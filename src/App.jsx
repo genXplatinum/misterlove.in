@@ -5,6 +5,7 @@ import Nav from './components/Nav';
 import Footer from './components/Footer';
 import StatusBar from './components/StatusBar';
 import ScrollProgress from './components/ScrollProgress';
+import ErrorBoundary from './components/ErrorBoundary';
 import Home from './pages/Home';
 import { ScrollTrigger } from './lib/gsap';
 
@@ -64,9 +65,11 @@ export default function App() {
       <a href="#main" className="skip-link">Skip to content</a>
 
       <div ref={canvasRef} className="canvas-layer" aria-hidden="true">
-        <Suspense fallback={null}>
-          <Scene />
-        </Suspense>
+        <ErrorBoundary fallback={null}>
+          <Suspense fallback={null}>
+            <Scene />
+          </Suspense>
+        </ErrorBoundary>
       </div>
 
       <Nav />

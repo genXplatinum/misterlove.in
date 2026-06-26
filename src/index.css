@@ -341,9 +341,12 @@ body.cursor-hover .cursor-ring {
 body.cursor-down .cursor-ring { width: 26px; height: 26px; }
 
 /* ---------- Fixed 3D canvas layer ---------- */
+/* z-index:-1 keeps the 3D strictly BEHIND all content (which is what makes the
+   transparent hero reveal the Sentinel Core while every other section, being
+   opaque, covers it). Never let this go >= 0 or it can paint over the page. */
 .canvas-layer {
   position: fixed; inset: 0;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
 }
 
