@@ -24,14 +24,26 @@
 }
 
 /* ---- Title ---- */
-.hero__main { max-width: 16ch; }
+.hero__main { max-width: none; }
 .hero__title {
-  font-size: clamp(3.6rem, 14vw, 12.5rem);
-  line-height: 0.86;
-  letter-spacing: -0.045em;
+  /* "Lovepreet" is ~9em wide, so keep the vw factor conservative to never
+     overflow narrow viewports. */
+  font-size: clamp(1.9rem, 9vw, 10rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
   font-weight: 600;
 }
-.hero__title .line { display: block; overflow: hidden; }
+/* overflow:hidden masks the slide-up reveal; the vertical padding (cancelled by
+   an equal negative margin) expands the clip box so ascenders/descenders such as
+   the 'p' and 'g' are never sliced off. */
+.hero__title .line {
+  display: block;
+  overflow: hidden;
+  padding-top: 0.14em;
+  padding-bottom: 0.3em;
+  margin-top: -0.14em;
+  margin-bottom: -0.3em;
+}
 .hero__title .line span {
   display: block;
   transform: translateY(110%);
@@ -45,17 +57,22 @@ body.is-ready .hero__title .line span { transform: translateY(0); }
   -webkit-text-stroke: 1.4px var(--text);
 }
 
+/* Role tagline: a normal wrapping line (not flex) so long taglines wrap inside
+   the bracket marks instead of overflowing the viewport. */
 .hero__role {
-  display: flex; align-items: center; gap: 0.6em;
-  margin-top: clamp(0.8rem, 2vw, 1.4rem);
+  max-width: 44ch;
+  margin-top: clamp(1rem, 2.5vw, 1.6rem);
   opacity: 0; transform: translateY(16px);
   transition: opacity 0.8s var(--ease-out) 0.5s, transform 0.8s var(--ease-out) 0.5s;
 }
 body.is-ready .hero__role { opacity: 1; transform: none; }
-.hero__role-bracket { color: var(--accent); font-size: 1rem; }
+.hero__role-bracket { color: var(--accent); }
+.hero__role-bracket:first-child { margin-right: 0.4em; }
+.hero__role-bracket:last-child { margin-left: 0.4em; }
 .hero__role-text {
   font-family: var(--font-mono);
-  font-size: clamp(0.95rem, 2.4vw, 1.45rem);
+  font-size: clamp(0.9rem, 2.2vw, 1.25rem);
+  line-height: 1.45;
   letter-spacing: 0.01em;
   color: var(--text);
   text-transform: none;
