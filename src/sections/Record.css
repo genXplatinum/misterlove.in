@@ -1,0 +1,80 @@
+.record { position: relative; background: var(--bg); }
+
+/* ---- Stats band ---- */
+.record__stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  padding-bottom: clamp(3rem, 7vw, 5.5rem);
+  margin-bottom: clamp(3rem, 7vw, 5.5rem);
+  border-bottom: 1px solid var(--line);
+}
+.record__stat { display: grid; gap: 0.6rem; }
+.record__stat-value {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: clamp(2.4rem, 6vw, 4.6rem); line-height: 0.9;
+  letter-spacing: -0.03em; color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.record__stat-label {
+  font-size: var(--t-sm); color: var(--text-2); max-width: 18ch;
+}
+
+/* ---- Head ---- */
+.record__head {
+  display: grid; grid-template-columns: auto 1fr; gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: end; margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+.record__title { font-size: var(--t-h2); }
+.record__intro { max-width: 48ch; }
+
+/* ---- Case files ---- */
+.record__files {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1rem, 2.4vw, 1.6rem);
+}
+.file {
+  position: relative;
+  display: grid; gap: 1rem; align-content: start;
+  padding: clamp(1.4rem, 3vw, 2.2rem);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color 0.4s var(--ease-out), transform 0.4s var(--ease-out), background 0.4s;
+}
+.file::after {
+  /* corner scan accent */
+  content: ""; position: absolute; top: 0; right: 0;
+  width: 56px; height: 56px;
+  background: linear-gradient(225deg, var(--accent-soft), transparent 70%);
+  pointer-events: none;
+}
+.file:hover { border-color: var(--accent); transform: translateY(-4px); }
+.file__head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.file__id { color: var(--accent); }
+.file__tag { color: var(--text-dim); }
+.file__title {
+  font-size: clamp(1.2rem, 2.6vw, 1.7rem); line-height: 1.1; max-width: 20ch; color: var(--text);
+}
+.file__body { color: var(--text-2); position: relative; }
+/* redaction bar that clears on hover */
+.file__redact {
+  position: absolute; left: 0; top: 0.1em; width: 62%; height: 1.15em;
+  background: var(--line-2);
+  transition: opacity 0.5s var(--ease-out), transform 0.6s var(--ease-out);
+  transform-origin: left;
+}
+.file:hover .file__redact { opacity: 0; transform: scaleX(0); }
+.file__foot { margin-top: 0.4rem; }
+.file__stamp {
+  display: inline-block; color: var(--scan);
+  border: 1px solid color-mix(in oklab, var(--scan) 40%, transparent);
+  padding: 0.35em 0.7em; border-radius: 3px;
+  letter-spacing: 0.12em;
+}
+
+@media (max-width: 860px) {
+  .record__stats { grid-template-columns: repeat(2, 1fr); }
+  .record__head { grid-template-columns: 1fr; }
+  .record__files { grid-template-columns: 1fr; }
+}

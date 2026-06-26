@@ -1,0 +1,32 @@
+.interstitial {
+  position: relative;
+  padding-block: clamp(3.5rem, 9vw, 8rem);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.interstitial--right { align-items: flex-end; text-align: right; }
+
+.interstitial__word {
+  font-size: clamp(4rem, 17vw, 17rem);
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--line-2);
+  white-space: nowrap;
+  transition: -webkit-text-stroke-color 0.5s var(--ease-out), color 0.5s var(--ease-out);
+  will-change: transform;
+}
+.interstitial__word:hover {
+  color: var(--accent-soft);
+  -webkit-text-stroke-color: var(--accent);
+}
+.interstitial__note {
+  margin-top: 1.2rem;
+  padding-inline: var(--gutter);
+  color: var(--text-dim);
+}
+.interstitial--left .interstitial__word,
+.interstitial--left .interstitial__note { padding-left: var(--gutter); }
+.interstitial--right .interstitial__word,
+.interstitial--right .interstitial__note { padding-right: var(--gutter); }

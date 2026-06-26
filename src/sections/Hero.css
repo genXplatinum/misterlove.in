@@ -1,0 +1,109 @@
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding-block: clamp(7rem, 15vh, 11rem) clamp(3.5rem, 8vh, 6rem);
+  isolation: isolate;
+}
+.hero__grid {
+  position: absolute; inset: 0; z-index: -1;
+  mask-image: radial-gradient(120% 90% at 20% 30%, #000 0%, transparent 70%);
+  opacity: 0.7;
+}
+.hero__inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(2rem, 5vh, 3.5rem);
+}
+
+.hero__top {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+
+/* ---- Title ---- */
+.hero__main { max-width: 16ch; }
+.hero__title {
+  font-size: clamp(3.6rem, 14vw, 12.5rem);
+  line-height: 0.86;
+  letter-spacing: -0.045em;
+  font-weight: 600;
+}
+.hero__title .line { display: block; overflow: hidden; }
+.hero__title .line span {
+  display: block;
+  transform: translateY(110%);
+  transition: transform 1.1s var(--ease-out);
+}
+.hero__title .line:nth-child(2) span { transition-delay: 0.12s; }
+body.is-ready .hero__title .line span { transform: translateY(0); }
+.hero__title .line:nth-child(2) span {
+  /* the surname in outline for contrast against the solid first name */
+  color: transparent;
+  -webkit-text-stroke: 1.4px var(--text);
+}
+
+.hero__role {
+  display: flex; align-items: center; gap: 0.6em;
+  margin-top: clamp(0.8rem, 2vw, 1.4rem);
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.8s var(--ease-out) 0.5s, transform 0.8s var(--ease-out) 0.5s;
+}
+body.is-ready .hero__role { opacity: 1; transform: none; }
+.hero__role-bracket { color: var(--accent); font-size: 1rem; }
+.hero__role-text {
+  font-family: var(--font-mono);
+  font-size: clamp(0.95rem, 2.4vw, 1.45rem);
+  letter-spacing: 0.01em;
+  color: var(--text);
+  text-transform: none;
+}
+.scramble__g { color: var(--scan); }
+
+/* ---- Bottom ---- */
+.hero__bottom {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: clamp(1.5rem, 4vw, 3rem); flex-wrap: wrap;
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.8s var(--ease-out) 0.7s, transform 0.8s var(--ease-out) 0.7s;
+}
+body.is-ready .hero__bottom { opacity: 1; transform: none; }
+.hero__lead { max-width: 46ch; }
+.hero__cta { display: flex; align-items: center; gap: clamp(1.2rem, 3vw, 2rem); flex-wrap: wrap; }
+
+/* ---- Scroll cue ---- */
+.hero__scroll {
+  position: absolute; left: 50%; bottom: 1.4rem; translate: -50% 0;
+  display: flex; flex-direction: column; align-items: center; gap: 0.7rem;
+  color: var(--text-dim);
+  opacity: 0; transition: opacity 1s var(--ease-out) 1.1s;
+}
+body.is-ready .hero__scroll { opacity: 1; }
+.hero__scroll-line {
+  width: 1px; height: 46px;
+  background: linear-gradient(var(--accent), transparent);
+  position: relative; overflow: hidden;
+}
+.hero__scroll-line::after {
+  content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 40%;
+  background: var(--scan); box-shadow: 0 0 8px var(--scan);
+  animation: scrollcue 2s var(--ease-io) infinite;
+}
+@keyframes scrollcue {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(360%); }
+}
+
+/* Hide the bottom-centred scroll cue whenever the hero content is tall enough
+   to collide with the CTAs (narrow or short viewports). */
+@media (max-width: 1000px), (max-height: 820px) {
+  .hero__scroll { display: none; }
+}
+
+@media (max-width: 860px) {
+  .hero__main { max-width: 100%; }
+  .hero__bottom { flex-direction: column; align-items: flex-start; }
+  .hero__title .line:nth-child(2) span { -webkit-text-stroke-width: 1px; }
+}

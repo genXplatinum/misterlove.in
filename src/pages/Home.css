@@ -1,0 +1,71 @@
+/* ---- Capabilities marquee ---- */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  border-block: 1px solid var(--line);
+  padding-block: clamp(1rem, 2.2vw, 1.6rem);
+  background: var(--bg-2);
+}
+.marquee__track {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: marquee 42s linear infinite;
+}
+.marquee:hover .marquee__track { animation-play-state: paused; }
+.marquee__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.4rem;
+  padding-right: 1.4rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.1rem, 2.6vw, 1.9rem);
+  letter-spacing: -0.01em;
+  color: var(--text-2);
+}
+.marquee__sep {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 8px var(--glow);
+}
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* ---- Act transition (dark ⇄ light bridge) ---- */
+.act-transition {
+  position: relative;
+  height: clamp(240px, 42vh, 460px);
+  background: linear-gradient(180deg, #06070a 0%, #0a0c12 18%, #5b6172 62%, #f4f4f2 100%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: hidden;
+}
+.act-transition--reverse {
+  background: linear-gradient(180deg, #f4f4f2 0%, #5b6172 38%, #0a0c12 82%, #06070a 100%);
+  align-items: flex-end;
+}
+.act-transition__line {
+  position: absolute; left: 50%; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, var(--accent), transparent);
+  opacity: 0.5;
+}
+.act-transition--reverse .act-transition__line {
+  background: linear-gradient(0deg, var(--accent), transparent);
+}
+.act-transition__node {
+  position: absolute; left: 50%; top: 50%; translate: -50% -50%;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: #4d6bff; box-shadow: 0 0 0 6px rgba(77,107,255,0.15), 0 0 22px rgba(77,107,255,0.7);
+  animation: pulse 2.6s var(--ease-out) infinite;
+}
+.act-transition__label {
+  margin-top: clamp(2.5rem, 7vh, 5rem);
+  color: rgba(160,175,210,0.85);
+  letter-spacing: 0.16em;
+  text-align: center;
+  padding-inline: var(--gutter);
+}
+.act-transition--reverse .act-transition__label { margin-top: 0; margin-bottom: clamp(2.5rem, 7vh, 5rem); }
+
+/* ---- Light act wrapper ---- */
+.home__light { position: relative; background: var(--bg); z-index: 1; }

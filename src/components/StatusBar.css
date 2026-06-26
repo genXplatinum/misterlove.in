@@ -1,0 +1,30 @@
+.statusbar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 8000;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem var(--gutter);
+  background: color-mix(in oklab, var(--bg) 70%, transparent);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  transition: transform 0.5s var(--ease-out), opacity 0.5s var(--ease-out);
+}
+.statusbar.is-hidden { transform: translateY(110%); opacity: 0; }
+
+.statusbar__group { display: flex; align-items: center; gap: 0.8rem; }
+.statusbar__center { flex: 1; justify-content: center; }
+.statusbar__sep { width: 1px; height: 11px; background: var(--line-2); }
+
+.statusbar__live { display: inline-flex; align-items: center; gap: 0.5em; }
+.statusbar__dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--scan);
+  box-shadow: 0 0 8px var(--scan);
+  animation: pulse 2.4s var(--ease-out) infinite;
+}
+.statusbar__clock { font-variant-numeric: tabular-nums; }
+
+@media (max-width: 720px) {
+  .statusbar { padding: 0.5rem var(--gutter); }
+  .statusbar__center { display: none; }
+}

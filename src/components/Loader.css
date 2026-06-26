@@ -1,0 +1,70 @@
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: var(--bg);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.loader::before {
+  /* faint blueprint grid */
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(120,140,200,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120,140,200,0.06) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(circle at 50% 50%, #000 0%, transparent 75%);
+}
+.loader__scanline {
+  position: absolute; left: 0; right: 0; top: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--scan), transparent);
+  box-shadow: 0 0 14px var(--scan);
+  animation: bootscan 2.2s var(--ease-io) infinite;
+}
+@keyframes bootscan {
+  0% { top: 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.boot__console {
+  position: relative;
+  width: min(440px, 84vw);
+  padding: clamp(1.5rem, 4vw, 2.4rem);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--surface) 70%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 40px 120px -40px #000;
+}
+.boot__head {
+  display: flex; align-items: center; gap: 0.7em;
+  padding-bottom: 1rem; margin-bottom: 1.2rem;
+  border-bottom: 1px solid var(--line);
+}
+.boot__mark { color: var(--accent); display: inline-flex; }
+
+.boot__lines { display: grid; gap: 0.7rem; margin-bottom: 1.4rem; }
+.boot__line { display: flex; align-items: center; gap: 0.7em; color: var(--text-2); }
+.boot__check { color: var(--scan); }
+
+.boot__bar {
+  height: 2px; width: 100%;
+  background: var(--line-2);
+  overflow: hidden; border-radius: 100px;
+}
+.boot__bar-fill {
+  display: block; height: 100%; width: 100%;
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--accent), var(--scan));
+  box-shadow: 0 0 12px var(--glow);
+}
+.boot__foot {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-top: 1rem;
+}
+.boot__grant { opacity: 0; }
+.boot__num { font-size: clamp(1.4rem, 5vw, 2rem); color: var(--text); letter-spacing: 0.05em; }

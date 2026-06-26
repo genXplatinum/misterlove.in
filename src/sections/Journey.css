@@ -1,0 +1,52 @@
+.journey { position: relative; background: var(--bg); }
+.journey__title {
+  font-size: var(--t-h2); max-width: 16ch;
+  margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.timeline { display: grid; }
+.tl {
+  display: grid;
+  grid-template-columns: clamp(5rem, 12vw, 9rem) 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+.tl__when {
+  text-align: right;
+  color: var(--accent);
+  padding-top: 0.2rem;
+  font-size: var(--t-sm);
+  letter-spacing: 0.06em;
+}
+.tl__content {
+  position: relative;
+  border-left: 1px solid var(--line-2);
+  padding-left: clamp(1.5rem, 4vw, 3rem);
+  padding-bottom: clamp(2.2rem, 5vw, 3.5rem);
+}
+.tl__content::before {
+  content: ""; position: absolute; left: -6px; top: 0.35rem;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--bg); border: 2px solid var(--accent);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.tl:hover .tl__content::before { background: var(--accent); box-shadow: 0 0 0 5px var(--accent-soft); }
+.tl__what {
+  font-size: clamp(1.3rem, 3vw, 2.1rem); letter-spacing: -0.02em;
+  margin-bottom: 0.6rem; color: var(--text);
+}
+.tl__detail { max-width: 52ch; }
+
+/* Last milestone — the 2030 goal, emphasised */
+.tl--last .tl__content { border-left-color: transparent; }
+.tl--last .tl__content::before {
+  background: var(--accent); width: 13px; height: 13px; left: -7px;
+  box-shadow: 0 0 0 6px var(--accent-soft);
+}
+.tl--last .tl__what { color: var(--accent); }
+.tl--last .tl__when { font-weight: 700; }
+
+@media (max-width: 600px) {
+  .tl { grid-template-columns: 1fr; gap: 0.5rem; }
+  .tl__when { text-align: left; }
+  .tl__content { border-left: 1px solid var(--line-2); }
+}
