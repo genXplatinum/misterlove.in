@@ -14,6 +14,9 @@
     />
     <meta name="author" content="Lovepreet Singh" />
     <link rel="canonical" href="https://misterlove.in/" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="keywords" content="Lovepreet Singh, misterlove, ethical hacker, top 100 ethical hacker, cybersecurity expert, penetration testing, digital forensics, threat intelligence, security architect, Microsoft MVP, Five Rivers Inc, cybersecurity founder, India cybersecurity" />
 
     <!-- Open Graph -->
     <meta property="og:title" content="Lovepreet Singh — Ethical Hacker · Security Architect · Founder" />
@@ -24,9 +27,20 @@
     <meta property="og:type" content="profile" />
     <meta property="og:site_name" content="Lovepreet Singh" />
     <meta property="og:url" content="https://misterlove.in/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://misterlove.in/og.png" />
+    <meta property="og:image:secure_url" content="https://misterlove.in/og.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Lovepreet Singh — Ethical Hacker, Security Architect & Founder. misterlove.in" />
+    <meta property="profile:first_name" content="Lovepreet" />
+    <meta property="profile:last_name" content="Singh" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Lovepreet Singh — Ethical Hacker · Founder" />
     <meta name="twitter:description" content="Top-100 ethical hacker. Microsoft MVP. Founder & MD of Five Rivers Inc." />
+    <meta name="twitter:image" content="https://misterlove.in/og.png" />
+    <meta name="twitter:image:alt" content="Lovepreet Singh — Ethical Hacker, Security Architect & Founder" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -35,49 +49,84 @@
       rel="stylesheet"
     />
 
-    <!-- Structured data: a security professional & founder -->
+    <!-- Structured data: website + person + organization -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "@id": "https://misterlove.in/#lovepreet-singh",
-        "name": "Lovepreet Singh",
-        "jobTitle": ["Ethical Hacker", "Security Architect", "Founder & Managing Director"],
-        "description": "One of the world's top-100 ethical hackers, Microsoft MVP and Founder & Managing Director of Five Rivers Inc. — a cybersecurity-led technology group spanning security, AI and IoT.",
-        "url": "https://misterlove.in/",
-        "image": "https://misterlove.in/founder.jpg",
-        "nationality": "Indian",
-        "worksFor": {
-          "@type": "Organization",
-          "name": "Five Rivers Inc.",
-          "description": "Cybersecurity-led technology group (security, AI, IoT) with offices in London, Dubai and India."
-        },
-        "sameAs": [
-          "https://www.linkedin.com/in/fiverivers-founder/",
-          "https://www.instagram.com/misterlove.in"
-        ],
-        "knowsAbout": [
-          "Cybersecurity",
-          "Ethical Hacking",
-          "Penetration Testing",
-          "Digital Forensics",
-          "Threat Intelligence",
-          "Secure Architecture",
-          "Artificial Intelligence"
-        ],
-        "award": [
-          "Microsoft MVP",
-          "Fortune 40 Under 40",
-          "Guinness World Records",
-          "Limca Book of Records",
-          "Bharat Yuva Award"
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://misterlove.in/#website",
+            "url": "https://misterlove.in/",
+            "name": "Lovepreet Singh",
+            "description": "Personal portfolio of Lovepreet Singh — ethical hacker, security architect and founder.",
+            "inLanguage": "en",
+            "publisher": { "@id": "https://misterlove.in/#lovepreet-singh" }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://misterlove.in/#lovepreet-singh",
+            "name": "Lovepreet Singh",
+            "givenName": "Lovepreet",
+            "familyName": "Singh",
+            "jobTitle": ["Ethical Hacker", "Security Architect", "Founder & Managing Director"],
+            "description": "One of the world's top-100 ethical hackers, Microsoft MVP and Founder & Managing Director of Five Rivers Inc. — a cybersecurity-led technology group spanning security, AI and IoT.",
+            "url": "https://misterlove.in/",
+            "image": "https://misterlove.in/founder.jpg",
+            "nationality": "Indian",
+            "worksFor": { "@id": "https://misterlove.in/#five-rivers" },
+            "mainEntityOfPage": { "@id": "https://misterlove.in/#website" },
+            "sameAs": [
+              "https://www.linkedin.com/in/fiverivers-founder/",
+              "https://www.instagram.com/misterlove.in"
+            ],
+            "knowsAbout": [
+              "Cybersecurity",
+              "Ethical Hacking",
+              "Penetration Testing",
+              "Digital Forensics",
+              "Threat Intelligence",
+              "Secure Architecture",
+              "Artificial Intelligence"
+            ],
+            "award": [
+              "Microsoft MVP",
+              "Fortune 40 Under 40",
+              "Guinness World Records",
+              "Limca Book of Records",
+              "Bharat Yuva Award"
+            ]
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://misterlove.in/#five-rivers",
+            "name": "Five Rivers Inc.",
+            "description": "Cybersecurity-led technology group (security, AI and IoT) with offices in London, Dubai and India.",
+            "url": "https://misterlove.in/",
+            "founder": { "@id": "https://misterlove.in/#lovepreet-singh" },
+            "areaServed": "Worldwide",
+            "knowsAbout": ["Cybersecurity", "Artificial Intelligence", "Internet of Things"]
+          }
         ]
       }
     </script>
   </head>
   <body>
     <div id="root"></div>
-    <noscript>Lovepreet Singh — Ethical Hacker, Security Architect & Founder of Five Rivers Inc.</noscript>
+    <noscript>
+      <h1>Lovepreet Singh — Ethical Hacker, Security Architect &amp; Founder</h1>
+      <p>
+        One of the world's top-100 ethical hackers and a Microsoft MVP. Founder &amp; Managing
+        Director of Five Rivers Inc., a cybersecurity-led technology group spanning security, AI
+        and IoT across London, Dubai and India. Specialising in offensive security, penetration
+        testing, digital forensics, threat intelligence and secure architecture.
+      </p>
+      <p>
+        Contact: <a href="mailto:lovepreetsinghmk10@gmail.com">lovepreetsinghmk10@gmail.com</a>
+        · <a href="https://www.linkedin.com/in/fiverivers-founder/">LinkedIn</a>
+        · <a href="https://www.instagram.com/misterlove.in">Instagram</a>
+      </p>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
