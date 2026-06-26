@@ -65,6 +65,10 @@
   transform-origin: left;
 }
 .file:hover .file__redact { opacity: 0; transform: scaleX(0); }
+/* Touch devices can't hover — never leave text permanently redacted. */
+@media (hover: none) {
+  .file__redact { display: none; }
+}
 .file__foot { margin-top: 0.4rem; }
 .file__stamp {
   display: inline-block; color: var(--scan);
