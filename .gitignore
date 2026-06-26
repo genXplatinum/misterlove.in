@@ -5,6 +5,10 @@ node_modules
 dist
 dist-ssr
 
+# Local exports (story graphics + OG source/fonts; regenerate via stories/render.mjs).
+# The deployed OG image lives in public/og.png and IS committed.
+/stories/
+
 # Local env / tooling
 .env
 .env.local
