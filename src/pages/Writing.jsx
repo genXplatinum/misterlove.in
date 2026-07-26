@@ -1,121 +1,35 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Reveal from '../components/Reveal';
-import Magnetic from '../components/Magnetic';
-import { pieces, writingMeta } from '../data/writing';
+import CoverPlate from '../components/CoverPlate';
+import { pieces, writingMeta, writingTotals } from '../data/writing';
 import { profile } from '../data/site';
 import './Writing.css';
 
-/** Fetches the part manifest for a piece so the index can list its contents. */
-function usePieceParts(piece) {
-  const [parts, setParts] = useState(null);
-  useEffect(() => {
-    let alive = true;
-    piece.load().then((m) => { if (alive) setParts(m.default); }).catch(() => {});
-    return () => { alive = false; };
-  }, [piece]);
-  return parts;
-}
-
-function Feature({ piece }) {
-  const parts = usePieceParts(piece);
-  const read = `/writing/${piece.slug}/part-1`;
-
+function TopicCard({ piece, i }) {
   return (
-    <article className="feature">
-      {/* Typographic cover — no stock photography anywhere on this site,
-          so the piece announces itself in type, the way the book does. */}
-      <Reveal className="feature__cover" variant="fade">
-        <Link to={read} className="feature__cover-link" data-cursor aria-label={`Read ${piece.title}`}>
-          <span className="feature__cover-kicker mono">{piece.kicker}</span>
-          <span className="feature__cover-title">
-            {piece.title}
-            <span className="feature__cover-sub">{piece.subtitle}</span>
+    <Reveal as="li" className="topic" delay={i * 70}>
+      <Link to={`/writing/${piece.slug}`} className="topic__link" data-cursor>
+        <CoverPlate piece={piece} className="topic__cover" />
+
+        <span className="topic__body">
+          <span className="mono topic__topic">{piece.topic}</span>
+          <span className="topic__title">{piece.title}</span>
+          <span className="topic__stand">{piece.standfirst}</span>
+
+          <span className="topic__meta">
+            <span><b>{piece.parts}</b> parts</span>
+            <span><b>{piece.words.toLocaleString('en-IN')}</b> words</span>
+            <span><b>~{Math.round((piece.minutes / 60) * 10) / 10}</b> hrs</span>
+            <span className="topic__date">{piece.displayDate}</span>
           </span>
-          <span className="feature__cover-rule" aria-hidden="true" />
-          <span className="feature__cover-stand">{piece.standfirst}</span>
-          <span className="feature__cover-foot">
-            <span className="feature__badge mono">{piece.parts} parts · {piece.status}</span>
-            <span className="mono dim">Written &amp; researched by {profile.name}</span>
+
+          <span className="link topic__cta">
+            Open this research <span className="link__arrow">→</span>
           </span>
-        </Link>
-      </Reveal>
-
-      <div className="feature__body">
-        <Reveal className="feature__intro">
-          <p className="feature__summary">{piece.summary}</p>
-
-          <dl className="feature__stats">
-            <div><dt className="mono">Parts</dt><dd>{piece.parts}</dd></div>
-            <div><dt className="mono">Words</dt><dd>{piece.words.toLocaleString('en-IN')}</dd></div>
-            <div><dt className="mono">Read</dt><dd>~{Math.round(piece.minutes / 60 * 10) / 10} hrs</dd></div>
-            <div><dt className="mono">Published</dt><dd>{piece.displayDate}</dd></div>
-          </dl>
-
-          <div className="feature__ctas">
-            <Magnetic>
-              <Link to={read} className="btn" data-cursor>
-                Start reading — Part 01 <span className="btn__dot" />
-              </Link>
-            </Magnetic>
-            <a
-              className="btn btn--ghost"
-              href={`${import.meta.env.BASE_URL}${piece.pdf}`}
-              download
-              data-cursor
-            >
-              PDF · {piece.pdfSize}
-            </a>
-          </div>
-        </Reveal>
-
-        <Reveal className="feature__method" delay={80}>
-          <span className="mono feature__method-title">// The four promises this book opens with</span>
-          <ol className="feature__promises">
-            {piece.promises.map((p) => (
-              <li key={p.n}>
-                <span className="mono feature__promise-n">{p.n}</span>
-                <span className="feature__promise-t">{p.t}</span>
-                <span className="feature__promise-d">{p.d}</span>
-              </li>
-            ))}
-          </ol>
-        </Reveal>
-      </div>
-
-      {/* Contents */}
-      <div className="feature__contents">
-        <div className="section-head">
-          <span className="mono">
-            <span className="section-head__id">CONTENTS</span>&nbsp;&nbsp;/&nbsp;&nbsp;{piece.parts} parts, in order
-          </span>
-          <span className="mono hide-sm">{piece.topic}</span>
-        </div>
-
-        {parts ? (
-          <ol className="feature__parts">
-            {parts.map((p, i) => (
-              <li key={p.n}>
-                <Reveal delay={Math.min(i, 6) * 40}>
-                  <Link to={`/writing/${piece.slug}/part-${p.n}`} className="partrow" data-cursor>
-                    <span className="partrow__n mono">{String(p.n).padStart(2, '0')}</span>
-                    <span className="partrow__body">
-                      <span className="partrow__label mono">{p.label}</span>
-                      <span className="partrow__title">{p.title}</span>
-                      <span className="partrow__lead">{p.lead}</span>
-                    </span>
-                    <span className="partrow__meta mono">{p.minutes} min</span>
-                    <span className="partrow__arrow" aria-hidden="true">→</span>
-                  </Link>
-                </Reveal>
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <p className="mono dim feature__loading">Loading contents…</p>
-        )}
-      </div>
-    </article>
+        </span>
+      </Link>
+    </Reveal>
   );
 }
 
@@ -124,7 +38,6 @@ export default function Writing() {
     const prev = document.title;
     document.title = `Writing — long-form research by ${profile.name}`;
 
-    // Match the pre-rendered /writing shell after a client-side navigation.
     const featured = pieces[0];
     const image = featured ? `https://misterlove.in/og/${featured.slug}.png` : null;
     const tags = image
@@ -153,12 +66,27 @@ export default function Writing() {
             <span className="eyebrow">{writingMeta.index} — {writingMeta.label}</span>
             <h1 className="writingpage__title">{writingMeta.title}</h1>
             <p className="writingpage__lead lead muted">{writingMeta.lead}</p>
+
+            <dl className="writingpage__totals">
+              <div><dt className="mono">Research</dt><dd>{writingTotals.pieces}</dd></div>
+              <div><dt className="mono">Parts</dt><dd>{writingTotals.parts}</dd></div>
+              <div><dt className="mono">Words</dt><dd>{writingTotals.words.toLocaleString('en-IN')}</dd></div>
+            </dl>
           </Reveal>
         </div>
       </header>
 
       <div className="container">
-        {pieces.map((p) => <Feature key={p.slug} piece={p} />)}
+        <div className="section-head">
+          <span className="mono">
+            <span className="section-head__id">ALL RESEARCH</span>&nbsp;&nbsp;/&nbsp;&nbsp;newest first
+          </span>
+          <span className="mono hide-sm">SELECT A TOPIC TO OPEN IT</span>
+        </div>
+
+        <ul className="topics">
+          {pieces.map((p, i) => <TopicCard key={p.slug} piece={p} i={i} />)}
+        </ul>
       </div>
     </div>
   );

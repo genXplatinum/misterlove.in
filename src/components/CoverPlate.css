@@ -1,0 +1,89 @@
+/* ============================================================
+   COVER PLATE — a research piece's typographic cover.
+   Each piece carries its own register via .cover--<accent>;
+   the frame (blueprint grid, gold rule, badge) stays constant.
+   ============================================================ */
+
+.cover {
+  display: grid;
+  align-content: center;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: var(--radius);
+  padding: clamp(2rem, 4vw, 3.2rem);
+  min-height: clamp(16rem, 28vw, 22rem);
+  color: #f4f6f4;
+}
+.cover::after {
+  /* blueprint hairlines — the same drawing as the rest of the site */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 62px 62px;
+}
+
+/* Registers — mirrored by PALETTES in scripts/make-og-cards.mjs so the share
+   card and the on-site cover read as the same object. */
+.cover--harvest {
+  background:
+    radial-gradient(120% 90% at 80% 8%, rgba(120, 190, 140, 0.16), transparent 62%),
+    linear-gradient(158deg, #16301f 0%, #1e4429 48%, #29583a 100%);
+  --cover-gold: #f2c14e;
+  --cover-kick: #ffe6a3;
+  --cover-sub: #cfe6d6;
+}
+.cover--ember {
+  background:
+    radial-gradient(120% 90% at 78% 6%, rgba(214, 150, 82, 0.20), transparent 60%),
+    linear-gradient(158deg, #17131b 0%, #2a1e26 46%, #3d2a2a 100%);
+  --cover-gold: #d59a4e;
+  --cover-kick: #f0cf9d;
+  --cover-sub: #d9c7bb;
+}
+
+.cover__kicker {
+  color: var(--cover-kick);
+  margin-bottom: clamp(1.6rem, 3.5vw, 2.8rem);
+}
+.cover__title {
+  display: grid;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.2rem + 3.2vw, 3.4rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+.cover__sub {
+  font-size: 0.36em;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--cover-sub);
+  margin-top: 0.75em;
+}
+.cover__rule {
+  width: 3.4rem;
+  height: 3px;
+  background: var(--cover-gold);
+  margin: clamp(1.1rem, 2.5vw, 1.7rem) 0;
+}
+.cover__badge {
+  justify-self: start;
+  background: var(--cover-gold);
+  color: #22201f;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.45em 0.85em;
+  border-radius: 2px;
+}
+
+/* Full-bleed variant, used on the topic page */
+.cover--full {
+  min-height: clamp(20rem, 38vw, 30rem);
+  padding: clamp(2.4rem, 5vw, 4.5rem);
+}
+.cover--full .cover__title { font-size: clamp(2.4rem, 1.3rem + 4.6vw, 5rem); }

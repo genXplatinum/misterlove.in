@@ -364,11 +364,17 @@ export default function Article() {
 
             {part?.prologue && (
               <section className="article__prologue">
-                <h2 className="article__prologue-head">Author’s Note</h2>
-                <p className="mono article__prologue-tag">Why I wrote this, and how to read it</p>
+                {part.prologueTitle && (
+                  <h2 className="article__prologue-head">{part.prologueTitle}</h2>
+                )}
+                {part.prologueTag && (
+                  <p className="mono article__prologue-tag">{part.prologueTag}</p>
+                )}
                 <Prose html={part.prologue} dark={theme === 'dark'} />
                 <div className="article__prologue-rule" aria-hidden="true" />
-                <span className="mono article__prologue-next">Part 01 begins</span>
+                <span className="mono article__prologue-next">
+                  Part {String(n).padStart(2, '0')} begins
+                </span>
               </section>
             )}
 

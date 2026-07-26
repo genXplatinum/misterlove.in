@@ -323,6 +323,10 @@ for (let i = 1; i <= PART_COUNT; i++) {
     minutes: Math.max(1, Math.round(words / 220)),
     toc: anchored.toc,
     prologue,
+    // The source strips these from the prologue body, so name them here for
+    // the reader's prologue header (see Article.jsx).
+    prologueTitle: prologue ? 'Author’s Note' : null,
+    prologueTag: prologue ? 'Why I wrote this, and how to read it' : null,
     html: anchored.html,
     sources,
   });

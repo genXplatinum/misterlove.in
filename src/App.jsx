@@ -12,6 +12,7 @@ import { ScrollTrigger } from './lib/gsap';
 
 const Scene = lazy(() => import('./components/three/Scene'));
 const Writing = lazy(() => import('./pages/Writing'));
+const Topic = lazy(() => import('./pages/Topic'));
 const Article = lazy(() => import('./pages/Article'));
 
 /** Home-only chrome: the boot handshake and the Sentinel Core behind it. */
@@ -106,8 +107,9 @@ export default function App() {
           <Suspense fallback={<div className="route-fallback mono">Loading…</div>}>
             <Routes>
               <Route path="/" element={<Home />} />
+              {/* The shelf → one topic → one part of that topic. */}
               <Route path="/writing" element={<Writing />} />
-              <Route path="/writing/:slug" element={<Article />} />
+              <Route path="/writing/:slug" element={<Topic />} />
               {/* Router params must span a whole segment, so the "part-N"
                   segment is matched as one param and parsed in Article. */}
               <Route path="/writing/:slug/:part" element={<Article />} />

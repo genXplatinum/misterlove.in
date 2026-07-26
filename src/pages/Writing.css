@@ -1,10 +1,11 @@
 /* ============================================================
-   WRITING — index of long-form research.
-   Dark, like the operator acts: this is the shelf. The reading
-   itself happens on paper (see Article.css).
+   WRITING — the shelf (/writing) and a single topic
+   (/writing/<slug>). Dark, like the operator acts: this is where
+   you choose. The reading itself happens on paper (Article.css).
    ============================================================ */
 
-.writingpage {
+.writingpage,
+.topicpage {
   padding-top: clamp(7rem, 12vw, 10rem);
   padding-bottom: clamp(5rem, 10vw, 9rem);
   background: var(--bg);
@@ -25,110 +26,121 @@
 }
 .writingpage__lead { max-width: 52ch; margin-top: 1.8rem; }
 
-/* ---------- Typographic cover ---------- */
-.feature__cover { margin-bottom: clamp(3rem, 6vw, 5rem); }
-.feature__cover-link {
+.writingpage__totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem 3rem;
+  margin-top: 2.6rem;
+}
+.writingpage__totals dt { color: var(--text-dim); margin-bottom: 0.35rem; }
+.writingpage__totals dd {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+/* ---------- The shelf ---------- */
+.topics { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); }
+
+.topic__link {
   display: grid;
-  gap: 0;
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
+  border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: clamp(2.5rem, 6vw, 5rem);
-  min-height: clamp(24rem, 46vw, 34rem);
+  overflow: hidden;
+  background: var(--surface);
+  transition: border-color 0.5s var(--ease-out), transform 0.5s var(--ease-out),
+              box-shadow 0.5s var(--ease-out);
+}
+.topic__link:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 26px 60px -34px var(--shadow);
+}
+@media (min-width: 880px) {
+  .topic__link { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); }
+}
+
+.topic__body {
+  padding: clamp(1.7rem, 3.5vw, 2.8rem);
+  display: grid;
   align-content: center;
-  border: 1px solid var(--line-2);
-  /* Field green → the source document's own register, deepened so the
-     site's cobalt accents still read on top of it. */
-  background:
-    radial-gradient(120% 90% at 82% 8%, rgba(120, 190, 140, 0.14), transparent 62%),
-    linear-gradient(158deg, #16301f 0%, #1e4429 46%, #29583a 100%);
-  color: #f2f7f3;
+  gap: 1rem;
+}
+.topic__topic { color: var(--accent); }
+.topic__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--text);
+}
+.topic__stand {
+  font-family: var(--font-read);
+  font-size: clamp(1rem, 0.95rem + 0.35vw, 1.15rem);
+  line-height: 1.55;
+  color: var(--text-2);
+  max-width: 52ch;
+}
+.topic__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.6rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--t-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.topic__meta b { color: var(--text); font-weight: 500; }
+.topic__date { margin-left: auto; }
+.topic__cta { justify-self: start; margin-top: 0.3rem; }
+.topic__link:hover .topic__cta { color: var(--accent); }
+.topic__link:hover .topic__cta::after { transform: scaleX(1); transform-origin: left; }
+.topic__link:hover .link__arrow { transform: translate(3px, 0); }
+
+/* ---------- Topic page ---------- */
+.topicpage__cover { margin: clamp(2rem, 4vw, 3rem) 0 clamp(2.5rem, 5vw, 4rem); }
+.topicpage__coverlink {
+  display: block;
   transition: transform 0.6s var(--ease-out), box-shadow 0.6s var(--ease-out);
 }
-.feature__cover-link::after {
-  /* Blueprint hairlines, so the cover belongs to the same drawing as the site */
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
-  background-size: 72px 72px;
-}
-.feature__cover-link:hover {
+.topicpage__coverlink:hover {
   transform: translateY(-4px);
   box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.7);
 }
+.article__crumb.is-current { color: var(--text-2); }
 
-.feature__cover-kicker {
-  color: #ffe6a3;
-  margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
-}
-.feature__cover-title {
-  font-family: var(--font-display);
-  font-size: clamp(2.8rem, 1.4rem + 5.6vw, 6rem);
-  font-weight: 600;
-  line-height: 0.94;
-  letter-spacing: -0.035em;
-  display: grid;
-}
-.feature__cover-sub {
-  font-weight: 400;
-  font-size: 0.36em;
-  letter-spacing: -0.01em;
-  color: #cfe6d6;
-  margin-top: 0.7em;
-}
-.feature__cover-rule {
-  width: 4.5rem;
-  height: 3px;
-  background: #f2c14e;
-  margin: clamp(1.5rem, 3vw, 2.2rem) 0;
-}
-.feature__cover-stand {
-  font-family: var(--font-read);
-  font-size: clamp(1rem, 0.94rem + 0.42vw, 1.24rem);
-  line-height: 1.5;
-  color: #dcece2;
-  max-width: 44ch;
-}
-.feature__cover-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1rem 1.4rem;
-  margin-top: clamp(2.5rem, 6vw, 4rem);
-}
-.feature__badge {
-  background: #f2c14e;
-  color: #22331f;
-  font-weight: 700;
-  padding: 0.5em 0.9em;
-  border-radius: 2px;
-  letter-spacing: 0.08em;
-}
-.feature__cover-foot .dim { color: rgba(242, 247, 243, 0.6); }
-
-/* ---------- Intro + method ---------- */
-.feature__body {
+.topicpage__body {
   display: grid;
   gap: clamp(2.5rem, 5vw, 4rem);
   padding-bottom: clamp(3.5rem, 7vw, 6rem);
 }
 @media (min-width: 900px) {
-  .feature__body { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+  .topicpage__body { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
 }
-
-.feature__summary {
+.topicpage__topic { color: var(--accent); display: block; margin-bottom: 1.2rem; }
+.topicpage__stand {
   font-family: var(--font-read);
-  font-size: clamp(1.05rem, 1rem + 0.4vw, 1.24rem);
+  font-size: var(--t-lead);
+  line-height: 1.4;
+  color: var(--text);
+  max-width: 42ch;
+  margin-bottom: 1.4rem;
+}
+.topicpage__summary {
+  font-family: var(--font-read);
+  font-size: clamp(1rem, 0.96rem + 0.3vw, 1.15rem);
   line-height: 1.65;
   color: var(--text-2);
   max-width: 54ch;
 }
 
+/* ---------- Stats / method panel (shared) ---------- */
 .feature__stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr));
@@ -170,11 +182,7 @@
   letter-spacing: -0.015em;
   color: var(--text);
 }
-.feature__promise-d {
-  font-size: 0.92rem;
-  line-height: 1.55;
-  color: var(--text-2);
-}
+.feature__promise-d { font-size: 0.92rem; line-height: 1.55; color: var(--text-2); }
 
 /* ---------- Contents list ---------- */
 .feature__contents { padding-top: clamp(1rem, 2vw, 2rem); }
