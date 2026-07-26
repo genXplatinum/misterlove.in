@@ -65,7 +65,10 @@ function useArticleMeta(piece, part) {
     const prevTitle = document.title;
     document.title = `${part.title} — ${piece.title}: Part ${part.n} of ${piece.parts} | ${profile.name}`;
 
-    const url = `https://misterlove.in/writing/${piece.slug}/part-${part.n}`;
+    // Trailing slash: these routes are pre-rendered as directories, so this is
+    // the form that answers 200 without a redirect. Keep it identical to the
+    // canonical the pre-rendered shell ships (see scripts/postbuild.mjs).
+    const url = `https://misterlove.in/writing/${piece.slug}/part-${part.n}/`;
     const set = (selector, attr, value) => {
       let el = document.head.querySelector(selector);
       const created = !el;
@@ -108,7 +111,7 @@ function useArticleMeta(piece, part) {
       isPartOf: {
         '@type': 'CreativeWorkSeries',
         name: `${piece.title} — ${piece.subtitle}`,
-        url: `https://misterlove.in/writing/${piece.slug}/part-1`,
+        url: `https://misterlove.in/writing/${piece.slug}/part-1/`,
         numberOfItems: piece.parts,
       },
       author: { '@type': 'Person', '@id': 'https://misterlove.in/#lovepreet-singh', name: profile.name },
