@@ -5,7 +5,7 @@
 //   - sitemap.xml is generated from the writing manifest, so adding a piece or a
 //     part can't leave the sitemap silently stale
 import { copyFileSync, writeFileSync, mkdirSync, readFileSync } from 'node:fs';
-import { pieces } from '../src/data/writing.js';
+import { pieces, writingTotals } from '../src/data/writing.js';
 
 const SITE = 'https://misterlove.in';
 const today = new Date().toISOString().slice(0, 10);
@@ -39,7 +39,16 @@ const urls = [
   // and GitHub Pages 301s the slash-less form to them. Pointing the sitemap and
   // canonicals at the form that answers 200 directly avoids sending every
   // crawl through a redirect.
-  url({ loc: `${SITE}/writing/`, lastmod: today, changefreq: 'monthly', priority: '0.9' }),
+  url({
+    loc: `${SITE}/writing/`,
+    lastmod: today,
+    changefreq: 'monthly',
+    priority: '0.9',
+    image: {
+      loc: `${SITE}/og/writing.png`,
+      title: 'Writing — long-form research by Lovepreet Singh',
+    },
+  }),
 ];
 
 for (const piece of pieces) {
@@ -162,9 +171,10 @@ shell({
     'Long-form work on subjects I refused to have a lazy opinion about. Researched properly, written plainly, every side given its strongest case.',
   canonical: `${SITE}/writing/`,
   keywords: `Lovepreet Singh writing, long-form research, essays, ${pieces.map((p) => p.title).join(', ')}`,
-  // The newest piece fronts the shelf.
-  image: `${SITE}/og/${pieces[0].slug}.png`,
-  imageAlt: `Writing by Lovepreet Singh — ${pieces.length} long-form research pieces.`,
+  // The shelf has its own card listing the research — not a borrowed cover
+  // from whichever piece happens to be newest.
+  image: `${SITE}/og/writing.png`,
+  imageAlt: `Writing by Lovepreet Singh — ${pieces.length} long-form research pieces, ${writingTotals.parts} parts, ${writingTotals.words.toLocaleString('en-IN')} words.`,
   jsonLd: {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',

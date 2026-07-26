@@ -21,7 +21,7 @@
  */
 import { Resvg } from '@resvg/resvg-js';
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { pieces } from '../src/data/writing.js';
+import { pieces, writingMeta, writingTotals } from '../src/data/writing.js';
 
 const W = 1200;
 const H = 630;
@@ -105,6 +105,10 @@ function clampLines(text, size, maxW, maxLines) {
 const PALETTES = {
   harvest: { a: '#16301f', b: '#1e4429', c: '#29583a', lift: '#78be8c', gold: '#f2c14e', kick: '#ffe6a3', sub: '#cfe6d6', ink: '#22331f', foot: '#bcd6c5', mark: '#9dc0a8' },
   ember:   { a: '#17131b', b: '#2a1e26', c: '#3d2a2a', lift: '#d69652', gold: '#d59a4e', kick: '#f0cf9d', sub: '#d9c7bb', ink: '#221b18', foot: '#cbb8a8', mark: '#bfa88f' },
+  // The shelf belongs to the site, not to any one piece — so it wears the
+  // site's own obsidian/cobalt rather than a book's register. It also stays
+  // correct as pieces are added, which a borrowed cover would not.
+  site:    { a: '#06070a', b: '#0a0c12', c: '#141826', lift: '#4d6bff', gold: '#4d6bff', kick: '#7d93ff', sub: '#aab3c5', ink: '#ffffff', foot: '#69748b', mark: '#69748b' },
 };
 
 const frame = (p) => `
@@ -214,6 +218,88 @@ ${frame(p)}
 </svg>`;
 }
 
+/**
+ * The shelf card for /writing — the section, not a piece.
+ *
+ * Lists the research so a shared link previews what's actually there, and
+ * derives its counts from the manifest so it stays true as pieces are added.
+ * Beyond ROWS entries it lists the newest and says how many more there are,
+ * rather than silently cutting the list off.
+ */
+function shelfCard() {
+  const p = PALETTES.site;
+  const LEFT = 62;
+  const COL = 660;                 // where the list column starts
+  const LEFT_W = COL - LEFT - 40;  // headline measure
+  const ROWS = 4;
+
+  const shown = pieces.slice(0, ROWS);
+  const rest = pieces.length - shown.length;
+
+  // Both columns hang from the same top line, so the headline and the shelf
+  // read as one composition rather than two things that happen to share a card.
+  const TOP = 150;
+
+  const t = fitLines(writingMeta.title, { max: 56, min: 34, maxW: LEFT_W, maxLines: 4 });
+  const leading = t.size * 1.06;
+  const titleTop = TOP + t.size * 0.92;
+
+  const titleLines = t.lines
+    .map((l, i) => `<text class="d" x="${LEFT}" y="${(titleTop + i * leading).toFixed(0)}" fill="#ffffff" font-size="${t.size}" font-weight="700" letter-spacing="-${(t.size * 0.032).toFixed(1)}">${esc(l)}</text>`)
+    .join('\n  ');
+
+  const ruleY = titleTop + (t.lines.length - 1) * leading + 40;
+
+  // A line of the section's own copy fills the space under the rule, so the
+  // left column doesn't trail off into empty card.
+  const leadY = ruleY + 44;
+  const leadLines = clampLines(writingMeta.lead, 24, LEFT_W, 2)
+    .map((l, i) => `<text class="d" x="${LEFT}" y="${(leadY + i * 33).toFixed(0)}" fill="${p.sub}" font-size="24" font-weight="500">${esc(l)}</text>`)
+    .join('\n  ');
+
+  // One row per piece: an accent swatch in that piece's own register, its
+  // title, and its size.
+  const rowH = 74;
+  const listTop = TOP + 56;
+  const rows = shown
+    .map((piece, i) => {
+      const tone = (PALETTES[piece.accent] ?? PALETTES.harvest).gold;
+      const y = listTop + i * rowH;
+      const name = clampLines(piece.title, 27, 380, 1)[0];
+      return `  <rect x="${COL}" y="${y - 20}" width="4" height="26" fill="${tone}"/>
+  <text class="d" x="${COL + 20}" y="${y}" fill="#eaeef7" font-size="27" font-weight="500" letter-spacing="-0.5">${esc(name)}</text>
+  <text class="m" x="${COL + 20}" y="${y + 27}" fill="${p.foot}" font-size="17" letter-spacing="1">${piece.parts} parts · ${piece.words.toLocaleString('en-IN')} words</text>`;
+    })
+    .join('\n');
+
+  const more = rest > 0
+    ? `  <text class="m" x="${COL + 20}" y="${listTop + shown.length * rowH}" fill="${p.kick}" font-size="18" letter-spacing="1.5">+ ${rest} more</text>`
+    : '';
+
+  const badge = `${writingTotals.parts} PARTS · ${writingTotals.words.toLocaleString('en-IN')} WORDS`;
+  const badgeW = monoWidth(badge, 19, 1.4) + 34;
+
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Writing — long-form research by Lovepreet Singh</title>
+${frame(p)}
+  <text class="m" x="${LEFT}" y="${TOP}" fill="${p.kick}" font-size="22" letter-spacing="3.5">${esc(`${writingMeta.index} — ${writingMeta.label}`.toUpperCase())}</text>
+  ${titleLines}
+  <rect x="${LEFT}" y="${ruleY.toFixed(0)}" width="72" height="4" fill="${p.gold}"/>
+  ${leadLines}
+
+  <text class="m" x="${COL}" y="${TOP}" fill="${p.foot}" font-size="19" letter-spacing="2.5">ON THE SHELF</text>
+  <line x1="${COL}" y1="${TOP + 18}" x2="${W - 62}" y2="${TOP + 18}" stroke="#28324a" stroke-width="1"/>
+${rows}
+${more}
+
+  <g transform="translate(${LEFT}, ${H - 88})">
+    <rect x="0" y="0" width="${badgeW.toFixed(0)}" height="34" rx="3" fill="${p.gold}"/>
+    <text class="m" x="17" y="23" fill="${p.ink}" font-size="19" font-weight="700" letter-spacing="1.4">${esc(badge)}</text>
+    <text class="m" x="${(badgeW + 26).toFixed(0)}" y="23" fill="${p.foot}" font-size="19" letter-spacing="1">Researched &amp; written by Lovepreet Singh</text>
+  </g>
+</svg>`;
+}
+
 function render(svg, file) {
   const resvg = new Resvg(svg, {
     fitTo: { mode: 'width', value: W },
@@ -228,6 +314,14 @@ function render(svg, file) {
 mkdirSync(OUT, { recursive: true });
 
 let total = 0;
+
+// The shelf card for /writing itself.
+{
+  const file = `${OUT}/writing.png`;
+  const r = render(shelfCard(), file);
+  console.log(`${file.padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
+  total += r.kb;
+}
 for (const piece of pieces) {
   const parts = (await piece.load()).default;
 

@@ -38,19 +38,17 @@ export default function Writing() {
     const prev = document.title;
     document.title = `Writing — long-form research by ${profile.name}`;
 
-    const featured = pieces[0];
-    const image = featured ? `https://misterlove.in/og/${featured.slug}.png` : null;
-    const tags = image
-      ? ['meta[property="og:image"]', 'meta[property="og:image:secure_url"]', 'meta[name="twitter:image"]']
-          .map((sel) => {
-            const el = document.head.querySelector(sel);
-            if (!el) return null;
-            const was = el.getAttribute('content');
-            el.setAttribute('content', image);
-            return () => el.setAttribute('content', was);
-          })
-          .filter(Boolean)
-      : [];
+    // The shelf's own card, matching the pre-rendered /writing shell.
+    const image = 'https://misterlove.in/og/writing.png';
+    const tags = ['meta[property="og:image"]', 'meta[property="og:image:secure_url"]', 'meta[name="twitter:image"]']
+      .map((sel) => {
+        const el = document.head.querySelector(sel);
+        if (!el) return null;
+        const was = el.getAttribute('content');
+        el.setAttribute('content', image);
+        return () => el.setAttribute('content', was);
+      })
+      .filter(Boolean);
 
     return () => {
       document.title = prev;
