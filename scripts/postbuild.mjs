@@ -43,6 +43,21 @@ const urls = [
 ];
 
 for (const piece of pieces) {
+  // The topic page is the piece's front door — what /writing links to and what
+  // someone sharing "this research" would send.
+  urls.push(
+    url({
+      loc: `${SITE}/writing/${piece.slug}/`,
+      lastmod: piece.published,
+      changefreq: 'monthly',
+      priority: '0.9',
+      image: {
+        loc: `${SITE}/og/${piece.slug}.png`,
+        title: `${piece.title} — ${piece.subtitle}`.replace(/&/g, '&amp;'),
+      },
+    })
+  );
+
   for (let n = 1; n <= piece.parts; n++) {
     urls.push(
       url({
@@ -50,7 +65,7 @@ for (const piece of pieces) {
         lastmod: piece.published,
         changefreq: 'yearly',
         // Part 1 is the entry point readers should land on from search.
-        priority: n === 1 ? '0.9' : '0.7',
+        priority: n === 1 ? '0.8' : '0.7',
       })
     );
   }
@@ -132,40 +147,91 @@ function shell({ path, title, description, canonical, jsonLd, noscript, keywords
 
 let shells = 0;
 
+// Load every piece's parts up front — the index shell needs them all, and each
+// piece needs its own, so fetching once avoids re-importing per template.
+const loaded = [];
 for (const piece of pieces) {
-  const parts = (await piece.load()).default;
+  loaded.push({ piece, parts: (await piece.load()).default });
+}
 
+/* ---- /writing — the shelf. Written once, listing every piece. ---- */
+shell({
+  path: '/writing',
+  title: 'Writing — long-form research by Lovepreet Singh',
+  description:
+    'Long-form work on subjects I refused to have a lazy opinion about. Researched properly, written plainly, every side given its strongest case.',
+  canonical: `${SITE}/writing/`,
+  keywords: `Lovepreet Singh writing, long-form research, essays, ${pieces.map((p) => p.title).join(', ')}`,
+  // The newest piece fronts the shelf.
+  image: `${SITE}/og/${pieces[0].slug}.png`,
+  imageAlt: `Writing by Lovepreet Singh — ${pieces.length} long-form research pieces.`,
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Writing — Lovepreet Singh',
+    url: `${SITE}/writing/`,
+    author: { '@id': `${SITE}/#lovepreet-singh` },
+    hasPart: pieces.map((p) => ({
+      '@type': 'CreativeWorkSeries',
+      name: `${p.title} — ${p.subtitle}`,
+      url: `${SITE}/writing/${p.slug}/`,
+      numberOfItems: p.parts,
+      abstract: p.standfirst,
+    })),
+  },
+  noscript:
+    '      <h1>Writing — Lovepreet Singh</h1>\n' +
+    loaded
+      .map(({ piece: p, parts }) =>
+        `      <h2><a href="/writing/${p.slug}/">${esc(p.title)} — ${esc(p.subtitle)}</a></h2>\n` +
+        `      <p>${esc(p.standfirst)}</p>\n` +
+        `      <ul>\n${parts
+          .map((x) => `        <li><a href="/writing/${p.slug}/part-${x.n}/">Part ${x.n}: ${esc(x.title)}</a></li>`)
+          .join('\n')}\n      </ul>`
+      )
+      .join('\n'),
+});
+shells += 1;
+
+for (const { piece, parts } of loaded) {
+  /* ---- /writing/<slug> — the topic's front door ---- */
+  const topicUrl = `${SITE}/writing/${piece.slug}/`;
   shell({
-    path: '/writing',
-    title: `Writing — long-form research by Lovepreet Singh`,
-    description:
-      'Long-form work on subjects I refused to have a lazy opinion about. Researched properly, written plainly, every side given its strongest case.',
-    canonical: `${SITE}/writing/`,
-    keywords: `Lovepreet Singh writing, long-form research, essays, ${pieces.map((p) => p.title).join(', ')}`,
+    path: `/writing/${piece.slug}`,
+    title: `${piece.title} — ${piece.subtitle} | Lovepreet Singh`,
+    description: piece.standfirst,
+    canonical: topicUrl,
+    keywords: [piece.title, ...piece.keywords, 'Lovepreet Singh'].join(', '),
     image: `${SITE}/og/${piece.slug}.png`,
     imageAlt: `${piece.title} — ${piece.subtitle}. ${piece.parts}-part research series by Lovepreet Singh.`,
     jsonLd: {
       '@context': 'https://schema.org',
-      '@type': 'CollectionPage',
-      name: 'Writing — Lovepreet Singh',
-      url: `${SITE}/writing`,
-      author: { '@id': `${SITE}/#lovepreet-singh` },
-      hasPart: pieces.map((p) => ({
-        '@type': 'CreativeWorkSeries',
-        name: `${p.title} — ${p.subtitle}`,
-        url: `${SITE}/writing/${p.slug}/part-1/`,
-        numberOfItems: p.parts,
+      '@type': 'CreativeWorkSeries',
+      name: `${piece.title} — ${piece.subtitle}`,
+      url: topicUrl,
+      description: piece.standfirst,
+      abstract: piece.summary,
+      datePublished: piece.published,
+      inLanguage: 'en',
+      numberOfItems: piece.parts,
+      author: { '@type': 'Person', '@id': `${SITE}/#lovepreet-singh`, name: 'Lovepreet Singh' },
+      about: piece.topic.split(' · ').map((t) => ({ '@type': 'Thing', name: t })),
+      hasPart: parts.map((x) => ({
+        '@type': 'Article',
+        headline: x.title,
+        url: `${SITE}/writing/${piece.slug}/part-${x.n}/`,
+        wordCount: x.words,
+        position: x.n,
       })),
     },
-    noscript: `      <h1>Writing — Lovepreet Singh</h1>\n${pieces
-      .map(
-        (p) =>
-          `      <h2>${esc(p.title)} — ${esc(p.subtitle)}</h2>\n      <p>${esc(p.standfirst)}</p>\n` +
-          `      <ul>\n${parts
-            .map((x) => `        <li><a href="/writing/${p.slug}/part-${x.n}">Part ${x.n}: ${esc(x.title)}</a></li>`)
-            .join('\n')}\n      </ul>`
-      )
-      .join('\n')}`,
+    noscript:
+      `      <h1>${esc(piece.title)} — ${esc(piece.subtitle)}</h1>\n` +
+      `      <p>${esc(piece.standfirst)}</p>\n` +
+      `      <p>${esc(piece.summary)}</p>\n` +
+      `      <p>${piece.parts} parts · ${piece.words.toLocaleString('en-IN')} words · by Lovepreet Singh, ${esc(piece.displayDate)}</p>\n` +
+      `      <h2>Contents</h2>\n      <ul>\n${parts
+        .map((x) => `        <li><a href="/writing/${piece.slug}/part-${x.n}/">Part ${x.n} — ${esc(x.title)}</a></li>`)
+        .join('\n')}\n      </ul>`,
   });
   shells += 1;
 
@@ -178,8 +244,7 @@ for (const piece of pieces) {
       canonical,
       keywords: [
         piece.title, `${piece.title} part ${part.n}`, part.label.toLowerCase(),
-        'kisan andolan', 'farmers protest India', 'farm laws 2020', 'MSP', 'Punjab farmers',
-        'Lovepreet Singh',
+        ...piece.keywords, 'Lovepreet Singh',
       ].join(', '),
       image: `${SITE}/og/${piece.slug}-part-${part.n}.png`,
       imageAlt: `${piece.title}, Part ${part.n} of ${piece.parts} — ${part.title}. By Lovepreet Singh.`,

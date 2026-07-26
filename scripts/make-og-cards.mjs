@@ -100,17 +100,24 @@ function clampLines(text, size, maxW, maxLines) {
   return kept;
 }
 
-const FRAME = `
+/* Per-piece palettes — the same registers as the on-site cover plates
+   (.cover--harvest / .cover--ember in src/pages/Writing.css). */
+const PALETTES = {
+  harvest: { a: '#16301f', b: '#1e4429', c: '#29583a', lift: '#78be8c', gold: '#f2c14e', kick: '#ffe6a3', sub: '#cfe6d6', ink: '#22331f', foot: '#bcd6c5', mark: '#9dc0a8' },
+  ember:   { a: '#17131b', b: '#2a1e26', c: '#3d2a2a', lift: '#d69652', gold: '#d59a4e', kick: '#f0cf9d', sub: '#d9c7bb', ink: '#221b18', foot: '#cbb8a8', mark: '#bfa88f' },
+};
+
+const frame = (p) => `
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0.55" y2="1">
-      <stop offset="0%" stop-color="#16301f"/>
-      <stop offset="48%" stop-color="#1e4429"/>
-      <stop offset="100%" stop-color="#29583a"/>
+      <stop offset="0%" stop-color="${p.a}"/>
+      <stop offset="48%" stop-color="${p.b}"/>
+      <stop offset="100%" stop-color="${p.c}"/>
     </linearGradient>
     <radialGradient id="lift" cx="80%" cy="8%" r="70%">
-      <stop offset="0%" stop-color="#78be8c" stop-opacity="0.20"/>
-      <stop offset="62%" stop-color="#78be8c" stop-opacity="0.03"/>
-      <stop offset="100%" stop-color="#78be8c" stop-opacity="0"/>
+      <stop offset="0%" stop-color="${p.lift}" stop-opacity="0.20"/>
+      <stop offset="62%" stop-color="${p.lift}" stop-opacity="0.03"/>
+      <stop offset="100%" stop-color="${p.lift}" stop-opacity="0"/>
     </radialGradient>
     <pattern id="grid" width="72" height="72" patternUnits="userSpaceOnUse">
       <path d="M72 0H0V72" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
@@ -127,24 +134,25 @@ const FRAME = `
   <rect width="${W}" height="${H}" fill="url(#lift)"/>
   <rect y="${H - 210}" width="${W}" height="210" fill="url(#fade)"/>
 
-  <!-- corner brackets, in the book's gold rather than the site's cobalt -->
-  <path d="M40 72V40H72"        fill="none" stroke="#f2c14e" stroke-width="2.5"/>
-  <path d="M1128 40h32v32"      fill="none" stroke="#f2c14e" stroke-width="2.5"/>
-  <path d="M40 558v32h32"       fill="none" stroke="#f2c14e" stroke-width="2.5"/>
-  <path d="M1160 590v-32h-32"   fill="none" stroke="#f2c14e" stroke-width="2.5"/>
+  <!-- corner brackets, in the piece's own gold rather than the site's cobalt -->
+  <path d="M40 72V40H72"        fill="none" stroke="${p.gold}" stroke-width="2.5"/>
+  <path d="M1128 40h32v32"      fill="none" stroke="${p.gold}" stroke-width="2.5"/>
+  <path d="M40 558v32h32"       fill="none" stroke="${p.gold}" stroke-width="2.5"/>
+  <path d="M1160 590v-32h-32"   fill="none" stroke="${p.gold}" stroke-width="2.5"/>
 
   <!-- reticle wordmark -->
   <g transform="translate(60,54)">
-    <circle cx="16" cy="16" r="14" fill="none" stroke="#f2c14e" stroke-width="2" opacity="0.65"/>
-    <circle cx="16" cy="16" r="3.4" fill="#f2c14e"/>
-    <path d="M16 0V6 M16 26V32 M0 16H6 M26 16H32" stroke="#f2c14e" stroke-width="2" stroke-linecap="round" opacity="0.65"/>
-    <text class="d" x="46" y="23" fill="#f2f7f3" font-size="23" font-weight="700" letter-spacing="1">LOVEPREET <tspan fill="#9dc0a8">SINGH</tspan></text>
+    <circle cx="16" cy="16" r="14" fill="none" stroke="${p.gold}" stroke-width="2" opacity="0.65"/>
+    <circle cx="16" cy="16" r="3.4" fill="${p.gold}"/>
+    <path d="M16 0V6 M16 26V32 M0 16H6 M26 16H32" stroke="${p.gold}" stroke-width="2" stroke-linecap="round" opacity="0.65"/>
+    <text class="d" x="46" y="23" fill="#f6f4f2" font-size="23" font-weight="700" letter-spacing="1">LOVEPREET <tspan fill="${p.mark}">SINGH</tspan></text>
   </g>
-  <text class="m" x="${W - 60}" y="77" text-anchor="end" fill="#9dc0a8" font-size="20" letter-spacing="2">misterlove.in</text>
+  <text class="m" x="${W - 60}" y="77" text-anchor="end" fill="${p.mark}" font-size="20" letter-spacing="2">misterlove.in</text>
 `;
 
 /** One card. `kicker` is the mono line, `title`/`sub` the display block. */
-function card({ kicker, title, sub, standfirst, badge, byline }) {
+function card({ kicker, title, sub, standfirst, badge, byline, accent }) {
+  const p = PALETTES[accent] ?? PALETTES.harvest;
   const LEFT = 62;
   const MAXW = W - LEFT - 80;
 
@@ -183,7 +191,7 @@ function card({ kicker, title, sub, standfirst, badge, byline }) {
 
   const standLines = standCount
     ? clampLines(standfirst, 25, MAXW - 130, standCount)
-        .map((l, i) => `<text class="d" x="${LEFT}" y="${(standY + i * 34).toFixed(0)}" fill="#dcece2" font-size="25" font-weight="500">${esc(l)}</text>`)
+        .map((l, i) => `<text class="d" x="${LEFT}" y="${(standY + i * 34).toFixed(0)}" fill="${p.sub}" font-size="25" font-weight="500">${esc(l)}</text>`)
         .join('\n  ')
     : '';
 
@@ -191,17 +199,17 @@ function card({ kicker, title, sub, standfirst, badge, byline }) {
 
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">
   <title>${esc(title)} — ${esc(sub || '')}</title>
-${FRAME}
-  <text class="m" x="${LEFT}" y="${kickerY.toFixed(0)}" fill="#ffe6a3" font-size="22" letter-spacing="3.5">${esc(kicker.toUpperCase())}</text>
+${frame(p)}
+  <text class="m" x="${LEFT}" y="${kickerY.toFixed(0)}" fill="${p.kick}" font-size="22" letter-spacing="3.5">${esc(kicker.toUpperCase())}</text>
   ${titleLines}
-  ${sub ? `<text class="d" x="${LEFT}" y="${subY.toFixed(0)}" fill="#cfe6d6" font-size="31" font-weight="500">${esc(sub)}</text>` : ''}
-  <rect x="${LEFT}" y="${ruleY.toFixed(0)}" width="72" height="4" fill="#f2c14e"/>
+  ${sub ? `<text class="d" x="${LEFT}" y="${subY.toFixed(0)}" fill="${p.sub}" font-size="31" font-weight="500">${esc(sub)}</text>` : ''}
+  <rect x="${LEFT}" y="${ruleY.toFixed(0)}" width="72" height="4" fill="${p.gold}"/>
   ${standLines}
 
   <g transform="translate(${LEFT}, ${BADGE_Y})">
-    <rect x="0" y="0" width="${badgeW.toFixed(0)}" height="34" rx="3" fill="#f2c14e"/>
-    <text class="m" x="17" y="23" fill="#22331f" font-size="19" font-weight="700" letter-spacing="1.4">${esc(badge)}</text>
-    <text class="m" x="${(badgeW + 26).toFixed(0)}" y="23" fill="#bcd6c5" font-size="19" letter-spacing="1">${esc(byline)}</text>
+    <rect x="0" y="0" width="${badgeW.toFixed(0)}" height="34" rx="3" fill="${p.gold}"/>
+    <text class="m" x="17" y="23" fill="${p.ink}" font-size="19" font-weight="700" letter-spacing="1.4">${esc(badge)}</text>
+    <text class="m" x="${(badgeW + 26).toFixed(0)}" y="23" fill="${p.foot}" font-size="19" letter-spacing="1">${esc(byline)}</text>
   </g>
 </svg>`;
 }
@@ -233,6 +241,7 @@ for (const piece of pieces) {
       standfirst: piece.standfirst,
       badge: `${piece.parts} PARTS`,
       byline: 'Written & researched by Lovepreet Singh',
+      accent: piece.accent,
     }),
     seriesFile
   );
@@ -249,6 +258,7 @@ for (const piece of pieces) {
         standfirst: part.lead,
         badge: `${part.minutes} MIN READ`,
         byline: 'Lovepreet Singh · misterlove.in',
+        accent: piece.accent,
       }),
       file
     );
