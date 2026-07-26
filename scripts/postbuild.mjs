@@ -35,14 +35,18 @@ const urls = [
       title: 'Lovepreet Singh — Ethical Hacker, Security Architect &amp; Founder',
     },
   }),
-  url({ loc: `${SITE}/writing`, lastmod: today, changefreq: 'monthly', priority: '0.9' }),
+  // Trailing slashes throughout: these routes are pre-rendered as directories,
+  // and GitHub Pages 301s the slash-less form to them. Pointing the sitemap and
+  // canonicals at the form that answers 200 directly avoids sending every
+  // crawl through a redirect.
+  url({ loc: `${SITE}/writing/`, lastmod: today, changefreq: 'monthly', priority: '0.9' }),
 ];
 
 for (const piece of pieces) {
   for (let n = 1; n <= piece.parts; n++) {
     urls.push(
       url({
-        loc: `${SITE}/writing/${piece.slug}/part-${n}`,
+        loc: `${SITE}/writing/${piece.slug}/part-${n}/`,
         lastmod: piece.published,
         changefreq: 'yearly',
         // Part 1 is the entry point readers should land on from search.
@@ -129,7 +133,7 @@ for (const piece of pieces) {
     title: `Writing — long-form research by Lovepreet Singh`,
     description:
       'Long-form work on subjects I refused to have a lazy opinion about. Researched properly, written plainly, every side given its strongest case.',
-    canonical: `${SITE}/writing`,
+    canonical: `${SITE}/writing/`,
     keywords: `Lovepreet Singh writing, long-form research, essays, ${pieces.map((p) => p.title).join(', ')}`,
     jsonLd: {
       '@context': 'https://schema.org',
@@ -140,7 +144,7 @@ for (const piece of pieces) {
       hasPart: pieces.map((p) => ({
         '@type': 'CreativeWorkSeries',
         name: `${p.title} — ${p.subtitle}`,
-        url: `${SITE}/writing/${p.slug}/part-1`,
+        url: `${SITE}/writing/${p.slug}/part-1/`,
         numberOfItems: p.parts,
       })),
     },
@@ -157,7 +161,7 @@ for (const piece of pieces) {
   shells += 1;
 
   for (const part of parts) {
-    const canonical = `${SITE}/writing/${piece.slug}/part-${part.n}`;
+    const canonical = `${SITE}/writing/${piece.slug}/part-${part.n}/`;
     shell({
       path: `/writing/${piece.slug}/part-${part.n}`,
       title: `${part.title} — ${piece.title}: Part ${part.n} of ${piece.parts} | Lovepreet Singh`,
@@ -182,7 +186,7 @@ for (const piece of pieces) {
         isPartOf: {
           '@type': 'CreativeWorkSeries',
           name: `${piece.title} — ${piece.subtitle}`,
-          url: `${SITE}/writing/${piece.slug}/part-1`,
+          url: `${SITE}/writing/${piece.slug}/part-1/`,
           numberOfItems: piece.parts,
         },
         author: { '@type': 'Person', '@id': `${SITE}/#lovepreet-singh`, name: 'Lovepreet Singh' },
