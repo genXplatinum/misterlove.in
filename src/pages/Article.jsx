@@ -84,6 +84,11 @@ function useArticleMeta(piece, part) {
       return () => { if (created) el.remove(); else if (prev !== null) el.setAttribute(attr, prev); };
     };
 
+    // Keeps the tags matching the pre-rendered shell after a client-side
+    // navigation, so anything reading the live DOM sees this part, not the last.
+    const image = `https://misterlove.in/og/${piece.slug}-part-${part.n}.png`;
+    const imageAlt = `${piece.title}, Part ${part.n} of ${piece.parts} — ${part.title}. By ${profile.name}.`;
+
     const restores = [
       set('link[rel="canonical"]', 'href', url),
       set('meta[name="description"]', 'content', part.lead || piece.standfirst),
@@ -91,6 +96,11 @@ function useArticleMeta(piece, part) {
       set('meta[property="og:description"]', 'content', part.lead || piece.standfirst),
       set('meta[property="og:url"]', 'content', url),
       set('meta[property="og:type"]', 'content', 'article'),
+      set('meta[property="og:image"]', 'content', image),
+      set('meta[property="og:image:secure_url"]', 'content', image),
+      set('meta[property="og:image:alt"]', 'content', imageAlt),
+      set('meta[name="twitter:image"]', 'content', image),
+      set('meta[name="twitter:image:alt"]', 'content', imageAlt),
     ];
 
     // Per-part Article schema. Each part is its own page with its own

@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "postbuild": "node scripts/postbuild.mjs",
+    "og": "node scripts/make-og-cards.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },
