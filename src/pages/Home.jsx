@@ -5,6 +5,7 @@ import Record from '../sections/Record';
 import Ventures from '../sections/Ventures';
 import Recognition from '../sections/Recognition';
 import Journey from '../sections/Journey';
+import WritingTeaser from '../sections/Writing';
 import Contact from '../sections/Contact';
 import Interstitial from '../components/Interstitial';
 import { marquee } from '../data/site';
@@ -55,6 +56,8 @@ export default function Home() {
         <Interstitial word="Scale." align="right" note="// Turning a security instinct into companies." />
         <Recognition />
         <Journey />
+        <Interstitial word="Think." note="// Subjects I refused to have a lazy opinion about." />
+        <WritingTeaser />
       </div>
 
       {/* ---- bridge: back to the terminal ---- */}

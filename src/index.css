@@ -30,6 +30,9 @@
   --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   --font-body:    'Inter', system-ui, -apple-system, sans-serif;
   --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  /* Long-form reading only — a screen serif for the writing section, so
+     25,000 words don't have to be read in the interface typeface. */
+  --font-read:    'Newsreader', Georgia, 'Times New Roman', serif;
 
   /* Fluid type scale */
   --t-mono:    clamp(0.68rem, 0.65rem + 0.14vw, 0.77rem);
@@ -348,6 +351,18 @@ body.cursor-down .cursor-ring { width: 26px; height: 26px; }
   position: fixed; inset: 0;
   z-index: -1;
   pointer-events: none;
+}
+
+/* ---------- Route suspense / error fallback ---------- */
+.route-fallback {
+  min-height: 60vh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1.5rem;
+  padding: var(--gutter);
+  color: var(--text-dim);
+  text-align: center;
 }
 
 /* ---------- Scroll reveal primitives ---------- */

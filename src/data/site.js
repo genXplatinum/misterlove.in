@@ -22,7 +22,9 @@ export const profile = {
   ],
 };
 
-/* ---------- Anchor navigation (single-page, scene-to-scene) ---------- */
+/* ---------- Navigation ----------
+   Mostly scene-to-scene anchors on the one-pager. Entries carrying `route`
+   are real pages instead, and Nav renders them as router links. */
 export const nav = [
   { label: 'Identity', to: '#identity', index: '01' },
   { label: 'Arsenal', to: '#arsenal', index: '02' },
@@ -30,7 +32,8 @@ export const nav = [
   { label: 'Ventures', to: '#ventures', index: '04' },
   { label: 'Honours', to: '#recognition', index: '05' },
   { label: 'Journey', to: '#journey', index: '06' },
-  { label: 'Contact', to: '#contact', index: '07' },
+  { label: 'Writing', to: '/writing', index: '07', route: true },
+  { label: 'Contact', to: '#contact', index: '08' },
 ];
 
 /* ---------- HERO ---------- */
@@ -252,7 +255,7 @@ export const journey = {
 
 /* ---------- CONTACT (secure channel — dark bookend) ---------- */
 export const contact = {
-  index: '07',
+  index: '08',
   label: 'Contact',
   title: 'Open a secure channel.',
   body:

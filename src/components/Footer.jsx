@@ -1,5 +1,7 @@
+import { Link } from 'react-router-dom';
 import { Wordmark } from './Logo';
 import { profile } from '../data/site';
+import { pieces } from '../data/writing';
 import './Footer.css';
 
 const year = 2026;
@@ -45,6 +47,19 @@ export default function Footer() {
           <div className="footer__col">
             <span className="mono">// Operating from</span>
             <span className="footer__loc">{profile.locations.join(' · ')}</span>
+          </div>
+          <div className="footer__col">
+            <span className="mono">// Writing</span>
+            <div className="footer__socials">
+              <Link to="/writing" className="link" data-cursor>
+                All writing <span className="link__arrow">→</span>
+              </Link>
+              {pieces.map((p) => (
+                <Link key={p.slug} to={`/writing/${p.slug}/part-1`} className="link" data-cursor>
+                  {p.title} <span className="link__arrow">→</span>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
 
