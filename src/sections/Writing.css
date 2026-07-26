@@ -1,0 +1,147 @@
+/* ============================================================
+   WRITING — homepage teaser (sits in the light "founder" act).
+   ============================================================ */
+
+.writingsec__title {
+  font-size: clamp(1.9rem, 1.1rem + 3vw, 3.6rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  max-width: 18ch;
+}
+.writingsec__lead {
+  font-size: var(--t-lead);
+  line-height: 1.4;
+  max-width: 46ch;
+  margin-top: 1.5rem;
+}
+
+.writingsec__card { margin-top: clamp(2.5rem, 5vw, 4rem); }
+
+.writingsec__link {
+  display: grid;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+  transition: border-color 0.5s var(--ease-out), transform 0.5s var(--ease-out),
+              box-shadow 0.5s var(--ease-out);
+}
+.writingsec__link:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 26px 60px -34px var(--shadow);
+}
+@media (min-width: 860px) {
+  .writingsec__link { grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); }
+}
+
+/* Cover plate — the book's own agrarian register, held inside the card
+   so it reads as an artefact sitting on the founder's light surface. */
+.writingsec__plate {
+  display: grid;
+  align-content: center;
+  gap: 0;
+  position: relative;
+  isolation: isolate;
+  padding: clamp(2.2rem, 4.5vw, 3.4rem);
+  min-height: clamp(17rem, 30vw, 23rem);
+  background:
+    radial-gradient(120% 90% at 80% 10%, rgba(120, 190, 140, 0.15), transparent 62%),
+    linear-gradient(158deg, #16301f 0%, #1e4429 48%, #29583a 100%);
+  color: #f2f7f3;
+}
+.writingsec__plate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 58px 58px;
+}
+.writingsec__plate-kicker {
+  color: #ffe6a3;
+  margin-bottom: clamp(1.8rem, 4vw, 3rem);
+}
+.writingsec__plate-title {
+  display: grid;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 1.3rem + 3.2vw, 3.4rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+.writingsec__plate-sub {
+  font-size: 0.38em;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: #cfe6d6;
+  margin-top: 0.75em;
+}
+.writingsec__plate-rule {
+  width: 3.4rem;
+  height: 3px;
+  background: #f2c14e;
+  margin: clamp(1.2rem, 2.5vw, 1.8rem) 0;
+}
+.writingsec__plate-badge {
+  justify-self: start;
+  background: #f2c14e;
+  color: #22331f;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.45em 0.85em;
+  border-radius: 2px;
+}
+
+/* Card body */
+.writingsec__meat {
+  padding: clamp(1.8rem, 4vw, 3rem);
+  display: grid;
+  align-content: start;
+  gap: 1.1rem;
+}
+.writingsec__topic { color: var(--accent); }
+.writingsec__stand {
+  font-family: var(--font-read);
+  font-size: clamp(1.05rem, 0.98rem + 0.5vw, 1.32rem);
+  line-height: 1.45;
+  color: var(--text);
+  max-width: 40ch;
+}
+.writingsec__summary {
+  font-family: var(--font-read);
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--text-2);
+  max-width: 56ch;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.writingsec__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem 2.4rem;
+  padding: 1.2rem 0;
+  border-block: 1px solid var(--line);
+  margin: 0.4rem 0;
+}
+.writingsec__stats dt { color: var(--text-dim); margin-bottom: 0.35rem; }
+.writingsec__stats dd {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+.writingsec__cta { margin-top: 0.4rem; justify-self: start; }
+.writingsec__link:hover .writingsec__cta { color: var(--accent); }
+.writingsec__link:hover .writingsec__cta::after { transform: scaleX(1); transform-origin: left; }
+.writingsec__link:hover .link__arrow { transform: translate(3px, 0); }
+
+.writingsec__all { margin-top: clamp(2rem, 4vw, 3rem); }

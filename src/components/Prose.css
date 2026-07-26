@@ -1,0 +1,512 @@
+/* ============================================================
+   PROSE — the reading surface for long-form writing.
+
+   The authored source has a real vocabulary: numbered sections,
+   ten kinds of callout box, timelines, journey diagrams, data
+   tables, pull-quotes, takeaways and margin citations. Every one
+   of those is themed here against the site's semantic tokens, so
+   the article flips light↔dark with the rest of the site.
+
+   Each callout carries its own --w-tone; the box chrome (rule,
+   label, tint) is derived from that single value, so adding a new
+   box variant means declaring one colour.
+   ============================================================ */
+
+.prose {
+  /* Piece palette — the agrarian register of the source document,
+     kept distinct from the site's cobalt so the writing reads as
+     its own artefact. Re-declared under .is-dark for contrast. */
+  /* Label text is small mono, so every tone here is darkened until it clears
+     AA (4.5:1) against the paper. Gold and clay needed the most. */
+  --w-field:    #2e6e3f;
+  --w-gold:     #8a6110;
+  --w-violet:   #7a4fb0;
+  --w-clay:     #9d4526;
+  --w-teal:     #17786e;
+  --w-slate:    #4b5c6b;
+  --w-indigo:   #3a52b8;
+  --w-quote:    #6b6257;
+
+  --w-rule: var(--line);
+  --w-measure: 68ch;
+
+  font-family: var(--font-read);
+  font-size: clamp(1.02rem, 0.97rem + 0.24vw, 1.16rem);
+  line-height: 1.72;
+  color: var(--text);
+  font-weight: 400;
+  counter-reset: w-fn;
+}
+
+.prose.is-dark {
+  /* Lift every hue off the obsidian background — the print colours
+     are tuned for paper and go muddy on a dark surface. */
+  --w-field:  #5fbf7d;
+  --w-gold:   #e0aa46;
+  --w-violet: #b18ae4;
+  --w-clay:   #ef8a63;
+  --w-teal:   #46c9bb;
+  --w-slate:  #93a6b8;
+  --w-indigo: #8098ff;
+  --w-quote:  #c2b6a4;
+}
+
+/* ---------- Paragraphs ---------- */
+.prose p {
+  margin: 0 0 1.15em;
+  text-wrap: pretty;
+}
+.prose strong, .prose b {
+  font-weight: 600;
+  color: var(--text);
+}
+.prose em { font-style: italic; }
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+  word-break: break-word;
+}
+.prose a:hover { text-decoration-thickness: 2px; }
+
+/* Standfirst — the opening promise of each part */
+.prose .w-lead {
+  font-size: 1.24em;
+  line-height: 1.5;
+  color: var(--text);
+  margin-bottom: 1.6em;
+  font-weight: 400;
+}
+
+/* ---------- Headings ---------- */
+.prose .w-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 1.1rem + 1.1vw, 1.85rem);
+  font-weight: 500;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 2.6em 0 0.85em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid var(--w-rule);
+  display: flex;
+  align-items: baseline;
+  gap: 0.62em;
+  scroll-margin-top: 6.5rem;
+}
+.prose .w-h2:first-child { margin-top: 0; }
+
+/* The section numeral, set as a plate rather than a circle so it
+   sits on the same optical baseline as the site's mono indices. */
+.prose .w-num {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 0.62em;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  border: 1px solid var(--line-2);
+  border-radius: 2px;
+  padding: 0.3em 0.55em;
+  line-height: 1;
+  translate: 0 -0.14em;
+}
+
+.prose .w-h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.08rem, 1rem + 0.42vw, 1.28rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--text);
+  margin: 2em 0 0.6em;
+}
+
+.prose hr.w-soft {
+  border: 0;
+  border-top: 1px solid var(--w-rule);
+  margin: 2.6em 0;
+}
+
+/* ---------- Callout boxes ---------- */
+.prose .w-box {
+  --w-tone: var(--accent);
+  background: color-mix(in oklab, var(--w-tone) 8%, var(--surface));
+  border: 1px solid color-mix(in oklab, var(--w-tone) 22%, var(--line));
+  border-left: 3px solid var(--w-tone);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.05em 1.25em;
+  margin: 1.5em 0;
+}
+.prose .w-box p { margin: 0 0 0.7em; }
+.prose .w-box p:last-child { margin-bottom: 0; }
+
+.prose .w-box-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.7em;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--w-tone);
+  margin-bottom: 0.6em;
+}
+
+.prose .w-box--simple   { --w-tone: var(--w-field); }
+.prose .w-box--key      { --w-tone: var(--accent); }
+.prose .w-box--number   { --w-tone: var(--w-gold); }
+.prose .w-box--remember { --w-tone: var(--w-violet); }
+.prose .w-box--weigh    { --w-tone: var(--w-slate); }
+.prose .w-box--arg      { --w-tone: var(--w-indigo); }
+.prose .w-box--worry    { --w-tone: var(--w-clay); }
+.prose .w-box--answer   { --w-tone: var(--w-teal); }
+.prose .w-box--aim      { --w-tone: var(--w-indigo); }
+.prose .w-box--quote    { --w-tone: var(--w-quote); }
+
+/* Quoted speech gets the typographic treatment, not just a rule */
+.prose .w-box--quote {
+  font-style: italic;
+  font-size: 1.06em;
+  border-left-width: 3px;
+}
+.prose .w-box--quote .w-box-label { font-style: normal; }
+
+/* The headline figure inside "a number that matters" */
+.prose .w-big {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.2rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--w-tone);
+  margin-bottom: 0.35em;
+}
+
+/* ---------- Pull-quote ---------- */
+.prose .w-pullquote {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 1.05rem + 1.15vw, 1.85rem);
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-align: center;
+  margin: 2.2em auto;
+  max-width: 22ch;
+  position: relative;
+  padding: 0.7em 0;
+}
+.prose .w-pullquote::before,
+.prose .w-pullquote::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  width: 2.4rem;
+  height: 1px;
+  background: var(--accent);
+}
+.prose .w-pullquote::before { top: 0; }
+.prose .w-pullquote::after  { bottom: 0; }
+
+/* ---------- Tables ---------- */
+/* The importer wraps each table in .w-table-scroll and hoists its caption
+   out, so a narrow viewport scrolls the table instead of the page and the
+   label stays readable while the data moves under it. */
+.prose .w-figure { margin: 1.5em 0; }
+.prose .w-table-caption {
+  font-family: var(--font-mono);
+  font-size: 0.74em;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 0 0 0.6em;
+  line-height: 1.5;
+}
+.prose .w-table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  -webkit-overflow-scrolling: touch;
+}
+.prose .w-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: 0.87em;
+  line-height: 1.5;
+  min-width: 32rem;
+}
+.prose .w-table th {
+  background: var(--surface-2);
+  color: var(--text);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75em 1em;
+  border-bottom: 1px solid var(--line-2);
+  white-space: nowrap;
+}
+.prose .w-table td {
+  padding: 0.72em 1em;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+  color: var(--text-2);
+}
+.prose .w-table tbody tr:last-child td { border-bottom: 0; }
+.prose .w-table tbody tr:nth-child(even) { background: color-mix(in oklab, var(--surface) 55%, transparent); }
+
+/* Row-label emphasis, and the won/pending verdict cells */
+.prose .w-table .w-hi { color: var(--text); font-weight: 600; }
+.prose .w-table .w-win,
+.prose .w-table .w-pend {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.prose .w-table .w-win  { color: var(--w-field); }
+.prose .w-table .w-pend { color: var(--w-clay); }
+
+/* ---------- Timeline ---------- */
+.prose .w-timeline {
+  margin: 1.5em 0;
+  border-top: 1px solid var(--w-rule);
+}
+.prose .w-tl-item {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  gap: 1.2rem;
+  padding: 0.8em 0;
+  border-bottom: 1px solid var(--w-rule);
+}
+.prose .w-tl-year {
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  padding-top: 0.28em;
+}
+.prose .w-tl-text { color: var(--text-2); }
+@media (max-width: 640px) {
+  .prose .w-tl-item { grid-template-columns: 1fr; gap: 0.25rem; }
+}
+
+/* ---------- Journey diagram (how a crop reaches the nation) ---------- */
+.prose .w-journey { margin: 1.6em 0; }
+.prose .w-j-step {
+  display: grid;
+  grid-template-columns: 2.1rem minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.85em 1.1em;
+}
+.prose .w-j-num {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.prose .w-j-body { color: var(--text-2); padding-top: 0.15em; }
+.prose .w-j-body b { color: var(--text); }
+.prose .w-j-arrow {
+  text-align: center;
+  color: var(--accent);
+  font-size: 0.7rem;
+  line-height: 1;
+  padding: 0.3em 0;
+  opacity: 0.55;
+}
+
+/* ---------- Takeaways ---------- */
+.prose .w-takeaways {
+  background: color-mix(in oklab, var(--accent) 6%, var(--surface));
+  border: 1px solid color-mix(in oklab, var(--accent) 20%, var(--line));
+  border-radius: var(--radius);
+  padding: 1.4em 1.6em;
+  margin: 2.4em 0 0;
+}
+.prose .w-takeaways h3 {
+  font-family: var(--font-mono);
+  font-size: 0.74em;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.9em;
+}
+.prose .w-takeaways ul { display: grid; gap: 0.7em; }
+.prose .w-takeaways li {
+  position: relative;
+  padding-left: 1.5em;
+  color: var(--text-2);
+}
+.prose .w-takeaways li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 0.7em;
+  height: 1px;
+  background: var(--accent);
+}
+.prose .w-takeaways li strong { color: var(--text); }
+
+/* ---------- Author's note & dedication (the closing movement) ---------- */
+.prose .w-authnote {
+  border-top: 1px solid var(--w-rule);
+  border-bottom: 1px solid var(--w-rule);
+  padding: 1.8em 0;
+  margin: 2.2em 0;
+}
+.prose .w-authnote .w-box-label {
+  color: var(--accent);
+  margin-top: 1.2em;
+}
+.prose .w-sign {
+  font-family: var(--font-display);
+  font-size: 1.05em;
+  color: var(--text);
+  margin-top: 1.2em !important;
+}
+.prose .w-dedication {
+  font-family: var(--font-display);
+  font-size: 1.12em;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text-2);
+  max-width: 34ch;
+  margin: 2.6em auto;
+  font-style: italic;
+}
+
+/* ---------- Inline chips ---------- */
+.prose .w-lawtag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.68em;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--line-2);
+  border-radius: 2px;
+  padding: 0.25em 0.5em;
+  translate: 0 -0.1em;
+}
+
+/* ---------- Citations ---------- */
+.prose .w-fnref {
+  font-family: var(--font-mono);
+  font-size: 0.62em;
+  font-weight: 500;
+  color: var(--accent);
+  vertical-align: super;
+  line-height: 0;
+  margin-left: 0.15em;
+  padding: 0 0.1em;
+}
+.prose .w-fn {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.78em;
+  line-height: 1.55;
+  /* --text-2 rather than --text-dim: at 0.78em these are small text and
+     must clear AA, which dim does not on the light reading surface. */
+  color: var(--text-2);
+  border-left: 2px solid var(--line-2);
+  padding-left: 0.95em;
+  margin: 1em 0 1.2em;
+}
+.prose .w-fn-n {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--accent);
+  margin-right: 0.5em;
+}
+
+/* On a wide screen the citations move into the outer margin, the way they'd
+   sit in a printed research document. The article grid reserves the track;
+   see Article.css (.article__body).
+
+   Deliberately restricted to notes in the main prose flow (a direct child of
+   a top-level paragraph). A citation nested inside a callout box or a table
+   cell must stay put: floating it would either break out of the box's own
+   border or be trapped by the table's overflow container, and it would align
+   to its parent's edge rather than the shared margin. */
+@media (min-width: 1400px) {
+  .prose > p > .w-fn {
+    float: right;
+    clear: right;
+    width: 15rem;
+    margin: 0.3em -18rem 1.1em 0;
+    padding-left: 0.85em;
+    text-align: left;
+  }
+}
+
+/* ---------- Citation links ---------- */
+/* Publications and URLs inside the sources list and the margin notes resolve
+   to the outlet's own site. Marked with a trailing ↗ so it's obvious the link
+   leaves the page, and underlined rather than colour-only for accessibility. */
+.prose .w-cite {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
+  text-decoration-color: color-mix(in oklab, var(--accent) 45%, transparent);
+  transition: text-decoration-color 0.25s var(--ease-out);
+}
+.prose .w-cite::after {
+  content: "↗";
+  font-size: 0.8em;
+  margin-left: 0.18em;
+  text-decoration: none;
+  display: inline-block;
+}
+.prose .w-cite:hover { text-decoration-color: currentColor; }
+.prose .w-cite--url { word-break: break-all; }
+
+/* ---------- Sources block ---------- */
+.prose--sources {
+  font-family: var(--font-body);
+  font-size: 0.86em;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+.prose--sources ol {
+  list-style: decimal;
+  padding-left: 1.4em;
+  display: grid;
+  gap: 0.5em;
+}
+.prose--sources li::marker {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--text-dim);
+}
+.prose--sources p { margin: 1.1em 0 0; color: var(--text-dim); font-style: italic; }
+
+/* ---------- Lists in body prose ---------- */
+.prose > ul, .prose > ol { margin: 0 0 1.2em; display: grid; gap: 0.5em; }
+.prose > ul li { position: relative; padding-left: 1.3em; }
+.prose > ul li::before {
+  content: "";
+  position: absolute; left: 0; top: 0.75em;
+  width: 0.55em; height: 1px; background: var(--accent);
+}
+.prose > ol { list-style: decimal; padding-left: 1.5em; }
