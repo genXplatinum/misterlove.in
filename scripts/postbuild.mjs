@@ -433,7 +433,6 @@ for (const { piece, parts } of loaded) {
         publisher: { '@id': `${SITE}/#lovepreet-singh` },
         about: piece.topic.split(' · ').map((t) => ({ '@type': 'Thing', name: t })),
         isAccessibleForFree: true,
-        inLanguage: 'en',
       }],
       noscript:
         `      <p><strong>${esc(part.title)}</strong></p>\n` +
