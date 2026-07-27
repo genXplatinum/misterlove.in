@@ -27,16 +27,16 @@ function useReaderTheme() {
 
   useEffect(() => {
     const root = document.documentElement;
-    const previous = root.dataset.theme;
     root.dataset.theme = theme;
     document.body.classList.add('is-reading');
     try { localStorage.setItem(THEME_KEY, theme); } catch { /* private mode */ }
 
     return () => {
-      // Hand the document back exactly as we found it — the homepage drives
-      // its own light act via section-level data-theme and must not inherit ours.
-      if (previous) root.dataset.theme = previous;
-      else delete root.dataset.theme;
+      // Always clear rather than restore: the pre-rendered article shells set
+      // data-theme in <head> to avoid a flash, so "what we found" is this
+      // route's own value. Restoring it would leave the shelf and the homepage
+      // stuck on paper after navigating away. Only the reader wants light.
+      delete root.dataset.theme;
       document.body.classList.remove('is-reading');
     };
   }, [theme]);
