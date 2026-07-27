@@ -4,8 +4,8 @@
 //   - .nojekyll stops GitHub Pages from running Jekyll over the build output
 //   - sitemap.xml is generated from the writing manifest, so adding a piece or a
 //     part can't leave the sitemap silently stale
-import { copyFileSync, writeFileSync, mkdirSync, readFileSync } from 'node:fs';
-import { pieces, writingTotals } from '../src/data/writing.js';
+import { copyFileSync, writeFileSync, mkdirSync, readFileSync, readdirSync } from 'node:fs';
+import { pieces, writingMeta, writingTotals } from '../src/data/writing.js';
 
 const SITE = 'https://misterlove.in';
 const today = new Date().toISOString().slice(0, 10);
@@ -105,6 +105,18 @@ ${urls.join('\n')}
    ------------------------------------------------------------------ */
 const template = readFileSync('dist/index.html', 'utf8');
 
+/* The route stylesheets ship in lazy chunks, so index.html only links the main
+   one. The pre-rendered markup below uses those route classes — without the
+   stylesheet the static content lands unstyled for anyone whose JS has not run
+   yet (or at all), and everyone else gets a repaint when the chunk finally
+   arrives. Link them up front instead: the CSS then downloads in parallel with
+   the bundle rather than after it. */
+const cssFor = (name) => {
+  const hit = readdirSync('dist/assets').find((f) => f.startsWith(`${name}-`) && f.endsWith('.css'));
+  return hit ? `  <link rel="stylesheet" href="/assets/${hit}" />` : '';
+};
+const ROUTE_CSS = { article: cssFor('Article'), writing: cssFor('Writing') };
+
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -115,7 +127,88 @@ const stripTags = (s) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-function shell({ path, title, description, canonical, jsonLd, noscript, keywords, image, imageAlt }) {
+/* ------------------------------------------------------------------
+   Static body.
+
+   The SPA leaves <div id="root"> empty, so a crawler that does not execute
+   JavaScript sees the metadata and nothing else — 291 words of a 7,800-word
+   part. Google renders JS eventually, but rendering is deferred and most
+   other crawlers (Bing, social unfurlers, the AI search bots) do not render
+   at all. So each shell now ships the real article inside #root, using the
+   site's own class names so the existing CSS styles it.
+
+   main.jsx mounts with createRoot().render(), which replaces this markup
+   rather than hydrating it — no mismatch warnings, and the reader sees text
+   immediately instead of waiting on the bundle.
+   ------------------------------------------------------------------ */
+
+const crumbs = (trail) =>
+  `<nav class="article__crumbs" aria-label="Breadcrumb">${trail
+    .map((c, i) =>
+      (i ? '<span class="article__crumb-sep" aria-hidden="true">/</span>' : '')
+      + (c.href
+        ? `<a class="article__crumb" href="${c.href}">${esc(c.name)}</a>`
+        : `<span class="article__crumb is-current">${esc(c.name)}</span>`)
+    )
+    .join('')}</nav>`;
+
+function articleBody(piece, part) {
+  const base = `/writing/${piece.slug}`;
+  return `<main id="main"><article class="article">
+  <header class="article__head"><div class="container">
+    ${crumbs([
+      { name: 'Writing', href: '/writing/' },
+      { name: piece.title, href: `${base}/` },
+      { name: `Part ${part.n}` },
+    ])}
+    <div class="article__head-grid"><div class="article__head-main">
+      <span class="article__partno mono">Part ${String(part.n).padStart(2, '0')} <span class="dim">of ${piece.parts}</span><span class="article__partlabel">${esc(part.label)}</span></span>
+      <h1 class="article__title">${esc(part.title)}</h1>
+      <p class="article__standfirst">${esc(part.lead)}</p>
+    </div></div>
+  </div></header>
+  <div class="container"><div class="article__body"><div class="article__col">
+    ${part.prologue ? `<section class="article__prologue">${part.prologueTitle ? `<h2 class="article__prologue-head">${esc(part.prologueTitle)}</h2>` : ''}<div class="prose">${part.prologue}</div></section>` : ''}
+    <div class="prose">${part.html}</div>
+    ${part.sources ? `<section class="article__sources" open><p class="mono">Sources &amp; further reading — Part ${part.n}</p><div class="prose prose--sources">${part.sources}</div></section>` : ''}
+    <nav class="article__pager" aria-label="Article parts">
+      ${part.n > 1 ? `<a class="article__pager-link article__pager-link--prev" href="${base}/part-${part.n - 1}/"><span class="mono">← Part ${String(part.n - 1).padStart(2, '0')}</span></a>` : '<span></span>'}
+      ${part.n < piece.parts ? `<a class="article__pager-link article__pager-link--next" href="${base}/part-${part.n + 1}/"><span class="mono">Part ${String(part.n + 1).padStart(2, '0')} →</span></a>` : `<a class="article__pager-link article__pager-link--next" href="/writing/"><span class="mono">Back to all writing →</span></a>`}
+    </nav>
+  </div></div></div>
+</article></main>`;
+}
+
+function topicBody(piece, parts) {
+  const base = `/writing/${piece.slug}`;
+  return `<main id="main"><div class="topicpage"><div class="container">
+  ${crumbs([{ name: 'Writing', href: '/writing/' }, { name: piece.title }])}
+  <h1 class="topic__title">${esc(piece.title)} — ${esc(piece.subtitle)}</h1>
+  <p class="topicpage__stand">${esc(piece.standfirst)}</p>
+  <p class="topicpage__summary">${esc(piece.summary)}</p>
+  <p class="mono">${piece.parts} parts · ${piece.words.toLocaleString('en-IN')} words · ${esc(piece.displayDate)} · by Lovepreet Singh</p>
+  <h2>Contents</h2>
+  <ol class="feature__parts">${parts
+    .map((p) => `<li><a class="partrow" href="${base}/part-${p.n}/"><span class="partrow__n mono">${String(p.n).padStart(2, '0')}</span><span class="partrow__body"><span class="partrow__label mono">${esc(p.label)}</span><span class="partrow__title">${esc(p.title)}</span><span class="partrow__lead">${esc(p.lead)}</span></span></a></li>`)
+    .join('')}</ol>
+  <p><a class="btn btn--ghost" href="/${piece.pdf}" download>Download the full PDF · ${piece.pdfSize}</a></p>
+</div></div></main>`;
+}
+
+function shelfBody(loaded) {
+  return `<main id="main"><div class="writingpage"><div class="container">
+  <h1 class="writingpage__title">${esc(writingMeta.title)}</h1>
+  <p class="writingpage__lead">${esc(writingMeta.lead)}</p>
+  <p class="mono">${writingTotals.pieces} research pieces · ${writingTotals.parts} parts · ${writingTotals.words.toLocaleString('en-IN')} words</p>
+  <ul class="topics">${loaded
+    .map(({ piece: p, parts }) => `<li class="topic"><a class="topic__link" href="/writing/${p.slug}/"><span class="topic__body"><span class="mono topic__topic">${esc(p.topic)}</span><span class="topic__title">${esc(p.title)} — ${esc(p.subtitle)}</span><span class="topic__stand">${esc(p.standfirst)}</span><span class="topic__meta mono">${p.parts} parts · ${p.words.toLocaleString('en-IN')} words · ${esc(p.displayDate)}</span></span></a><ol>${parts
+      .map((x) => `<li><a href="/writing/${p.slug}/part-${x.n}/">Part ${x.n} — ${esc(x.title)}</a></li>`)
+      .join('')}</ol></li>`)
+    .join('')}</ul>
+</div></div></main>`;
+}
+
+function shell({ path, title, description, canonical, jsonLd, noscript, keywords, image, imageAlt, body, theme, extraMeta, css }) {
   let html = template
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
     // Share card: the piece's own artwork rather than the site banner, so a
@@ -140,14 +233,45 @@ function shell({ path, title, description, canonical, jsonLd, noscript, keywords
     .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${esc(title)}$2`)
     .replace(/(<meta\s+name="twitter:description"\s+content=")[\s\S]*?(")/, `$1${esc(description)}$2`);
 
-  if (jsonLd) {
-    html = html.replace(
-      '</head>',
-      `  <script type="application/ld+json">\n${JSON.stringify(jsonLd, null, 2)}\n    </script>\n  </head>`
+  const head = [];
+
+  for (const ld of [].concat(jsonLd ?? [])) {
+    head.push(`  <script type="application/ld+json">\n${JSON.stringify(ld, null, 2)}\n    </script>`);
+  }
+  for (const [k, v] of Object.entries(extraMeta ?? {})) {
+    head.push(`  <meta property="${k}" content="${esc(v)}" />`);
+  }
+  head.push('  <link rel="alternate" type="application/rss+xml" title="Writing — Lovepreet Singh" href="https://misterlove.in/feed.xml" />');
+  for (const c of [].concat(css ?? [])) if (c) head.push(c);
+
+  // Set the reading theme before first paint so the article does not flash
+  // from the site's dark default to paper. Matches useReaderTheme's key.
+  if (theme) {
+    head.push(
+      '  <script>try{var t=localStorage.getItem("lws:reader-theme");'
+      + `document.documentElement.dataset.theme=t==="dark"?"dark":"${theme}"}`
+      + `catch(e){document.documentElement.dataset.theme="${theme}"}</script>`
     );
   }
-  // Replace the homepage's no-JS fallback with this route's own.
-  html = html.replace(/<noscript>[\s\S]*?<\/noscript>/, `<noscript>\n${noscript}\n    </noscript>`);
+
+  html = html.replace('</head>', `${head.join('\n')}\n  </head>`);
+
+  // Swap the homepage's no-JS fallback for this route's own.
+  //
+  // Target it by content, not position: <head> also carries a <noscript> that
+  // loads the reading serif, and a naive first-match replace drops article
+  // markup into the head while leaving the real fallback in place — which
+  // also left two <h1>s in the document.
+  //
+  // With #root now carrying the full article, this block is only a safety net,
+  // so it stays short and headingless rather than duplicating the page.
+  html = html.replace(
+    /<noscript>\s*<h1>[\s\S]*?<\/noscript>/,
+    `<noscript>\n${noscript}\n    </noscript>`
+  );
+
+  // Ship the real content inside #root. React replaces it on mount.
+  if (body) html = html.replace('<div id="root"></div>', `<div id="root">${body}</div>`);
 
   const dir = `dist${path}`;
   mkdirSync(dir, { recursive: true });
@@ -189,8 +313,10 @@ shell({
       abstract: p.standfirst,
     })),
   },
+  body: shelfBody(loaded),
+  css: ROUTE_CSS.writing,
   noscript:
-    '      <h1>Writing — Lovepreet Singh</h1>\n' +
+    '      <p><strong>Writing — Lovepreet Singh</strong></p>\n' +
     loaded
       .map(({ piece: p, parts }) =>
         `      <h2><a href="/writing/${p.slug}/">${esc(p.title)} — ${esc(p.subtitle)}</a></h2>\n` +
@@ -214,7 +340,16 @@ for (const { piece, parts } of loaded) {
     keywords: [piece.title, ...piece.keywords, 'Lovepreet Singh'].join(', '),
     image: `${SITE}/og/${piece.slug}.png`,
     imageAlt: `${piece.title} — ${piece.subtitle}. ${piece.parts}-part research series by Lovepreet Singh.`,
-    jsonLd: {
+    body: topicBody(piece, parts),
+    css: ROUTE_CSS.writing,
+    jsonLd: [{
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Writing', item: `${SITE}/writing/` },
+        { '@type': 'ListItem', position: 2, name: piece.title, item: topicUrl },
+      ],
+    }, {
       '@context': 'https://schema.org',
       '@type': 'CreativeWorkSeries',
       name: `${piece.title} — ${piece.subtitle}`,
@@ -233,9 +368,9 @@ for (const { piece, parts } of loaded) {
         wordCount: x.words,
         position: x.n,
       })),
-    },
+    }],
     noscript:
-      `      <h1>${esc(piece.title)} — ${esc(piece.subtitle)}</h1>\n` +
+      `      <p><strong>${esc(piece.title)} — ${esc(piece.subtitle)}</strong></p>\n` +
       `      <p>${esc(piece.standfirst)}</p>\n` +
       `      <p>${esc(piece.summary)}</p>\n` +
       `      <p>${piece.parts} parts · ${piece.words.toLocaleString('en-IN')} words · by Lovepreet Singh, ${esc(piece.displayDate)}</p>\n` +
@@ -258,7 +393,26 @@ for (const { piece, parts } of loaded) {
       ].join(', '),
       image: `${SITE}/og/${piece.slug}-part-${part.n}.png`,
       imageAlt: `${piece.title}, Part ${part.n} of ${piece.parts} — ${part.title}. By Lovepreet Singh.`,
-      jsonLd: {
+      body: articleBody(piece, part),
+      css: [ROUTE_CSS.article, ROUTE_CSS.writing],
+      // The article reads on paper; set it before paint so there is no flash.
+      theme: 'light',
+      extraMeta: {
+        'article:published_time': `${piece.published}T00:00:00+05:30`,
+        'article:modified_time': `${piece.published}T00:00:00+05:30`,
+        'article:author': 'Lovepreet Singh',
+        'article:section': part.label,
+        'article:tag': piece.keywords.slice(0, 6).join(', '),
+      },
+      jsonLd: [{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Writing', item: `${SITE}/writing/` },
+          { '@type': 'ListItem', position: 2, name: piece.title, item: `${SITE}/writing/${piece.slug}/` },
+          { '@type': 'ListItem', position: 3, name: part.title, item: canonical },
+        ],
+      }, {
         '@context': 'https://schema.org',
         '@type': 'Article',
         headline: `${part.title} — ${piece.title}: Part ${part.n}`,
@@ -278,9 +432,11 @@ for (const { piece, parts } of loaded) {
         author: { '@type': 'Person', '@id': `${SITE}/#lovepreet-singh`, name: 'Lovepreet Singh' },
         publisher: { '@id': `${SITE}/#lovepreet-singh` },
         about: piece.topic.split(' · ').map((t) => ({ '@type': 'Thing', name: t })),
-      },
+        isAccessibleForFree: true,
+        inLanguage: 'en',
+      }],
       noscript:
-        `      <h1>${esc(part.title)}</h1>\n` +
+        `      <p><strong>${esc(part.title)}</strong></p>\n` +
         `      <p><strong>${esc(piece.title)} — ${esc(piece.subtitle)}</strong> · Part ${part.n} of ${piece.parts} · by Lovepreet Singh</p>\n` +
         `      <p>${esc(part.lead)}</p>\n` +
         `      <h2>In this part</h2>\n      <ul>\n${part.toc
@@ -293,4 +449,41 @@ for (const { piece, parts } of loaded) {
   }
 }
 
-console.log(`postbuild ✓  404.html, .nojekyll, sitemap.xml (${urls.length} URLs), ${shells} pre-rendered routes`);
+/* ---- RSS ----------------------------------------------------------------
+   One item per part, newest piece first. Gives readers and aggregators
+   something to subscribe to, and gives crawlers a second discovery path
+   into every part alongside the sitemap. */
+const rssDate = (d) => new Date(`${d}T00:00:00+05:30`).toUTCString();
+
+const items = loaded.flatMap(({ piece, parts }) =>
+  parts.map((part) => `    <item>
+      <title>${esc(`${piece.title} — Part ${part.n}: ${part.title}`)}</title>
+      <link>${SITE}/writing/${piece.slug}/part-${part.n}/</link>
+      <guid isPermaLink="true">${SITE}/writing/${piece.slug}/part-${part.n}/</guid>
+      <pubDate>${rssDate(piece.published)}</pubDate>
+      <category>${esc(piece.topic.split(' · ')[0])}</category>
+      <description>${esc(part.lead || piece.standfirst)}</description>
+    </item>`)
+);
+
+writeFileSync(
+  'dist/feed.xml',
+  `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Writing — Lovepreet Singh</title>
+    <link>${SITE}/writing/</link>
+    <atom:link href="${SITE}/feed.xml" rel="self" type="application/rss+xml" />
+    <description>${esc(writingMeta.lead)}</description>
+    <language>en</language>
+    <lastBuildDate>${rssDate(today)}</lastBuildDate>
+${items.join('\n')}
+  </channel>
+</rss>
+`
+);
+
+console.log(
+  `postbuild ✓  404.html, .nojekyll, sitemap.xml (${urls.length} URLs), `
+  + `feed.xml (${items.length} items), ${shells} pre-rendered routes`
+);
