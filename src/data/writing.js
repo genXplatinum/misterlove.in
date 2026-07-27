@@ -16,6 +16,39 @@ export const writingMeta = {
 
 export const pieces = [
   {
+    slug: 'independence',
+    kicker: 'A fact-tested history',
+    title: 'How India Became Free',
+    subtitle: 'And Why It Was Cut in Two',
+    standfirst:
+      'Every major claim about Independence, Partition and its leaders, tested against the documentary record and explained in plain English.',
+    summary:
+      'I kept hearing the same arguments again and again — on television, on YouTube, in WhatsApp groups, at family dinners. Someone says Gandhi gave us nothing. Someone says the British left only because they went broke. Someone says one man caused Partition. Someone else says all of that is a lie. Everybody sounds certain. Almost nobody shows the paper. So I decided to go and look for the paper myself.',
+    topic: 'India · History · Partition',
+    keywords: [
+      'Indian independence', 'Partition 1947', 'Gandhi', 'Jinnah', 'Nehru', 'Ambedkar',
+      'Bhagat Singh', 'Subhas Chandra Bose', 'two-nation theory', 'Quit India',
+      'divide and rule', 'Indian history fact check',
+    ],
+    published: '2026-07-27',
+    displayDate: 'July 2026',
+    parts: 12,
+    words: 78023,
+    minutes: 352,
+    status: 'Complete',
+    accent: 'ink',
+    pdf: 'how-india-became-free.pdf',
+    pdfSize: '1.7 MB',
+    principlesTitle: '// The method, stated up front',
+    principles: [
+      { n: '01', t: 'Every claim gets its strongest version', d: 'Stated fairly first, then tested against the evidence, then a clear verdict.' },
+      { n: '02', t: 'The record decides, not the side', d: 'True is true even when it damages someone I admire. False is false even when it protects them.' },
+      { n: '03', t: '“We do not know” is an answer', d: 'When that is the honest position, I say so instead of pretending otherwise.' },
+      { n: '04', t: 'Simple English on purpose', d: 'Hard words are a good way to stop ordinary people checking your claims. Simple words let them.' },
+    ],
+    load: () => import('./writing/independence.js'),
+  },
+  {
     slug: 'kissan-andolan',
     kicker: 'A plain-English deep dive',
     title: 'Kissan Andolan',

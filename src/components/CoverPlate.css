@@ -45,6 +45,14 @@
   --cover-kick: #f0cf9d;
   --cover-sub: #d9c7bb;
 }
+.cover--ink {
+  background:
+    radial-gradient(120% 90% at 80% 6%, rgba(224, 135, 58, 0.18), transparent 60%),
+    linear-gradient(158deg, #0f1520 0%, #1a2438 48%, #26324a 100%);
+  --cover-gold: #e0873a;
+  --cover-kick: #f5c98d;
+  --cover-sub: #c3cee0;
+}
 
 .cover__kicker {
   color: var(--cover-kick);

@@ -105,6 +105,7 @@ function clampLines(text, size, maxW, maxLines) {
 const PALETTES = {
   harvest: { a: '#16301f', b: '#1e4429', c: '#29583a', lift: '#78be8c', gold: '#f2c14e', kick: '#ffe6a3', sub: '#cfe6d6', ink: '#22331f', foot: '#bcd6c5', mark: '#9dc0a8' },
   ember:   { a: '#17131b', b: '#2a1e26', c: '#3d2a2a', lift: '#d69652', gold: '#d59a4e', kick: '#f0cf9d', sub: '#d9c7bb', ink: '#221b18', foot: '#cbb8a8', mark: '#bfa88f' },
+  ink:     { a: '#0f1520', b: '#1a2438', c: '#26324a', lift: '#e0873a', gold: '#e0873a', kick: '#f5c98d', sub: '#c3cee0', ink: '#1b1408', foot: '#aebbd0', mark: '#93a3bd' },
   // The shelf belongs to the site, not to any one piece — so it wears the
   // site's own obsidian/cobalt rather than a book's register. It also stays
   // correct as pieces are added, which a borrowed cover would not.
