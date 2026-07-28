@@ -297,6 +297,14 @@
   border-color: var(--accent);
   color: var(--on-accent);
 }
+/* Announced but not written — present so the series reads whole, inert so it
+   never looks like a link that failed. */
+.article__pip.is-soon {
+  border-style: dashed;
+  opacity: 0.5;
+  cursor: default;
+}
+.article__pip.is-soon:hover { border-color: var(--line); color: var(--text-dim); }
 
 /* ---------- Prologue (Author's Note, Part 1 only) ---------- */
 .article__prologue { margin-bottom: 3.5rem; }
@@ -411,6 +419,15 @@
 }
 .article__entry:hover { background: var(--surface); padding-left: 1.2rem; }
 .article__entry.is-current { background: color-mix(in oklab, var(--accent) 8%, transparent); }
+.article__entry.is-soon { cursor: default; }
+.article__entry.is-soon:hover { background: none; padding-left: 0.5rem; }
+.article__entry.is-soon .article__entry-n,
+.article__entry.is-soon .article__entry-title { color: var(--text-2); }
+.article__entry.is-soon .article__entry-meta {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 0.25em 0.6em;
+}
 .article__entry-n { color: var(--accent); }
 .article__entry-body { display: grid; gap: 0.4rem; min-width: 0; }
 .article__entry-label { color: var(--text-dim); }

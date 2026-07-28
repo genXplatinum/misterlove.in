@@ -3,7 +3,7 @@ import Reveal from '../components/Reveal';
 import Magnetic from '../components/Magnetic';
 import SectionHead from '../components/SectionHead';
 import CoverPlate from '../components/CoverPlate';
-import { pieces, writingMeta, writingTotals } from '../data/writing';
+import { pieces, writingMeta, writingTotals, livePartsOf, isInProgress } from '../data/writing';
 import './Writing.css';
 
 /**
@@ -36,7 +36,10 @@ export default function WritingTeaser() {
                   <span className="mono writingsec__topic">{piece.topic}</span>
                   <span className="writingsec__stand">{piece.standfirst}</span>
                   <span className="writingsec__meta mono">
-                    {piece.parts} parts · {piece.words.toLocaleString('en-IN')} words · {piece.displayDate}
+                    {isInProgress(piece)
+                      ? `${livePartsOf(piece)} of ${piece.parts} parts`
+                      : `${piece.parts} parts`}
+                    {' · '}{piece.words.toLocaleString('en-IN')} words · {piece.displayDate}
                   </span>
                   <span className="link writingsec__cta">
                     Open <span className="link__arrow">→</span>

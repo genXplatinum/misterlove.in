@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Reveal from '../components/Reveal';
 import CoverPlate from '../components/CoverPlate';
-import { pieces, writingMeta, writingTotals } from '../data/writing';
+import { pieces, writingMeta, writingTotals, livePartsOf, isInProgress } from '../data/writing';
 import { profile } from '../data/site';
 import './Writing.css';
 
@@ -18,7 +18,9 @@ function TopicCard({ piece, i }) {
           <span className="topic__stand">{piece.standfirst}</span>
 
           <span className="topic__meta">
-            <span><b>{piece.parts}</b> parts</span>
+            <span>
+              <b>{isInProgress(piece) ? `${livePartsOf(piece)} of ${piece.parts}` : piece.parts}</b> parts
+            </span>
             <span><b>{piece.words.toLocaleString('en-IN')}</b> words</span>
             <span><b>~{Math.round((piece.minutes / 60) * 10) / 10}</b> hrs</span>
             <span className="topic__date">{piece.displayDate}</span>

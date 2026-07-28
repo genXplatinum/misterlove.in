@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import Prose from '../components/Prose';
-import { getPiece } from '../data/writing';
+import { getPiece, contentsOf, isInProgress } from '../data/writing';
 import { profile } from '../data/site';
 import './Article.css';
 
@@ -221,10 +221,15 @@ export default function Article() {
 
   if (!piece) return <Navigate to="/writing" replace />;
   if (!valid) return <Navigate to={`/writing/${slug}/part-1`} replace />;
+  // A serialised piece announces all its parts before they are written. The
+  // route only exists once the prose does, so send anyone who guesses a URL
+  // (or follows a stale link) back to part one rather than to a blank reader.
+  if (parts && !parts[n - 1]) return <Navigate to={`/writing/${slug}/part-1`} replace />;
 
   const base = `/writing/${piece.slug}`;
   const prev = n > 1 ? n - 1 : null;
-  const next = n < piece.parts ? n + 1 : null;
+  const next = parts && n < parts.length ? n + 1 : null;
+  const contents = contentsOf(piece, parts);
 
   const goSection = (e, id) => {
     e.preventDefault();
@@ -335,7 +340,7 @@ export default function Article() {
 
               <span className="mono article__rail-title article__rail-title--sub">All {piece.parts} parts</span>
               <div className="article__pips">
-                {parts?.map((p) => (
+                {contents.map((p) => (p.live ? (
                   <Link
                     key={p.n}
                     to={`${base}/part-${p.n}`}
@@ -346,7 +351,15 @@ export default function Article() {
                   >
                     {p.n}
                   </Link>
-                ))}
+                ) : (
+                  <span
+                    key={p.n}
+                    className="article__pip is-soon"
+                    title={`Part ${p.n} — ${p.title} (in preparation)`}
+                  >
+                    {p.n}
+                  </span>
+                )))}
               </div>
             </div>
           </aside>
@@ -404,6 +417,13 @@ export default function Article() {
                     <span className="mono">Part {String(next).padStart(2, '0')} →</span>
                     <span className="article__pager-title">{parts[next - 1].title}</span>
                   </Link>
+                ) : isInProgress(piece) ? (
+                  <Link to={base} className="article__pager-link article__pager-link--next" data-cursor>
+                    <span className="mono">That’s all so far →</span>
+                    <span className="article__pager-title">
+                      Part {String(n + 1).padStart(2, '0')} — {contents[n]?.title} is being written
+                    </span>
+                  </Link>
                 ) : (
                   <Link to="/writing" className="article__pager-link article__pager-link--next" data-cursor>
                     <span className="mono">You’ve finished →</span>
@@ -428,23 +448,37 @@ export default function Article() {
             </div>
 
             <ol className="article__contents-list">
-              {parts.map((p) => (
-                <li key={p.n}>
-                  <Link
-                    to={`${base}/part-${p.n}`}
-                    className={`article__entry ${p.n === n ? 'is-current' : ''}`}
-                    data-cursor
-                  >
+              {contents.map((p) => {
+                const inner = (
+                  <>
                     <span className="article__entry-n mono">{String(p.n).padStart(2, '0')}</span>
                     <span className="article__entry-body">
                       <span className="article__entry-label mono">{p.label}</span>
                       <span className="article__entry-title">{p.title}</span>
                       <span className="article__entry-lead">{p.lead}</span>
                     </span>
-                    <span className="article__entry-meta mono">{p.minutes} min</span>
-                  </Link>
-                </li>
-              ))}
+                    <span className="article__entry-meta mono">
+                      {p.live ? `${p.minutes} min` : 'In preparation'}
+                    </span>
+                  </>
+                );
+
+                return (
+                  <li key={p.n}>
+                    {p.live ? (
+                      <Link
+                        to={`${base}/part-${p.n}`}
+                        className={`article__entry ${p.n === n ? 'is-current' : ''}`}
+                        data-cursor
+                      >
+                        {inner}
+                      </Link>
+                    ) : (
+                      <span className="article__entry is-soon">{inner}</span>
+                    )}
+                  </li>
+                );
+              })}
             </ol>
 
             <div className="article__grabpdf">
@@ -454,7 +488,10 @@ export default function Article() {
                 download
                 data-cursor
               >
-                Download all {piece.parts} parts (PDF, {piece.pdfSize}) <span className="btn__dot" />
+                {isInProgress(piece)
+                  ? `Download ${piece.pdfLabel ?? 'the PDF'} (${piece.pdfSize})`
+                  : `Download all ${piece.parts} parts (PDF, ${piece.pdfSize})`}
+                {' '}<span className="btn__dot" />
               </a>
             </div>
           </div>
