@@ -5,7 +5,15 @@
 //   - sitemap.xml is generated from the writing manifest, so adding a piece or a
 //     part can't leave the sitemap silently stale
 import { copyFileSync, writeFileSync, mkdirSync, readFileSync, readdirSync } from 'node:fs';
-import { pieces, writingMeta, writingTotals, contentsOf, isInProgress } from '../src/data/writing.js';
+import {
+  pieces,
+  writingMeta,
+  writingTotals,
+  contentsOf,
+  isInProgress,
+  getPieceForLanguage,
+  writingPathOf,
+} from '../src/data/writing.js';
 
 const SITE = 'https://misterlove.in';
 const today = new Date().toISOString().slice(0, 10);
@@ -18,15 +26,35 @@ writeFileSync('dist/.nojekyll', '');
    fifteen parts long before it has written them, and a sitemap that promised
    the other fourteen would be fourteen 404s handed straight to Google. */
 const loaded = [];
+const editions = [];
 for (const piece of pieces) {
-  loaded.push({ piece, parts: (await piece.load()).default });
+  const english = getPieceForLanguage(piece.slug, 'en');
+  const parts = (await english.load()).default;
+  loaded.push({ piece: english, parts });
+  editions.push({ piece: english, parts });
+
+  for (const language of Object.keys(piece.translations ?? {})) {
+    const edition = getPieceForLanguage(piece.slug, language);
+    editions.push({ piece: edition, parts: (await edition.load()).default });
+  }
 }
 
-const url = ({ loc, lastmod, changefreq, priority, image }) => `  <url>
+const alternatesFor = (piece, part) => {
+  if (!piece.translations?.hi) return [];
+  const suffix = part ? `/part-${part}/` : '/';
+  return [
+    { language: 'en', href: `${SITE}/writing/${piece.slug}${suffix}` },
+    { language: 'hi', href: `${SITE}/hi/writing/${piece.slug}${suffix}` },
+    { language: 'x-default', href: `${SITE}/writing/${piece.slug}${suffix}` },
+  ];
+};
+
+const url = ({ loc, lastmod, changefreq, priority, image, alternates = [] }) => `  <url>
     <loc>${loc}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>${changefreq}</changefreq>
-    <priority>${priority}</priority>${image ? `
+    <priority>${priority}</priority>${alternates.map((alternate) => `
+    <xhtml:link rel="alternate" hreflang="${alternate.language}" href="${alternate.href}" />`).join('')}${image ? `
     <image:image>
       <image:loc>${image.loc}</image:loc>
       <image:title>${image.title}</image:title>
@@ -60,17 +88,20 @@ const urls = [
   }),
 ];
 
-for (const { piece, parts } of loaded) {
+for (const { piece, parts } of editions) {
+  const base = writingPathOf(piece);
+  const imageSlug = piece.ogSlug ?? piece.slug;
   // The topic page is the piece's front door — what /writing links to and what
   // someone sharing "this research" would send.
   urls.push(
     url({
-      loc: `${SITE}/writing/${piece.slug}/`,
+      loc: `${SITE}${base}/`,
       lastmod: piece.published,
       changefreq: 'monthly',
       priority: '0.9',
+      alternates: alternatesFor(piece),
       image: {
-        loc: `${SITE}/og/${piece.slug}.png`,
+        loc: `${SITE}/og/${imageSlug}.png`,
         title: `${piece.title} — ${piece.subtitle}`.replace(/&/g, '&amp;'),
       },
     })
@@ -79,11 +110,12 @@ for (const { piece, parts } of loaded) {
   for (const part of parts) {
     urls.push(
       url({
-        loc: `${SITE}/writing/${piece.slug}/part-${part.n}/`,
+        loc: `${SITE}${base}/part-${part.n}/`,
         lastmod: piece.published,
         changefreq: 'yearly',
         // Part 1 is the entry point readers should land on from search.
         priority: part.n === 1 ? '0.8' : '0.7',
+        alternates: alternatesFor(piece, part.n),
       })
     );
   }
@@ -93,7 +125,8 @@ writeFileSync(
   'dist/sitemap.xml',
   `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${urls.join('\n')}
 </urlset>
 `
@@ -151,8 +184,8 @@ const stripTags = (s) =>
    immediately instead of waiting on the bundle.
    ------------------------------------------------------------------ */
 
-const crumbs = (trail) =>
-  `<nav class="article__crumbs" aria-label="Breadcrumb">${trail
+const crumbs = (trail, label = 'Breadcrumb') =>
+  `<nav class="article__crumbs" aria-label="${esc(label)}">${trail
     .map((c, i) =>
       (i ? '<span class="article__crumb-sep" aria-hidden="true">/</span>' : '')
       + (c.href
@@ -161,17 +194,56 @@ const crumbs = (trail) =>
     )
     .join('')}</nav>`;
 
+const staticCopy = (piece) => (piece.language === 'hi' ? {
+  writing: 'लेखन',
+  part: 'भाग',
+  of: '/',
+  sources: 'स्रोत और आगे की पढ़ाई',
+  allParts: 'सभी भाग',
+  back: 'सभी लेखों पर वापस जाएं →',
+  parts: 'भाग',
+  published: 'प्रकाशित',
+  words: 'शब्द',
+  contents: 'विषय सूची',
+  minutes: 'मिनट',
+  preparing: 'तैयार हो रहा है',
+  download: `मूल अंग्रेज़ी PDF डाउनलोड करें · ${piece.pdfSize}`,
+  by: 'लेखक',
+  readFull: 'पूरा भाग पढ़ें',
+  inThisPart: 'इस भाग में',
+  partsAria: 'लेख के भाग',
+} : {
+  writing: 'Writing',
+  part: 'Part',
+  of: 'of',
+  sources: 'Sources & further reading',
+  allParts: 'All parts',
+  back: 'Back to all writing →',
+  parts: 'parts',
+  published: 'published',
+  words: 'words',
+  contents: 'Contents',
+  minutes: 'min',
+  preparing: 'In preparation',
+  download: `Download ${piece.pdfLabel ?? 'the full PDF'} · ${piece.pdfSize}`,
+  by: 'by',
+  readFull: 'Read the full part',
+  inThisPart: 'In this part',
+  partsAria: 'Article parts',
+});
+
 function articleBody(piece, part, live) {
-  const base = `/writing/${piece.slug}`;
-  return `<main id="main"><article class="article">
+  const base = writingPathOf(piece);
+  const copy = staticCopy(piece);
+  return `<main id="main"><article class="article${piece.language === 'hi' ? ' article--hi' : ''}" lang="${piece.language}">
   <header class="article__head"><div class="container">
     ${crumbs([
-      { name: 'Writing', href: '/writing/' },
+      { name: copy.writing, href: '/writing/' },
       { name: piece.title, href: `${base}/` },
-      { name: `Part ${part.n}` },
-    ])}
+      { name: `${copy.part} ${part.n}` },
+    ], piece.language === 'hi' ? 'पृष्ठ क्रम' : 'Breadcrumb')}
     <div class="article__head-grid"><div class="article__head-main">
-      <span class="article__partno mono">Part ${String(part.n).padStart(2, '0')} <span class="dim">of ${piece.parts}</span><span class="article__partlabel">${esc(part.label)}</span></span>
+      <span class="article__partno mono">${copy.part} ${String(part.n).padStart(2, '0')} <span class="dim">${copy.of} ${piece.parts}</span><span class="article__partlabel">${esc(part.label)}</span></span>
       <h1 class="article__title">${esc(part.title)}</h1>
       <p class="article__standfirst">${esc(part.lead)}</p>
     </div></div>
@@ -179,40 +251,44 @@ function articleBody(piece, part, live) {
   <div class="container"><div class="article__body"><div class="article__col">
     ${part.prologue ? `<section class="article__prologue">${part.prologueTitle ? `<h2 class="article__prologue-head">${esc(part.prologueTitle)}</h2>` : ''}<div class="prose">${part.prologue}</div></section>` : ''}
     <div class="prose">${part.html}</div>
-    ${part.sources ? `<section class="article__sources" open><p class="mono">Sources &amp; further reading — Part ${part.n}</p><div class="prose prose--sources">${part.sources}</div></section>` : ''}
-    <nav class="article__pager" aria-label="Article parts">
-      ${part.n > 1 ? `<a class="article__pager-link article__pager-link--prev" href="${base}/part-${part.n - 1}/"><span class="mono">← Part ${String(part.n - 1).padStart(2, '0')}</span></a>` : '<span></span>'}
-      ${part.n < live ? `<a class="article__pager-link article__pager-link--next" href="${base}/part-${part.n + 1}/"><span class="mono">Part ${String(part.n + 1).padStart(2, '0')} →</span></a>` : `<a class="article__pager-link article__pager-link--next" href="${isInProgress(piece) ? `${base}/` : '/writing/'}"><span class="mono">${isInProgress(piece) ? 'All parts →' : 'Back to all writing →'}</span></a>`}
+    ${part.sources ? `<section class="article__sources" open><p class="mono">${copy.sources} — ${copy.part} ${part.n}</p><div class="prose prose--sources">${part.sources}</div></section>` : ''}
+    <nav class="article__pager" aria-label="${copy.partsAria}">
+      ${part.n > 1 ? `<a class="article__pager-link article__pager-link--prev" href="${base}/part-${part.n - 1}/"><span class="mono">← ${copy.part} ${String(part.n - 1).padStart(2, '0')}</span></a>` : '<span></span>'}
+      ${part.n < live ? `<a class="article__pager-link article__pager-link--next" href="${base}/part-${part.n + 1}/"><span class="mono">${copy.part} ${String(part.n + 1).padStart(2, '0')} →</span></a>` : `<a class="article__pager-link article__pager-link--next" href="${isInProgress(piece) ? `${base}/` : '/writing/'}"><span class="mono">${isInProgress(piece) ? `${copy.allParts} →` : copy.back}</span></a>`}
     </nav>
   </div></div></div>
 </article></main>`;
 }
 
 function topicBody(piece, parts) {
-  const base = `/writing/${piece.slug}`;
+  const base = writingPathOf(piece);
+  const copy = staticCopy(piece);
   // The whole announced series, not just what is written: a crawler that sees
   // the shape of the work indexes the topic page for the subjects still to
   // come, and the unwritten rows are plain markup with no href to follow.
   const contents = contentsOf(piece, parts);
   const count = isInProgress(piece)
-    ? `${parts.length} of ${piece.parts} parts published`
-    : `${piece.parts} parts`;
+    ? `${parts.length} / ${piece.parts} ${copy.parts} ${copy.published}`
+    : `${piece.parts} ${copy.parts}`;
 
-  const row = (p) => `<span class="partrow__n mono">${String(p.n).padStart(2, '0')}</span><span class="partrow__body"><span class="partrow__label mono">${esc(p.label)}</span><span class="partrow__title">${esc(p.title)}</span><span class="partrow__lead">${esc(p.lead)}</span></span><span class="partrow__meta mono">${p.live ? `${p.minutes} min` : 'In preparation'}</span>`;
+  const row = (p) => `<span class="partrow__n mono">${String(p.n).padStart(2, '0')}</span><span class="partrow__body"><span class="partrow__label mono">${esc(p.label)}</span><span class="partrow__title">${esc(p.title)}</span><span class="partrow__lead">${esc(p.lead)}</span></span><span class="partrow__meta mono">${p.live ? `${p.minutes} ${copy.minutes}` : copy.preparing}</span>`;
 
-  return `<main id="main"><div class="topicpage"><div class="container">
-  ${crumbs([{ name: 'Writing', href: '/writing/' }, { name: piece.title }])}
+  return `<main id="main"><div class="topicpage${piece.language === 'hi' ? ' topicpage--hi' : ''}" lang="${piece.language}"><div class="container">
+  ${crumbs(
+    [{ name: copy.writing, href: '/writing/' }, { name: piece.title }],
+    piece.language === 'hi' ? 'पृष्ठ क्रम' : 'Breadcrumb'
+  )}
   <h1 class="topic__title">${esc(piece.title)} — ${esc(piece.subtitle)}</h1>
   <p class="topicpage__stand">${esc(piece.standfirst)}</p>
   <p class="topicpage__summary">${esc(piece.summary)}</p>
-  <p class="mono">${count} · ${piece.words.toLocaleString('en-IN')} words · ${esc(piece.displayDate)} · by Lovepreet Singh</p>
-  <h2>Contents</h2>
+  <p class="mono">${count} · ${piece.words.toLocaleString('en-IN')} ${copy.words} · ${esc(piece.displayDate)} · ${copy.by} Lovepreet Singh</p>
+  <h2>${copy.contents}</h2>
   <ol class="feature__parts">${contents
     .map((p) => `<li>${p.live
       ? `<a class="partrow" href="${base}/part-${p.n}/">${row(p)}</a>`
       : `<span class="partrow partrow--soon">${row(p)}</span>`}</li>`)
     .join('')}</ol>
-  <p><a class="btn btn--ghost" href="/${piece.pdf}" download>Download ${esc(piece.pdfLabel ?? 'the full PDF')} · ${piece.pdfSize}</a></p>
+  <p><a class="btn btn--ghost" href="/${piece.pdf}" download>${esc(copy.download)}</a></p>
 </div></div></main>`;
 }
 
@@ -229,8 +305,26 @@ function shelfBody(loaded) {
 </div></div></main>`;
 }
 
-function shell({ path, title, description, canonical, jsonLd, noscript, keywords, image, imageAlt, body, theme, extraMeta, css }) {
+function shell({
+  path,
+  title,
+  description,
+  canonical,
+  jsonLd,
+  noscript,
+  keywords,
+  image,
+  imageAlt,
+  body,
+  theme,
+  extraMeta,
+  css,
+  language = 'en',
+  locale = 'en_US',
+  alternates = [],
+}) {
   let html = template
+    .replace(/<html lang="[^"]*"/, `<html lang="${language}"`)
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
     // Share card: the piece's own artwork rather than the site banner, so a
     // shared part previews that part. Generated by scripts/make-og-cards.mjs.
@@ -251,6 +345,7 @@ function shell({ path, title, description, canonical, jsonLd, noscript, keywords
     .replace(/(<meta\s+property="og:description"\s+content=")[\s\S]*?(")/, `$1${esc(description)}$2`)
     .replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${canonical}$2`)
     .replace(/(<meta property="og:type" content=")[^"]*(")/, `$1article$2`)
+    .replace(/(<meta property="og:locale" content=")[^"]*(")/, `$1${locale}$2`)
     .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${esc(title)}$2`)
     .replace(/(<meta\s+name="twitter:description"\s+content=")[\s\S]*?(")/, `$1${esc(description)}$2`);
 
@@ -261,6 +356,12 @@ function shell({ path, title, description, canonical, jsonLd, noscript, keywords
   }
   for (const [k, v] of Object.entries(extraMeta ?? {})) {
     head.push(`  <meta property="${k}" content="${esc(v)}" />`);
+  }
+  for (const alternate of alternates) {
+    head.push(`  <link rel="alternate" hreflang="${alternate.language}" href="${alternate.href}" />`);
+  }
+  if (alternates.length) {
+    head.push(`  <meta property="og:locale:alternate" content="${locale === 'hi_IN' ? 'en_IN' : 'hi_IN'}" />`);
   }
   head.push('  <link rel="alternate" type="application/rss+xml" title="Writing — Lovepreet Singh" href="https://misterlove.in/feed.xml" />');
   for (const c of [].concat(css ?? [])) if (c) head.push(c);
@@ -343,24 +444,33 @@ shell({
 });
 shells += 1;
 
-for (const { piece, parts } of loaded) {
-  /* ---- /writing/<slug> — the topic's front door ---- */
-  const topicUrl = `${SITE}/writing/${piece.slug}/`;
+for (const { piece, parts } of editions) {
+  /* ---- English or Hindi topic front door. ---- */
+  const copy = staticCopy(piece);
+  const topicPath = writingPathOf(piece);
+  const topicUrl = `${SITE}${topicPath}/`;
+  const imageSlug = piece.ogSlug ?? piece.slug;
+  const alternates = alternatesFor(piece);
   shell({
-    path: `/writing/${piece.slug}`,
+    path: topicPath,
     title: `${piece.title} — ${piece.subtitle} | Lovepreet Singh`,
     description: piece.standfirst,
     canonical: topicUrl,
     keywords: [piece.title, ...piece.keywords, 'Lovepreet Singh'].join(', '),
-    image: `${SITE}/og/${piece.slug}.png`,
-    imageAlt: `${piece.title} — ${piece.subtitle}. ${piece.parts}-part research series by Lovepreet Singh.`,
+    image: `${SITE}/og/${imageSlug}.png`,
+    imageAlt: piece.language === 'hi'
+      ? `${piece.title} — ${piece.subtitle}। Lovepreet Singh की ${piece.parts} भागों वाली शोध श्रृंखला।`
+      : `${piece.title} — ${piece.subtitle}. ${piece.parts}-part research series by Lovepreet Singh.`,
     body: topicBody(piece, parts),
     css: ROUTE_CSS.writing,
+    language: piece.language,
+    locale: piece.locale,
+    alternates,
     jsonLd: [{
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Writing', item: `${SITE}/writing/` },
+        { '@type': 'ListItem', position: 1, name: copy.writing, item: `${SITE}/writing/` },
         { '@type': 'ListItem', position: 2, name: piece.title, item: topicUrl },
       ],
     }, {
@@ -371,46 +481,67 @@ for (const { piece, parts } of loaded) {
       description: piece.standfirst,
       abstract: piece.summary,
       datePublished: piece.published,
-      inLanguage: 'en',
+      inLanguage: piece.language,
       numberOfItems: piece.parts,
       author: { '@type': 'Person', '@id': `${SITE}/#lovepreet-singh`, name: 'Lovepreet Singh' },
       about: piece.topic.split(' · ').map((t) => ({ '@type': 'Thing', name: t })),
       hasPart: parts.map((x) => ({
         '@type': 'Article',
         headline: x.title,
-        url: `${SITE}/writing/${piece.slug}/part-${x.n}/`,
+        url: `${SITE}${topicPath}/part-${x.n}/`,
         wordCount: x.words,
         position: x.n,
       })),
+      ...(piece.language === 'hi' ? {
+        translationOfWork: {
+          '@type': 'CreativeWorkSeries',
+          inLanguage: 'en',
+          url: `${SITE}/writing/${piece.slug}/`,
+        },
+      } : piece.translations?.hi ? {
+        workTranslation: {
+          '@type': 'CreativeWorkSeries',
+          inLanguage: 'hi',
+          url: `${SITE}/hi/writing/${piece.slug}/`,
+        },
+      } : {}),
     }],
     noscript:
       `      <p><strong>${esc(piece.title)} — ${esc(piece.subtitle)}</strong></p>\n` +
       `      <p>${esc(piece.standfirst)}</p>\n` +
       `      <p>${esc(piece.summary)}</p>\n` +
-      `      <p>${isInProgress(piece) ? `${parts.length} of ${piece.parts} parts published` : `${piece.parts} parts`} · ${piece.words.toLocaleString('en-IN')} words · by Lovepreet Singh, ${esc(piece.displayDate)}</p>\n` +
-      `      <h2>Contents</h2>\n      <ul>\n${contentsOf(piece, parts)
+      `      <p>${isInProgress(piece) ? `${parts.length} / ${piece.parts} ${copy.parts} ${copy.published}` : `${piece.parts} ${copy.parts}`} · ${piece.words.toLocaleString('en-IN')} ${copy.words} · ${copy.by} Lovepreet Singh, ${esc(piece.displayDate)}</p>\n` +
+      `      <h2>${copy.contents}</h2>\n      <ul>\n${contentsOf(piece, parts)
         .map((x) => (x.live
-          ? `        <li><a href="/writing/${piece.slug}/part-${x.n}/">Part ${x.n} — ${esc(x.title)}</a></li>`
-          : `        <li>Part ${x.n} — ${esc(x.title)} (in preparation)</li>`))
+          ? `        <li><a href="${topicPath}/part-${x.n}/">${copy.part} ${x.n} — ${esc(x.title)}</a></li>`
+          : `        <li>${copy.part} ${x.n} — ${esc(x.title)} (${copy.preparing})</li>`))
         .join('\n')}\n      </ul>`,
   });
   shells += 1;
 
   for (const part of parts) {
-    const canonical = `${SITE}/writing/${piece.slug}/part-${part.n}/`;
+    const canonical = `${SITE}${topicPath}/part-${part.n}/`;
+    const partAlternates = alternatesFor(piece, part.n);
     shell({
-      path: `/writing/${piece.slug}/part-${part.n}`,
-      title: `${part.title} — ${piece.title}: Part ${part.n} of ${piece.parts} | Lovepreet Singh`,
+      path: `${topicPath}/part-${part.n}`,
+      title: piece.language === 'hi'
+        ? `${part.title} — ${piece.title}: भाग ${part.n}/${piece.parts} | Lovepreet Singh`
+        : `${part.title} — ${piece.title}: Part ${part.n} of ${piece.parts} | Lovepreet Singh`,
       description: part.lead || piece.standfirst,
       canonical,
       keywords: [
-        piece.title, `${piece.title} part ${part.n}`, part.label.toLowerCase(),
+        piece.title, `${piece.title} ${copy.part} ${part.n}`, part.label.toLowerCase(),
         ...piece.keywords, 'Lovepreet Singh',
       ].join(', '),
-      image: `${SITE}/og/${piece.slug}-part-${part.n}.png`,
-      imageAlt: `${piece.title}, Part ${part.n} of ${piece.parts} — ${part.title}. By Lovepreet Singh.`,
+      image: `${SITE}/og/${imageSlug}-part-${part.n}.png`,
+      imageAlt: piece.language === 'hi'
+        ? `${piece.title}, ${piece.parts} में से भाग ${part.n} — ${part.title}। लेखक: Lovepreet Singh।`
+        : `${piece.title}, Part ${part.n} of ${piece.parts} — ${part.title}. By Lovepreet Singh.`,
       body: articleBody(piece, part, parts.length),
       css: [ROUTE_CSS.article, ROUTE_CSS.writing],
+      language: piece.language,
+      locale: piece.locale,
+      alternates: partAlternates,
       // The article reads on paper; set it before paint so there is no flash.
       theme: 'light',
       extraMeta: {
@@ -424,41 +555,56 @@ for (const { piece, parts } of loaded) {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Writing', item: `${SITE}/writing/` },
-          { '@type': 'ListItem', position: 2, name: piece.title, item: `${SITE}/writing/${piece.slug}/` },
+          { '@type': 'ListItem', position: 1, name: copy.writing, item: `${SITE}/writing/` },
+          { '@type': 'ListItem', position: 2, name: piece.title, item: topicUrl },
           { '@type': 'ListItem', position: 3, name: part.title, item: canonical },
         ],
       }, {
         '@context': 'https://schema.org',
         '@type': 'Article',
-        headline: `${part.title} — ${piece.title}: Part ${part.n}`,
+        headline: piece.language === 'hi'
+          ? `${part.title} — ${piece.title}: भाग ${part.n}`
+          : `${part.title} — ${piece.title}: Part ${part.n}`,
         description: part.lead || piece.standfirst,
         url: canonical,
         mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
         datePublished: piece.published,
-        inLanguage: 'en',
+        inLanguage: piece.language,
         wordCount: part.words,
         articleSection: part.label,
         isPartOf: {
           '@type': 'CreativeWorkSeries',
           name: `${piece.title} — ${piece.subtitle}`,
-          url: `${SITE}/writing/${piece.slug}/part-1/`,
+          url: topicUrl,
           numberOfItems: piece.parts,
         },
         author: { '@type': 'Person', '@id': `${SITE}/#lovepreet-singh`, name: 'Lovepreet Singh' },
         publisher: { '@id': `${SITE}/#lovepreet-singh` },
         about: piece.topic.split(' · ').map((t) => ({ '@type': 'Thing', name: t })),
         isAccessibleForFree: true,
+        ...(piece.language === 'hi' ? {
+          translationOfWork: {
+            '@type': 'Article',
+            inLanguage: 'en',
+            url: `${SITE}/writing/${piece.slug}/part-${part.n}/`,
+          },
+        } : piece.translations?.hi ? {
+          workTranslation: {
+            '@type': 'Article',
+            inLanguage: 'hi',
+            url: `${SITE}/hi/writing/${piece.slug}/part-${part.n}/`,
+          },
+        } : {}),
       }],
       noscript:
         `      <p><strong>${esc(part.title)}</strong></p>\n` +
-        `      <p><strong>${esc(piece.title)} — ${esc(piece.subtitle)}</strong> · Part ${part.n} of ${piece.parts} · by Lovepreet Singh</p>\n` +
+        `      <p><strong>${esc(piece.title)} — ${esc(piece.subtitle)}</strong> · ${copy.part} ${part.n} ${copy.of} ${piece.parts} · ${copy.by} Lovepreet Singh</p>\n` +
         `      <p>${esc(part.lead)}</p>\n` +
-        `      <h2>In this part</h2>\n      <ul>\n${part.toc
+        `      <h2>${copy.inThisPart}</h2>\n      <ul>\n${part.toc
           .map((t) => `        <li>${esc(t.text)}</li>`)
           .join('\n')}\n      </ul>\n` +
         `      <p>${esc(stripTags(part.html).slice(0, 900))}…</p>\n` +
-        `      <p><a href="${canonical}">Read the full part</a></p>`,
+        `      <p><a href="${canonical}">${copy.readFull}</a></p>`,
     });
     shells += 1;
   }

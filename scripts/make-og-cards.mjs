@@ -12,6 +12,7 @@
  * (committed). Run from the project root:
  *
  *     node scripts/make-og-cards.mjs
+ *     node scripts/make-og-cards.mjs --hindi-only
  *
  * Requires the brand TTFs in stories/_fonts/ and @resvg/resvg-js. Both are
  * local-only (stories/ is git-ignored, resvg installed with --no-save):
@@ -21,7 +22,14 @@
  */
 import { Resvg } from '@resvg/resvg-js';
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { pieces, writingMeta, writingTotals, livePartsOf, isInProgress } from '../src/data/writing.js';
+import {
+  pieces,
+  writingMeta,
+  writingTotals,
+  livePartsOf,
+  isInProgress,
+  getPieceForLanguage,
+} from '../src/data/writing.js';
 
 const W = 1200;
 const H = 630;
@@ -32,6 +40,8 @@ const FONTS = [
   'stories/_fonts/sg-700.ttf',
   'stories/_fonts/jm-400.ttf',
   'stories/_fonts/jm-700.ttf',
+  'C:/Windows/Fonts/mangal.ttf',
+  'C:/Windows/Fonts/mangalb.ttf',
 ];
 
 const missing = FONTS.filter((f) => !existsSync(f));
@@ -49,8 +59,15 @@ const esc = (s) =>
    the titles are short and the box has generous slack. */
 const NARROW = new Set(['i', 'l', 'I', 'j', 't', 'f', 'r', '.', ',', ':', ';', "'", '’', '!', '|', ' ']);
 const WIDE = new Set(['m', 'w', 'M', 'W', '—', '&', '@']);
+const graphemeSegmenter = new Intl.Segmenter('hi', { granularity: 'grapheme' });
+const graphemes = (text) => [...graphemeSegmenter.segment(text)].map((part) => part.segment);
 
 const charWidth = (c, size) => {
+  // A Devanagari grapheme often combines several code points into one wide
+  // shaped cluster (for example "स्ता"). Measuring it like a Latin letter
+  // makes resvg place text beyond the card edge, so keep a conservative
+  // advance that matches Mangal's rendered width.
+  if (/[\u0900-\u097f]/u.test(c)) return size * 0.82;
   if (NARROW.has(c)) return size * (c === ' ' ? 0.26 : 0.32);
   if (WIDE.has(c)) return size * 0.86;
   if (c >= 'A' && c <= 'Z') return size * 0.66;
@@ -58,11 +75,11 @@ const charWidth = (c, size) => {
   return size * 0.545;
 };
 
-const textWidth = (s, size) => [...s].reduce((a, c) => a + charWidth(c, size), 0);
+const textWidth = (s, size) => graphemes(s).reduce((a, c) => a + charWidth(c, size), 0);
 
 /** JetBrains Mono is fixed-pitch — the proportional table above under-measures
     it badly, which is enough to push a badge label outside its plate. */
-const monoWidth = (s, size, tracking = 0) => s.length * (size * 0.6 + tracking);
+const monoWidth = (s, size, tracking = 0) => graphemes(s).length * (size * 0.6 + tracking);
 
 /** Greedy wrap to a pixel width. */
 function wrap(text, size, maxW) {
@@ -132,7 +149,7 @@ const frame = (p) => `
       <stop offset="0%" stop-color="#000000" stop-opacity="0"/>
       <stop offset="100%" stop-color="#000000" stop-opacity="0.30"/>
     </linearGradient>
-    <style>.d{font-family:'Space Grotesk','Segoe UI',system-ui,sans-serif}.m{font-family:'JetBrains Mono',ui-monospace,monospace}</style>
+    <style>.d{font-family:'Space Grotesk','Segoe UI',system-ui,sans-serif}.m{font-family:'JetBrains Mono',ui-monospace,monospace}.h{font-family:'Mangal','Noto Sans Devanagari',sans-serif}</style>
   </defs>
 
   <rect width="${W}" height="${H}" fill="url(#bg)"/>
@@ -157,10 +174,12 @@ const frame = (p) => `
 `;
 
 /** One card. `kicker` is the mono line, `title`/`sub` the display block. */
-function card({ kicker, title, sub, standfirst, badge, byline, accent }) {
+function card({ kicker, title, sub, standfirst, badge, byline, accent, language = 'en' }) {
   const p = PALETTES[accent] ?? PALETTES.harvest;
   const LEFT = 62;
   const MAXW = W - LEFT - 80;
+  const displayClass = language === 'hi' ? 'h' : 'd';
+  const labelClass = language === 'hi' ? 'h' : 'm';
 
   // The wordmark and the badge row are pinned to the top and bottom edges. The
   // block between them is measured and then centred in that band, so a
@@ -171,7 +190,12 @@ function card({ kicker, title, sub, standfirst, badge, byline, accent }) {
   const BAND_TOP = 150;
   const BAND_BOTTOM = BADGE_Y - 30;
 
-  const t = fitLines(title, { max: 76, min: 42, maxW: MAXW, maxLines: 3 });
+  const t = fitLines(title, {
+    max: language === 'hi' ? 64 : 76,
+    min: language === 'hi' ? 38 : 42,
+    maxW: MAXW,
+    maxLines: 3,
+  });
   const leading = t.size * 1.03;
   const standCount = standfirst ? (t.lines.length >= 3 ? 1 : 2) : 0;
 
@@ -192,12 +216,12 @@ function card({ kicker, title, sub, standfirst, badge, byline, accent }) {
   const standY = ruleY + 4 + gapRuleStand;
 
   const titleLines = t.lines
-    .map((l, i) => `<text class="d" x="${LEFT}" y="${(titleTop + i * leading).toFixed(0)}" fill="#ffffff" font-size="${t.size}" font-weight="700" letter-spacing="-${(t.size * 0.032).toFixed(1)}">${esc(l)}</text>`)
+    .map((l, i) => `<text class="${displayClass}" x="${LEFT}" y="${(titleTop + i * leading).toFixed(0)}" fill="#ffffff" font-size="${t.size}" font-weight="700" letter-spacing="${language === 'hi' ? '0' : `-${(t.size * 0.032).toFixed(1)}`}">${esc(l)}</text>`)
     .join('\n  ');
 
   const standLines = standCount
     ? clampLines(standfirst, 25, MAXW - 130, standCount)
-        .map((l, i) => `<text class="d" x="${LEFT}" y="${(standY + i * 34).toFixed(0)}" fill="${p.sub}" font-size="25" font-weight="500">${esc(l)}</text>`)
+        .map((l, i) => `<text class="${displayClass}" x="${LEFT}" y="${(standY + i * 34).toFixed(0)}" fill="${p.sub}" font-size="25" font-weight="500">${esc(l)}</text>`)
         .join('\n  ')
     : '';
 
@@ -206,16 +230,16 @@ function card({ kicker, title, sub, standfirst, badge, byline, accent }) {
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">
   <title>${esc(title)} — ${esc(sub || '')}</title>
 ${frame(p)}
-  <text class="m" x="${LEFT}" y="${kickerY.toFixed(0)}" fill="${p.kick}" font-size="22" letter-spacing="3.5">${esc(kicker.toUpperCase())}</text>
+  <text class="${labelClass}" x="${LEFT}" y="${kickerY.toFixed(0)}" fill="${p.kick}" font-size="22" letter-spacing="${language === 'hi' ? '0' : '3.5'}">${esc(kicker.toUpperCase())}</text>
   ${titleLines}
-  ${sub ? `<text class="d" x="${LEFT}" y="${subY.toFixed(0)}" fill="${p.sub}" font-size="31" font-weight="500">${esc(sub)}</text>` : ''}
+  ${sub ? `<text class="${displayClass}" x="${LEFT}" y="${subY.toFixed(0)}" fill="${p.sub}" font-size="31" font-weight="500">${esc(sub)}</text>` : ''}
   <rect x="${LEFT}" y="${ruleY.toFixed(0)}" width="72" height="4" fill="${p.gold}"/>
   ${standLines}
 
   <g transform="translate(${LEFT}, ${BADGE_Y})">
     <rect x="0" y="0" width="${badgeW.toFixed(0)}" height="34" rx="3" fill="${p.gold}"/>
-    <text class="m" x="17" y="23" fill="${p.ink}" font-size="19" font-weight="700" letter-spacing="1.4">${esc(badge)}</text>
-    <text class="m" x="${(badgeW + 26).toFixed(0)}" y="23" fill="${p.foot}" font-size="19" letter-spacing="1">${esc(byline)}</text>
+    <text class="${labelClass}" x="17" y="23" fill="${p.ink}" font-size="19" font-weight="700" letter-spacing="${language === 'hi' ? '0' : '1.4'}">${esc(badge)}</text>
+    <text class="${labelClass}" x="${(badgeW + 26).toFixed(0)}" y="23" fill="${p.foot}" font-size="19" letter-spacing="${language === 'hi' ? '0' : '1'}">${esc(byline)}</text>
   </g>
 </svg>`;
 }
@@ -321,50 +345,96 @@ function render(svg, file) {
 mkdirSync(OUT, { recursive: true });
 
 let total = 0;
+const hindiOnly = process.argv.includes('--hindi-only');
 
 // The shelf card for /writing itself.
-{
+if (!hindiOnly) {
   const file = `${OUT}/writing.png`;
   const r = render(shelfCard(), file);
   console.log(`${file.padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
   total += r.kb;
 }
 for (const piece of pieces) {
-  const parts = (await piece.load()).default;
+  let r;
+  if (!hindiOnly) {
+    const parts = (await piece.load()).default;
 
-  // Series card — used by /writing and as the piece-level fallback.
-  const seriesFile = `${OUT}/${piece.slug}.png`;
-  let r = render(
-    card({
-      kicker: piece.kicker,
-      title: piece.title,
-      sub: piece.subtitle,
-      standfirst: piece.standfirst,
-      badge: isInProgress(piece) ? `${parts.length} OF ${piece.parts} PARTS LIVE` : `${piece.parts} PARTS`,
-      byline: 'Written & researched by Lovepreet Singh',
-      accent: piece.accent,
-    }),
-    seriesFile
-  );
-  console.log(`${seriesFile.padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
-  total += r.kb;
-
-  for (const part of parts) {
-    const file = `${OUT}/${piece.slug}-part-${part.n}.png`;
+    // Series card — used by /writing and as the piece-level fallback.
+    const seriesFile = `${OUT}/${piece.slug}.png`;
     r = render(
       card({
-        kicker: `Part ${String(part.n).padStart(2, '0')} of ${piece.parts} · ${part.label}`,
-        title: part.title,
-        sub: `${piece.title} — ${piece.subtitle}`,
-        standfirst: part.lead,
-        badge: `${part.minutes} MIN READ`,
-        byline: 'Lovepreet Singh · misterlove.in',
+        kicker: piece.kicker,
+        title: piece.title,
+        sub: piece.subtitle,
+        standfirst: piece.standfirst,
+        badge: isInProgress(piece) ? `${parts.length} OF ${piece.parts} PARTS LIVE` : `${piece.parts} PARTS`,
+        byline: 'Written & researched by Lovepreet Singh',
         accent: piece.accent,
       }),
-      file
+      seriesFile
     );
-    console.log(`${file.padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
+    console.log(`${seriesFile.padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
     total += r.kb;
+
+    for (const part of parts) {
+      const file = `${OUT}/${piece.slug}-part-${part.n}.png`;
+      r = render(
+        card({
+          kicker: `Part ${String(part.n).padStart(2, '0')} of ${piece.parts} · ${part.label}`,
+          title: part.title,
+          sub: `${piece.title} — ${piece.subtitle}`,
+          standfirst: part.lead,
+          badge: `${part.minutes} MIN READ`,
+          byline: 'Lovepreet Singh · misterlove.in',
+          accent: piece.accent,
+        }),
+        file
+      );
+      console.log(`${file.padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
+      total += r.kb;
+    }
+  }
+
+  for (const language of Object.keys(piece.translations ?? {})) {
+    const edition = getPieceForLanguage(piece.slug, language);
+    const translatedParts = (await edition.load()).default;
+    const translatedSlug = edition.ogSlug ?? `${piece.slug}-${language}`;
+    const translatedSeriesFile = `${OUT}/${translatedSlug}.png`;
+
+    r = render(
+      card({
+        kicker: edition.kicker,
+        title: edition.title,
+        sub: edition.subtitle,
+        standfirst: edition.standfirst,
+        badge: `${edition.parts} भाग`,
+        byline: 'Lovepreet Singh की शोध और लेखनी',
+        accent: edition.accent,
+        language,
+      }),
+      translatedSeriesFile
+    );
+    console.log(`${translatedSeriesFile.padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
+    total += r.kb;
+
+    for (const translatedPart of translatedParts) {
+      const file = `${OUT}/${translatedSlug}-part-${translatedPart.n}.png`;
+      r = render(
+        card({
+          kicker: `भाग ${String(translatedPart.n).padStart(2, '0')} / ${edition.parts} · ${translatedPart.label}`,
+          title: translatedPart.title,
+          sub: `${edition.title} — ${edition.subtitle}`,
+          standfirst: translatedPart.lead,
+          badge: `${translatedPart.minutes} मिनट`,
+          byline: 'Lovepreet Singh · misterlove.in',
+          accent: edition.accent,
+          language,
+        }),
+        file
+      );
+      console.log(`${file.padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
+      total += r.kb;
+    }
   }
 }
 

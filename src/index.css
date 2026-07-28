@@ -33,6 +33,8 @@
   /* Long-form reading only — a screen serif for the writing section, so
      25,000 words don't have to be read in the interface typeface. */
   --font-read:    'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-hi-sans: 'Noto Sans Devanagari', 'Nirmala UI', 'Mangal', sans-serif;
+  --font-hi-read: 'Noto Serif Devanagari', 'Nirmala UI', 'Mangal', serif;
 
   /* Fluid type scale */
   --t-mono:    clamp(0.68rem, 0.65rem + 0.14vw, 0.77rem);
@@ -396,6 +398,31 @@ body.cursor-down .cursor-ring { width: 26px; height: 26px; }
   transition: translate 0.3s var(--ease-out);
 }
 .skip-link:focus { translate: -50% 0; }
+
+/* Keyboard-friendly edition switch shared by the topic and reader pages. */
+.language-switch {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  padding: 0.2rem;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--surface);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  line-height: 1;
+}
+.language-switch a {
+  padding: 0.6rem 0.85rem;
+  border-radius: 999px;
+  color: var(--text-2);
+  transition: color 0.25s var(--ease-out), background 0.25s var(--ease-out);
+}
+.language-switch a:hover { color: var(--text); }
+.language-switch a.is-active {
+  color: var(--on-accent);
+  background: var(--accent);
+}
 
 @media (hover: hover) and (pointer: fine) {
   body.has-cursor, body.has-cursor * { cursor: none; }

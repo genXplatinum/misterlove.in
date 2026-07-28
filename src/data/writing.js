@@ -135,6 +135,39 @@ export const pieces = [
       { n: '03', t: 'Fact and opinion kept separate', d: 'What is proven, what is claimed, and who is claiming it — never blurred together.' },
       { n: '04', t: 'No hiding the hard parts', d: 'The uncomfortable truths on every side stay in.' },
     ],
+    translations: {
+      hi: {
+        language: 'hi',
+        locale: 'hi_IN',
+        ogSlug: 'kissan-andolan-hi',
+        published: '2026-07-28',
+        kicker: 'सरल हिंदी में गहरी पड़ताल',
+        title: 'किसान आंदोलन',
+        subtitle: 'पूरी कहानी',
+        standfirst:
+          'भारत के किसान आंदोलन की पूरी कहानी — 2020 से 2024 और उसके बाद तक। महीनों की खोज के बाद हर पक्ष को सबसे सरल और साफ हिंदी में समझाया गया है।',
+        summary:
+          'चार साल तक किसान आंदोलन हमारी खबरों, हमारे फोन और खाने की मेज पर होने वाली बहसों में छाया रहा। हर किसी की राय मजबूत थी, लेकिन पूरी कहानी बहुत कम लोगों को मालूम थी। इसलिए मैंने महीनों लगाकर असली कानून, सरकारी दस्तावेज़, अदालतों के आदेश, कृषि-अर्थव्यवस्था पर हुए अध्ययन और हर नज़रिये की रिपोर्टिंग — बाएँ, दाएँ और बीच की भी — पढ़ी। यह लेख उसी खोज का नतीजा है।',
+        topic: 'भारत · खेती · नीति',
+        keywords: [
+          'किसान आंदोलन', 'भारत किसान प्रदर्शन', 'कृषि कानून 2020',
+          'न्यूनतम समर्थन मूल्य', 'MSP', 'पंजाब के किसान', 'दिल्ली चलो',
+        ],
+        displayDate: 'जुलाई 2026',
+        words: 31209,
+        minutes: 174,
+        status: 'पूर्ण',
+        pdfLabel: 'अंग्रेज़ी PDF',
+        principlesTitle: '// इस पुस्तक के चार वादे',
+        principles: [
+          { n: '01', t: 'आसान भाषा', d: 'अगर कक्षा 6 का विद्यार्थी इसे न समझ सके, तो गलती मेरे लिखने में है। किसी कठिन शब्द को सरल अर्थ बताए बिना नहीं छोड़ा गया है।' },
+          { n: '02', t: 'हर पक्ष को पूरी और निष्पक्ष जगह', d: 'सरकार, किसान, समर्थक और आलोचक—हर पक्ष की सबसे मजबूत दलील उसी की भाषा में रखी गई है।' },
+          { n: '03', t: 'तथ्य और राय अलग-अलग', d: 'क्या साबित है, क्या दावा है और दावा कौन कर रहा है—इन तीनों को कभी एक-दूसरे में नहीं मिलाया गया है।' },
+          { n: '04', t: 'कठिन बातों को नहीं छिपाना', d: 'किसी भी पक्ष के लिए असहज सच इस कहानी से बाहर नहीं रखे गए हैं।' },
+        ],
+        load: () => import('./writing/kissan-andolan-hi.js'),
+      },
+    },
     load: () => import('./writing/kissan-andolan.js'),
   },
   {
@@ -169,6 +202,28 @@ export const pieces = [
 ];
 
 export const getPiece = (slug) => pieces.find((p) => p.slug === slug);
+
+/**
+ * A language edition keeps the original piece's identity and publication
+ * details, but replaces every reader-facing field and the prose loader.
+ * Returning undefined for an unavailable edition lets the router redirect
+ * cleanly instead of showing a half-translated page.
+ */
+export const getPieceForLanguage = (slug, language = 'en') => {
+  const piece = getPiece(slug);
+  if (!piece) return undefined;
+  if (language === 'en') return { ...piece, language: 'en', locale: 'en_IN' };
+
+  const translation = piece.translations?.[language];
+  return translation ? { ...piece, ...translation } : undefined;
+};
+
+/** Canonical client-side path for either a topic or one numbered part. */
+export const writingPathOf = (piece, part) => {
+  const prefix = piece?.language === 'hi' ? '/hi' : '';
+  const base = `${prefix}/writing/${piece.slug}`;
+  return part ? `${base}/part-${part}` : base;
+};
 
 /**
  * Parts actually published. A finished piece omits `live`, so this is just its

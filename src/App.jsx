@@ -110,9 +110,11 @@ export default function App() {
               {/* The shelf → one topic → one part of that topic. */}
               <Route path="/writing" element={<Writing />} />
               <Route path="/writing/:slug" element={<Topic />} />
+              <Route path="/hi/writing/:slug" element={<Topic />} />
               {/* Router params must span a whole segment, so the "part-N"
                   segment is matched as one param and parsed in Article. */}
               <Route path="/writing/:slug/:part" element={<Article />} />
+              <Route path="/hi/writing/:slug/:part" element={<Article />} />
               <Route path="*" element={<Home />} />
             </Routes>
           </Suspense>
