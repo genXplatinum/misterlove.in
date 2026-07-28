@@ -6,9 +6,12 @@
   "description": "Personal portfolio of Lovepreet Singh — ethical hacker, security architect & founder.",
   "scripts": {
     "dev": "vite",
+    "prebuild": "npm run validate:hindi",
     "build": "vite build",
     "postbuild": "node scripts/postbuild.mjs",
     "og": "node scripts/make-og-cards.mjs",
+    "og:hindi": "node scripts/make-og-cards.mjs --hindi-only",
+    "validate:hindi": "node scripts/validate-hindi-writing.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },

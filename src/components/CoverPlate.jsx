@@ -19,7 +19,7 @@ export default function CoverPlate({ piece, className = '' }) {
       </span>
       <span className="cover__rule" aria-hidden="true" />
       <span className="cover__badge mono">
-        {piece.parts} parts · {piece.status}
+        {piece.parts} {piece.language === 'hi' ? 'भाग' : 'parts'} · {piece.status}
       </span>
     </span>
   );

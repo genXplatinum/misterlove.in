@@ -1,24 +1,101 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import Prose from '../components/Prose';
-import { getPiece, contentsOf, isInProgress } from '../data/writing';
+import {
+  getPiece,
+  getPieceForLanguage,
+  contentsOf,
+  isInProgress,
+  writingPathOf,
+} from '../data/writing';
 import { profile } from '../data/site';
 import './Article.css';
 
 const THEME_KEY = 'lws:reader-theme';
 const RAIL_KEY = 'lws:reader-rail';
 
+const COPY = {
+  en: {
+    writing: 'Writing',
+    breadcrumb: 'Breadcrumb',
+    part: 'Part',
+    of: 'of',
+    series: 'Series',
+    author: 'Author',
+    published: 'Published',
+    thisPart: 'This part',
+    minute: 'min',
+    words: 'words',
+    dark: 'Dark reading',
+    light: 'Light reading',
+    showContents: 'Show contents',
+    hideContents: 'Hide contents',
+    contents: 'Contents',
+    inThisPart: 'In this part',
+    allParts: (count) => `All ${count} parts`,
+    loading: (n) => `Loading part ${n}…`,
+    loadFail: 'This part didn’t load.',
+    retry: 'Try again',
+    begins: (n) => `Part ${String(n).padStart(2, '0')} begins`,
+    sources: (n) => `Sources & further reading — Part ${n}`,
+    partsAria: 'Article parts',
+    finished: 'You’ve finished →',
+    backWriting: 'Back to all writing',
+    allPartsHead: 'ALL PARTS',
+    preparing: 'In preparation',
+    allSoFar: 'That’s all so far →',
+    beingWritten: (n, title) => `Part ${String(n).padStart(2, '0')} — ${title} is being written`,
+    download: (piece) => (
+      isInProgress(piece)
+        ? `Download ${piece.pdfLabel ?? 'the PDF'} (${piece.pdfSize})`
+        : `Download all ${piece.parts} parts (PDF, ${piece.pdfSize})`
+    ),
+    switchLabel: 'Reading language',
+    english: 'English',
+    hindi: 'हिन्दी',
+  },
+  hi: {
+    writing: 'लेखन',
+    breadcrumb: 'पृष्ठ क्रम',
+    part: 'भाग',
+    of: '/',
+    series: 'श्रृंखला',
+    author: 'लेखक',
+    published: 'प्रकाशित',
+    thisPart: 'यह भाग',
+    minute: 'मिनट',
+    words: 'शब्द',
+    dark: 'गहरे रंग में पढ़ें',
+    light: 'हल्के रंग में पढ़ें',
+    showContents: 'विषय सूची दिखाएं',
+    hideContents: 'विषय सूची छिपाएं',
+    contents: 'विषय सूची',
+    inThisPart: 'इस भाग में',
+    allParts: (count) => `सभी ${count} भाग`,
+    loading: (n) => `भाग ${n} खुल रहा है…`,
+    loadFail: 'यह भाग नहीं खुल पाया।',
+    retry: 'फिर कोशिश करें',
+    begins: (n) => `भाग ${String(n).padStart(2, '0')} शुरू होता है`,
+    sources: (n) => `स्रोत और आगे की पढ़ाई — भाग ${n}`,
+    partsAria: 'लेख के भाग',
+    finished: 'आपने पूरा पढ़ लिया →',
+    backWriting: 'सभी लेखों पर वापस जाएं',
+    allPartsHead: 'सभी भाग',
+    preparing: 'तैयार हो रहा है',
+    allSoFar: 'अभी तक इतना ही →',
+    beingWritten: (n, title) => `भाग ${String(n).padStart(2, '0')} — ${title} लिखा जा रहा है`,
+    download: (piece) => `मूल अंग्रेज़ी PDF डाउनलोड करें (${piece.pdfSize})`,
+    switchLabel: 'पढ़ने की भाषा',
+    english: 'English',
+    hindi: 'हिन्दी',
+  },
+};
+
 function scrollToTop() {
   if (window.lenis) window.lenis.scrollTo(0, { immediate: true });
   else window.scrollTo(0, 0);
 }
 
-/**
- * Reader theme. Long-form defaults to the light "paper" surface — the site's
- * own light-act tokens — because 25,000 words of obsidian is punishing. The
- * choice is written to the document element so the nav, footer and HUD flip
- * with the article rather than fighting it, and remembered between visits.
- */
 function useReaderTheme() {
   const [theme, setTheme] = useState(() => {
     if (typeof localStorage === 'undefined') return 'light';
@@ -32,10 +109,6 @@ function useReaderTheme() {
     try { localStorage.setItem(THEME_KEY, theme); } catch { /* private mode */ }
 
     return () => {
-      // Always clear rather than restore: the pre-rendered article shells set
-      // data-theme in <head> to avoid a flash, so "what we found" is this
-      // route's own value. Restoring it would leave the shelf and the homepage
-      // stuck on paper after navigating away. Only the reader wants light.
       delete root.dataset.theme;
       document.body.classList.remove('is-reading');
     };
@@ -44,7 +117,6 @@ function useReaderTheme() {
   return [theme, setTheme];
 }
 
-/** Contents rail open/closed, remembered between parts and visits. */
 function useRail() {
   const [open, setOpen] = useState(() => {
     if (typeof localStorage === 'undefined') return true;
@@ -58,87 +130,142 @@ function useRail() {
   return [open, setOpen];
 }
 
-/** Per-part <title>, description and canonical, so each page is its own result. */
-function useArticleMeta(piece, part) {
+/** Per-part metadata, including reciprocal English/Hindi alternate URLs. */
+function useArticleMeta(piece, part, original) {
   useEffect(() => {
-    if (!piece || !part) return;
+    if (!piece || !part) return undefined;
+    const language = piece.language ?? 'en';
     const prevTitle = document.title;
-    document.title = `${part.title} — ${piece.title}: Part ${part.n} of ${piece.parts} | ${profile.name}`;
+    const prevLang = document.documentElement.lang;
+    const path = writingPathOf(piece, part.n);
+    const url = `https://misterlove.in${path}/`;
+    const title = language === 'hi'
+      ? `${part.title} — ${piece.title}: भाग ${part.n}/${piece.parts} | ${profile.name}`
+      : `${part.title} — ${piece.title}: Part ${part.n} of ${piece.parts} | ${profile.name}`;
+    document.title = title;
+    document.documentElement.lang = language;
 
-    // Trailing slash: these routes are pre-rendered as directories, so this is
-    // the form that answers 200 without a redirect. Keep it identical to the
-    // canonical the pre-rendered shell ships (see scripts/postbuild.mjs).
-    const url = `https://misterlove.in/writing/${piece.slug}/part-${part.n}/`;
-    const set = (selector, attr, value) => {
+    const set = (selector, tag, attrs) => {
       let el = document.head.querySelector(selector);
       const created = !el;
       if (!el) {
-        el = document.createElement(selector.startsWith('link') ? 'link' : 'meta');
-        if (selector.includes('canonical')) el.rel = 'canonical';
-        if (selector.includes('name=')) el.name = selector.match(/name="([^"]+)"/)[1];
-        if (selector.includes('property=')) el.setAttribute('property', selector.match(/property="([^"]+)"/)[1]);
+        el = document.createElement(tag);
         document.head.appendChild(el);
       }
-      const prev = el.getAttribute(attr);
-      el.setAttribute(attr, value);
-      return () => { if (created) el.remove(); else if (prev !== null) el.setAttribute(attr, prev); };
+      const previous = Object.fromEntries(
+        Object.keys(attrs).map((name) => [name, el.getAttribute(name)])
+      );
+      Object.entries(attrs).forEach(([name, value]) => el.setAttribute(name, value));
+      return () => {
+        if (created) el.remove();
+        else Object.entries(previous).forEach(([name, value]) => {
+          if (value === null) el.removeAttribute(name);
+          else el.setAttribute(name, value);
+        });
+      };
     };
 
-    // Keeps the tags matching the pre-rendered shell after a client-side
-    // navigation, so anything reading the live DOM sees this part, not the last.
-    const image = `https://misterlove.in/og/${piece.slug}-part-${part.n}.png`;
-    const imageAlt = `${piece.title}, Part ${part.n} of ${piece.parts} — ${part.title}. By ${profile.name}.`;
+    const imageSlug = piece.ogSlug ?? piece.slug;
+    const image = `https://misterlove.in/og/${imageSlug}-part-${part.n}.png`;
+    const imageAlt = language === 'hi'
+      ? `${piece.title}, ${piece.parts} में से भाग ${part.n} — ${part.title}। लेखक: ${profile.name}।`
+      : `${piece.title}, Part ${part.n} of ${piece.parts} — ${part.title}. By ${profile.name}.`;
+
+    document.head
+      .querySelectorAll('link[rel="alternate"][hreflang]')
+      .forEach((link) => link.remove());
+    document.head.querySelector('meta[property="og:locale:alternate"]')?.remove();
 
     const restores = [
-      set('link[rel="canonical"]', 'href', url),
-      set('meta[name="description"]', 'content', part.lead || piece.standfirst),
-      set('meta[property="og:title"]', 'content', `${part.title} — ${piece.title}`),
-      set('meta[property="og:description"]', 'content', part.lead || piece.standfirst),
-      set('meta[property="og:url"]', 'content', url),
-      set('meta[property="og:type"]', 'content', 'article'),
-      set('meta[property="og:image"]', 'content', image),
-      set('meta[property="og:image:secure_url"]', 'content', image),
-      set('meta[property="og:image:alt"]', 'content', imageAlt),
-      set('meta[name="twitter:image"]', 'content', image),
-      set('meta[name="twitter:image:alt"]', 'content', imageAlt),
+      set('link[rel="canonical"]', 'link', { rel: 'canonical', href: url }),
+      set('meta[name="description"]', 'meta', { name: 'description', content: part.lead || piece.standfirst }),
+      set('meta[property="og:title"]', 'meta', { property: 'og:title', content: `${part.title} — ${piece.title}` }),
+      set('meta[property="og:description"]', 'meta', { property: 'og:description', content: part.lead || piece.standfirst }),
+      set('meta[property="og:url"]', 'meta', { property: 'og:url', content: url }),
+      set('meta[property="og:type"]', 'meta', { property: 'og:type', content: 'article' }),
+      set('meta[property="og:locale"]', 'meta', { property: 'og:locale', content: piece.locale ?? 'en_IN' }),
+      set('meta[property="og:image"]', 'meta', { property: 'og:image', content: image }),
+      set('meta[property="og:image:secure_url"]', 'meta', { property: 'og:image:secure_url', content: image }),
+      set('meta[property="og:image:alt"]', 'meta', { property: 'og:image:alt', content: imageAlt }),
+      set('meta[name="twitter:title"]', 'meta', { name: 'twitter:title', content: `${part.title} — ${piece.title}` }),
+      set('meta[name="twitter:description"]', 'meta', { name: 'twitter:description', content: part.lead || piece.standfirst }),
+      set('meta[name="twitter:image"]', 'meta', { name: 'twitter:image', content: image }),
+      set('meta[name="twitter:image:alt"]', 'meta', { name: 'twitter:image:alt', content: imageAlt }),
     ];
 
-    // Per-part Article schema. Each part is its own page with its own
-    // canonical, so it gets its own node linked back to the series and author.
+    if (original?.translations?.hi) {
+      restores.push(
+        set('meta[property="og:locale:alternate"]', 'meta', {
+          property: 'og:locale:alternate',
+          content: language === 'hi' ? 'en_IN' : 'hi_IN',
+        }),
+        set('link[rel="alternate"][hreflang="en"]', 'link', {
+          rel: 'alternate',
+          hreflang: 'en',
+          href: `https://misterlove.in/writing/${piece.slug}/part-${part.n}/`,
+        }),
+        set('link[rel="alternate"][hreflang="hi"]', 'link', {
+          rel: 'alternate',
+          hreflang: 'hi',
+          href: `https://misterlove.in/hi/writing/${piece.slug}/part-${part.n}/`,
+        }),
+        set('link[rel="alternate"][hreflang="x-default"]', 'link', {
+          rel: 'alternate',
+          hreflang: 'x-default',
+          href: `https://misterlove.in/writing/${piece.slug}/part-${part.n}/`,
+        })
+      );
+    }
+
     const ld = document.createElement('script');
     ld.type = 'application/ld+json';
     ld.textContent = JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'Article',
-      headline: `${part.title} — ${piece.title}: Part ${part.n}`,
+      headline: language === 'hi'
+        ? `${part.title} — ${piece.title}: भाग ${part.n}`
+        : `${part.title} — ${piece.title}: Part ${part.n}`,
       description: part.lead || piece.standfirst,
       url,
       mainEntityOfPage: { '@type': 'WebPage', '@id': url },
       datePublished: piece.published,
-      inLanguage: 'en',
+      inLanguage: language,
       wordCount: part.words,
       articleSection: part.label,
       isPartOf: {
         '@type': 'CreativeWorkSeries',
         name: `${piece.title} — ${piece.subtitle}`,
-        url: `https://misterlove.in/writing/${piece.slug}/part-1/`,
+        url: `https://misterlove.in${writingPathOf(piece)}/`,
         numberOfItems: piece.parts,
       },
       author: { '@type': 'Person', '@id': 'https://misterlove.in/#lovepreet-singh', name: profile.name },
       publisher: { '@id': 'https://misterlove.in/#lovepreet-singh' },
-      about: piece.topic.split(' · ').map((t) => ({ '@type': 'Thing', name: t })),
+      about: piece.topic.split(' · ').map((topic) => ({ '@type': 'Thing', name: topic })),
+      ...(language === 'hi' ? {
+        translationOfWork: {
+          '@type': 'Article',
+          inLanguage: 'en',
+          url: `https://misterlove.in/writing/${piece.slug}/part-${part.n}/`,
+        },
+      } : original?.translations?.hi ? {
+        workTranslation: {
+          '@type': 'Article',
+          inLanguage: 'hi',
+          url: `https://misterlove.in/hi/writing/${piece.slug}/part-${part.n}/`,
+        },
+      } : {}),
     });
     document.head.appendChild(ld);
 
     return () => {
       document.title = prevTitle;
-      restores.forEach((r) => r());
+      document.documentElement.lang = prevLang;
+      restores.forEach((restore) => restore());
       ld.remove();
     };
-  }, [piece, part]);
+  }, [piece, part, original]);
 }
 
-/** Fraction of the article body scrolled past — drives the reading meter. */
 function useReadingProgress(ref) {
   const [progress, setProgress] = useState(0);
 
@@ -149,7 +276,7 @@ function useReadingProgress(ref) {
       const start = el.offsetTop;
       const span = el.offsetHeight - window.innerHeight * 0.75;
       if (span <= 0) return setProgress(1);
-      setProgress(Math.min(1, Math.max(0, (window.scrollY - start) / span)));
+      return setProgress(Math.min(1, Math.max(0, (window.scrollY - start) / span)));
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -163,22 +290,21 @@ function useReadingProgress(ref) {
   return progress;
 }
 
-/** Highlights the section currently being read in the contents rail. */
 function useActiveSection(toc, deps) {
   const [active, setActive] = useState('');
 
   useEffect(() => {
-    if (!toc.length) return;
-    const els = toc.map((t) => document.getElementById(t.id)).filter(Boolean);
-    if (!els.length) return;
-    const io = new IntersectionObserver(
+    if (!toc.length) return undefined;
+    const elements = toc.map((entry) => document.getElementById(entry.id)).filter(Boolean);
+    if (!elements.length) return undefined;
+    const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.id); });
+        entries.forEach((entry) => { if (entry.isIntersecting) setActive(entry.target.id); });
       },
       { rootMargin: '-12% 0px -70% 0px' }
     );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    elements.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
@@ -187,7 +313,11 @@ function useActiveSection(toc, deps) {
 
 export default function Article() {
   const { slug, part: partParam } = useParams();
-  const piece = getPiece(slug);
+  const { pathname } = useLocation();
+  const language = pathname.startsWith('/hi/') ? 'hi' : 'en';
+  const original = getPiece(slug);
+  const piece = useMemo(() => getPieceForLanguage(slug, language), [slug, language]);
+  const copy = COPY[language];
 
   const [parts, setParts] = useState(null);
   const [loadError, setLoadError] = useState(false);
@@ -195,18 +325,16 @@ export default function Article() {
   const [railOpen, setRailOpen] = useRail();
   const bodyRef = useRef(null);
 
-  // URLs read /writing/<slug>/part-3; the router hands us the whole segment.
   const n = partParam ? Number(String(partParam).replace(/^part-/, '')) : 1;
   const valid = Number.isInteger(n) && n >= 1 && piece && n <= piece.parts;
 
-  // The prose is ~240 KB of data — code-split so it is only fetched by
-  // readers who actually open the piece, never by the homepage.
   useEffect(() => {
-    if (!piece) return;
+    if (!piece) return undefined;
     let alive = true;
-    piece
-      .load()
-      .then((m) => { if (alive) setParts(m.default); })
+    setParts(null);
+    setLoadError(false);
+    piece.load()
+      .then((module) => { if (alive) setParts(module.default); })
       .catch(() => { if (alive) setLoadError(true); });
     return () => { alive = false; };
   }, [piece]);
@@ -215,66 +343,89 @@ export default function Article() {
   const toc = useMemo(() => part?.toc ?? [], [part]);
   const progress = useReadingProgress(bodyRef);
   const active = useActiveSection(toc, [toc]);
-  useArticleMeta(piece, part);
+  useArticleMeta(piece, part, original);
 
-  useEffect(() => { scrollToTop(); }, [n, slug]);
+  useEffect(() => { scrollToTop(); }, [n, slug, language]);
 
-  if (!piece) return <Navigate to="/writing" replace />;
-  if (!valid) return <Navigate to={`/writing/${slug}/part-1`} replace />;
-  // A serialised piece announces all its parts before they are written. The
-  // route only exists once the prose does, so send anyone who guesses a URL
-  // (or follows a stale link) back to part one rather than to a blank reader.
-  if (parts && !parts[n - 1]) return <Navigate to={`/writing/${slug}/part-1`} replace />;
+  if (!original) return <Navigate to="/writing" replace />;
+  if (!piece) return <Navigate to={`/writing/${slug}/part-${n || 1}`} replace />;
 
-  const base = `/writing/${piece.slug}`;
+  const base = writingPathOf(piece);
+  if (!valid) return <Navigate to={`${base}/part-1`} replace />;
+  if (parts && !parts[n - 1]) return <Navigate to={`${base}/part-1`} replace />;
+
   const prev = n > 1 ? n - 1 : null;
   const next = parts && n < parts.length ? n + 1 : null;
   const contents = contentsOf(piece, parts);
+  const hasHindi = Boolean(original.translations?.hi);
 
-  const goSection = (e, id) => {
-    e.preventDefault();
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (window.lenis) window.lenis.scrollTo(el, { offset: -100, duration: 1.1 });
-    else el.scrollIntoView({ behavior: 'smooth' });
+  const goSection = (event, id) => {
+    event.preventDefault();
+    const element = document.getElementById(id);
+    if (!element) return;
+    if (window.lenis) window.lenis.scrollTo(element, { offset: -100, duration: 1.1 });
+    else element.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <article className="article">
+    <article
+      className={`article ${language === 'hi' ? 'article--hi' : ''}`}
+      lang={language}
+    >
       <div className="article__meter" aria-hidden="true">
         <span className="article__meter-fill" style={{ transform: `scaleX(${progress})` }} />
       </div>
 
-      {/* Edge tab to bring the collapsed rail back. Rendered only when the rail
-          is hidden, and only shown at the widths where the rail exists at all. */}
       {!railOpen && (
         <button
           type="button"
           className="article__rail-reopen"
           onClick={() => setRailOpen(true)}
-          aria-label="Show contents"
+          aria-label={copy.showContents}
           aria-expanded="false"
           aria-controls="article-rail"
           data-cursor
         >
           <span className="article__rail-chev is-flipped" aria-hidden="true" />
-          <span className="mono">Contents</span>
+          <span className="mono">{copy.contents}</span>
         </button>
       )}
 
-      {/* ---------- Masthead ---------- */}
       <header className="article__head">
         <div className="container">
-          <nav className="article__crumbs" aria-label="Breadcrumb">
-            <Link to="/writing" className="article__crumb" data-cursor>Writing</Link>
-            <span className="article__crumb-sep" aria-hidden="true">/</span>
-            <Link to={base} className="article__crumb" data-cursor>{piece.title}</Link>
-          </nav>
+          <div className="article__navrow">
+            <nav className="article__crumbs" aria-label={copy.breadcrumb}>
+              <Link to="/writing" className="article__crumb" data-cursor>{copy.writing}</Link>
+              <span className="article__crumb-sep" aria-hidden="true">/</span>
+              <Link to={base} className="article__crumb" data-cursor>{piece.title}</Link>
+            </nav>
+
+            {hasHindi && (
+              <nav className="language-switch" aria-label={copy.switchLabel}>
+                <Link
+                  to={`/writing/${piece.slug}/part-${n}`}
+                  className={language === 'en' ? 'is-active' : ''}
+                  aria-current={language === 'en' ? 'page' : undefined}
+                  data-cursor
+                >
+                  {copy.english}
+                </Link>
+                <Link
+                  to={`/hi/writing/${piece.slug}/part-${n}`}
+                  className={language === 'hi' ? 'is-active' : ''}
+                  aria-current={language === 'hi' ? 'page' : undefined}
+                  data-cursor
+                >
+                  {copy.hindi}
+                </Link>
+              </nav>
+            )}
+          </div>
 
           <div className="article__head-grid">
             <div className="article__head-main">
               <span className="article__partno mono">
-                Part {String(n).padStart(2, '0')} <span className="dim">of {piece.parts}</span>
+                {copy.part} {String(n).padStart(2, '0')} <span className="dim">{copy.of} {piece.parts}</span>
                 <span className="article__partlabel">{part?.label}</span>
               </span>
               <h1 className="article__title">{part ? part.title : piece.title}</h1>
@@ -283,10 +434,15 @@ export default function Article() {
 
             <aside className="article__head-aside">
               <dl className="article__facts">
-                <div><dt className="mono">Series</dt><dd>{piece.title} — {piece.subtitle}</dd></div>
-                <div><dt className="mono">Author</dt><dd>{profile.name}</dd></div>
-                <div><dt className="mono">Published</dt><dd>{piece.displayDate}</dd></div>
-                {part && <div><dt className="mono">This part</dt><dd>{part.minutes} min · {part.words.toLocaleString('en-IN')} words</dd></div>}
+                <div><dt className="mono">{copy.series}</dt><dd>{piece.title} — {piece.subtitle}</dd></div>
+                <div><dt className="mono">{copy.author}</dt><dd>{profile.name}</dd></div>
+                <div><dt className="mono">{copy.published}</dt><dd>{piece.displayDate}</dd></div>
+                {part && (
+                  <div>
+                    <dt className="mono">{copy.thisPart}</dt>
+                    <dd>{part.minutes} {copy.minute} · {part.words.toLocaleString('en-IN')} {copy.words}</dd>
+                  </div>
+                )}
               </dl>
               <button
                 type="button"
@@ -294,7 +450,7 @@ export default function Article() {
                 onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
                 data-cursor
               >
-                <span className="mono">{theme === 'light' ? 'Dark' : 'Light'} reading</span>
+                <span className="mono">{theme === 'light' ? copy.dark : copy.light}</span>
                 <span className={`article__themedot ${theme === 'dark' ? 'is-dark' : ''}`} aria-hidden="true" />
               </button>
             </aside>
@@ -302,20 +458,17 @@ export default function Article() {
         </div>
       </header>
 
-      {/* ---------- Body ---------- */}
       <div className="container">
         <div className={`article__body ${railOpen ? '' : 'is-rail-closed'}`} ref={bodyRef}>
-          {/* Contents rail — collapsible, so the reader can give the prose the
-              full width of the screen. State persists across parts and visits. */}
           <aside className="article__rail" id="article-rail" hidden={!railOpen}>
             <div className="article__rail-inner">
               <div className="article__rail-head">
-                <span className="mono article__rail-title">In this part</span>
+                <span className="mono article__rail-title">{copy.inThisPart}</span>
                 <button
                   type="button"
                   className="article__rail-btn"
                   onClick={() => setRailOpen(false)}
-                  aria-label="Hide contents"
+                  aria-label={copy.hideContents}
                   aria-expanded="true"
                   aria-controls="article-rail"
                   data-cursor
@@ -324,70 +477,66 @@ export default function Article() {
                 </button>
               </div>
               <ol className="article__toc">
-                {toc.map((t) => (
-                  <li key={t.id}>
+                {toc.map((entry) => (
+                  <li key={entry.id}>
                     <a
-                      href={`#${t.id}`}
-                      onClick={(e) => goSection(e, t.id)}
-                      className={`article__toc-link ${active === t.id ? 'is-active' : ''}`}
+                      href={`#${entry.id}`}
+                      onClick={(event) => goSection(event, entry.id)}
+                      className={`article__toc-link ${active === entry.id ? 'is-active' : ''}`}
                     >
-                      <span className="article__toc-n mono">{t.num}</span>
-                      <span>{t.text}</span>
+                      <span className="article__toc-n mono">{entry.num}</span>
+                      <span>{entry.text}</span>
                     </a>
                   </li>
                 ))}
               </ol>
 
-              <span className="mono article__rail-title article__rail-title--sub">All {piece.parts} parts</span>
+              <span className="mono article__rail-title article__rail-title--sub">
+                {copy.allParts(piece.parts)}
+              </span>
               <div className="article__pips">
-                {contents.map((p) => (p.live ? (
+                {contents.map((entry) => (entry.live ? (
                   <Link
-                    key={p.n}
-                    to={`${base}/part-${p.n}`}
-                    className={`article__pip ${p.n === n ? 'is-current' : ''}`}
-                    title={`Part ${p.n} — ${p.title}`}
-                    aria-current={p.n === n ? 'page' : undefined}
+                    key={entry.n}
+                    to={`${base}/part-${entry.n}`}
+                    className={`article__pip ${entry.n === n ? 'is-current' : ''}`}
+                    title={`${copy.part} ${entry.n} — ${entry.title}`}
+                    aria-current={entry.n === n ? 'page' : undefined}
                     data-cursor
                   >
-                    {p.n}
+                    {entry.n}
                   </Link>
                 ) : (
                   <span
-                    key={p.n}
+                    key={entry.n}
                     className="article__pip is-soon"
-                    title={`Part ${p.n} — ${p.title} (in preparation)`}
+                    title={`${copy.part} ${entry.n} — ${entry.title} (${copy.preparing})`}
                   >
-                    {p.n}
+                    {entry.n}
                   </span>
                 )))}
               </div>
             </div>
           </aside>
 
-          {/* Prose column */}
           <div className="article__col">
-            {!parts && !loadError && (
-              <p className="article__loading mono">Loading part {n}…</p>
-            )}
+            {!parts && !loadError && <p className="article__loading mono">{copy.loading(n)}</p>}
             {loadError && (
               <p className="article__loading">
-                This part didn’t load. <button type="button" className="link" onClick={() => window.location.reload()}>Try again</button>
+                {copy.loadFail}{' '}
+                <button type="button" className="link" onClick={() => window.location.reload()}>
+                  {copy.retry}
+                </button>
               </p>
             )}
 
             {part?.prologue && (
               <section className="article__prologue">
-                {part.prologueTitle && (
-                  <h2 className="article__prologue-head">{part.prologueTitle}</h2>
-                )}
-                {part.prologueTag && (
-                  <p className="mono article__prologue-tag">{part.prologueTag}</p>
-                )}
+                {part.prologueTitle && <h2 className="article__prologue-head">{part.prologueTitle}</h2>}
+                {part.prologueTag && <p className="mono article__prologue-tag">{part.prologueTag}</p>}
                 <Prose html={part.prologue} dark={theme === 'dark'} />
                 <div className="article__prologue-rule" aria-hidden="true" />
-                <span className="mono article__prologue-next">
-                  Part {String(n).padStart(2, '0')} begins
-                </span>
+                <span className="mono article__prologue-next">{copy.begins(n)}</span>
               </section>
             )}
 
@@ -396,38 +545,37 @@ export default function Article() {
             {part?.sources && (
               <details className="article__sources">
                 <summary data-cursor>
-                  <span className="mono">Sources &amp; further reading — Part {n}</span>
+                  <span className="mono">{copy.sources(n)}</span>
                   <span className="article__sources-icon" aria-hidden="true" />
                 </summary>
                 <Prose html={part.sources} className="prose--sources" dark={theme === 'dark'} />
               </details>
             )}
 
-            {/* Prev / next */}
             {part && (
-              <nav className="article__pager" aria-label="Article parts">
+              <nav className="article__pager" aria-label={copy.partsAria}>
                 {prev ? (
                   <Link to={`${base}/part-${prev}`} className="article__pager-link article__pager-link--prev" data-cursor>
-                    <span className="mono">← Part {String(prev).padStart(2, '0')}</span>
+                    <span className="mono">← {copy.part} {String(prev).padStart(2, '0')}</span>
                     <span className="article__pager-title">{parts[prev - 1].title}</span>
                   </Link>
                 ) : <span />}
                 {next ? (
                   <Link to={`${base}/part-${next}`} className="article__pager-link article__pager-link--next" data-cursor>
-                    <span className="mono">Part {String(next).padStart(2, '0')} →</span>
+                    <span className="mono">{copy.part} {String(next).padStart(2, '0')} →</span>
                     <span className="article__pager-title">{parts[next - 1].title}</span>
                   </Link>
                 ) : isInProgress(piece) ? (
                   <Link to={base} className="article__pager-link article__pager-link--next" data-cursor>
-                    <span className="mono">That’s all so far →</span>
+                    <span className="mono">{copy.allSoFar}</span>
                     <span className="article__pager-title">
-                      Part {String(n + 1).padStart(2, '0')} — {contents[n]?.title} is being written
+                      {copy.beingWritten(n + 1, contents[n]?.title)}
                     </span>
                   </Link>
                 ) : (
                   <Link to="/writing" className="article__pager-link article__pager-link--next" data-cursor>
-                    <span className="mono">You’ve finished →</span>
-                    <span className="article__pager-title">Back to all writing</span>
+                    <span className="mono">{copy.finished}</span>
+                    <span className="article__pager-title">{copy.backWriting}</span>
                   </Link>
                 )}
               </nav>
@@ -436,39 +584,41 @@ export default function Article() {
         </div>
       </div>
 
-      {/* ---------- Full contents ---------- */}
       {parts && (
         <section className="article__contents">
           <div className="container">
             <div className="section-head">
               <span className="mono">
-                <span className="section-head__id">ALL PARTS</span>&nbsp;&nbsp;/&nbsp;&nbsp;{piece.title} — {piece.subtitle}
+                <span className="section-head__id">{copy.allPartsHead}</span>&nbsp;&nbsp;/&nbsp;&nbsp;
+                {piece.title} — {piece.subtitle}
               </span>
-              <span className="mono hide-sm">{piece.words.toLocaleString('en-IN')} WORDS</span>
+              <span className="mono hide-sm">
+                {piece.words.toLocaleString('en-IN')} {copy.words}
+              </span>
             </div>
 
             <ol className="article__contents-list">
-              {contents.map((p) => {
+              {contents.map((entry) => {
                 const inner = (
                   <>
-                    <span className="article__entry-n mono">{String(p.n).padStart(2, '0')}</span>
+                    <span className="article__entry-n mono">{String(entry.n).padStart(2, '0')}</span>
                     <span className="article__entry-body">
-                      <span className="article__entry-label mono">{p.label}</span>
-                      <span className="article__entry-title">{p.title}</span>
-                      <span className="article__entry-lead">{p.lead}</span>
+                      <span className="article__entry-label mono">{entry.label}</span>
+                      <span className="article__entry-title">{entry.title}</span>
+                      <span className="article__entry-lead">{entry.lead}</span>
                     </span>
                     <span className="article__entry-meta mono">
-                      {p.live ? `${p.minutes} min` : 'In preparation'}
+                      {entry.live ? `${entry.minutes} ${copy.minute}` : copy.preparing}
                     </span>
                   </>
                 );
 
                 return (
-                  <li key={p.n}>
-                    {p.live ? (
+                  <li key={entry.n}>
+                    {entry.live ? (
                       <Link
-                        to={`${base}/part-${p.n}`}
-                        className={`article__entry ${p.n === n ? 'is-current' : ''}`}
+                        to={`${base}/part-${entry.n}`}
+                        className={`article__entry ${entry.n === n ? 'is-current' : ''}`}
                         data-cursor
                       >
                         {inner}
@@ -488,10 +638,7 @@ export default function Article() {
                 download
                 data-cursor
               >
-                {isInProgress(piece)
-                  ? `Download ${piece.pdfLabel ?? 'the PDF'} (${piece.pdfSize})`
-                  : `Download all ${piece.parts} parts (PDF, ${piece.pdfSize})`}
-                {' '}<span className="btn__dot" />
+                {copy.download(piece)} <span className="btn__dot" />
               </a>
             </div>
           </div>

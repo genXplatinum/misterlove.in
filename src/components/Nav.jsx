@@ -81,7 +81,11 @@ export default function Nav() {
     return () => cancelAnimationFrame(id);
   }, [isHome, state]);
 
-  const isActive = (n) => (n.route ? pathname.startsWith(n.to) : active === n.to);
+  const isActive = (n) => (
+    n.route
+      ? pathname.startsWith(n.to) || (n.to === '/writing' && pathname.startsWith('/hi/writing'))
+      : active === n.to
+  );
 
   const renderLink = (n, className, extra = {}) =>
     n.route ? (
