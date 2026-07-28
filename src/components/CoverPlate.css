@@ -53,6 +53,16 @@
   --cover-kick: #f5c98d;
   --cover-sub: #c3cee0;
 }
+/* Cool and unheated on purpose — the one subject on the shelf where a warm,
+   partisan register would read as taking a side before the first page. */
+.cover--quartz {
+  background:
+    radial-gradient(120% 90% at 79% 7%, rgba(87, 201, 189, 0.17), transparent 61%),
+    linear-gradient(158deg, #0c1417 0%, #12262c 47%, #1b3a42 100%);
+  --cover-gold: #5ec8bb;
+  --cover-kick: #a8ece3;
+  --cover-sub: #c0d6da;
+}
 
 .cover__kicker {
   color: var(--cover-kick);

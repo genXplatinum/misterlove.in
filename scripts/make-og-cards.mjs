@@ -21,7 +21,7 @@
  */
 import { Resvg } from '@resvg/resvg-js';
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { pieces, writingMeta, writingTotals } from '../src/data/writing.js';
+import { pieces, writingMeta, writingTotals, livePartsOf, isInProgress } from '../src/data/writing.js';
 
 const W = 1200;
 const H = 630;
@@ -106,6 +106,7 @@ const PALETTES = {
   harvest: { a: '#16301f', b: '#1e4429', c: '#29583a', lift: '#78be8c', gold: '#f2c14e', kick: '#ffe6a3', sub: '#cfe6d6', ink: '#22331f', foot: '#bcd6c5', mark: '#9dc0a8' },
   ember:   { a: '#17131b', b: '#2a1e26', c: '#3d2a2a', lift: '#d69652', gold: '#d59a4e', kick: '#f0cf9d', sub: '#d9c7bb', ink: '#221b18', foot: '#cbb8a8', mark: '#bfa88f' },
   ink:     { a: '#0f1520', b: '#1a2438', c: '#26324a', lift: '#e0873a', gold: '#e0873a', kick: '#f5c98d', sub: '#c3cee0', ink: '#1b1408', foot: '#aebbd0', mark: '#93a3bd' },
+  quartz:  { a: '#0c1417', b: '#12262c', c: '#1b3a42', lift: '#57c9bd', gold: '#5ec8bb', kick: '#a8ece3', sub: '#c0d6da', ink: '#08211f', foot: '#a5bcc0', mark: '#86a4a9' },
   // The shelf belongs to the site, not to any one piece — so it wears the
   // site's own obsidian/cobalt rather than a book's register. It also stays
   // correct as pieces are added, which a borrowed cover would not.
@@ -267,9 +268,14 @@ function shelfCard() {
       const tone = (PALETTES[piece.accent] ?? PALETTES.harvest).gold;
       const y = listTop + i * rowH;
       const name = clampLines(piece.title, 27, 380, 1)[0];
+      // A serialised piece says how far it has got, so the card never claims
+      // fifteen parts are waiting when one is.
+      const size = isInProgress(piece)
+        ? `${livePartsOf(piece)} of ${piece.parts} parts · ${piece.words.toLocaleString('en-IN')} words`
+        : `${piece.parts} parts · ${piece.words.toLocaleString('en-IN')} words`;
       return `  <rect x="${COL}" y="${y - 20}" width="4" height="26" fill="${tone}"/>
   <text class="d" x="${COL + 20}" y="${y}" fill="#eaeef7" font-size="27" font-weight="500" letter-spacing="-0.5">${esc(name)}</text>
-  <text class="m" x="${COL + 20}" y="${y + 27}" fill="${p.foot}" font-size="17" letter-spacing="1">${piece.parts} parts · ${piece.words.toLocaleString('en-IN')} words</text>`;
+  <text class="m" x="${COL + 20}" y="${y + 27}" fill="${p.foot}" font-size="17" letter-spacing="1">${size}</text>`;
     })
     .join('\n');
 
@@ -334,7 +340,7 @@ for (const piece of pieces) {
       title: piece.title,
       sub: piece.subtitle,
       standfirst: piece.standfirst,
-      badge: `${piece.parts} PARTS`,
+      badge: isInProgress(piece) ? `${parts.length} OF ${piece.parts} PARTS LIVE` : `${piece.parts} PARTS`,
       byline: 'Written & researched by Lovepreet Singh',
       accent: piece.accent,
     }),

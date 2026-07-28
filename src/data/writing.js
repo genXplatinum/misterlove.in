@@ -16,6 +16,65 @@ export const writingMeta = {
 
 export const pieces = [
   {
+    slug: 'patriarchy-feminism',
+    kicker: 'An evidence-led, all-sides report',
+    title: 'Patriarchy & Feminism',
+    subtitle: 'And the Arguments Between Them',
+    standfirst:
+      'A fifteen-part deep dive into the argument about men and women — every position stated in its own words, every factual claim footnoted, and the value questions left to you.',
+    summary:
+      'I did not set out to write fifteen volumes. I set out to settle an argument I kept losing — not losing on the evidence, but losing in the sense that it never ended, and neither side, including mine, ever seemed to be talking about the same thing as the other. Patriarchy against matriarchy. Whether the pay gap is real. Whether a woman’s clothing is her business alone. Whether men are the oppressed sex now, or were never oppressed at all. What eventually struck me was that most of these fights are not about facts at all. They are three different arguments wearing one costume: a factual dispute, a dispute about what a word means, and a dispute about what ought to matter. Nobody says which one they are having. So the conversation cannot end.',
+    topic: 'Gender · Society · India',
+    keywords: [
+      'patriarchy', 'feminism', 'gender equality', 'sex and gender', 'matriarchy',
+      'feminist waves', 'men’s rights', 'MGTOW', 'incels', 'gender pay gap',
+      'equality of opportunity', 'gender-equality paradox', 'India gender debate',
+      'Brahmanical patriarchy', 'fact check gender claims',
+    ],
+    published: '2026-07-27',
+    displayDate: 'July 2026',
+    // The series as planned. `live` is what is actually published — the sitemap,
+    // share cards, RSS and pager all follow the data file, never this number.
+    parts: 15,
+    live: 1,
+    words: 32616,
+    minutes: 148,
+    status: 'In progress',
+    accent: 'quartz',
+    pdf: 'patriarchy-and-feminism-part-1.pdf',
+    pdfSize: '582 KB',
+    pdfLabel: 'Part 1 PDF',
+    principlesTitle: '// The four commitments the whole series follows',
+    principles: [
+      { n: '01', t: 'Loaded questions get answered, not dodged', d: 'Where a claim is well supported, this says so. Where it is false as stated, it says that too — with equal force on both sides.' },
+      { n: '02', t: 'Value questions are labelled as value questions', d: 'Some disputes no amount of data settles. Those get the strongest version of each position, and no verdict smuggled in.' },
+      { n: '03', t: 'Everything factual is footnoted', d: 'Named studies, years, effect sizes, statutes, judgments. Where sources disagree, the disagreement is reported rather than resolved.' },
+      { n: '04', t: 'India is in focus, not a footnote', d: 'Indian law, data and debate treated in depth; the US, Europe, the Nordics, East Asia and the Middle East supply the comparison.' },
+    ],
+    /* The author's own printed index, from the "fifteen parts" table in Part 1.
+       Published parts come from the data file; everything else shows here as
+       announced-but-unwritten, so the shape of the series is visible from day
+       one and a part landing later changes nothing but the data. */
+    outline: [
+      { n: 1, label: 'Definitions & Method', title: 'The Ground Rules', blurb: 'Definitions, the map of every position, and the reasoning failures.' },
+      { n: 2, label: 'Why It Began', title: 'Origins', blurb: 'Why nearly every society became patriarchal; whether any matriarchy has existed.' },
+      { n: 3, label: 'Religion I', title: 'Dharmic Traditions', blurb: 'Hindu, Buddhist, Jain and Sikh texts, practice, caste, and reform.' },
+      { n: 4, label: 'Religion II', title: 'Christianity', blurb: 'Scripture, church history, the modern complementarian–egalitarian split.' },
+      { n: 5, label: 'Religion III', title: 'Islam', blurb: 'Qur’an, hadith, the schools of law, and why outcomes differ so wildly by country.' },
+      { n: 6, label: 'Religion IV', title: 'Judaism, East Asia, Indigenous & Colonialism', blurb: 'Halakhah, Confucian norms, pre-colonial gender, and what colonial rule did.' },
+      { n: 7, label: 'Bodies & Minds', title: 'The Science', blurb: 'How different are men and women really — bodies, minds, interests.' },
+      { n: 8, label: 'India I', title: 'India I: Law', blurb: 'Personal law, the Constitution, dowry law, marital rape, the courts.' },
+      { n: 9, label: 'India II', title: 'India II: Society', blurb: 'Sex ratio, work, caste, violence, and the data.' },
+      { n: 10, label: 'Pay & Work', title: 'Work and Money', blurb: 'The pay gap, the child penalty, hours, and who does what.' },
+      { n: 11, label: 'Dress & Consent', title: 'Bodies and Consent', blurb: 'Dress, sexual attention, pornography, sex work, false accusation.' },
+      { n: 12, label: 'The Male Ledger', title: 'Where Men Are Losing', blurb: 'Education, suicide, custody, conscription, sentencing, loneliness.' },
+      { n: 13, label: 'Quotas & Privilege', title: 'Quotas and the Global Ledger', blurb: 'Reservation, boards, privilege claims — and where women remain unequal.' },
+      { n: 14, label: 'The Specialists', title: 'The Expert Map', blurb: 'What professionals in each field actually say, and where they split.' },
+      { n: 15, label: 'The Verdict', title: 'The Internet War & Verdict', blurb: 'The online gender conflict, direct answers, and the balance sheet.' },
+    ],
+    load: () => import('./writing/patriarchy-feminism.js'),
+  },
+  {
     slug: 'independence',
     kicker: 'A fact-tested history',
     title: 'How India Became Free',
@@ -111,9 +170,39 @@ export const pieces = [
 
 export const getPiece = (slug) => pieces.find((p) => p.slug === slug);
 
-/** Totals for the index header. */
+/**
+ * Parts actually published. A finished piece omits `live`, so this is just its
+ * part count; a serialised one declares how far it has got. Everything that
+ * makes a promise to a reader or a crawler — totals, the sitemap, RSS, share
+ * cards — counts these, never the planned total.
+ */
+export const livePartsOf = (p) => p.live ?? p.parts;
+
+/** Whether a piece is still being written. */
+export const isInProgress = (p) => livePartsOf(p) < p.parts;
+
+/**
+ * The full contents of a piece: its published parts, plus any announced-but-
+ * unwritten ones from the manifest outline. Given the loaded data file, the
+ * written part always wins — the outline only fills the gap after it.
+ */
+export const contentsOf = (piece, parts) => {
+  const written = new Map((parts ?? []).map((p) => [p.n, p]));
+  const planned = piece.outline ?? [];
+  const total = Math.max(piece.parts, written.size, ...planned.map((o) => o.n), 0);
+
+  return Array.from({ length: total }, (_, i) => {
+    const n = i + 1;
+    const part = written.get(n);
+    if (part) return { ...part, n, live: true };
+    const o = planned.find((x) => x.n === n);
+    return { n, live: false, label: o?.label ?? '', title: o?.title ?? `Part ${n}`, lead: o?.blurb ?? '' };
+  });
+};
+
+/** Totals for the index header — published work only. */
 export const writingTotals = {
   pieces: pieces.length,
-  parts: pieces.reduce((a, p) => a + p.parts, 0),
+  parts: pieces.reduce((a, p) => a + livePartsOf(p), 0),
   words: pieces.reduce((a, p) => a + p.words, 0),
 };

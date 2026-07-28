@@ -5,13 +5,22 @@
 //   - sitemap.xml is generated from the writing manifest, so adding a piece or a
 //     part can't leave the sitemap silently stale
 import { copyFileSync, writeFileSync, mkdirSync, readFileSync, readdirSync } from 'node:fs';
-import { pieces, writingMeta, writingTotals } from '../src/data/writing.js';
+import { pieces, writingMeta, writingTotals, contentsOf, isInProgress } from '../src/data/writing.js';
 
 const SITE = 'https://misterlove.in';
 const today = new Date().toISOString().slice(0, 10);
 
 copyFileSync('dist/index.html', 'dist/404.html');
 writeFileSync('dist/.nojekyll', '');
+
+/* Every route below is driven by the parts that actually exist in the data
+   files, never by a piece's planned part count. A serialised piece announces
+   fifteen parts long before it has written them, and a sitemap that promised
+   the other fourteen would be fourteen 404s handed straight to Google. */
+const loaded = [];
+for (const piece of pieces) {
+  loaded.push({ piece, parts: (await piece.load()).default });
+}
 
 const url = ({ loc, lastmod, changefreq, priority, image }) => `  <url>
     <loc>${loc}</loc>
@@ -51,7 +60,7 @@ const urls = [
   }),
 ];
 
-for (const piece of pieces) {
+for (const { piece, parts } of loaded) {
   // The topic page is the piece's front door — what /writing links to and what
   // someone sharing "this research" would send.
   urls.push(
@@ -67,14 +76,14 @@ for (const piece of pieces) {
     })
   );
 
-  for (let n = 1; n <= piece.parts; n++) {
+  for (const part of parts) {
     urls.push(
       url({
-        loc: `${SITE}/writing/${piece.slug}/part-${n}/`,
+        loc: `${SITE}/writing/${piece.slug}/part-${part.n}/`,
         lastmod: piece.published,
         changefreq: 'yearly',
         // Part 1 is the entry point readers should land on from search.
-        priority: n === 1 ? '0.8' : '0.7',
+        priority: part.n === 1 ? '0.8' : '0.7',
       })
     );
   }
@@ -152,7 +161,7 @@ const crumbs = (trail) =>
     )
     .join('')}</nav>`;
 
-function articleBody(piece, part) {
+function articleBody(piece, part, live) {
   const base = `/writing/${piece.slug}`;
   return `<main id="main"><article class="article">
   <header class="article__head"><div class="container">
@@ -173,7 +182,7 @@ function articleBody(piece, part) {
     ${part.sources ? `<section class="article__sources" open><p class="mono">Sources &amp; further reading — Part ${part.n}</p><div class="prose prose--sources">${part.sources}</div></section>` : ''}
     <nav class="article__pager" aria-label="Article parts">
       ${part.n > 1 ? `<a class="article__pager-link article__pager-link--prev" href="${base}/part-${part.n - 1}/"><span class="mono">← Part ${String(part.n - 1).padStart(2, '0')}</span></a>` : '<span></span>'}
-      ${part.n < piece.parts ? `<a class="article__pager-link article__pager-link--next" href="${base}/part-${part.n + 1}/"><span class="mono">Part ${String(part.n + 1).padStart(2, '0')} →</span></a>` : `<a class="article__pager-link article__pager-link--next" href="/writing/"><span class="mono">Back to all writing →</span></a>`}
+      ${part.n < live ? `<a class="article__pager-link article__pager-link--next" href="${base}/part-${part.n + 1}/"><span class="mono">Part ${String(part.n + 1).padStart(2, '0')} →</span></a>` : `<a class="article__pager-link article__pager-link--next" href="${isInProgress(piece) ? `${base}/` : '/writing/'}"><span class="mono">${isInProgress(piece) ? 'All parts →' : 'Back to all writing →'}</span></a>`}
     </nav>
   </div></div></div>
 </article></main>`;
@@ -181,17 +190,29 @@ function articleBody(piece, part) {
 
 function topicBody(piece, parts) {
   const base = `/writing/${piece.slug}`;
+  // The whole announced series, not just what is written: a crawler that sees
+  // the shape of the work indexes the topic page for the subjects still to
+  // come, and the unwritten rows are plain markup with no href to follow.
+  const contents = contentsOf(piece, parts);
+  const count = isInProgress(piece)
+    ? `${parts.length} of ${piece.parts} parts published`
+    : `${piece.parts} parts`;
+
+  const row = (p) => `<span class="partrow__n mono">${String(p.n).padStart(2, '0')}</span><span class="partrow__body"><span class="partrow__label mono">${esc(p.label)}</span><span class="partrow__title">${esc(p.title)}</span><span class="partrow__lead">${esc(p.lead)}</span></span><span class="partrow__meta mono">${p.live ? `${p.minutes} min` : 'In preparation'}</span>`;
+
   return `<main id="main"><div class="topicpage"><div class="container">
   ${crumbs([{ name: 'Writing', href: '/writing/' }, { name: piece.title }])}
   <h1 class="topic__title">${esc(piece.title)} — ${esc(piece.subtitle)}</h1>
   <p class="topicpage__stand">${esc(piece.standfirst)}</p>
   <p class="topicpage__summary">${esc(piece.summary)}</p>
-  <p class="mono">${piece.parts} parts · ${piece.words.toLocaleString('en-IN')} words · ${esc(piece.displayDate)} · by Lovepreet Singh</p>
+  <p class="mono">${count} · ${piece.words.toLocaleString('en-IN')} words · ${esc(piece.displayDate)} · by Lovepreet Singh</p>
   <h2>Contents</h2>
-  <ol class="feature__parts">${parts
-    .map((p) => `<li><a class="partrow" href="${base}/part-${p.n}/"><span class="partrow__n mono">${String(p.n).padStart(2, '0')}</span><span class="partrow__body"><span class="partrow__label mono">${esc(p.label)}</span><span class="partrow__title">${esc(p.title)}</span><span class="partrow__lead">${esc(p.lead)}</span></span></a></li>`)
+  <ol class="feature__parts">${contents
+    .map((p) => `<li>${p.live
+      ? `<a class="partrow" href="${base}/part-${p.n}/">${row(p)}</a>`
+      : `<span class="partrow partrow--soon">${row(p)}</span>`}</li>`)
     .join('')}</ol>
-  <p><a class="btn btn--ghost" href="/${piece.pdf}" download>Download the full PDF · ${piece.pdfSize}</a></p>
+  <p><a class="btn btn--ghost" href="/${piece.pdf}" download>Download ${esc(piece.pdfLabel ?? 'the full PDF')} · ${piece.pdfSize}</a></p>
 </div></div></main>`;
 }
 
@@ -201,7 +222,7 @@ function shelfBody(loaded) {
   <p class="writingpage__lead">${esc(writingMeta.lead)}</p>
   <p class="mono">${writingTotals.pieces} research pieces · ${writingTotals.parts} parts · ${writingTotals.words.toLocaleString('en-IN')} words</p>
   <ul class="topics">${loaded
-    .map(({ piece: p, parts }) => `<li class="topic"><a class="topic__link" href="/writing/${p.slug}/"><span class="topic__body"><span class="mono topic__topic">${esc(p.topic)}</span><span class="topic__title">${esc(p.title)} — ${esc(p.subtitle)}</span><span class="topic__stand">${esc(p.standfirst)}</span><span class="topic__meta mono">${p.parts} parts · ${p.words.toLocaleString('en-IN')} words · ${esc(p.displayDate)}</span></span></a><ol>${parts
+    .map(({ piece: p, parts }) => `<li class="topic"><a class="topic__link" href="/writing/${p.slug}/"><span class="topic__body"><span class="mono topic__topic">${esc(p.topic)}</span><span class="topic__title">${esc(p.title)} — ${esc(p.subtitle)}</span><span class="topic__stand">${esc(p.standfirst)}</span><span class="topic__meta mono">${isInProgress(p) ? `${parts.length} of ${p.parts} parts` : `${p.parts} parts`} · ${p.words.toLocaleString('en-IN')} words · ${esc(p.displayDate)}</span></span></a><ol>${parts
       .map((x) => `<li><a href="/writing/${p.slug}/part-${x.n}/">Part ${x.n} — ${esc(x.title)}</a></li>`)
       .join('')}</ol></li>`)
     .join('')}</ul>
@@ -279,13 +300,6 @@ function shell({ path, title, description, canonical, jsonLd, noscript, keywords
 }
 
 let shells = 0;
-
-// Load every piece's parts up front — the index shell needs them all, and each
-// piece needs its own, so fetching once avoids re-importing per template.
-const loaded = [];
-for (const piece of pieces) {
-  loaded.push({ piece, parts: (await piece.load()).default });
-}
 
 /* ---- /writing — the shelf. Written once, listing every piece. ---- */
 shell({
@@ -373,9 +387,11 @@ for (const { piece, parts } of loaded) {
       `      <p><strong>${esc(piece.title)} — ${esc(piece.subtitle)}</strong></p>\n` +
       `      <p>${esc(piece.standfirst)}</p>\n` +
       `      <p>${esc(piece.summary)}</p>\n` +
-      `      <p>${piece.parts} parts · ${piece.words.toLocaleString('en-IN')} words · by Lovepreet Singh, ${esc(piece.displayDate)}</p>\n` +
-      `      <h2>Contents</h2>\n      <ul>\n${parts
-        .map((x) => `        <li><a href="/writing/${piece.slug}/part-${x.n}/">Part ${x.n} — ${esc(x.title)}</a></li>`)
+      `      <p>${isInProgress(piece) ? `${parts.length} of ${piece.parts} parts published` : `${piece.parts} parts`} · ${piece.words.toLocaleString('en-IN')} words · by Lovepreet Singh, ${esc(piece.displayDate)}</p>\n` +
+      `      <h2>Contents</h2>\n      <ul>\n${contentsOf(piece, parts)
+        .map((x) => (x.live
+          ? `        <li><a href="/writing/${piece.slug}/part-${x.n}/">Part ${x.n} — ${esc(x.title)}</a></li>`
+          : `        <li>Part ${x.n} — ${esc(x.title)} (in preparation)</li>`))
         .join('\n')}\n      </ul>`,
   });
   shells += 1;
@@ -393,7 +409,7 @@ for (const { piece, parts } of loaded) {
       ].join(', '),
       image: `${SITE}/og/${piece.slug}-part-${part.n}.png`,
       imageAlt: `${piece.title}, Part ${part.n} of ${piece.parts} — ${part.title}. By Lovepreet Singh.`,
-      body: articleBody(piece, part),
+      body: articleBody(piece, part, parts.length),
       css: [ROUTE_CSS.article, ROUTE_CSS.writing],
       // The article reads on paper; set it before paint so there is no flash.
       theme: 'light',

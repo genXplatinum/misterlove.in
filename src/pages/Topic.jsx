@@ -3,7 +3,7 @@ import { Link, Navigate, useParams } from 'react-router-dom';
 import Reveal from '../components/Reveal';
 import Magnetic from '../components/Magnetic';
 import CoverPlate from '../components/CoverPlate';
-import { getPiece } from '../data/writing';
+import { getPiece, contentsOf, livePartsOf, isInProgress } from '../data/writing';
 import { profile } from '../data/site';
 import './Writing.css';
 
@@ -63,6 +63,10 @@ export default function Topic() {
   if (!piece) return <Navigate to="/writing" replace />;
 
   const read = `/writing/${piece.slug}/part-1`;
+  const inProgress = isInProgress(piece);
+  // Every announced part, published or not — so the shape of a serialised work
+  // is visible from the day its first part lands.
+  const contents = contentsOf(piece, parts);
 
   return (
     <div className="topicpage">
@@ -86,7 +90,10 @@ export default function Topic() {
             <p className="topicpage__summary">{piece.summary}</p>
 
             <dl className="feature__stats">
-              <div><dt className="mono">Parts</dt><dd>{piece.parts}</dd></div>
+              <div>
+                <dt className="mono">Parts</dt>
+                <dd>{inProgress ? `${livePartsOf(piece)} of ${piece.parts}` : piece.parts}</dd>
+              </div>
               <div><dt className="mono">Words</dt><dd>{piece.words.toLocaleString('en-IN')}</dd></div>
               <div><dt className="mono">Read</dt><dd>~{Math.round((piece.minutes / 60) * 10) / 10} hrs</dd></div>
               <div><dt className="mono">Published</dt><dd>{piece.displayDate}</dd></div>
@@ -104,7 +111,7 @@ export default function Topic() {
                 download
                 data-cursor
               >
-                PDF · {piece.pdfSize}
+                {piece.pdfLabel ?? 'PDF'} · {piece.pdfSize}
               </a>
             </div>
           </Reveal>
@@ -126,35 +133,53 @@ export default function Topic() {
         <div className="feature__contents">
           <div className="section-head">
             <span className="mono">
-              <span className="section-head__id">CONTENTS</span>&nbsp;&nbsp;/&nbsp;&nbsp;{piece.parts} parts, in order
+              <span className="section-head__id">CONTENTS</span>&nbsp;&nbsp;/&nbsp;&nbsp;
+              {inProgress
+                ? `${piece.parts} parts planned, ${livePartsOf(piece)} published`
+                : `${piece.parts} parts, in order`}
             </span>
             <span className="mono hide-sm">{piece.topic}</span>
           </div>
 
-          {parts ? (
-            <ol className="feature__parts">
-              {parts.map((p, i) => (
+          {failed && (
+            <p className="mono dim feature__loading">Contents didn’t load — please refresh.</p>
+          )}
+
+          {/* Rendered from the manifest outline, so the full series is listed
+              before its data file exists. Unwritten parts are inert rows, not
+              links: a dead route would be worse than an honest placeholder. */}
+          <ol className="feature__parts">
+            {contents.map((p, i) => {
+              const body = (
+                <>
+                  <span className="partrow__n mono">{String(p.n).padStart(2, '0')}</span>
+                  <span className="partrow__body">
+                    <span className="partrow__label mono">{p.label}</span>
+                    <span className="partrow__title">{p.title}</span>
+                    <span className="partrow__lead">{p.lead}</span>
+                  </span>
+                  <span className="partrow__meta mono">
+                    {p.live ? `${p.minutes} min` : 'In preparation'}
+                  </span>
+                  <span className="partrow__arrow" aria-hidden="true">{p.live ? '→' : ''}</span>
+                </>
+              );
+
+              return (
                 <li key={p.n}>
                   <Reveal delay={Math.min(i, 6) * 40}>
-                    <Link to={`/writing/${piece.slug}/part-${p.n}`} className="partrow" data-cursor>
-                      <span className="partrow__n mono">{String(p.n).padStart(2, '0')}</span>
-                      <span className="partrow__body">
-                        <span className="partrow__label mono">{p.label}</span>
-                        <span className="partrow__title">{p.title}</span>
-                        <span className="partrow__lead">{p.lead}</span>
-                      </span>
-                      <span className="partrow__meta mono">{p.minutes} min</span>
-                      <span className="partrow__arrow" aria-hidden="true">→</span>
-                    </Link>
+                    {p.live ? (
+                      <Link to={`/writing/${piece.slug}/part-${p.n}`} className="partrow" data-cursor>
+                        {body}
+                      </Link>
+                    ) : (
+                      <span className="partrow partrow--soon">{body}</span>
+                    )}
                   </Reveal>
                 </li>
-              ))}
-            </ol>
-          ) : (
-            <p className="mono dim feature__loading">
-              {failed ? 'Contents didn’t load — please refresh.' : 'Loading contents…'}
-            </p>
-          )}
+              );
+            })}
+          </ol>
         </div>
       </div>
     </div>

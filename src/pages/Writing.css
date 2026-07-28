@@ -230,6 +230,21 @@
 }
 .partrow:hover .partrow__arrow { opacity: 1; translate: 0 0; }
 
+/* An announced part that isn't written yet — listed so the series reads whole,
+   but visibly inert so nobody clicks at a route that doesn't exist. */
+.partrow--soon { cursor: default; }
+.partrow--soon:hover { background: none; padding-left: 0.6rem; }
+.partrow--soon .partrow__n,
+.partrow--soon .partrow__title { color: var(--text-2); }
+.partrow--soon .partrow__label,
+.partrow--soon .partrow__lead { color: var(--text-dim); }
+.partrow--soon .partrow__meta {
+  color: var(--text-dim);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 0.25em 0.6em;
+}
+
 @media (max-width: 720px) {
   .partrow { grid-template-columns: 2.4rem minmax(0, 1fr); }
   .partrow__meta, .partrow__arrow { display: none; }
