@@ -12,6 +12,9 @@ import {
   contentsOf,
   isInProgress,
   getPieceForLanguage,
+  pdfForPart,
+  pdfsOf,
+  publishedOf,
   writingPathOf,
 } from '../src/data/writing.js';
 
@@ -96,7 +99,7 @@ for (const { piece, parts } of editions) {
   urls.push(
     url({
       loc: `${SITE}${base}/`,
-      lastmod: piece.published,
+      lastmod: publishedOf(piece, parts.at(-1)),
       changefreq: 'monthly',
       priority: '0.9',
       alternates: alternatesFor(piece),
@@ -111,7 +114,7 @@ for (const { piece, parts } of editions) {
     urls.push(
       url({
         loc: `${SITE}${base}/part-${part.n}/`,
-        lastmod: piece.published,
+        lastmod: publishedOf(piece, part),
         changefreq: 'yearly',
         // Part 1 is the entry point readers should land on from search.
         priority: part.n === 1 ? '0.8' : '0.7',
@@ -207,7 +210,7 @@ const staticCopy = (piece) => (piece.language === 'hi' ? {
   contents: 'विषय सूची',
   minutes: 'मिनट',
   preparing: 'तैयार हो रहा है',
-  download: `मूल अंग्रेज़ी PDF डाउनलोड करें · ${piece.pdfSize}`,
+  download: (pdf) => `मूल अंग्रेज़ी PDF डाउनलोड करें · ${pdf.size}`,
   by: 'लेखक',
   readFull: 'पूरा भाग पढ़ें',
   inThisPart: 'इस भाग में',
@@ -225,7 +228,11 @@ const staticCopy = (piece) => (piece.language === 'hi' ? {
   contents: 'Contents',
   minutes: 'min',
   preparing: 'In preparation',
-  download: `Download ${piece.pdfLabel ?? 'the full PDF'} · ${piece.pdfSize}`,
+  download: (pdf) => (
+    piece.pdfs
+      ? `Download ${pdf.label ?? 'the PDF'} · ${pdf.size}`
+      : `Download ${piece.pdfLabel ?? 'the full PDF'} · ${piece.pdfSize}`
+  ),
   by: 'by',
   readFull: 'Read the full part',
   inThisPart: 'In this part',
@@ -235,6 +242,10 @@ const staticCopy = (piece) => (piece.language === 'hi' ? {
 function articleBody(piece, part, live) {
   const base = writingPathOf(piece);
   const copy = staticCopy(piece);
+  const pdf = pdfForPart(piece, part);
+  const download = pdf
+    ? `<p><a class="btn btn--ghost" href="/${pdf.file}" download>${esc(copy.download(pdf))}</a></p>`
+    : '';
   return `<main id="main"><article class="article${piece.language === 'hi' ? ' article--hi' : ''}" lang="${piece.language}">
   <header class="article__head"><div class="container">
     ${crumbs([
@@ -252,6 +263,7 @@ function articleBody(piece, part, live) {
     ${part.prologue ? `<section class="article__prologue">${part.prologueTitle ? `<h2 class="article__prologue-head">${esc(part.prologueTitle)}</h2>` : ''}<div class="prose">${part.prologue}</div></section>` : ''}
     <div class="prose">${part.html}</div>
     ${part.sources ? `<section class="article__sources" open><p class="mono">${copy.sources} — ${copy.part} ${part.n}</p><div class="prose prose--sources">${part.sources}</div></section>` : ''}
+    ${download}
     <nav class="article__pager" aria-label="${copy.partsAria}">
       ${part.n > 1 ? `<a class="article__pager-link article__pager-link--prev" href="${base}/part-${part.n - 1}/"><span class="mono">← ${copy.part} ${String(part.n - 1).padStart(2, '0')}</span></a>` : '<span></span>'}
       ${part.n < live ? `<a class="article__pager-link article__pager-link--next" href="${base}/part-${part.n + 1}/"><span class="mono">${copy.part} ${String(part.n + 1).padStart(2, '0')} →</span></a>` : `<a class="article__pager-link article__pager-link--next" href="${isInProgress(piece) ? `${base}/` : '/writing/'}"><span class="mono">${isInProgress(piece) ? `${copy.allParts} →` : copy.back}</span></a>`}
@@ -263,6 +275,9 @@ function articleBody(piece, part, live) {
 function topicBody(piece, parts) {
   const base = writingPathOf(piece);
   const copy = staticCopy(piece);
+  const downloads = pdfsOf(piece)
+    .map((pdf) => `<a class="btn btn--ghost" href="/${pdf.file}" download>${esc(copy.download(pdf))}</a>`)
+    .join(' ');
   // The whole announced series, not just what is written: a crawler that sees
   // the shape of the work indexes the topic page for the subjects still to
   // come, and the unwritten rows are plain markup with no href to follow.
@@ -288,7 +303,7 @@ function topicBody(piece, parts) {
       ? `<a class="partrow" href="${base}/part-${p.n}/">${row(p)}</a>`
       : `<span class="partrow partrow--soon">${row(p)}</span>`}</li>`)
     .join('')}</ol>
-  <p><a class="btn btn--ghost" href="/${piece.pdf}" download>${esc(copy.download)}</a></p>
+  ${downloads ? `<p>${downloads}</p>` : ''}
 </div></div></main>`;
 }
 
@@ -522,6 +537,7 @@ for (const { piece, parts } of editions) {
   for (const part of parts) {
     const canonical = `${SITE}${topicPath}/part-${part.n}/`;
     const partAlternates = alternatesFor(piece, part.n);
+    const partPublished = publishedOf(piece, part);
     shell({
       path: `${topicPath}/part-${part.n}`,
       title: piece.language === 'hi'
@@ -545,8 +561,8 @@ for (const { piece, parts } of editions) {
       // The article reads on paper; set it before paint so there is no flash.
       theme: 'light',
       extraMeta: {
-        'article:published_time': `${piece.published}T00:00:00+05:30`,
-        'article:modified_time': `${piece.published}T00:00:00+05:30`,
+        'article:published_time': `${partPublished}T00:00:00+05:30`,
+        'article:modified_time': `${partPublished}T00:00:00+05:30`,
         'article:author': 'Lovepreet Singh',
         'article:section': part.label,
         'article:tag': piece.keywords.slice(0, 6).join(', '),
@@ -568,7 +584,7 @@ for (const { piece, parts } of editions) {
         description: part.lead || piece.standfirst,
         url: canonical,
         mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
-        datePublished: piece.published,
+        datePublished: partPublished,
         inLanguage: piece.language,
         wordCount: part.words,
         articleSection: part.label,
@@ -621,7 +637,7 @@ const items = loaded.flatMap(({ piece, parts }) =>
       <title>${esc(`${piece.title} — Part ${part.n}: ${part.title}`)}</title>
       <link>${SITE}/writing/${piece.slug}/part-${part.n}/</link>
       <guid isPermaLink="true">${SITE}/writing/${piece.slug}/part-${part.n}/</guid>
-      <pubDate>${rssDate(piece.published)}</pubDate>
+      <pubDate>${rssDate(publishedOf(piece, part))}</pubDate>
       <category>${esc(piece.topic.split(' · ')[0])}</category>
       <description>${esc(part.lead || piece.standfirst)}</description>
     </item>`)

@@ -9,6 +9,7 @@ import {
   contentsOf,
   livePartsOf,
   isInProgress,
+  pdfsOf,
   writingPathOf,
 } from '../data/writing';
 import { profile } from '../data/site';
@@ -186,6 +187,7 @@ export default function Topic() {
   const inProgress = isInProgress(piece);
   const contents = contentsOf(piece, parts);
   const hasHindi = Boolean(original.translations?.hi);
+  const pdfs = pdfsOf(piece);
 
   return (
     <div
@@ -250,14 +252,17 @@ export default function Topic() {
                   {copy.start} <span className="btn__dot" />
                 </Link>
               </Magnetic>
-              <a
-                className="btn btn--ghost"
-                href={`${import.meta.env.BASE_URL}${piece.pdf}`}
-                download
-                data-cursor
-              >
-                {copy.pdf(piece.pdfLabel, piece.pdfSize)}
-              </a>
+              {pdfs.map((pdf) => (
+                <a
+                  key={pdf.file}
+                  className="btn btn--ghost"
+                  href={`${import.meta.env.BASE_URL}${pdf.file}`}
+                  download
+                  data-cursor
+                >
+                  {copy.pdf(pdf.label, pdf.size)}
+                </a>
+              ))}
             </div>
           </Reveal>
 
