@@ -21,9 +21,11 @@ export default function Reveal({
     const el = ref.current;
     if (!el) return;
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const reduced = typeof window.matchMedia === 'function'
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced || typeof window.IntersectionObserver !== 'function') {
       el.classList.add('is-in');
-      return;
+      return undefined;
     }
 
     const io = new IntersectionObserver(

@@ -4,12 +4,17 @@ import { profile } from '../data/site';
 import { pieces } from '../data/writing';
 import './Footer.css';
 
-const year = 2026;
-
-function toTop(e) {
-  e.preventDefault();
-  if (window.lenis) window.lenis.scrollTo(0, { duration: 1.4 });
-  else window.scrollTo({ top: 0, behavior: 'smooth' });
+function toTop(event) {
+  event.preventDefault();
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (window.lenis) {
+    window.lenis.scrollTo(0, {
+      duration: reduceMotion ? 0 : 1,
+      immediate: reduceMotion,
+    });
+  } else {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  }
 }
 
 export default function Footer() {
@@ -17,46 +22,43 @@ export default function Footer() {
     <footer className="footer">
       <div className="container footer__inner">
         <div className="footer__top">
-          <a href="#main" className="footer__brand" onClick={toTop} data-cursor>
+          <a href="#main" className="footer__brand" onClick={toTop} aria-label="Back to the top">
             <Wordmark />
           </a>
-          <a href="#main" className="footer__totop link" onClick={toTop}>
-            Back to top <span className="link__arrow">↑</span>
+          <p>Research, technology and design, brought into one considered practice.</p>
+          <a href="#main" className="footer__toplink" onClick={toTop}>
+            Back to top <span aria-hidden="true">↑</span>
           </a>
         </div>
 
-        <div className="hairline" />
+        <div className="footer__rule" />
 
         <div className="footer__grid">
-          <div className="footer__col">
-            <span className="mono">// Direct line</span>
-            <a href={`mailto:${profile.email}`} className="footer__email" data-cursor>
+          <div className="footer__column">
+            <span className="footer__label">Write</span>
+            <a href={`mailto:${profile.email}`} className="footer__email">
               {profile.email}
             </a>
           </div>
-          <div className="footer__col">
-            <span className="mono">// Channels</span>
-            <div className="footer__socials">
-              {profile.social.map((s) => (
-                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" className="link" data-cursor>
-                  {s.label} <span className="link__arrow">↗</span>
+
+          <div className="footer__column">
+            <span className="footer__label">Elsewhere</span>
+            <div className="footer__links">
+              {profile.social.map((social) => (
+                <a key={social.label} href={social.href} target="_blank" rel="noopener noreferrer">
+                  {social.label}<span aria-hidden="true">↗</span>
                 </a>
               ))}
             </div>
           </div>
-          <div className="footer__col">
-            <span className="mono">// Operating from</span>
-            <span className="footer__loc">{profile.locations.join(' · ')}</span>
-          </div>
-          <div className="footer__col">
-            <span className="mono">// Writing</span>
-            <div className="footer__socials">
-              <Link to="/writing" className="link" data-cursor>
-                All writing <span className="link__arrow">→</span>
-              </Link>
-              {pieces.map((p) => (
-                <Link key={p.slug} to={`/writing/${p.slug}/part-1`} className="link" data-cursor>
-                  {p.title} <span className="link__arrow">→</span>
+
+          <div className="footer__column footer__column--writing">
+            <span className="footer__label">Writing</span>
+            <div className="footer__links">
+              <Link to="/writing">All research<span aria-hidden="true">→</span></Link>
+              {pieces.map((piece) => (
+                <Link key={piece.slug} to={`/writing/${piece.slug}`}>
+                  {piece.title}<span aria-hidden="true">→</span>
                 </Link>
               ))}
             </div>
@@ -64,8 +66,8 @@ export default function Footer() {
         </div>
 
         <div className="footer__base">
-          <span className="mono">© {year} {profile.name}. All rights reserved.</span>
-          <span className="mono footer__sig">Designed &amp; engineered in-house — no templates.</span>
+          <span>© {new Date().getFullYear()} Lovepreet Singh</span>
+          <span>{profile.location}</span>
         </div>
       </div>
     </footer>

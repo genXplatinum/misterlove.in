@@ -1,7 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import SmoothScroll from './components/SmoothScroll';
 import './index.css';
 import App from './App.jsx';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -14,17 +13,15 @@ const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || undefined;
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter basename={basename}>
-      <SmoothScroll>
-        <ErrorBoundary
-          fallback={
-            <div style={{ padding: '3rem', fontFamily: 'monospace', color: '#eaeef7', background: '#06070a', minHeight: '100vh' }}>
-              Something went wrong loading the experience. Please refresh.
-            </div>
-          }
-        >
-          <App />
-        </ErrorBoundary>
-      </SmoothScroll>
+      <ErrorBoundary
+        fallback={
+          <div style={{ padding: '3rem', fontFamily: 'Inter, sans-serif', color: '#F3F0E5', background: '#14170F', minHeight: '100vh' }}>
+            Something went wrong opening the site. Please refresh.
+          </div>
+        }
+      >
+        <App />
+      </ErrorBoundary>
     </BrowserRouter>
   </StrictMode>
 );

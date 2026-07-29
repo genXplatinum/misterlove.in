@@ -1,127 +1,129 @@
-import { useEffect, useRef, useState, Suspense, lazy } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
-import Loader from './components/Loader';
-import Cursor from './components/Cursor';
+import { lazy, Suspense, useCallback, useEffect, useRef } from 'react';
+import { Link, Route, Routes, useLocation } from 'react-router-dom';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
-import StatusBar from './components/StatusBar';
 import ScrollProgress from './components/ScrollProgress';
 import ErrorBoundary from './components/ErrorBoundary';
 import Home from './pages/Home';
-import { ScrollTrigger } from './lib/gsap';
 
 const Scene = lazy(() => import('./components/three/Scene'));
+const SmoothScroll = lazy(() => import('./components/SmoothScroll'));
 const Writing = lazy(() => import('./pages/Writing'));
 const Topic = lazy(() => import('./pages/Topic'));
 const Article = lazy(() => import('./pages/Article'));
 
-/** Home-only chrome: the boot handshake and the Sentinel Core behind it. */
-function HomeExperience({ onReady, canvasRef }) {
+function SceneFailure() {
+  useEffect(() => {
+    document.documentElement.classList.remove('scene-ready');
+  }, []);
+  return null;
+}
+
+function HomeScene() {
+  const markReady = useCallback(() => {
+    document.documentElement.classList.add('scene-ready');
+  }, []);
+  const markUnavailable = useCallback(() => {
+    document.documentElement.classList.remove('scene-ready');
+  }, []);
+
+  useEffect(() => markUnavailable, [markUnavailable]);
+
   return (
-    <>
-      <Loader onComplete={onReady} />
-      <div ref={canvasRef} className="canvas-layer" aria-hidden="true">
-        <ErrorBoundary fallback={null}>
-          <Suspense fallback={null}>
-            <Scene />
-          </Suspense>
-        </ErrorBoundary>
-      </div>
-    </>
+    <div className="canvas-layer" aria-hidden="true">
+      <ErrorBoundary fallback={<SceneFailure />} onError={markUnavailable}>
+        <Suspense fallback={null}>
+          <Scene onReady={markReady} onUnavailable={markUnavailable} />
+        </Suspense>
+      </ErrorBoundary>
+    </div>
   );
 }
 
-export default function App() {
-  const [ready, setReady] = useState(false);
-  const canvasRef = useRef(null);
-  const { pathname } = useLocation();
-  const isHome = pathname === '/';
+function NotFound() {
+  return (
+    <section className="not-found">
+      <p className="archive-label">404 · Page not found</p>
+      <h1>This page is not in the archive.</h1>
+      <p>The address may have changed, or the page may never have existed.</p>
+      <div>
+        <Link to="/" className="btn">Return home</Link>
+        <Link to="/writing" className="link">Browse the writing →</Link>
+      </div>
+    </section>
+  );
+}
 
-  const handleReady = () => {
-    setReady(true);
-    document.body.classList.add('is-ready');
-    ScrollTrigger.refresh();
-  };
-
-  // The reading routes never run the boot sequence, so the Hero's
-  // body.is-ready gate has to be satisfied another way — otherwise a visitor
-  // who lands on /writing and then navigates home meets a hidden hero.
-  useEffect(() => {
-    if (!isHome) document.body.classList.add('is-ready');
-  }, [isHome]);
-
-  // Fade the dark 3D canvas out as the light (business) act begins,
-  // and bring it back for the dark contact bookend.
-  useEffect(() => {
-    if (!ready || !isHome) return;
-    const layer = canvasRef.current;
-    const light = document.querySelector('#ventures');
-    const dark = document.querySelector('#contact');
-    if (!layer) return;
-
-    const triggers = [];
-    if (light) {
-      triggers.push(
-        ScrollTrigger.create({
-          trigger: light,
-          start: 'top 85%',
-          end: 'top 35%',
-          scrub: true,
-          onUpdate: (self) => { layer.style.opacity = String(1 - self.progress); },
-        })
-      );
-    }
-    if (dark) {
-      triggers.push(
-        ScrollTrigger.create({
-          trigger: dark,
-          start: 'top 70%',
-          end: 'top 20%',
-          scrub: true,
-          onUpdate: (self) => { layer.style.opacity = String(self.progress); },
-        })
-      );
-    }
-    return () => triggers.forEach((t) => t.kill());
-  }, [ready, isHome]);
-
+function AppFrame({ isHome, resetKey }) {
   return (
     <>
-      <Cursor />
-      <div className="grain" aria-hidden="true" />
       <ScrollProgress />
+      <div className="surface-noise" aria-hidden="true" />
       <a href="#main" className="skip-link">Skip to content</a>
-
-      {isHome && <HomeExperience onReady={handleReady} canvasRef={canvasRef} />}
-
+      {isHome && <HomeScene />}
       <Nav />
-      <main id="main">
+
+      <main id="main" tabIndex="-1" className={isHome ? 'main--home' : 'main--reading'}>
         <ErrorBoundary
+          resetKey={resetKey}
           fallback={
             <div className="route-fallback">
-              <p>Something went wrong loading this page.</p>
-              <a href={import.meta.env.BASE_URL} className="btn btn--ghost">Back to home</a>
+              <p>This page could not be opened.</p>
+              <div>
+                <button type="button" className="btn" onClick={() => window.location.reload()}>
+                  Reload page
+                </button>
+                <Link to="/" className="link">Return home →</Link>
+              </div>
             </div>
           }
         >
-          <Suspense fallback={<div className="route-fallback mono">Loading…</div>}>
+          <Suspense fallback={<div className="route-fallback" role="status" aria-live="polite">Opening the archive…</div>}>
             <Routes>
               <Route path="/" element={<Home />} />
-              {/* The shelf → one topic → one part of that topic. */}
               <Route path="/writing" element={<Writing />} />
               <Route path="/writing/:slug" element={<Topic />} />
               <Route path="/hi/writing/:slug" element={<Topic />} />
-              {/* Router params must span a whole segment, so the "part-N"
-                  segment is matched as one param and parsed in Article. */}
               <Route path="/writing/:slug/:part" element={<Article />} />
               <Route path="/hi/writing/:slug/:part" element={<Article />} />
-              <Route path="*" element={<Home />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
         </ErrorBoundary>
       </main>
       <Footer />
-      {isHome && <StatusBar />}
+    </>
+  );
+}
+
+export default function App() {
+  const location = useLocation();
+  const previousPath = useRef(location.pathname);
+  const isHome = location.pathname === '/';
+
+  useEffect(() => {
+    document.body.classList.toggle('is-home', isHome);
+    if (!isHome) document.documentElement.classList.remove('scene-ready');
+    return () => document.body.classList.remove('is-home');
+  }, [isHome]);
+
+  useEffect(() => {
+    if (previousPath.current === location.pathname) return;
+    previousPath.current = location.pathname;
+    if (!location.state?.scrollTo) window.scrollTo(0, 0);
+    requestAnimationFrame(() => document.getElementById('main')?.focus({ preventScroll: true }));
+  }, [location.pathname, location.state]);
+
+  const frame = <AppFrame isHome={isHome} resetKey={location.key} />;
+
+  return (
+    <>
+      {isHome && (
+        <Suspense fallback={null}>
+          <SmoothScroll />
+        </Suspense>
+      )}
+      {frame}
     </>
   );
 }

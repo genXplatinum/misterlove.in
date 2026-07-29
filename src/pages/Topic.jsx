@@ -113,6 +113,8 @@ function useTopicMeta(piece, original) {
       set('meta[property="og:image"]', 'meta', { property: 'og:image', content: image }),
       set('meta[property="og:image:secure_url"]', 'meta', { property: 'og:image:secure_url', content: image }),
       set('meta[property="og:image:alt"]', 'meta', { property: 'og:image:alt', content: imageAlt }),
+      set('meta[property="og:image:width"]', 'meta', { property: 'og:image:width', content: '1200' }),
+      set('meta[property="og:image:height"]', 'meta', { property: 'og:image:height', content: '630' }),
       set('meta[name="twitter:title"]', 'meta', { name: 'twitter:title', content: `${piece.title} — ${piece.subtitle}` }),
       set('meta[name="twitter:description"]', 'meta', { name: 'twitter:description', content: piece.standfirst }),
       set('meta[name="twitter:image"]', 'meta', { name: 'twitter:image', content: image }),

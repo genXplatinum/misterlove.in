@@ -15,11 +15,15 @@ export default function SmoothScroll({ children }) {
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) {
+      if (typeof window !== 'undefined') window.lenis = null;
+      return undefined;
+    }
 
     const instance = new Lenis({
-      duration: 1.15,
+      duration: 1.08,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: !reduced,
+      smoothWheel: true,
       syncTouch: false,
       touchMultiplier: 1.6,
       wheelMultiplier: 1,
@@ -36,6 +40,7 @@ export default function SmoothScroll({ children }) {
     return () => {
       gsap.ticker.remove(raf);
       instance.destroy();
+      if (typeof window !== 'undefined') window.lenis = null;
       setLenis(null);
     };
   }, []);

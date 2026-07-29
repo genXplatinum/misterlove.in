@@ -16,6 +16,21 @@ import './Article.css';
 const THEME_KEY = 'lws:reader-theme';
 const RAIL_KEY = 'lws:reader-rail';
 
+function getStoredPreference(key) {
+  if (typeof window === 'undefined') return null;
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function prefersReducedMotion() {
+  return typeof window !== 'undefined'
+    && typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 const COPY = {
   en: {
     writing: 'Writing',
@@ -102,8 +117,7 @@ function scrollToTop() {
 
 function useReaderTheme() {
   const [theme, setTheme] = useState(() => {
-    if (typeof localStorage === 'undefined') return 'light';
-    return localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
+    return getStoredPreference(THEME_KEY) === 'dark' ? 'dark' : 'light';
   });
 
   useEffect(() => {
@@ -123,8 +137,7 @@ function useReaderTheme() {
 
 function useRail() {
   const [open, setOpen] = useState(() => {
-    if (typeof localStorage === 'undefined') return true;
-    return localStorage.getItem(RAIL_KEY) !== 'closed';
+    return getStoredPreference(RAIL_KEY) !== 'closed';
   });
 
   useEffect(() => {
@@ -191,6 +204,8 @@ function useArticleMeta(piece, part, original) {
       set('meta[property="og:image"]', 'meta', { property: 'og:image', content: image }),
       set('meta[property="og:image:secure_url"]', 'meta', { property: 'og:image:secure_url', content: image }),
       set('meta[property="og:image:alt"]', 'meta', { property: 'og:image:alt', content: imageAlt }),
+      set('meta[property="og:image:width"]', 'meta', { property: 'og:image:width', content: '1200' }),
+      set('meta[property="og:image:height"]', 'meta', { property: 'og:image:height', content: '630' }),
       set('meta[name="twitter:title"]', 'meta', { name: 'twitter:title', content: `${part.title} — ${piece.title}` }),
       set('meta[name="twitter:description"]', 'meta', { name: 'twitter:description', content: part.lead || piece.standfirst }),
       set('meta[name="twitter:image"]', 'meta', { name: 'twitter:image', content: image }),
@@ -274,7 +289,8 @@ function useReadingProgress(ref) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const onScroll = () => {
+    let frame = 0;
+    const update = () => {
       const el = ref.current;
       if (!el) return;
       const start = el.offsetTop;
@@ -282,12 +298,29 @@ function useReadingProgress(ref) {
       if (span <= 0) return setProgress(1);
       return setProgress(Math.min(1, Math.max(0, (window.scrollY - start) / span)));
     };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+
+    const schedule = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        update();
+      });
+    };
+
+    update();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+
+    const resizeObserver = typeof ResizeObserver === 'function'
+      ? new ResizeObserver(schedule)
+      : null;
+    if (ref.current) resizeObserver?.observe(ref.current);
+
     return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      resizeObserver?.disconnect();
+      if (frame) cancelAnimationFrame(frame);
     };
   }, [ref]);
 
@@ -328,6 +361,8 @@ export default function Article() {
   const [theme, setTheme] = useReaderTheme();
   const [railOpen, setRailOpen] = useRail();
   const bodyRef = useRef(null);
+  const railCloseRef = useRef(null);
+  const railReopenRef = useRef(null);
 
   const n = partParam ? Number(String(partParam).replace(/^part-/, '')) : 1;
   const valid = Number.isInteger(n) && n >= 1 && piece && n <= piece.parts;
@@ -368,8 +403,17 @@ export default function Article() {
     event.preventDefault();
     const element = document.getElementById(id);
     if (!element) return;
-    if (window.lenis) window.lenis.scrollTo(element, { offset: -100, duration: 1.1 });
-    else element.scrollIntoView({ behavior: 'smooth' });
+    const reduced = prefersReducedMotion();
+    if (window.lenis) {
+      window.lenis.scrollTo(element, {
+        offset: -100,
+        duration: reduced ? 0 : 1.1,
+        immediate: reduced,
+      });
+    } else {
+      const top = element.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' });
+    }
   };
 
   return (
@@ -383,9 +427,13 @@ export default function Article() {
 
       {!railOpen && (
         <button
+          ref={railReopenRef}
           type="button"
           className="article__rail-reopen"
-          onClick={() => setRailOpen(true)}
+          onClick={() => {
+            setRailOpen(true);
+            requestAnimationFrame(() => railCloseRef.current?.focus());
+          }}
           aria-label={copy.showContents}
           aria-expanded="false"
           aria-controls="article-rail"
@@ -470,9 +518,13 @@ export default function Article() {
               <div className="article__rail-head">
                 <span className="mono article__rail-title">{copy.inThisPart}</span>
                 <button
+                  ref={railCloseRef}
                   type="button"
                   className="article__rail-btn"
-                  onClick={() => setRailOpen(false)}
+                  onClick={() => {
+                    setRailOpen(false);
+                    requestAnimationFrame(() => railReopenRef.current?.focus());
+                  }}
                   aria-label={copy.hideContents}
                   aria-expanded="true"
                   aria-controls="article-rail"

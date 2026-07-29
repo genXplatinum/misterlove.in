@@ -7,11 +7,11 @@
    ============================================================ */
 
 export const writingMeta = {
-  index: '07',
+  index: 'Research',
   label: 'Writing',
-  title: 'Things I research until I actually understand them.',
+  title: 'Questions I followed further.',
   lead:
-    'Long-form work on subjects I refused to have a lazy opinion about. Researched properly, written plainly, every side given its strongest case.',
+    'Long-form work on difficult public questions. The evidence is checked, the competing arguments are stated fairly, and the conclusions are written in plain language.',
 };
 
 export const pieces = [

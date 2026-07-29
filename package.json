@@ -3,10 +3,10 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Personal portfolio of Lovepreet Singh — ethical hacker, security architect & founder.",
+  "description": "The personal site and Living Archive of Lovepreet Singh, cybersecurity professional, Lovelace founder, scholar, researcher and writer.",
   "scripts": {
     "dev": "vite",
-    "prebuild": "npm run validate:hindi",
+    "prebuild": "npm run validate:hindi && npm run og",
     "build": "vite build",
     "postbuild": "node scripts/postbuild.mjs",
     "og": "node scripts/make-og-cards.mjs",
@@ -28,6 +28,7 @@
     "three": "^0.184.0"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
