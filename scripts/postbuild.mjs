@@ -4,7 +4,7 @@
 //   - .nojekyll stops GitHub Pages from running Jekyll over the build output
 //   - sitemap.xml is generated from the writing manifest, so adding a piece or a
 //     part can't leave the sitemap silently stale
-import { copyFileSync, writeFileSync, mkdirSync, readFileSync, readdirSync } from 'node:fs';
+import { copyFileSync, writeFileSync, mkdirSync, readFileSync, readdirSync, existsSync } from 'node:fs';
 import {
   pieces,
   writingMeta,
@@ -42,6 +42,42 @@ for (const piece of pieces) {
   }
 }
 
+/* The HTML below promises a route-specific social image. Fail the build before
+   deployment if generation was skipped, a filename drifted, or a card has the
+   wrong dimensions. PNG stores width and height in the IHDR header. */
+const expectedOgCards = new Set(['writing.png']);
+for (const { piece, parts } of editions) {
+  const imageSlug = piece.ogSlug ?? piece.slug;
+  expectedOgCards.add(`${imageSlug}.png`);
+  for (const part of parts) expectedOgCards.add(`${imageSlug}-part-${part.n}.png`);
+}
+
+const ogErrors = [];
+for (const name of expectedOgCards) {
+  const path = `dist/og/${name}`;
+  if (!existsSync(path)) {
+    ogErrors.push(`${name}: missing`);
+    continue;
+  }
+
+  const png = readFileSync(path);
+  const signature = png.subarray(1, 4).toString('ascii');
+  if (png.length < 24 || signature !== 'PNG') {
+    ogErrors.push(`${name}: not a readable PNG`);
+    continue;
+  }
+
+  const width = png.readUInt32BE(16);
+  const height = png.readUInt32BE(20);
+  if (width !== 1200 || height !== 630) {
+    ogErrors.push(`${name}: ${width}×${height}, expected 1200×630`);
+  }
+}
+
+if (ogErrors.length) {
+  throw new Error(`OG card validation failed:\n  ${ogErrors.join('\n  ')}`);
+}
+
 const alternatesFor = (piece, part) => {
   if (!piece.translations?.hi) return [];
   const suffix = part ? `/part-${part}/` : '/';
@@ -72,7 +108,7 @@ const urls = [
     priority: '1.0',
     image: {
       loc: `${SITE}/og.png`,
-      title: 'Lovepreet Singh — Ethical Hacker, Security Architect &amp; Founder',
+      title: 'Lovepreet Singh — Cybersecurity Professional, Scholar and Writer',
     },
   }),
   // Trailing slashes throughout: these routes are pre-rendered as directories,
@@ -346,10 +382,18 @@ function shell({
     .replace(/(<meta property="og:image" content=")[^"]*(")/, `$1${image}$2`)
     .replace(/(<meta property="og:image:secure_url" content=")[^"]*(")/, `$1${image}$2`)
     .replace(/(<meta property="og:image:alt" content=")[^"]*(")/, `$1${esc(imageAlt)}$2`)
+    .replace(
+      /(<meta property="og:image:width" content=")[^"]*(")/,
+      (_, prefix, suffix) => `${prefix}1200${suffix}`
+    )
+    .replace(
+      /(<meta property="og:image:height" content=")[^"]*(")/,
+      (_, prefix, suffix) => `${prefix}630${suffix}`
+    )
     .replace(/(<meta name="twitter:image" content=")[^"]*(")/, `$1${image}$2`)
     .replace(/(<meta name="twitter:image:alt" content=")[^"]*(")/, `$1${esc(imageAlt)}$2`)
-    // The template's keywords describe the security practice; on a piece about
-    // Indian farm policy they are just noise.
+    // The homepage keywords describe the person and the wider archive. Each
+    // reading route gets the terms for its own subject instead.
     .replace(/(<meta name="keywords" content=")[^"]*(")/, `$1${esc(keywords)}$2`)
     .replace(
       /(<meta\s+name="description"\s+content=")[\s\S]*?(")/,
@@ -662,5 +706,6 @@ ${items.join('\n')}
 
 console.log(
   `postbuild ✓  404.html, .nojekyll, sitemap.xml (${urls.length} URLs), `
-  + `feed.xml (${items.length} items), ${shells} pre-rendered routes`
+  + `feed.xml (${items.length} items), ${shells} pre-rendered routes, `
+  + `${expectedOgCards.size} route-specific OG cards`
 );

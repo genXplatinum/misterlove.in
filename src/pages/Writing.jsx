@@ -42,12 +42,19 @@ export default function Writing() {
 
     // The shelf's own card, matching the pre-rendered /writing shell.
     const image = 'https://misterlove.in/og/writing.png';
-    const tags = ['meta[property="og:image"]', 'meta[property="og:image:secure_url"]', 'meta[name="twitter:image"]']
-      .map((sel) => {
+    const cards = [
+      ['meta[property="og:image"]', image],
+      ['meta[property="og:image:secure_url"]', image],
+      ['meta[property="og:image:width"]', '1200'],
+      ['meta[property="og:image:height"]', '630'],
+      ['meta[name="twitter:image"]', image],
+    ];
+    const tags = cards
+      .map(([sel, content]) => {
         const el = document.head.querySelector(sel);
         if (!el) return null;
         const was = el.getAttribute('content');
-        el.setAttribute('content', image);
+        el.setAttribute('content', content);
         return () => el.setAttribute('content', was);
       })
       .filter(Boolean);

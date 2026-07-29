@@ -1,15 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Wordmark } from './Logo';
-import Magnetic from './Magnetic';
 import { nav, profile } from '../data/site';
 import './Nav.css';
 
-function scrollToId(id) {
-  const el = document.querySelector(id);
-  if (!el) return false;
-  if (window.lenis) window.lenis.scrollTo(el, { offset: -10, duration: 1.3 });
-  else el.scrollIntoView({ behavior: 'smooth' });
+function scrollToTarget(target, immediate = false) {
+  const element = document.querySelector(target);
+  if (!element) return false;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const jump = immediate || reduceMotion;
+  const navHeight = document.querySelector('.nav')?.getBoundingClientRect().height ?? 72;
+  const clearance = Math.ceil(navHeight + 12);
+
+  if (window.lenis) {
+    window.lenis.scrollTo(element, {
+      offset: -clearance,
+      duration: jump ? 0 : 1.05,
+      immediate: jump,
+    });
+  } else {
+    const top = Math.max(
+      0,
+      element.getBoundingClientRect().top + window.scrollY - clearance
+    );
+    window.scrollTo({ top, behavior: jump ? 'auto' : 'smooth' });
+  }
   return true;
 }
 
@@ -17,6 +32,8 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState('');
+  const toggleRef = useRef(null);
+  const menuRef = useRef(null);
   const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const isHome = pathname === '/';
@@ -28,129 +45,216 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Scrollspy — highlight the section currently in view. Only the one-pager
-  // has these anchors; re-run per route so leaving and returning re-binds.
   useEffect(() => {
-    if (!isHome) { setActive(''); return; }
+    if (!isHome) {
+      setActive('');
+      return undefined;
+    }
+
     const sections = nav
-      .filter((n) => !n.route)
-      .map((n) => document.querySelector(n.to))
+      .filter((item) => !item.route)
+      .map((item) => document.querySelector(item.to))
       .filter(Boolean);
-    if (!sections.length) return;
-    const io = new IntersectionObserver(
+
+    if (!('IntersectionObserver' in window)) return undefined;
+
+    const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) setActive('#' + e.target.id);
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(`#${entry.target.id}`);
         });
       },
-      { rootMargin: '-45% 0px -50% 0px' }
+      { rootMargin: '-42% 0px -50% 0px' }
     );
-    sections.forEach((s) => io.observe(s));
-    return () => io.disconnect();
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
   }, [isHome, pathname]);
 
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 1121px)');
+    const closeOnDesktop = (event) => {
+      if (event.matches) setOpen(false);
+    };
+
+    if (desktop.matches) setOpen(false);
+
+    if (desktop.addEventListener) desktop.addEventListener('change', closeOnDesktop);
+    else desktop.addListener(closeOnDesktop);
+
+    return () => {
+      if (desktop.removeEventListener) desktop.removeEventListener('change', closeOnDesktop);
+      else desktop.removeListener(closeOnDesktop);
+    };
+  }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle('nav-open', open);
+    if (!open) return undefined;
+
+    const menu = menuRef.current;
+    const background = [
+      document.getElementById('main'),
+      document.querySelector('.footer'),
+    ].filter(Boolean);
+    const focusable = menu?.querySelectorAll('a[href], button:not([disabled])') ?? [];
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    background.forEach((element) => { element.inert = true; });
+    window.lenis?.stop();
+    requestAnimationFrame(() => first?.focus());
+
+    const onKey = (event) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        requestAnimationFrame(() => toggleRef.current?.focus());
+        return;
+      }
+      if (event.key !== 'Tab' || !first || !last) return;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.classList.remove('nav-open');
+      document.removeEventListener('keydown', onKey);
+      background.forEach((element) => { element.inert = false; });
+      window.lenis?.start();
+    };
   }, [open]);
 
-  // Close the mobile menu whenever the route changes under it.
-  useEffect(() => { setOpen(false); }, [pathname]);
+  useEffect(() => {
+    if (!isHome || !state?.scrollTo) return undefined;
+    const target = state.scrollTo;
+    const frame = requestAnimationFrame(() => {
+      if (target === '#main') {
+        if (window.lenis) window.lenis.scrollTo(0, { immediate: true });
+        else window.scrollTo(0, 0);
+      } else {
+        scrollToTarget(target);
+      }
+      navigate(pathname, { replace: true, state: null });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [isHome, navigate, pathname, state]);
 
-  /** Anchor links have to route home first when we're on a reading page. */
-  const go = (e, to) => {
-    e.preventDefault();
+  const go = (event, target) => {
+    event.preventDefault();
+    setOpen(false);
+    if (open) requestAnimationFrame(() => toggleRef.current?.focus());
+    if (isHome) scrollToTarget(target);
+    else navigate('/', { state: { scrollTo: target } });
+  };
+
+  const brand = (event) => {
+    event.preventDefault();
     setOpen(false);
     if (isHome) {
-      scrollToId(to);
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (window.lenis) {
+        window.lenis.scrollTo(0, {
+          duration: reduceMotion ? 0 : 1,
+          immediate: reduceMotion,
+        });
+      } else {
+        window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+      }
     } else {
-      navigate('/', { state: { scrollTo: to } });
+      navigate('/');
     }
   };
 
-  // Deferred scroll for an anchor clicked from another route: wait for the
-  // homepage sections to mount before asking Lenis to find them.
-  useEffect(() => {
-    if (!isHome || !state?.scrollTo) return;
-    const target = state.scrollTo;
-    const id = requestAnimationFrame(() => {
-      if (target === '#main') window.scrollTo(0, 0);
-      else scrollToId(target);
-      window.history.replaceState({}, '');
-    });
-    return () => cancelAnimationFrame(id);
-  }, [isHome, state]);
-
-  const isActive = (n) => (
-    n.route
-      ? pathname.startsWith(n.to) || (n.to === '/writing' && pathname.startsWith('/hi/writing'))
-      : active === n.to
+  const activeFor = (item) => (
+    item.route
+      ? pathname.startsWith(item.to) || (item.to === '/writing' && pathname.startsWith('/hi/writing'))
+      : active === item.to
   );
 
-  const renderLink = (n, className, extra = {}) =>
-    n.route ? (
-      <Link key={n.to} to={n.to} className={className} onClick={() => setOpen(false)} {...extra}>
-        <span className="nav__link-idx mono">{n.index}</span>
-        <span className="nav__link-label">{n.label}</span>
-      </Link>
-    ) : (
-      <a key={n.to} href={n.to} onClick={(e) => go(e, n.to)} className={className} {...extra}>
-        <span className="nav__link-idx mono">{n.index}</span>
-        <span className="nav__link-label">{n.label}</span>
+  const NavItem = ({ item, mobile = false }) => {
+    const current = activeFor(item);
+    const className = mobile
+      ? `navmenu__link ${current ? 'is-active' : ''}`
+      : `nav__link ${current ? 'is-active' : ''}`;
+    const ariaCurrent = current ? (item.route ? 'page' : 'location') : undefined;
+
+    if (item.route) {
+      return (
+        <Link
+          to={item.to}
+          className={className}
+          onClick={() => setOpen(false)}
+          aria-current={ariaCurrent}
+        >
+          {item.label}
+        </Link>
+      );
+    }
+
+    return (
+      <a
+        href={item.to}
+        className={className}
+        onClick={(event) => go(event, item.to)}
+        aria-current={ariaCurrent}
+      >
+        {item.label}
       </a>
     );
+  };
 
   return (
     <>
-      <header className={`nav ${scrolled ? 'is-scrolled' : ''}`}>
-        <a href="/" className="nav__brand" onClick={(e) => go(e, '#main')} data-cursor aria-label={profile.name}>
+      <header className={`nav ${scrolled ? 'is-scrolled' : ''} ${open ? 'is-menu-open' : ''}`}>
+        <a href="/" className="nav__brand" onClick={brand} aria-label={`${profile.name}, home`}>
           <Wordmark />
         </a>
 
-        <nav className="nav__links" aria-label="Primary">
-          {nav.map((n) =>
-            renderLink(n, `nav__link ${isActive(n) ? 'is-active' : ''} ${n.route ? 'nav__link--route' : ''}`)
-          )}
+        <nav className="nav__links" aria-label="Primary navigation">
+          {nav.map((item) => <NavItem key={item.to} item={item} />)}
         </nav>
 
         <div className="nav__right">
-          <Magnetic>
-            <a href="#contact" onClick={(e) => go(e, '#contact')} className="btn nav__cta">
-              Secure channel <span className="btn__dot" />
-            </a>
-          </Magnetic>
+          <a href="#contact" className="nav__cta" onClick={(event) => go(event, '#contact')}>
+            Write to me
+          </a>
           <button
+            ref={toggleRef}
+            type="button"
             className={`nav__burger ${open ? 'is-open' : ''}`}
-            onClick={() => setOpen((o) => !o)}
-            aria-label={open ? 'Close menu' : 'Open menu'}
+            onClick={() => setOpen((value) => !value)}
+            aria-label={open ? 'Close navigation' : 'Open navigation'}
             aria-expanded={open}
+            aria-controls="site-menu"
           >
-            <span /><span />
+            <span />
+            <span />
           </button>
         </div>
       </header>
 
-      {/* Mobile fullscreen menu */}
-      <div className={`navmenu ${open ? 'is-open' : ''}`} aria-hidden={!open}>
-        <div className="navmenu__inner">
-          {nav.map((n, i) => {
-            const style = { transitionDelay: `${0.06 * i + 0.1}s` };
-            return n.route ? (
-              <Link key={n.to} to={n.to} className="navmenu__link" style={style} onClick={() => setOpen(false)}>
-                <span className="mono navmenu__idx">{n.index}</span>
-                {n.label}
-              </Link>
-            ) : (
-              <a key={n.to} href={n.to} onClick={(e) => go(e, n.to)} className="navmenu__link" style={style}>
-                <span className="mono navmenu__idx">{n.index}</span>
-                {n.label}
-              </a>
-            );
-          })}
-          <a href="#contact" onClick={(e) => go(e, '#contact')} className="btn navmenu__cta">
-            Open a secure channel <span className="btn__dot" />
+      <div
+        ref={menuRef}
+        id="site-menu"
+        className={`navmenu ${open ? 'is-open' : ''}`}
+        aria-hidden={!open}
+        inert={!open}
+      >
+        <nav className="navmenu__inner" aria-label="Mobile navigation">
+          {nav.map((item) => <NavItem key={item.to} item={item} mobile />)}
+          <a href="#contact" className="navmenu__contact" onClick={(event) => go(event, '#contact')}>
+            Write to me <span aria-hidden="true">↗</span>
           </a>
-        </div>
+        </nav>
       </div>
     </>
   );

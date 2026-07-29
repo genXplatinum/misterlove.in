@@ -10,7 +10,12 @@ export default function Magnetic({ children, strength = 0.4, className = '' }) {
   const onMove = (e) => {
     const el = ref.current;
     if (!el) return;
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const precisePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (reduced || !precisePointer) {
+      el.style.transform = 'translate(0, 0)';
+      return;
+    }
     const r = el.getBoundingClientRect();
     const x = (e.clientX - (r.left + r.width / 2)) * strength;
     const y = (e.clientY - (r.top + r.height / 2)) * strength;

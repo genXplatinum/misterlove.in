@@ -112,7 +112,7 @@ const LEXICON = new Set([
 function vocabSplit(s) {
   const n = s.length;
   const lower = s.toLowerCase();
-  const best = new Array(n + 1).fill(null);
+  const best = Array.from({ length: n + 1 }, () => null);
   best[0] = { score: 0, from: -1, word: '' };
 
   for (let i = 0; i < n; i++) {
@@ -312,7 +312,7 @@ function buildPart(lines, n, meta) {
       }
 
       if (table) {
-        const row = new Array(table.cols.length).fill('');
+        const row = Array.from({ length: table.cols.length }, () => '');
         for (const c of cells) {
           let best = 0;
           table.cols.forEach((cx, i) => {
@@ -338,7 +338,7 @@ function buildPart(lines, n, meta) {
       const label = unspace(text);
       const code = flat(label);
       // The verdict result is set deeper than the label that introduces it.
-      if (box && /^VERDICT/.test(box.code) && x > BODY_X + 20) { box.verdict = label; continue; }
+      if (box && box.code.startsWith('VERDICT') && x > BODY_X + 20) { box.verdict = label; continue; }
       flushBox();
       const hit = BOX_TONE.find(([re]) => re.test(code));
       box = { code, tone: hit ? hit[1] : 'key', label: hit ? hit[2] : titleCase(label), text: '', verdict: null };
@@ -469,7 +469,7 @@ function buildPart(lines, n, meta) {
       // sections ("How To Read This Book", "Closing") are headings without one.
       // No \b: if the dictionary failed to split the kicker it arrives as
       // "CHAPTERSEVEN", and that is still a chapter.
-      const isChapter = /^CHAPTER/.test(k);
+      const isChapter = k.startsWith('CHAPTER');
       let num = null;
       if (isChapter) {
         chapterNo += 1;
@@ -499,7 +499,7 @@ function buildPart(lines, n, meta) {
   // "How To Read This Book" preamble or the "Where Part One Left Us" recap
   // that opens the later parts, both of which sit before chapter one.
   const firstChapter = blocks.findIndex(
-    (b) => b.t === 'h2' && /^CHAPTER/.test((b.kicker ?? '').toUpperCase())
+    (b) => b.t === 'h2' && (b.kicker ?? '').toUpperCase().startsWith('CHAPTER')
   );
   const after = firstChapter === -1 ? 0 : firstChapter;
   const leadBlock =
