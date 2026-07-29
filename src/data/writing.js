@@ -36,14 +36,18 @@ export const pieces = [
     // The series as planned. `live` is what is actually published — the sitemap,
     // share cards, RSS and pager all follow the data file, never this number.
     parts: 15,
-    live: 1,
-    words: 32616,
-    minutes: 148,
+    live: 2,
+    words: 61211,
+    minutes: 278,
     status: 'In progress',
     accent: 'quartz',
     pdf: 'patriarchy-and-feminism-part-1.pdf',
     pdfSize: '582 KB',
     pdfLabel: 'Part 1 PDF',
+    pdfs: [
+      { n: 1, file: 'patriarchy-and-feminism-part-1.pdf', size: '582 KB', label: 'Part 1 PDF' },
+      { n: 2, file: 'patriarchy-and-feminism-part-2.pdf', size: '565 KB', label: 'Part 2 PDF' },
+    ],
     principlesTitle: '// The four commitments the whole series follows',
     principles: [
       { n: '01', t: 'Loaded questions get answered, not dodged', d: 'Where a claim is well supported, this says so. Where it is false as stated, it says that too — with equal force on both sides.' },
@@ -57,7 +61,7 @@ export const pieces = [
        one and a part landing later changes nothing but the data. */
     outline: [
       { n: 1, label: 'Definitions & Method', title: 'The Ground Rules', blurb: 'Definitions, the map of every position, and the reasoning failures.' },
-      { n: 2, label: 'Why It Began', title: 'Origins', blurb: 'Why nearly every society became patriarchal; whether any matriarchy has existed.' },
+      { n: 2, label: 'Origins & Change', title: 'How Patriarchal Institutions Emerged and Changed', blurb: 'Why patriarchal institutions became widespread, what sustained them, and why their forms varied, weakened, or changed.' },
       { n: 3, label: 'Religion I', title: 'Dharmic Traditions', blurb: 'Hindu, Buddhist, Jain and Sikh texts, practice, caste, and reform.' },
       { n: 4, label: 'Religion II', title: 'Christianity', blurb: 'Scripture, church history, the modern complementarian–egalitarian split.' },
       { n: 5, label: 'Religion III', title: 'Islam', blurb: 'Qur’an, hadith, the schools of law, and why outcomes differ so wildly by country.' },
@@ -235,6 +239,35 @@ export const livePartsOf = (p) => p.live ?? p.parts;
 
 /** Whether a piece is still being written. */
 export const isInProgress = (p) => livePartsOf(p) < p.parts;
+
+/** Every downloadable PDF attached to a piece, including legacy single PDFs. */
+export const pdfsOf = (piece) => (
+  piece?.pdfs
+  ?? (piece?.pdf
+    ? [{
+        n: null,
+        file: piece.pdf,
+        size: piece.pdfSize,
+        label: piece.pdfLabel ?? 'PDF',
+      }]
+    : [])
+);
+
+/** The PDF that belongs with one part, falling back to a piece-level book. */
+export const pdfForPart = (piece, part) => {
+  if (part?.pdf) {
+    return {
+      n: part.n,
+      file: part.pdf,
+      size: part.pdfSize,
+      label: part.pdfLabel ?? `Part ${part.n} PDF`,
+    };
+  }
+  return pdfsOf(piece).find((pdf) => pdf.n === part?.n) ?? pdfsOf(piece)[0];
+};
+
+/** Per-part publication dates let new volumes retain their real release date. */
+export const publishedOf = (piece, part) => part?.published ?? piece?.published;
 
 /**
  * The full contents of a piece: its published parts, plus any announced-but-

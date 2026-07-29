@@ -6,6 +6,8 @@ import {
   getPieceForLanguage,
   contentsOf,
   isInProgress,
+  pdfForPart,
+  publishedOf,
   writingPathOf,
 } from '../data/writing';
 import { profile } from '../data/site';
@@ -45,10 +47,12 @@ const COPY = {
     preparing: 'In preparation',
     allSoFar: 'That’s all so far →',
     beingWritten: (n, title) => `Part ${String(n).padStart(2, '0')} — ${title} is being written`,
-    download: (piece) => (
-      isInProgress(piece)
-        ? `Download ${piece.pdfLabel ?? 'the PDF'} (${piece.pdfSize})`
-        : `Download all ${piece.parts} parts (PDF, ${piece.pdfSize})`
+    download: (piece, pdf) => (
+      piece.pdfs
+        ? `Download ${pdf.label ?? 'the PDF'} (${pdf.size})`
+        : isInProgress(piece)
+          ? `Download ${piece.pdfLabel ?? 'the PDF'} (${piece.pdfSize})`
+          : `Download all ${piece.parts} parts (PDF, ${piece.pdfSize})`
     ),
     switchLabel: 'Reading language',
     english: 'English',
@@ -84,7 +88,7 @@ const COPY = {
     preparing: 'तैयार हो रहा है',
     allSoFar: 'अभी तक इतना ही →',
     beingWritten: (n, title) => `भाग ${String(n).padStart(2, '0')} — ${title} लिखा जा रहा है`,
-    download: (piece) => `मूल अंग्रेज़ी PDF डाउनलोड करें (${piece.pdfSize})`,
+    download: (_piece, pdf) => `मूल अंग्रेज़ी PDF डाउनलोड करें (${pdf.size})`,
     switchLabel: 'पढ़ने की भाषा',
     english: 'English',
     hindi: 'हिन्दी',
@@ -228,7 +232,7 @@ function useArticleMeta(piece, part, original) {
       description: part.lead || piece.standfirst,
       url,
       mainEntityOfPage: { '@type': 'WebPage', '@id': url },
-      datePublished: piece.published,
+      datePublished: publishedOf(piece, part),
       inLanguage: language,
       wordCount: part.words,
       articleSection: part.label,
@@ -340,6 +344,7 @@ export default function Article() {
   }, [piece]);
 
   const part = parts && valid ? parts[n - 1] : null;
+  const articlePdf = part ? pdfForPart(piece, part) : null;
   const toc = useMemo(() => part?.toc ?? [], [part]);
   const progress = useReadingProgress(bodyRef);
   const active = useActiveSection(toc, [toc]);
@@ -631,16 +636,18 @@ export default function Article() {
               })}
             </ol>
 
-            <div className="article__grabpdf">
-              <a
-                className="btn btn--ghost"
-                href={`${import.meta.env.BASE_URL}${piece.pdf}`}
-                download
-                data-cursor
-              >
-                {copy.download(piece)} <span className="btn__dot" />
-              </a>
-            </div>
+            {articlePdf && (
+              <div className="article__grabpdf">
+                <a
+                  className="btn btn--ghost"
+                  href={`${import.meta.env.BASE_URL}${articlePdf.file}`}
+                  download
+                  data-cursor
+                >
+                  {copy.download(piece, articlePdf)} <span className="btn__dot" />
+                </a>
+              </div>
+            )}
           </div>
         </section>
       )}
