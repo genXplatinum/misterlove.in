@@ -613,6 +613,255 @@
   color: var(--accent);
 }
 
+/* ============================================================
+   THE RESERVATION FILES vocabulary.
+
+   That series argues by separating three kinds of statement —
+   fact, interpretation and contested claim — and by putting the
+   two sides of each dispute side by side. Its print edition
+   carries that apparatus in colour, so the web edition does too,
+   drawn from the palette already declared above rather than a
+   second set of colours.
+   ============================================================ */
+
+/* The three colours of truth. */
+.prose .w-box--fact { --w-tone: var(--w-field); }
+.prose .w-box--interp { --w-tone: var(--w-gold); }
+.prose .w-box--claim { --w-tone: var(--w-clay); }
+
+/* Named mid-sentence, where the colour is the point. */
+.prose .w-tone-fact { color: var(--w-field); }
+.prose .w-tone-interp { color: var(--w-gold); }
+.prose .w-tone-claim { color: var(--w-clay); }
+
+/* A gloss set back to normal weight inside an emphasised cell. */
+.prose .w-plain { font-weight: 400; color: var(--text-2); }
+
+/* A callout headline, above its copy and below its label. */
+.prose .w-box-title {
+  display: block;
+  margin: -0.25em 0 0.6em;
+  font-family: var(--font-display);
+  font-size: 1.12em;
+  font-weight: 550;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  color: var(--text);
+}
+
+/* The traceable-source credit that closes a callout. */
+.prose .w-srcline {
+  margin: 0.9em 0 0 !important;
+  font-family: var(--font-body);
+  font-size: 0.72em;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+/* A third level, below the chapter and the section. */
+.prose .w-h4 {
+  margin: 1.75em 0 0.5em;
+  font-family: var(--font-body);
+  font-size: 0.86em;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
+
+/* Opening drop capital. */
+.prose .w-dropcap {
+  float: left;
+  margin: 0.06em 0.09em 0 0;
+  font-family: var(--font-display);
+  font-size: 3.1em;
+  font-weight: 600;
+  line-height: 0.82;
+  color: var(--w-clay);
+}
+
+.prose .w-attrib {
+  display: block;
+  margin-top: 0.85em;
+  font-family: var(--font-body);
+  font-size: 0.4em;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.prose .w-small {
+  font-size: 0.87em;
+  line-height: 1.7;
+  color: var(--text-2);
+}
+
+/* A caveat hung under the table it qualifies. */
+.prose .w-tnote {
+  margin-top: -1em;
+  font-family: var(--font-body);
+  font-size: 0.76em;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+/* ---------- Both sides, at full strength ---------- */
+.prose .w-sides {
+  display: grid;
+  gap: 0.9rem;
+  margin: 1.9em 0;
+}
+
+.prose .w-side {
+  --w-tone: var(--accent);
+  padding: 1.15em 1.35em 1.2em;
+  border: 1px solid color-mix(in oklab, var(--w-tone) 24%, var(--line));
+  border-left: 4px solid var(--w-tone);
+  border-radius: 0.25rem 0.75rem 0.75rem 0.25rem;
+  background:
+    linear-gradient(110deg, color-mix(in oklab, var(--w-tone) 9%, transparent), transparent 66%),
+    color-mix(in oklab, var(--surface) 90%, transparent);
+}
+
+.prose .w-side--a { --w-tone: var(--w-clay); }
+.prose .w-side--b { --w-tone: var(--w-teal); }
+
+.prose .w-side p { margin: 0 0 0.75em; }
+.prose .w-side p:last-child { margin-bottom: 0; }
+
+.prose .w-who {
+  display: block;
+  margin-bottom: 0.68em;
+  font-family: var(--font-body);
+  font-size: 0.66em;
+  font-weight: 750;
+  line-height: 1.4;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--w-tone);
+}
+
+@media (min-width: 900px) {
+  .prose .w-sides--pair { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------- Myth cards ---------- */
+.prose .w-myth {
+  overflow: hidden;
+  margin: 1.5em 0;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  background: color-mix(in oklab, var(--surface) 88%, transparent);
+  box-shadow: 0 14px 38px -40px var(--shadow);
+}
+
+.prose .w-myth-head {
+  padding: 1em 1.35em 0.95em;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in oklab, var(--olive) 6%, transparent);
+}
+
+.prose .w-myth-tag {
+  display: block;
+  margin-bottom: 0.5em;
+  font-family: var(--font-body);
+  font-size: 0.64em;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.prose .w-myth-title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.12em;
+  font-weight: 550;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  color: var(--text);
+}
+
+.prose .w-myth-body { padding: 1.15em 1.35em 1.2em; }
+.prose .w-myth-body p { margin: 0 0 0.75em; }
+.prose .w-myth-body p:last-child { margin-bottom: 0; }
+
+.prose .w-verdict {
+  display: block;
+  margin-top: 1em;
+  padding: 0.62em 0.9em;
+  border-radius: 0.35rem;
+  font-family: var(--font-body);
+  font-size: 0.78em;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--w-tone, var(--accent));
+  background: color-mix(in oklab, var(--w-tone, var(--accent)) 13%, transparent);
+}
+
+.prose .w-verdict--false { --w-tone: var(--w-clay); }
+.prose .w-verdict--half { --w-tone: var(--w-gold); }
+.prose .w-verdict--true { --w-tone: var(--w-field); }
+
+/* ---------- Stat strip ---------- */
+.prose .w-stats {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  margin: 1.9em 0;
+}
+
+.prose .w-stat {
+  padding: 1.1em 1.2em 1.15em;
+  border: 1px solid color-mix(in oklab, var(--brass) 30%, var(--line));
+  border-radius: 0.7rem;
+  background:
+    radial-gradient(80% 130% at 100% 0%, color-mix(in oklab, var(--brass) 10%, transparent), transparent),
+    color-mix(in oklab, var(--surface) 92%, transparent);
+}
+
+.prose .w-stat-big {
+  display: block;
+  margin-bottom: 0.28em;
+  font-family: var(--font-display);
+  font-size: 1.85em;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--accent);
+}
+
+.prose .w-stat-cap {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.74em;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+/* The five-line summary that closes each part reuses the takeaway
+   block, but keeps the author's numbering. */
+.prose .w-takeaways ol {
+  display: grid;
+  gap: 0.78em;
+  padding-left: 1.6em;
+  list-style: decimal;
+}
+
+.prose .w-takeaways ol li { color: var(--text-2); }
+.prose .w-takeaways ol li strong { color: var(--text); }
+
+.prose .w-takeaways ol li::marker {
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--accent);
+}
+
 @media (max-width: 560px) {
   .prose {
     font-size: 1.04rem;
@@ -625,8 +874,18 @@
   }
 
   .prose .w-box,
+  .prose .w-side,
   .prose .w-takeaways {
     margin-inline: -0.35rem;
+    padding-inline: 1rem;
+  }
+
+  .prose .w-myth {
+    margin-inline: -0.35rem;
+  }
+
+  .prose .w-myth-head,
+  .prose .w-myth-body {
     padding-inline: 1rem;
   }
 
@@ -656,6 +915,9 @@
   .prose .w-box,
   .prose .w-table-scroll,
   .prose .w-j-step,
+  .prose .w-side,
+  .prose .w-myth,
+  .prose .w-stat,
   .prose .w-takeaways {
     box-shadow: none;
     break-inside: avoid;
