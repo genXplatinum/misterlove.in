@@ -24,6 +24,13 @@
   color: var(--text);
   counter-reset: w-fn;
   font-kerning: normal;
+  /* Newsreader carries an optical-size axis; letting it run is most of the
+     difference between a web page and a set page. Figures in running prose
+     want proportional spacing; the tables and data below reset to tabular. */
+  font-optical-sizing: auto;
+  font-variant-numeric: proportional-nums;
+  font-variant-ligatures: common-ligatures contextual;
+  hanging-punctuation: first allow-end last;
   text-rendering: optimizeLegibility;
 }
 
@@ -77,16 +84,22 @@
   text-wrap: balance;
 }
 
-/* ---------- Headings ---------- */
+/* ---------- Headings ----------
+   A chapter opening, set the way a printed one is: a fleuron on a
+   tapering rule to close the chapter before it, then the folio mark
+   and the title over a double rule. */
 .prose .w-h2 {
+  position: relative;
   display: flex;
   align-items: baseline;
   gap: 0.72em;
   scroll-margin-top: 6.5rem;
-  margin: 2.8em 0 0.9em;
+  margin: 2.6em 0 0.95em;
+  padding-top: 2.4em;
   padding-bottom: 0.55em;
-  border-bottom: 1px solid var(--w-rule);
+  border-bottom: 3px double var(--w-rule);
   font-family: var(--font-display);
+  font-optical-sizing: auto;
   font-size: clamp(1.62rem, 1.2rem + 1.5vw, 2.35rem);
   font-weight: 500;
   line-height: 1.12;
@@ -95,23 +108,49 @@
   color: var(--text);
 }
 
-.prose .w-h2:first-child { margin-top: 0; }
+.prose .w-h2::before {
+  content: "❦";
+  position: absolute;
+  inset: 0 0 auto;
+  top: 0.1em;
+  font-family: var(--font-display);
+  font-size: 0.46em;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+  color: var(--brass);
+  opacity: 0.62;
+}
+
+/* The first chapter of a part opens the part; there is nothing above
+   it to close. */
+.prose .w-h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.prose .w-h2:first-child::before { content: none; }
 
 .prose .w-num {
   flex: none;
-  min-width: 2.2em;
-  padding: 0.34em 0.56em;
-  translate: 0 -0.1em;
-  border: 1px solid color-mix(in oklab, var(--brass) 52%, var(--line));
-  border-radius: 100px;
+  align-self: center;
+  min-width: 2.4em;
+  padding: 0.5em 0 0.42em;
+  translate: 0 -0.06em;
+  border-top: 1px solid color-mix(in oklab, var(--brass) 60%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--brass) 60%, transparent);
   font-family: var(--font-body);
-  font-size: 0.48em;
+  font-size: 0.44em;
   font-weight: 700;
+  font-variant-numeric: lining-nums tabular-nums;
   line-height: 1;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-align: center;
+  text-indent: 0.14em;
   color: var(--accent);
-  background: color-mix(in oklab, var(--brass) 7%, transparent);
+  background: none;
 }
 
 .prose .w-h3 {
@@ -267,6 +306,7 @@
   border-collapse: collapse;
   font-family: var(--font-body);
   font-size: 0.86em;
+  font-variant-numeric: lining-nums tabular-nums;
   line-height: 1.52;
 }
 
@@ -335,6 +375,7 @@
   font-family: var(--font-body);
   font-size: 0.73em;
   font-weight: 750;
+  font-variant-numeric: lining-nums tabular-nums;
   letter-spacing: 0.06em;
   color: var(--accent);
 }

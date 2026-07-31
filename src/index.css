@@ -132,11 +132,19 @@ h3,
 h4 {
   font-family: var(--font-display);
   font-weight: 400;
+  /* Newsreader is cut on an optical-size axis. Letting it run means the
+     display sizes get the tighter, finer drawing they were designed for
+     and the small sizes keep their sturdier one. */
+  font-optical-sizing: auto;
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
 
 p { text-wrap: pretty; }
+
+/* Figures in running copy space themselves; figures in a column of data
+   line up. The labels below opt into the second. */
+body { font-variant-numeric: proportional-nums; }
 
 ::selection {
   background: var(--lichen);
@@ -178,6 +186,7 @@ main {
   font-family: var(--font-body);
   font-size: var(--t-label);
   font-weight: 600;
+  font-variant-numeric: lining-nums tabular-nums;
   line-height: 1.45;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -216,6 +225,8 @@ main {
   line-height: 1.5;
 }
 
+/* A double rule under a running head is the oldest way a page says
+   "a new division starts here". It costs one border declaration. */
 .section-head {
   display: flex;
   align-items: baseline;
@@ -223,10 +234,24 @@ main {
   gap: 1rem;
   margin-bottom: clamp(2.2rem, 5vw, 4.5rem);
   padding-bottom: 1.2rem;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 3px double var(--line);
 }
 
 .section-head__id { color: var(--accent); }
+
+/* ---------- Printer's rule ----------
+   A hairline with a shorter one beneath it, tapering — the mark a
+   compositor sets under a chapter head. Used across the archive so
+   every division is closed the same way. */
+.rule-printer {
+  width: min(100%, 21rem);
+  height: 5px;
+  color: var(--brass);
+  opacity: 0.6;
+  background:
+    linear-gradient(currentColor, currentColor) 0 0 / 100% 1px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 4px / 36% 1px no-repeat;
+}
 
 .btn {
   min-height: 3rem;

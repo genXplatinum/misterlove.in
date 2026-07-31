@@ -594,3 +594,41 @@
     transform: none;
   }
 }
+
+/* ============================================================
+   BOOK FURNITURE — the shelf and the volume.
+   ============================================================ */
+
+/* Every volume on the shelf carries its accession number, the way a
+   catalogued one does. Newest first, so 01 is the newest arrival. */
+.topics { counter-reset: shelf; }
+.topics > .topic { counter-increment: shelf; }
+
+.topics > .topic .topic__topic::before {
+  content: counter(shelf, decimal-leading-zero);
+  margin-right: 0.85em;
+  padding-right: 0.85em;
+  border-right: 1px solid color-mix(in oklab, var(--brass) 55%, transparent);
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--brass);
+}
+
+/* Tallies are a column of data. */
+.writingpage__totals dd,
+.topic__meta,
+.partrow__n,
+.partrow__meta {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* The shelf head and the volume head are both divisions, so both are
+   closed with the same printer's rule. */
+.writingpage__title,
+.topic__title,
+.topicpage__stand {
+  font-optical-sizing: auto;
+}
+
+.topicpage__summary {
+  hanging-punctuation: first allow-end last;
+}

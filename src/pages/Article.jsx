@@ -31,6 +31,23 @@ function prefersReducedMotion() {
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
+/** Parts are numbered like a book's divisions in the closing colophon. */
+const ROMAN = [
+  [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I'],
+];
+
+function roman(n) {
+  let left = n;
+  let out = '';
+  for (const [value, numeral] of ROMAN) {
+    while (left >= value) {
+      out += numeral;
+      left -= value;
+    }
+  }
+  return out || String(n);
+}
+
 const COPY = {
   en: {
     writing: 'Writing',
@@ -72,6 +89,9 @@ const COPY = {
     switchLabel: 'Reading language',
     english: 'English',
     hindi: 'हिन्दी',
+    endOfPart: (n) => `End of Part ${roman(n)}`,
+    researchedBy: 'Researched and written by',
+    edition: 'First edition',
   },
   hi: {
     writing: 'लेखन',
@@ -107,6 +127,9 @@ const COPY = {
     switchLabel: 'पढ़ने की भाषा',
     english: 'English',
     hindi: 'हिन्दी',
+    endOfPart: (n) => `भाग ${n} समाप्त`,
+    researchedBy: 'शोध और लेखन',
+    edition: 'पहला संस्करण',
   },
 };
 
@@ -607,6 +630,22 @@ export default function Article() {
                 </summary>
                 <Prose html={part.sources} className="prose--sources" dark={theme === 'dark'} />
               </details>
+            )}
+
+            {part && (
+              <div className="article__colophon">
+                <span className="article__colophon-mark" aria-hidden="true">❦</span>
+                <p className="mono article__colophon-end">{copy.endOfPart(n)}</p>
+                <p className="article__colophon-title">
+                  {piece.title} — {part.title}
+                </p>
+                <p className="article__colophon-by">
+                  {copy.researchedBy} {profile.name}
+                </p>
+                <p className="mono article__colophon-meta">
+                  {copy.edition} · {piece.displayDate} · {part.words.toLocaleString('en-IN')} {copy.words}
+                </p>
+              </div>
             )}
 
             {part && (

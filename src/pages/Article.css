@@ -857,3 +857,95 @@ body.is-reading .statusbar { display: none; }
     box-shadow: none;
   }
 }
+
+/* ============================================================
+   COLOPHON
+
+   The print editions end each part on a set page: the fleuron, the
+   part number, the title, the byline and the edition line. The
+   reader had a pager and nothing else, so a part simply stopped.
+   This closes it the way the book does — and because it is built
+   from the manifest, every series gets one.
+   ============================================================ */
+.article__colophon {
+  margin: clamp(4rem, 8vw, 7rem) 0 clamp(3rem, 6vw, 5rem);
+  padding-top: clamp(2.5rem, 5vw, 4rem);
+  border-top: 1px solid var(--line);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.article__colophon-mark {
+  display: block;
+  margin-bottom: 1.6rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--brass);
+  opacity: 0.75;
+}
+
+.article__colophon-end {
+  color: var(--accent);
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+}
+
+.article__colophon-title {
+  max-width: 34ch;
+  margin: 1.1rem auto 0;
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-size: clamp(1.3rem, 1.05rem + 1vw, 1.85rem);
+  font-style: italic;
+  font-weight: 450;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.article__colophon-by {
+  margin-top: 0.9rem;
+  font-family: var(--font-reading);
+  font-size: 1.02rem;
+  color: var(--text-2);
+}
+
+.article__colophon-meta {
+  margin-top: 0.7rem;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--text-dim);
+}
+
+/* ---------- Book furniture elsewhere in the reader ---------- */
+
+/* The rule that closes the author's note becomes a printer's rule. */
+.article__prologue-rule {
+  width: min(100%, 21rem);
+  height: 5px;
+  margin: 3rem 0 1.2rem;
+  color: var(--brass);
+  opacity: 0.6;
+  background:
+    linear-gradient(currentColor, currentColor) 0 0 / 100% 1px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 4px / 36% 1px no-repeat;
+}
+
+/* Facts, folios and pips are columns of data. */
+.article__facts dd,
+.article__partno,
+.article__pips,
+.article__toc-n,
+.article__entry-n,
+.article__entry-meta {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.article__title,
+.article__entry-title {
+  font-optical-sizing: auto;
+}
+
+.article__standfirst {
+  hanging-punctuation: first allow-end last;
+}

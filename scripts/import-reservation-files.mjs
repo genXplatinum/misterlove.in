@@ -522,11 +522,11 @@ function importPart({ n, label, file }) {
   const front = [];
   const chapters = [];
   let appendix = null;
-  let endpage = null;
 
   for (const section of elements(body)) {
     if (hasClass(section, 'cover')) { cover = section; continue; }
-    if (hasClass(section, 'endpage')) { endpage = section; continue; }
+    // The printed end page is replaced by the reader's own colophon.
+    if (hasClass(section, 'endpage')) continue;
 
     const head = readHead(section);
     if (!head) {
