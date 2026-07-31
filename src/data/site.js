@@ -46,15 +46,17 @@ export const home = {
     statement:
       'I want to write the kind of argument that gets stronger the more you fact-check it, not weaker.',
     paragraphs: [
-      'I am Lovepreet Singh — a Certified Ethical Hacker, the founder of Lovelace, and the writer behind this archive. I took a B.Com in Business at Chandigarh University and am now reading for an MBA in Business Strategy and Analysis at Panjab University, Chandigarh. I read across technology, business, history, politics, psychology, philosophy and economics, because the questions that matter rarely stay inside one subject.',
+      'I am Lovepreet Singh — a Certified Ethical Hacker, the founder of Lovelace, and the writer behind this archive. I took a B.Com in Business at Chandigarh University and am in the second year of an MBA in Business Strategy and Analysis at Panjab University, Chandigarh. A doctorate is what I intend to do after it. I read across technology, business, history, politics, psychology, philosophy and economics, because the questions that matter rarely stay inside one subject.',
       'Everything technical about me is self-taught. I have no science background and no computer-science degree. I learned C, C++ and data structures and algorithms on my own, then the MERN stack, then security — and earned the Certified Ethical Hacker qualification the same way. I did it because I wanted to know how the machine actually works, not because a syllabus required it.',
       'I am an obsessive science and technology enthusiast, and I think the two halves of my training feed each other. Strategy taught me to ask who benefits from a claim. Engineering taught me that a system will do exactly what it was built to do, whatever anyone intended. They are the same discipline pointed at different objects.',
-      'So my writing begins with a simple discomfort: public arguments are usually confident long before they are careful. I go back to the record, read across disagreement, separate what is evidence from what is a value judgement, and explain what survives in plain language. This archive is what that method has produced so far.',
+      'Philosophy is the part I would do for nothing. Epistemology above all — how a claim earns the right to be believed, where certainty is warranted and where it is merely loud, and what it costs to hold a position honestly. Ethics and political philosophy follow from it, because most public arguments turn out to be three arguments wearing one coat: a dispute about facts, a dispute about what a word means, and a dispute about what ought to matter. Almost nobody says which one they are having, which is why so few of them ever end.',
+      'So my writing begins with a simple discomfort: public arguments are usually confident long before they are careful. I go back to the record, read across disagreement, separate what is evidence from what is a value judgement, and explain what survives in plain language. This archive is where that method is being built — and it is deliberate preparation for the doctoral research I mean to do, not a detour from it.',
     ],
     facts: [
       { label: 'Based in', value: 'Punjab, India' },
       { label: 'Qualified as', value: 'Certified Ethical Hacker' },
       { label: 'Self-taught in', value: 'C, C++, DSA and the MERN stack' },
+      { label: 'Reading toward', value: 'Doctoral research, after the MBA' },
       { label: 'Writing principle', value: 'Simple language, checkable claims' },
     ],
     photoCaption: 'Speaking about digital systems and security, Delhi, 2025.',
@@ -77,7 +79,7 @@ export const home = {
         n: '02',
         title: 'Research and writing',
         text:
-          'I investigate subjects that public debate often reduces to slogans: independence, farmers’ movements, religion, gender, caste, merit and social justice.',
+          'I investigate subjects that public debate often reduces to slogans: independence, farmers’ movements, religion, gender, caste, merit and social justice. The method is philosophical before it is historical — establish what kind of question is being asked, then answer that question rather than a louder one standing next to it.',
         points: ['Primary records', 'Competing arguments', 'Plain-English synthesis'],
         href: '/writing',
         route: true,
@@ -133,10 +135,17 @@ export const home = {
     label: 'Education and inquiry',
     title: 'Formal study, independent reading, public work.',
     intro:
-      'Education is not a finished badge here. It is a continuing practice of reading, testing and revising what I think I know.',
+      'Education is not a finished badge here. It is a continuing practice of reading, testing and revising what I think I know — and it is heading somewhere specific.',
     items: [
       {
-        period: 'Current',
+        period: 'Next',
+        title: 'Doctoral research',
+        place: 'Planned on completion of the MBA',
+        text:
+          'The intention this whole archive is pointed at. Philosophy is the spine of it — epistemology, ethics and political philosophy — and every investigation published here is groundwork: practice at holding a position honestly, in public, before anyone requires it of me.',
+      },
+      {
+        period: 'Second year',
         title: 'MBA — Business Strategy and Analysis',
         place: 'Panjab University, Chandigarh',
         text:
