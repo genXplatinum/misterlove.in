@@ -670,6 +670,40 @@ for (const { piece, parts } of editions) {
   }
 }
 
+/* ---- Retired routes ------------------------------------------------------
+   A piece that has been withdrawn or renamed still has its old URL in feeds,
+   in search results and in whatever anyone shared. GitHub Pages cannot issue a
+   301, so each retired path gets a real page that points at its replacement
+   and asks not to be indexed itself. */
+const RETIRED = {
+  // "Reservation Hatao" was withdrawn and rewritten from scratch as the
+  // fourteen-part "The Reservation Files".
+  '/writing/reservation-hatao': '/writing/reservation-files/',
+  '/writing/reservation-hatao/part-1': '/writing/reservation-files/part-1/',
+};
+
+for (const [from, to] of Object.entries(RETIRED)) {
+  const target = `${SITE}${to}`;
+  mkdirSync(`dist${from}`, { recursive: true });
+  writeFileSync(`dist${from}/index.html`, `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Moved — The Reservation Files | Lovepreet Singh</title>
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href="${target}" />
+    <meta http-equiv="refresh" content="0; url=${target}" />
+  </head>
+  <body>
+    <p>This research has been rewritten and expanded as <strong>The Reservation Files</strong>.</p>
+    <p><a href="${target}">Continue to its new home →</a></p>
+  </body>
+</html>
+`);
+  shells += 1;
+}
+
 /* ---- RSS ----------------------------------------------------------------
    One item per part, newest piece first. Gives readers and aggregators
    something to subscribe to, and gives crawlers a second discovery path
