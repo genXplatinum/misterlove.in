@@ -34,6 +34,7 @@ const PARTS = [
   { n: 1, label: 'The Basics', file: 'The Reservation Files - Part 1 - Ground Zero.pdf' },
   { n: 2, label: 'Origins', file: 'The Reservation Files - Part 2 - Before Caste.pdf' },
   { n: 3, label: 'The Mechanism', file: 'The Reservation Files - Part 3 - How Varna Became Jati.pdf' },
+  { n: 4, label: 'Invasions', file: 'The Reservation Files - Part 4 - 1000 Years of Outsiders.pdf' },
 ];
 
 const PUBLISHED = '2026-07-31';
@@ -149,6 +150,24 @@ function textOf(node) {
   return node.children.map(textOf).join('');
 }
 const flat = (node) => textOf(node).replace(/\s+/g, ' ').trim();
+
+/* Covers are set in capitals, so the part title has to be recased for the
+   web. Small words stay down unless they open or close the title. */
+const MINOR_WORDS = new Set([
+  'a', 'an', 'and', 'as', 'at', 'but', 'by', 'for', 'from', 'in', 'into',
+  'nor', 'of', 'on', 'onto', 'or', 'over', 'the', 'to', 'up', 'v', 'vs', 'with',
+]);
+
+const titleCase = (s) => {
+  const words = s.toLowerCase().split(/\s+/).filter(Boolean);
+  return words
+    .map((word, index) => (
+      index > 0 && index < words.length - 1 && MINOR_WORDS.has(word)
+        ? word
+        : word.replace(/[a-z]/, (c) => c.toUpperCase())
+    ))
+    .join(' ');
+};
 
 const slugify = (s) => s
   .toLowerCase()
@@ -547,9 +566,7 @@ function importPart({ n, label, file }) {
   if (!chapters.length) throw new Error(`${where}: no chapters`);
   if (!front.length) throw new Error(`${where}: no front matter`);
 
-  const coverTitle = flat(deepFindClass(cover, 'ptitle') ?? { children: [] })
-    .toLowerCase()
-    .replace(/\b[a-z]/g, (c) => c.toUpperCase());
+  const coverTitle = titleCase(flat(deepFindClass(cover, 'ptitle') ?? { children: [] }));
   const coverSub = flat(deepFindClass(cover, 'sub') ?? { children: [] });
   if (!coverTitle || !coverSub) throw new Error(`${where}: the cover has no title or strapline`);
 
