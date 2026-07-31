@@ -397,7 +397,7 @@
   display: grid;
   /* The number of facts is content, not layout — the row reflows rather
      than breaking when one is added. */
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
   gap: clamp(1.6rem, 3vw, 2.4rem) var(--gutter);
   margin-top: clamp(3.5rem, 6vw, 6rem);
   padding-top: 1.4rem;
