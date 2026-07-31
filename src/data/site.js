@@ -9,8 +9,8 @@ export const profile = {
   name: 'Lovepreet Singh',
   first: 'Lovepreet',
   last: 'Singh',
-  descriptor: 'Cybersecurity professional · Founder of Lovelace · Scholar · PhD candidate',
-  shortDescriptor: 'Cybersecurity · Research · Lovelace',
+  descriptor: 'Certified Ethical Hacker · Founder of Lovelace · MBA candidate · Researcher',
+  shortDescriptor: 'Security · Research · Lovelace',
   location: 'Punjab, India',
   email: 'lovepreetsinghmk10@gmail.com',
   photo: import.meta.env.BASE_URL + 'founder.jpg',
@@ -35,7 +35,7 @@ export const home = {
     eyebrow: profile.descriptor,
     title: 'I study systems, then write until they become clear.',
     lead:
-      'My work moves between cybersecurity, history and public research. I founded Lovelace, work with digital systems, and build long-form investigations around difficult public questions.',
+      'My work moves between security, business strategy and public research. I founded Lovelace, taught myself the engineering I use, and build long-form investigations that take difficult public questions back to the record.',
     primary: { label: 'Read my work', to: '/writing', route: true },
     secondary: { label: 'About me', to: '#about' },
   },
@@ -46,13 +46,15 @@ export const home = {
     statement:
       'I want to write the kind of argument that gets stronger the more you fact-check it, not weaker.',
     paragraphs: [
-      'I am Lovepreet Singh, a cybersecurity professional, founder of Lovelace, scholar and PhD candidate. I read across technology, business, history, politics, psychology, philosophy and economics because the questions that matter rarely stay inside one subject.',
-      'My writing begins with a simple discomfort: public arguments are often confident long before they are careful. I go back to the record, read across disagreement, separate evidence from values, and explain what survives in plain language.',
-      'I am Punjabi and come from a Sikh family shaped by the memory of Partition. My grandmother crossed on foot from what is now Pakistan to India. That family history is one reason I take memory, identity and political storytelling seriously.',
+      'I am Lovepreet Singh — a Certified Ethical Hacker, the founder of Lovelace, and the writer behind this archive. I took a B.Com in Business at Chandigarh University and am now reading for an MBA in Business Strategy and Analysis at Panjab University, Chandigarh. I read across technology, business, history, politics, psychology, philosophy and economics, because the questions that matter rarely stay inside one subject.',
+      'Everything technical about me is self-taught. I have no science background and no computer-science degree. I learned C, C++ and data structures and algorithms on my own, then the MERN stack, then security — and earned the Certified Ethical Hacker qualification the same way. I did it because I wanted to know how the machine actually works, not because a syllabus required it.',
+      'I am an obsessive science and technology enthusiast, and I think the two halves of my training feed each other. Strategy taught me to ask who benefits from a claim. Engineering taught me that a system will do exactly what it was built to do, whatever anyone intended. They are the same discipline pointed at different objects.',
+      'So my writing begins with a simple discomfort: public arguments are usually confident long before they are careful. I go back to the record, read across disagreement, separate what is evidence from what is a value judgement, and explain what survives in plain language. This archive is what that method has produced so far.',
     ],
     facts: [
       { label: 'Based in', value: 'Punjab, India' },
-      { label: 'Working across', value: 'Technology, history and public reasoning' },
+      { label: 'Qualified as', value: 'Certified Ethical Hacker' },
+      { label: 'Self-taught in', value: 'C, C++, DSA and the MERN stack' },
       { label: 'Writing principle', value: 'Simple language, checkable claims' },
     ],
     photoCaption: 'Speaking about digital systems and security, Delhi, 2025.',
@@ -68,8 +70,8 @@ export const home = {
         n: '01',
         title: 'Cybersecurity',
         text:
-          'I work on practical questions of risk, failure and trust in digital systems. The work is technical, but the purpose is simple: help people understand what can go wrong and make better decisions before it does.',
-        points: ['Security research', 'System review', 'Clear technical advice'],
+          'I work on practical questions of risk, failure and trust in digital systems, as a Certified Ethical Hacker who learned the craft outside any syllabus. The work is technical, but the purpose is simple: help people understand what can go wrong and make better decisions before it does.',
+        points: ['Offensive security', 'System review', 'Clear technical advice'],
       },
       {
         n: '02',
@@ -135,10 +137,24 @@ export const home = {
     items: [
       {
         period: 'Current',
-        title: 'PhD candidate',
-        place: 'Doctoral study in progress',
+        title: 'MBA — Business Strategy and Analysis',
+        place: 'Panjab University, Chandigarh',
         text:
-          'Formal research continues alongside an independent body of public writing and technology work.',
+          'Strategy, analysis and the economics of how organisations actually decide — the formal counterpart to the reasoning this archive runs on.',
+      },
+      {
+        period: 'Self-taught',
+        title: 'Certified Ethical Hacker',
+        place: 'Earned without a science background or a technology degree',
+        text:
+          'C, C++ and data structures and algorithms first, then the MERN stack, then offensive security. All of it outside a syllabus, because I wanted to know how the machine actually works.',
+      },
+      {
+        period: 'Completed',
+        title: 'B.Com — Business',
+        place: 'Chandigarh University',
+        text:
+          'The commerce foundation: accounts, markets and the structures sitting underneath every claim about who gains from a policy.',
       },
       {
         period: 'Foundation',
@@ -148,9 +164,9 @@ export const home = {
           'The formal foundation before a wider, self-directed path through technology and the social sciences.',
       },
       {
-        period: 'Ongoing',
+        period: 'Continuing',
         title: 'Independent interdisciplinary study',
-        place: 'Business · Technology · Politics · Psychology · Philosophy · Economics · History',
+        place: 'Science · Technology · Business · Politics · Psychology · Philosophy · Economics · History',
         text:
           'A daily reading and writing practice that moves between disciplines instead of treating them as sealed rooms.',
       },
