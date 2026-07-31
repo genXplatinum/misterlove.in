@@ -36,7 +36,21 @@ const PARTS = [
   { n: 3, label: 'The Mechanism', file: 'The Reservation Files - Part 3 - How Varna Became Jati.pdf' },
   { n: 4, label: 'Invasions', file: 'The Reservation Files - Part 4 - 1000 Years of Outsiders.pdf' },
   { n: 5, label: 'Colonial Rule', file: 'The Reservation Files - Part 5 - The British Machine.pdf' },
+  { n: 6, label: 'The Evidence', file: 'The Reservation Files - Part 6 - The Evidence File.pdf' },
+  { n: 7, label: 'The Thinkers', file: 'The Reservation Files - Part 7 - The Great Minds Argue.pdf' },
+  { n: 8, label: 'The Constitution', file: 'The Reservation Files - Part 8 - The Constitution Room.pdf' },
+  { n: 9, label: 'Mandal', file: 'The Reservation Files - Part 9 - Mandal and Fire.pdf' },
+  { n: 10, label: '2019–2026', file: 'The Reservation Files - Part 10 - The Modern Rewrite.pdf' },
+  { n: 11, label: 'The Data', file: 'The Reservation Files - Part 11 - The Data War.pdf' },
+  { n: 12, label: 'Both Cases', file: 'The Reservation Files - Part 12 - The Two Cases Steelmanned.pdf' },
+  { n: 13, label: 'Blind Spots', file: 'The Reservation Files - Part 13 - The Blind Spots.pdf' },
+  { n: 14, label: 'The Verdict', file: 'The Reservation Files - Part 14 - The Verdict.pdf' },
 ];
+
+/* The series is complete, so it ships as one book rather than fourteen
+   separate downloads. Parts no longer carry a PDF of their own; the
+   manifest points every download at the collected edition. */
+const COMPLETE_PDF = 'The Reservation Files - COMPLETE.pdf';
 
 const PUBLISHED = '2026-07-31';
 const WORDS_PER_MINUTE = 220;
@@ -49,6 +63,12 @@ const WORDS_PER_MINUTE = 220;
    tag or an unclosed element throws rather than silently swallowing prose.
    ------------------------------------------------------------------ */
 const VOID = new Set(['br', 'hr', 'img', 'col', 'meta', 'link', 'input']);
+
+/* Elements whose content is not markup. A later part carries a scoped
+   <style> block inside the body to tighten one chapter's cards; its CSS
+   must not be tokenised as tags, and it is dropped from the web edition,
+   which has its own stylesheet. */
+const RAW_TEXT = new Set(['style', 'script']);
 
 const ENTITIES = {
   amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: '\u00a0',
@@ -116,6 +136,16 @@ function parse(html, where) {
     const tag = opening.toLowerCase();
     const node = { tag, attrs: parseAttributes(rawAttrs), children: [] };
     push(node);
+
+    if (!selfClosing && RAW_TEXT.has(tag)) {
+      const end = html.toLowerCase().indexOf(`</${tag}`, index);
+      if (end === -1) throw new Error(`${where}: unclosed <${tag}>`);
+      node.children.push(html.slice(index, end));
+      index = html.indexOf('>', end) + 1;
+      pattern.lastIndex = index;
+      continue;
+    }
+
     if (!selfClosing && !VOID.has(tag)) stack.push(node);
   }
 
@@ -205,6 +235,11 @@ const TONE_BY_BACKGROUND = [
   [/--factlite/i, 'fact'],
   [/--interplite/i, 'interp'],
   [/--claimlite/i, 'claim'],
+  // The two sides of the argument, in the colours the print edition gives
+  // them: --a is the case for removal, --b the case for keeping it. The
+  // prose tones that already carry those exact hues are reused.
+  [/--alite/i, 'worry'],
+  [/--blite/i, 'answer'],
 ];
 
 /* The colour-code reminder prints FACT / INTERPRETATION / CONTESTED CLAIM in
@@ -265,7 +300,13 @@ class Importer {
     if (hasClass(node, 'sourceline')) return `<p class="w-srcline">${body}</p>`;
     if (hasClass(node, 'attrib')) return `<span class="w-attrib">${body}</span>`;
     if (hasClass(node, 'tnote')) return `<p class="w-tnote">${body}</p>`;
-    if (hasClass(node, 'small')) return `<p class="w-small">${body}</p>`;
+    if (hasClass(node, 'small')) {
+      // Later parts set the colour-code reminder as a boxed paragraph rather
+      // than a .box.note. It is the same device, so it reads the same here.
+      return /background\s*:\s*var\(--cream\)/.test(node.attrs.style ?? '')
+        ? `<div class="w-box w-box--key"><p>${body}</p></div>`
+        : `<p class="w-small">${body}</p>`;
+    }
     if (lead || hasClass(node, 'lead')) return `<p class="w-lead">${body}</p>`;
     return `<p>${body}</p>`;
   }
@@ -544,13 +585,19 @@ function importPart({ n, label, file }) {
   let appendix = null;
 
   for (const section of elements(body)) {
+    if (RAW_TEXT.has(section.tag)) continue;
     if (hasClass(section, 'cover')) { cover = section; continue; }
     // The printed end page is replaced by the reader's own colophon.
     if (hasClass(section, 'endpage')) continue;
 
     const head = readHead(section);
     if (!head) {
-      if (flat(section)) throw new Error(`${where}: a section with no heading strip`);
+      if (flat(section)) {
+        throw new Error(
+          `${where}: a section with no heading strip — <${section.tag} class="${classesOf(section).join(' ')}"> `
+          + `starting "${flat(section).slice(0, 120)}…"`
+        );
+      }
       continue;
     }
 
@@ -595,9 +642,11 @@ function importPart({ n, label, file }) {
       + io.blocks(withoutHead(appendix.section, appendix))
     : '';
 
+  // The per-part PDF is no longer published, but it must still exist: it is
+  // the proof that the source this part was read from is the one that was
+  // typeset, and the collected edition is built from the same set.
   const pdfPath = resolve(SRC_DIR, file);
   if (!existsSync(pdfPath)) throw new Error(`${where}: missing PDF ${pdfPath}`);
-  const pdfSize = `${Math.round(statSync(pdfPath).size / 1024)} KB`;
 
   const strip = (markup) => markup
     .replace(/<[^>]+>/g, ' ')
@@ -615,9 +664,6 @@ function importPart({ n, label, file }) {
       words,
       minutes: Math.max(1, Math.round(words / WORDS_PER_MINUTE)),
       published: PUBLISHED,
-      pdf: `the-reservation-files-part-${n}.pdf`,
-      pdfSize,
-      pdfLabel: `Part ${n} PDF`,
       toc,
       prologue,
       prologueTitle: front[0].title,
@@ -626,6 +672,20 @@ function importPart({ n, label, file }) {
       sources,
     },
     source: { path, pdfPath, chapters: chapters.length, warnings: io.warnings },
+  };
+}
+
+/** The collected edition, reported so the manifest's size can be checked. */
+function completeEdition() {
+  const path = resolve(SRC_DIR, COMPLETE_PDF);
+  if (!existsSync(path)) throw new Error(`Missing the collected edition: ${path}`);
+  const bytes = statSync(path).size;
+  return {
+    path,
+    bytes,
+    size: bytes >= 1024 * 1024
+      ? `${(bytes / 1024 / 1024).toFixed(1)} MB`
+      : `${Math.round(bytes / 1024)} KB`,
   };
 }
 
@@ -672,11 +732,17 @@ export default parts;
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, output, 'utf8');
 
+const complete = completeEdition();
+
 console.log(`✓ ${OUT}`);
 for (const { part } of imported) {
   console.log(
-    `  Part ${part.n} — ${part.title.padEnd(24)} ${String(part.toc.length).padStart(2)} chapters · `
-    + `${part.words.toLocaleString('en-IN').padStart(7)} words · ${String(part.minutes).padStart(3)} min · ${part.pdfSize}`
+    `  Part ${String(part.n).padStart(2)} — ${part.title.padEnd(26)} ${String(part.toc.length).padStart(2)} chapters · `
+    + `${part.words.toLocaleString('en-IN').padStart(7)} words · ${String(part.minutes).padStart(3)} min`
   );
 }
-console.log(`  ${parts.length} parts · ${totalWords.toLocaleString('en-IN')} words total`);
+console.log(
+  `  ${parts.length} parts · ${totalWords.toLocaleString('en-IN')} words · `
+  + `${parts.reduce((sum, part) => sum + part.minutes, 0)} min`
+);
+console.log(`  Collected edition: ${complete.size} — set this as pdfSize in the manifest`);

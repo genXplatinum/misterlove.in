@@ -35,24 +35,19 @@ export const pieces = [
     ],
     published: '2026-07-31',
     displayDate: 'July 2026',
-    // Fourteen parts planned; `live` is what is actually published. The sitemap,
-    // share cards, RSS and pager all follow the data file, never this number.
+    // All fourteen are written, so `live` is omitted: livePartsOf falls back
+    // to the part count and nothing claims a part that is not there.
     parts: 14,
-    live: 5,
-    words: 41754,
-    minutes: 190,
-    status: 'In progress',
+    words: 104987,
+    minutes: 479,
+    status: 'Complete',
     accent: 'ink',
-    pdf: 'the-reservation-files-part-1.pdf',
-    pdfSize: '181 KB',
-    pdfLabel: 'Part 1 PDF',
-    pdfs: [
-      { n: 1, file: 'the-reservation-files-part-1.pdf', size: '181 KB', label: 'Part 1 PDF' },
-      { n: 2, file: 'the-reservation-files-part-2.pdf', size: '171 KB', label: 'Part 2 PDF' },
-      { n: 3, file: 'the-reservation-files-part-3.pdf', size: '168 KB', label: 'Part 3 PDF' },
-      { n: 4, file: 'the-reservation-files-part-4.pdf', size: '152 KB', label: 'Part 4 PDF' },
-      { n: 5, file: 'the-reservation-files-part-5.pdf', size: '146 KB', label: 'Part 5 PDF' },
-    ],
+    // One book, not fourteen downloads. The per-part PDFs were right while the
+    // series was being serialised; now that it is finished the collected
+    // edition is the thing a reader actually wants.
+    pdf: 'the-reservation-files.pdf',
+    pdfSize: '2.4 MB',
+    pdfLabel: 'The complete book',
     principlesTitle: '// The house rules every part follows',
     principles: [
       { n: '01', t: 'Class-8 English, always', d: 'Short sentences, no jargon, every hard word explained where it first appears. If a fifteen-year-old who hates reading cannot follow a page, that page is badly written.' },
@@ -77,8 +72,8 @@ export const pieces = [
       { n: 10, label: '2019–2026', title: 'The Modern Rewrite', blurb: 'The 103rd Amendment and EWS, dominant communities demanding inclusion, the 2024 sub-classification ruling, and the 2027 caste census.' },
       { n: 11, label: 'The Data', title: 'The Data War', blurb: 'Every popular statistic from both sides run through the same test — dropout data, faculty vacancies, officer composition, wealth share and mobility.' },
       { n: 12, label: 'Both Cases', title: 'The Two Cases, Steelmanned', blurb: 'Abolish it and keep it, each written by its best possible advocate, then cross-examined, then scored claim by claim.' },
-      { n: 13, label: 'Blind Spots', title: 'The Questions Nobody Asks', blurb: 'Thirty questions neither side raises, plus what actually happened in the USA, Malaysia, South Africa, Brazil, Nepal and Northern Ireland.' },
-      { n: 14, label: 'The Verdict', title: 'The Verdict and the Road Ahead', blurb: 'What is true in each case, what each side is lying to itself about, a labelled verdict with its reasoning shown, and a concrete model for 2047.' },
+      { n: 13, label: 'Blind Spots', title: 'The Blind Spots', blurb: 'The questions neither side raises, plus what actually happened in the USA, Malaysia, South Africa, Brazil, Nepal and Northern Ireland.' },
+      { n: 14, label: 'The Verdict', title: 'The Verdict', blurb: 'What is true in each case, what each side is lying to itself about, a labelled verdict with its reasoning shown, and a concrete model for 2047.' },
     ],
     load: () => import('./writing/reservation-files.js'),
   },
