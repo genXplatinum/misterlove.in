@@ -1130,3 +1130,77 @@
     transform: none;
   }
 }
+
+/* ============================================================
+   BOOK FURNITURE
+
+   The archive already reads as a collection. What it lacked was
+   the apparatus a bound collection carries: divisions that are
+   numbered, heads that are closed with a rule, and figures that
+   line up in a column. None of it changes the layout — it only
+   tells the reader where they are.
+   ============================================================ */
+
+/* Divisions, numbered as a book numbers its parts. The hero opens
+   the volume and takes no numeral, so the count starts after it. */
+.archive-home { counter-reset: folio -1; }
+.archive-home > section { counter-increment: folio; }
+
+.archive-home .archive-section-head > .archive-label:first-child::before,
+.archive-home .archive-method__intro > .archive-label:first-child::before,
+.archive-home .archive-lovelace__grid > * > .archive-label:first-child::before,
+.archive-home .archive-contact__grid > * > .archive-label:first-child::before {
+  content: counter(folio, upper-roman);
+  margin-right: 0.9em;
+  padding-right: 0.9em;
+  border-right: 1px solid currentColor;
+  font-variant-numeric: lining-nums;
+  letter-spacing: 0.06em;
+  opacity: 0.62;
+}
+
+/* The rule that closes a chapter head. .archive-section-head is a
+   grid, so the pseudo-element simply becomes its last row. */
+.archive-home .archive-section-head::after,
+.archive-home .archive-method__intro::after {
+  content: "";
+  width: min(100%, 21rem);
+  height: 5px;
+  margin-top: 0.35rem;
+  color: var(--brass);
+  opacity: 0.55;
+  background:
+    linear-gradient(currentColor, currentColor) 0 0 / 100% 1px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 4px / 36% 1px no-repeat;
+}
+
+/* The method intro is a plain block; make it a grid so the rule below
+   can be its last row, on the same rhythm as the other section heads. */
+.archive-home .archive-method__intro {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.archive-home .archive-method__intro h2 { margin-top: 0; }
+
+/* Ledgers, tallies and dates are columns of data, so their figures
+   line up rather than space themselves. */
+.archive-writing__totals,
+.research-ledger,
+.education-ledger,
+.archive-facts,
+.featured-folio__meta,
+.practice-sheet__number,
+.method-list > li > span {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* An opening quotation hangs into the margin in a set book. */
+.archive-about__quote {
+  hanging-punctuation: first last;
+  text-indent: -0.42em;
+}
+
+@media (max-width: 640px) {
+  .archive-about__quote { text-indent: 0; }
+}
