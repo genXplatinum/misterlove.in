@@ -35,6 +35,7 @@ const PARTS = [
   { n: 2, label: 'Origins', file: 'The Reservation Files - Part 2 - Before Caste.pdf' },
   { n: 3, label: 'The Mechanism', file: 'The Reservation Files - Part 3 - How Varna Became Jati.pdf' },
   { n: 4, label: 'Invasions', file: 'The Reservation Files - Part 4 - 1000 Years of Outsiders.pdf' },
+  { n: 5, label: 'Colonial Rule', file: 'The Reservation Files - Part 5 - The British Machine.pdf' },
 ];
 
 const PUBLISHED = '2026-07-31';
