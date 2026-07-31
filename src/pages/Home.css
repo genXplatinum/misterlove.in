@@ -320,7 +320,13 @@
   align-items: start;
 }
 
+/* The bio column is several times taller than the epigraph beside it,
+   which left most of this half of the page empty. The epigraph now
+   travels with the reader instead — a running quotation in the margin,
+   which is what the space was always asking for. */
 .archive-about__quote {
+  position: sticky;
+  top: clamp(6.5rem, 14vh, 9.5rem);
   grid-column: 1 / span 7;
   font-family: var(--font-display);
   font-size: clamp(2.3rem, 5.2vw, 5.8rem);
@@ -328,6 +334,18 @@
   line-height: 0.98;
   letter-spacing: -0.035em;
   color: var(--olive);
+}
+
+.archive-about__quote::after {
+  content: "";
+  display: block;
+  width: min(100%, 18rem);
+  height: 5px;
+  margin-top: clamp(1.6rem, 3vw, 2.6rem);
+  opacity: 0.5;
+  background:
+    linear-gradient(currentColor, currentColor) 0 0 / 100% 1px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 4px / 36% 1px no-repeat;
 }
 
 .archive-about__bio {
@@ -377,8 +395,10 @@
 
 .archive-facts {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--gutter);
+  /* The number of facts is content, not layout — the row reflows rather
+     than breaking when one is added. */
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: clamp(1.6rem, 3vw, 2.4rem) var(--gutter);
   margin-top: clamp(3.5rem, 6vw, 6rem);
   padding-top: 1.4rem;
   border-top: 1px solid color-mix(in oklab, var(--olive) 26%, transparent);
@@ -832,12 +852,17 @@
 .archive-lovelace .archive-label,
 .archive-contact .archive-label { color: var(--lichen); }
 
+/* The wordmark has to fit the seven columns it is given. At 19vw it did
+   not: "Lovelace" ran past the halfway line, collided with the studio
+   description beside it, and was then chopped off by the section's own
+   overflow. And at a 0.72 line-height the ascenders climbed out of the
+   line box and struck the label above. */
 .archive-lovelace h2 {
-  margin-top: 1rem;
-  font-size: clamp(7rem, 19vw, 20rem);
+  margin-top: 1.5rem;
+  font-size: clamp(3.4rem, 11.5vw, 11rem);
   font-weight: 400;
-  line-height: 0.72;
-  letter-spacing: -0.07em;
+  line-height: 0.86;
+  letter-spacing: -0.055em;
 }
 
 .archive-lovelace__body {
@@ -990,7 +1015,12 @@
     grid-column: auto;
   }
 
-  .archive-about__quote { max-width: 15ch; }
+  /* Stacked, the epigraph sits above the bio rather than beside it, so
+     there is nothing for it to travel alongside. */
+  .archive-about__quote {
+    position: static;
+    max-width: 15ch;
+  }
 
   .archive-facts { grid-template-columns: 1fr; }
   .archive-facts div {
@@ -1055,7 +1085,9 @@
   .archive-contact__grid > div:first-child,
   .archive-contact__body { grid-column: auto; }
 
-  .archive-lovelace h2 { font-size: clamp(5rem, 27vw, 11rem); }
+  /* Stacked, the wordmark has the full column but still has to clear the
+     gutter rather than run into it. */
+  .archive-lovelace h2 { font-size: clamp(3rem, 23.5vw, 11rem); }
 }
 
 @media (max-width: 560px) {
