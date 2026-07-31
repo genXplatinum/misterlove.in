@@ -38,9 +38,9 @@ export const pieces = [
     // Fourteen parts planned; `live` is what is actually published. The sitemap,
     // share cards, RSS and pager all follow the data file, never this number.
     parts: 14,
-    live: 4,
-    words: 34777,
-    minutes: 158,
+    live: 5,
+    words: 41754,
+    minutes: 190,
     status: 'In progress',
     accent: 'ink',
     pdf: 'the-reservation-files-part-1.pdf',
@@ -51,6 +51,7 @@ export const pieces = [
       { n: 2, file: 'the-reservation-files-part-2.pdf', size: '171 KB', label: 'Part 2 PDF' },
       { n: 3, file: 'the-reservation-files-part-3.pdf', size: '168 KB', label: 'Part 3 PDF' },
       { n: 4, file: 'the-reservation-files-part-4.pdf', size: '152 KB', label: 'Part 4 PDF' },
+      { n: 5, file: 'the-reservation-files-part-5.pdf', size: '146 KB', label: 'Part 5 PDF' },
     ],
     principlesTitle: '// The house rules every part follows',
     principles: [
