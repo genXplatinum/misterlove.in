@@ -69,6 +69,18 @@ function Hero() {
   );
 }
 
+function Epigraph({ text, emphasis }) {
+  const at = emphasis ? text.indexOf(emphasis) : -1;
+  if (at < 0) return <>“{text}”</>;
+  return (
+    <>
+      “{text.slice(0, at)}
+      <em>{emphasis}</em>
+      {text.slice(at + emphasis.length)}”
+    </>
+  );
+}
+
 function About() {
   const { about } = home;
   return (
@@ -81,7 +93,7 @@ function About() {
 
         <div className="archive-about__opening">
           <Reveal as="blockquote" className="archive-about__quote" variant="fade">
-            “{about.statement}”
+            <Epigraph text={about.statement} emphasis={about.statementEmphasis} />
           </Reveal>
           <div className="archive-about__bio">
             {about.paragraphs.map((paragraph, i) => (
@@ -306,26 +318,44 @@ function Contact() {
   return (
     <section id="contact" className="archive-contact" data-scene="contact">
       <div className="container archive-contact__grid">
-        <Reveal>
+        <Reveal className="archive-contact__head">
           <span className="archive-label">{contact.label}</span>
-          <h2>{contact.title}</h2>
+          <h2>
+            {contact.title}{' '}
+            {contact.titleAccent && <em>{contact.titleAccent}</em>}
+          </h2>
+          <dl className="archive-contact__meta">
+            <div>
+              <dt>Based in</dt>
+              <dd>{profile.location}</dd>
+            </div>
+            <div>
+              <dt>Practice</dt>
+              <dd>{profile.shortDescriptor}</dd>
+            </div>
+          </dl>
         </Reveal>
         <Reveal className="archive-contact__body" delay={80}>
           <p>{contact.text}</p>
           <a className="archive-contact__email" href={`mailto:${profile.email}`}>
             {profile.email}
           </a>
+          <a
+            href={`mailto:${profile.email}`}
+            className="archive-btn archive-btn--light archive-contact__cta"
+          >
+            {contact.cta} <span aria-hidden="true">↗</span>
+          </a>
+          {/* A fixed three-up rail, not a wrapping flex row. Three links in a
+              row that wraps drop the last one onto a line of its own the
+              moment the column narrows. */}
           <div className="archive-contact__links">
-            <a href={`mailto:${profile.email}`} className="archive-btn archive-btn--light">
-              {contact.cta} <span aria-hidden="true">↗</span>
-            </a>
             {profile.social.map((social) => (
               <a
                 key={social.label}
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="archive-link archive-link--cream"
               >
                 {social.label}<span aria-hidden="true">↗</span>
               </a>
