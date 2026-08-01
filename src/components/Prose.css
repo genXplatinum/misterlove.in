@@ -920,11 +920,82 @@
   color: var(--accent);
 }
 
+/* ============================================================
+   DEBUNKED — SIKHISM vocabulary.
+
+   That series makes the same five moves against every claim —
+   where it came from, what the texts say, the real history, the
+   debunk, the honest picture — ten times per part. The print
+   edition marks each move with a letterspaced rule, and the
+   repetition is the argument, so the web edition keeps the rule
+   and keeps its number.
+   ============================================================ */
+.prose .w-step {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  margin: 2.4em 0 0.9em;
+}
+
+.prose .w-step-n {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.7em;
+  height: 1.7em;
+  border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent);
+  border-radius: 50%;
+  color: var(--accent);
+  font-family: var(--font-body);
+  font-size: 0.68em;
+  font-weight: 750;
+  line-height: 1;
+}
+
+.prose .w-step-t {
+  font-family: var(--font-body);
+  font-size: 0.7em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+/* The gold hairline the print edition rules under every step. */
+.prose .w-step::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--brass), transparent);
+  opacity: 0.55;
+}
+
+/* The epigraph facing Chapter One: a line of Gurbani, then its translation,
+   its citation and the author's gloss. The translation is a sentence and has
+   to stay readable, so it is set as quiet prose rather than as a credit; the
+   two credits under it sit tight together. */
+.prose .w-gloss {
+  display: block;
+  margin-top: 0.5em;
+  font-family: var(--font-body);
+  font-size: 0.42em;
+  font-style: normal;
+  line-height: 1.55;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-2);
+}
+
+.prose .w-pullquote .w-attrib + .w-attrib { margin-top: 0.3em; }
+
 @media (max-width: 560px) {
   .prose {
     font-size: 1.04rem;
     line-height: 1.78;
   }
+
+  .prose .w-step { margin-top: 2em; }
 
   .prose .w-h2 {
     align-items: flex-start;

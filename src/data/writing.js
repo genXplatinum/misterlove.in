@@ -241,6 +241,66 @@ export const pieces = [
     load: () => import('./writing/kissan-andolan.js'),
   },
   {
+    slug: 'debunked-sikhism',
+    /* The cover sets the title in the display face at up to 6.3rem, where an
+       em dash is a bar half the width of a word — so the series name stands
+       alone and the volume moves into the subtitle, which sits directly under
+       it on the plate and on the share card alike. The kicker carries the
+       method rather than repeating the title. */
+    kicker: 'A claim-by-claim examination',
+    title: 'Debunked',
+    subtitle: 'The Sikhism Series',
+    standfirst:
+      'The claims made about Sikhi, and the claims Sikhs make about themselves — each one traced to its source, tested against Gurbani and the historical record, and answered in plain language.',
+    summary:
+      'This is a different book to write. The previous eleven parts of Debunked were about claims made by other people about another tradition — I was an outsider examining a neighbour’s house, and an outsider’s care has a particular shape. This series is about my own house. I am a Sikh. I love this tradition the way a person loves a parent: the love is not in question, but the love does not exempt the parent from the truth. Two kinds of claim need careful undoing here. The first are claims made about us, often by Hindutva writers, that try to absorb Sikhism back into the tradition we deliberately walked out of in 1469. The second are the claims we make about ourselves — supernatural sakhis presented as history, scientific properties invented for the Five Ks, inflated battle figures repeated at school assemblies as if numbers were a measure of valour. Both kinds are debunked here, in the same plain language, with the same Gurbani citations, with the same care for the named source. I do not believe that loving Sikhi requires us to defend every claim that has been attached to her. I believe it requires us to remove the claims that diminish her.',
+    topic: 'Sikhi · History · Identity',
+    keywords: [
+      'Sikhism', 'Sikhi', 'Debunked Sikhism', 'Sri Guru Granth Sahib Ji',
+      'Guru Nanak Dev Ji', 'janamsakhi', 'sakhi and history', 'Khalsa',
+      'is Sikhism part of Hinduism', 'na hum hindu na musalman',
+      'Sikh identity', 'Hindutva and Sikhs', 'Sikh history fact check',
+      'Gurbani citations', 'the ten Gurus',
+    ],
+    // The date the first part was written, following the rest of this shelf —
+    // these books predate the site, and their own dating is what a reader
+    // means by "when was this written".
+    published: '2026-06-02',
+    displayDate: 'June 2026',
+    parts: 13,
+    live: 3,
+    words: 25567,
+    minutes: 116,
+    status: 'In progress',
+    /* The book itself is oxblood and gold, which is `ember` — but this piece
+       sits directly above The Forgotten Gods on the shelf and two ember plates
+       in a row read as one. `quartz` is the deep green the source already uses
+       for its definition panels and its Gurbani rules. */
+    accent: 'quartz',
+    pdf: 'debunked-sikhism-part-1.pdf',
+    pdfSize: '365 KB',
+    pdfLabel: 'Part 1 PDF',
+    pdfs: [
+      { n: 1, file: 'debunked-sikhism-part-1.pdf', size: '365 KB', label: 'Part 1 PDF' },
+      { n: 2, file: 'debunked-sikhism-part-2.pdf', size: '295 KB', label: 'Part 2 PDF' },
+      { n: 3, file: 'debunked-sikhism-part-3.pdf', size: '313 KB', label: 'Part 3 PDF' },
+    ],
+    principlesTitle: 'The rules this series argues by',
+    principles: [
+      { n: '01', t: 'The same five steps, ten times a part', d: 'Where the claim came from · what the Sikh texts say · the real history · the debunk · the honest picture. Every chapter, no exceptions, so the method can be checked as easily as the conclusion.' },
+      { n: '02', t: 'Both directions, not one', d: 'Claims made about Sikhs by outsiders, and claims Sikhs make about themselves. The second kind is harder to write and gets exactly the same treatment as the first.' },
+      { n: '03', t: 'Gurbani cited by raag and ang', d: 'Every scriptural claim is given with its raag and its page in the Sri Guru Granth Sahib Ji, so a reader can open it tonight and disagree precisely.' },
+      { n: '04', t: 'Love is not a reason to leave a false thing standing', d: 'Where a beloved story does not hold, this says so — and says what stands in its place, which on the evidence is almost always larger than the story.' },
+    ],
+    /* Only what the author has announced in print. Part 4 is named in Part 3's
+       closing; parts 5 to 13 are promised by the cover and not yet described,
+       so they show as unwritten rather than invented. */
+    outline: [
+      { n: 4, label: 'The Tenth Guru', title: 'Guru Gobind Singh Ji and the Khalsa', blurb: 'Vaisakhi 1699 and what the sources say about the five who stood up, the arithmetic of the battles, Chamkaur, the Five Ks and the sciences invented for them.' },
+    ],
+    load: () => import('./writing/debunked-sikhism.js'),
+  },
+  {
     slug: 'forgotten-gods',
     kicker: 'A grounded, plain-language history',
     title: 'The Forgotten Gods',
