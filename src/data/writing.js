@@ -38,8 +38,10 @@ export const pieces = [
     // All fourteen are written, so `live` is omitted: livePartsOf falls back
     // to the part count and nothing claims a part that is not there.
     parts: 14,
-    words: 104987,
-    minutes: 479,
+    // The web edition's Part 1 is the long, everything-explained rewrite, so
+    // these are 4,067 words above the printed book's total.
+    words: 109054,
+    minutes: 497,
     status: 'Complete',
     accent: 'ink',
     // One book, not fourteen downloads. The per-part PDFs were right while the
@@ -75,7 +77,9 @@ export const pieces = [
       { n: 13, label: 'Blind Spots', title: 'The Blind Spots', blurb: 'The questions neither side raises, plus what actually happened in the USA, Malaysia, South Africa, Brazil, Nepal and Northern Ireland.' },
       { n: 14, label: 'The Verdict', title: 'The Verdict', blurb: 'What is true in each case, what each side is lying to itself about, a labelled verdict with its reasoning shown, and a concrete model for 2047.' },
     ],
-    load: () => import('./writing/reservation-files.js'),
+    // The web edition, which layers the rewritten Part 1 over the generated
+    // parts. See reservation-files-web.js.
+    load: () => import('./writing/reservation-files-web.js'),
   },
   {
     slug: 'patriarchy-feminism',
