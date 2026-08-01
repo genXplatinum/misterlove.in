@@ -989,6 +989,46 @@
 
 .prose .w-pullquote .w-attrib + .w-attrib { margin-top: 0.3em; }
 
+/* ============================================================
+   DEBUNKED vocabulary.
+
+   The field guide shares the step rule above with the Sikhism
+   series. What it adds is Part 11's cross-series glossary — 130
+   entries of term, dates and definition — which is a description
+   list and is set as one.
+   ============================================================ */
+.prose .w-def {
+  margin: 0;
+  padding: 0.95em 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.prose .w-def:first-of-type { border-top: 1px solid var(--line); }
+
+.prose .w-def-term {
+  font-family: var(--font-display);
+  font-size: 1.06em;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text);
+}
+
+.prose .w-def-dates {
+  margin-left: 0.5em;
+  font-family: var(--font-body);
+  font-size: 0.72em;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text-dim);
+}
+
+.prose .w-def-body {
+  margin: 0.3em 0 0;
+  font-size: 0.94em;
+  line-height: 1.65;
+  color: var(--text-2);
+}
+
 @media (max-width: 560px) {
   .prose {
     font-size: 1.04rem;
