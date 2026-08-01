@@ -327,13 +327,25 @@
 .archive-about__quote {
   position: sticky;
   top: clamp(6.5rem, 14vh, 9.5rem);
-  grid-column: 1 / span 7;
+  grid-column: 1 / span 6;
   font-family: var(--font-display);
-  font-size: clamp(2.3rem, 5.2vw, 5.8rem);
+  font-size: clamp(2.2rem, 4.6vw, 5.1rem);
   font-style: italic;
   line-height: 0.98;
   letter-spacing: -0.035em;
   color: var(--olive);
+}
+
+/* An italic sentence has no way to stress a word — everything is already
+   leaning. The oldest fix is to set the stressed clause upright, in the
+   darker ink, and rule it in brass. */
+.archive-about__quote em {
+  font-style: normal;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--brass);
+  text-decoration-thickness: 0.055em;
+  text-underline-offset: 0.11em;
 }
 
 .archive-about__quote::after {
@@ -349,16 +361,31 @@
 }
 
 .archive-about__bio {
-  grid-column: 8 / -1;
+  grid-column: 7 / -1;
   display: grid;
   gap: 1.35rem;
-  padding-top: 0.4rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid color-mix(in oklab, var(--olive) 26%, transparent);
 }
 
 .archive-about__bio p {
   color: var(--ink-2);
   font-size: var(--t-body-lg);
   line-height: 1.7;
+}
+
+/* The account opens here, so the first paragraph is set as the lead and
+   takes the initial. Everything after it is running text. */
+.archive-about__bio p:first-child { color: var(--ink); }
+
+.archive-about__bio p:first-child::first-letter {
+  float: left;
+  margin: 0.07em 0.1em 0 0;
+  color: var(--olive);
+  font-family: var(--font-display);
+  font-size: 3.15em;
+  font-style: italic;
+  line-height: 0.78;
 }
 
 .archive-about__photo-wrap { margin-top: clamp(5rem, 10vw, 10rem); }
@@ -387,29 +414,59 @@
 }
 
 .archive-about__photo figcaption {
-  margin-top: 0.9rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid color-mix(in oklab, var(--olive) 22%, transparent);
   color: var(--ink-3);
   font-family: var(--font-body);
   font-size: 0.76rem;
 }
 
+.archive-about__photo figcaption::before {
+  content: "FIG. 1";
+  flex: none;
+  color: var(--brass);
+  font-weight: 600;
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: 0.1em;
+}
+
+/* ---- The specimen ledger ----
+   Five facts in an auto-fit track wrapped four-and-one at ordinary desktop
+   widths, which left three empty cells and read as a mistake. The row is
+   now a ruled table on a six-column field: cells butt together so their
+   top rules join into one continuous line, and the span is chosen from the
+   number of facts so the last row always closes. */
 .archive-facts {
   display: grid;
-  /* The number of facts is content, not layout — the row reflows rather
-     than breaking when one is added. */
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  gap: clamp(1.6rem, 3vw, 2.4rem) var(--gutter);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   margin-top: clamp(3.5rem, 6vw, 6rem);
-  padding-top: 1.4rem;
-  border-top: 1px solid color-mix(in oklab, var(--olive) 26%, transparent);
+  counter-reset: fact;
 }
 
-.archive-facts div {
+.archive-facts > div {
+  grid-column: span 2;
+  counter-increment: fact;
   display: grid;
-  gap: 0.65rem;
+  align-content: start;
+  gap: 0.7rem;
+  padding: 1.4rem clamp(1.1rem, 2.2vw, 2.2rem) 1.9rem 0;
+  border-top: 1px solid color-mix(in oklab, var(--olive) 30%, transparent);
 }
+
+/* Four facts: two rows of two. */
+.archive-facts:has(> div:nth-child(4):last-child) > div { grid-column: span 3; }
+
+/* Five: three across, then two that widen to close the row. */
+.archive-facts:has(> div:nth-child(5):last-child) > div:nth-child(n + 4) { grid-column: span 3; }
 
 .archive-facts dt {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
   color: var(--ink-3);
   font-size: 0.72rem;
   font-weight: 600;
@@ -417,11 +474,19 @@
   text-transform: uppercase;
 }
 
+.archive-facts dt::before {
+  content: counter(fact, decimal-leading-zero);
+  color: var(--brass);
+  letter-spacing: 0.06em;
+}
+
 .archive-facts dd {
   max-width: 22rem;
+  color: var(--ink);
   font-family: var(--font-display);
-  font-size: clamp(1.3rem, 2vw, 2rem);
-  line-height: 1.15;
+  font-size: clamp(1.3rem, 1.9vw, 1.95rem);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
 }
 
 /* ------------------------------------------------------------------
@@ -886,23 +951,75 @@
   align-items: center;
   padding-block: var(--section);
   color: var(--cream);
-  background: var(--night);
+  /* Flat night read as a dead panel under a very large headline. The light
+     comes up from the corner the eye finishes on. */
+  background:
+    radial-gradient(58% 62% at 14% 86%, rgba(75, 96, 46, 0.34), transparent 68%),
+    radial-gradient(46% 52% at 88% 14%, rgba(181, 139, 72, 0.12), transparent 70%),
+    var(--night);
 }
 
-.archive-contact__grid > div:first-child { grid-column: 1 / span 7; }
+.archive-contact__head {
+  grid-column: 1 / span 6;
+  display: grid;
+  align-content: end;
+  gap: 1.3rem;
+}
 
 .archive-contact h2 {
-  max-width: 9ch;
-  margin-top: 1.3rem;
+  max-width: 11ch;
+  margin-top: 0.2rem;
   font-size: var(--t-section);
   line-height: 0.88;
+}
+
+/* The same italic lichen the hero gives the surname, closing the page on
+   the note it opened with. */
+.archive-contact h2 em {
+  font-style: italic;
+  color: var(--lichen);
+}
+
+/* The headline is tall and the column beside it is not, so the foot of this
+   half was empty. The ledger gives it a base to sit on. */
+.archive-contact__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: clamp(1.4rem, 3vw, 2.4rem);
+}
+
+.archive-contact__meta > div {
+  display: grid;
+  align-content: start;
+  gap: 0.55rem;
+  padding: 1.15rem 1.5rem 0 0;
+  border-top: 1px solid var(--dark-rule);
+}
+
+.archive-contact__meta dt {
+  color: var(--sage);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.archive-contact__meta dd {
+  color: var(--cream);
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 1.3vw, 1.3rem);
+  line-height: 1.3;
 }
 
 .archive-contact__body {
   grid-column: 8 / -1;
   display: grid;
-  gap: 1.6rem;
+  align-content: end;
+  justify-items: start;
+  gap: 1.5rem;
 }
+
+.archive-contact__cta { margin-top: 0.2rem; }
 
 .archive-contact__body > p {
   max-width: 34rem;
@@ -930,13 +1047,43 @@
   border-color: var(--lichen);
 }
 
+/* Three fixed columns rather than a wrapping row: the third link used to
+   drop onto a line by itself as soon as the column narrowed. */
 .archive-contact__links {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.85rem 1.2rem;
-  margin-top: 0.7rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  margin-top: 0.6rem;
+  border-top: 1px solid var(--dark-rule);
 }
+
+.archive-contact__links a {
+  min-height: 3.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-right: 1rem;
+  border-right: 1px solid var(--dark-rule);
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  font-weight: 600;
+  transition: color 220ms var(--ease-out);
+}
+
+.archive-contact__links a:last-child {
+  padding-right: 0;
+  border-right: 0;
+}
+
+.archive-contact__links a span {
+  color: var(--lichen);
+  transition: transform 220ms var(--ease-out);
+}
+
+.archive-contact__links a:hover { color: var(--lichen); }
+.archive-contact__links a:hover span { transform: translate(0.18rem, -0.18rem); }
 
 /* ------------------------------------------------------------------
    RESPONSIVE
@@ -945,8 +1092,6 @@
 @media (max-width: 1100px) {
   .archive-hero__copy { grid-column: 1 / span 9; }
   .archive-hero__stage { grid-column: 7 / -1; }
-  .archive-about__quote { grid-column: 1 / span 6; }
-  .archive-about__bio { grid-column: 7 / -1; }
 
   .practice-sheet__body {
     grid-template-columns: 1fr;
@@ -1022,13 +1167,16 @@
     max-width: 15ch;
   }
 
-  .archive-facts { grid-template-columns: 1fr; }
-  .archive-facts div {
-    grid-template-columns: 8rem 1fr;
-    align-items: baseline;
-    padding-bottom: 1.3rem;
-    border-bottom: 1px solid color-mix(in oklab, var(--olive) 18%, transparent);
+  /* Stacked, the ledger becomes one ruled column — no span can orphan. */
+  .archive-facts { grid-template-columns: minmax(0, 1fr); }
+
+  .archive-facts > div,
+  .archive-facts:has(> div:nth-child(4):last-child) > div,
+  .archive-facts:has(> div:nth-child(5):last-child) > div:nth-child(n + 4) {
+    grid-column: 1 / -1;
   }
+
+  .archive-facts > div { padding: 1.2rem 0 1.5rem; }
 
   .archive-practice { padding-bottom: 5rem; }
   .practice-stack { padding: 0; }
@@ -1082,7 +1230,7 @@
   .archive-contact__grid { grid-template-columns: 1fr; }
   .archive-lovelace__grid > div:first-child,
   .archive-lovelace__body,
-  .archive-contact__grid > div:first-child,
+  .archive-contact__head,
   .archive-contact__body { grid-column: auto; }
 
   /* Stacked, the wordmark has the full column but still has to clear the
@@ -1103,7 +1251,28 @@
 
   .archive-about__photo img { aspect-ratio: 4 / 5; object-position: 36% 50%; }
 
-  .archive-facts div { grid-template-columns: 1fr; }
+  /* The initial needs a measure to wrap around. At this width it does not
+     have one, so the paragraph simply opens as running text. */
+  .archive-about__bio p:first-child::first-letter {
+    float: none;
+    margin: 0;
+    font-size: inherit;
+    font-style: inherit;
+    line-height: inherit;
+    color: inherit;
+  }
+
+  .archive-contact__meta { grid-template-columns: minmax(0, 1fr); }
+  .archive-contact__meta > div { padding-right: 0; }
+
+  /* Three columns of a 320px screen leave roughly 90px each. The labels fit,
+     but only if they are not asked to wrap. */
+  .archive-contact__links a {
+    gap: 0.35rem;
+    padding-right: 0.45rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
 
   .practice-sheet { padding: 1.5rem; }
   .practice-sheet p { font-size: 1rem; }

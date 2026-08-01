@@ -29,6 +29,27 @@ function HomeScene() {
 
   useEffect(() => markUnavailable, [markUnavailable]);
 
+  // The archive object belongs to the hero, but its canvas is fixed to the
+  // viewport and sits above every section background while staying below the
+  // text. Left running it drew pale sheets across the paper sections below.
+  // Park it once the hero has gone.
+  useEffect(() => {
+    const hero = document.querySelector('.archive-hero');
+    const root = document.documentElement;
+    if (!hero || typeof IntersectionObserver !== 'function') return undefined;
+
+    const io = new IntersectionObserver(
+      ([entry]) => root.classList.toggle('scene-parked', !entry.isIntersecting),
+      { threshold: 0 }
+    );
+    io.observe(hero);
+
+    return () => {
+      io.disconnect();
+      root.classList.remove('scene-parked');
+    };
+  }, []);
+
   return (
     <div className="canvas-layer" aria-hidden="true">
       <ErrorBoundary fallback={<SceneFailure />} onError={markUnavailable}>

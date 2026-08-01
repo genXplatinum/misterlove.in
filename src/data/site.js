@@ -45,6 +45,9 @@ export const home = {
     title: 'Curiosity became a method.',
     statement:
       'I want to write the kind of argument that gets stronger the more you fact-check it, not weaker.',
+    /* The clause the epigraph turns on. Set upright inside the italic, so
+       the sentence carries its own emphasis instead of running flat. */
+    statementEmphasis: 'gets stronger',
     paragraphs: [
       'I am Lovepreet Singh — a Certified Ethical Hacker, the founder of Lovelace, and the writer behind this archive. I took a B.Com in Business at Chandigarh University and am in the second year of an MBA in Business Strategy and Analysis at Panjab University, Chandigarh. A doctorate is what I intend to do after it. I read across technology, business, history, politics, psychology, philosophy and economics, because the questions that matter rarely stay inside one subject.',
       'Everything technical about me is self-taught. I have no science background and no computer-science degree. I learned C, C++ and data structures and algorithms on my own, then the MERN stack, then security — and earned the Certified Ethical Hacker qualification the same way. I did it because I wanted to know how the machine actually works, not because a syllabus required it.',
@@ -192,7 +195,10 @@ export const home = {
 
   contact: {
     label: 'Contact',
-    title: 'A serious question is a good place to begin.',
+    /* Split so the closing clause can be set in the italic lichen the hero
+       uses for the surname — the two ends of the page rhyme. */
+    title: 'A serious question is',
+    titleAccent: 'a good place to begin.',
     text:
       'For research conversations, cybersecurity work, collaborations or a considered digital project, write to me directly.',
     cta: 'Email Lovepreet',

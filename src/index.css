@@ -346,6 +346,10 @@ main {
 
 .scene-ready .canvas-layer { opacity: 1; }
 
+/* Past the hero the scene has nothing to be behind: it would render over the
+   paper sections' backgrounds and under their text. */
+.scene-ready.scene-parked .canvas-layer { opacity: 0; }
+
 .scene-canvas {
   width: 100% !important;
   height: 100% !important;
