@@ -25,7 +25,7 @@ export default function Footer() {
           <a href="#main" className="footer__brand" onClick={toTop} aria-label="Back to the top">
             <Wordmark />
           </a>
-          <p>Research, technology and design, brought into one considered practice.</p>
+          <p>Writing and research by Lovepreet Singh.</p>
           <a href="#main" className="footer__toplink" onClick={toTop}>
             Back to top <span aria-hidden="true">↑</span>
           </a>

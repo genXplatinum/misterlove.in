@@ -50,7 +50,7 @@ export const pieces = [
     pdf: 'the-reservation-files.pdf',
     pdfSize: '2.4 MB',
     pdfLabel: 'The complete book',
-    principlesTitle: '// The house rules every part follows',
+    principlesTitle: 'The house rules every part follows',
     principles: [
       { n: '01', t: 'Class-8 English, always', d: 'Short sentences, no jargon, every hard word explained where it first appears. If a fifteen-year-old who hates reading cannot follow a page, that page is badly written.' },
       { n: '02', t: 'Both sides at full strength', d: 'Every argument is written the way its smartest defender would write it — the steelman, never the stupid version that is easy to knock down.' },
@@ -114,7 +114,7 @@ export const pieces = [
       { n: 1, file: 'patriarchy-and-feminism-part-1.pdf', size: '582 KB', label: 'Part 1 PDF' },
       { n: 2, file: 'patriarchy-and-feminism-part-2.pdf', size: '565 KB', label: 'Part 2 PDF' },
     ],
-    principlesTitle: '// The four commitments the whole series follows',
+    principlesTitle: 'The four commitments the whole series follows',
     principles: [
       { n: '01', t: 'Loaded questions get answered, not dodged', d: 'Where a claim is well supported, this says so. Where it is false as stated, it says that too — with equal force on both sides.' },
       { n: '02', t: 'Value questions are labelled as value questions', d: 'Some disputes no amount of data settles. Those get the strongest version of each position, and no verdict smuggled in.' },
@@ -168,7 +168,7 @@ export const pieces = [
     accent: 'ink',
     pdf: 'how-india-became-free.pdf',
     pdfSize: '1.7 MB',
-    principlesTitle: '// The method, stated up front',
+    principlesTitle: 'The method, stated up front',
     principles: [
       { n: '01', t: 'Every claim gets its strongest version', d: 'Stated fairly first, then tested against the evidence, then a clear verdict.' },
       { n: '02', t: 'The record decides, not the side', d: 'True is true even when it damages someone I admire. False is false even when it protects them.' },
@@ -198,7 +198,7 @@ export const pieces = [
     accent: 'harvest',
     pdf: 'kissan-andolan-the-complete-story.pdf',
     pdfSize: '853 KB',
-    principlesTitle: '// The four promises this book opens with',
+    principlesTitle: 'The four promises this book opens with',
     principles: [
       { n: '01', t: 'Simple words', d: 'If a class-6 student can’t follow it, I’ve written it wrong. No jargon without a plain explanation.' },
       { n: '02', t: 'Every side gets a fair turn', d: 'Government, farmers, supporters, critics — each one gets its strongest case, in its own voice.' },
@@ -228,7 +228,7 @@ export const pieces = [
         minutes: 174,
         status: 'पूर्ण',
         pdfLabel: 'अंग्रेज़ी PDF',
-        principlesTitle: '// इस पुस्तक के चार वादे',
+        principlesTitle: 'इस पुस्तक के चार वादे',
         principles: [
           { n: '01', t: 'आसान भाषा', d: 'अगर कक्षा 6 का विद्यार्थी इसे न समझ सके, तो गलती मेरे लिखने में है। किसी कठिन शब्द को सरल अर्थ बताए बिना नहीं छोड़ा गया है।' },
           { n: '02', t: 'हर पक्ष को पूरी और निष्पक्ष जगह', d: 'सरकार, किसान, समर्थक और आलोचक—हर पक्ष की सबसे मजबूत दलील उसी की भाषा में रखी गई है।' },
@@ -260,7 +260,7 @@ export const pieces = [
     accent: 'ember',
     pdf: 'the-forgotten-gods.pdf',
     pdfSize: '996 KB',
-    principlesTitle: '// How this one is written',
+    principlesTitle: 'How this one is written',
     principles: [
       { n: '01', t: 'Simple language on purpose', d: 'Big words are often used to hide weak arguments. I do not want to hide anything.' },
       { n: '02', t: 'Every claim can be checked', d: 'Historians who spent their lives on this, and writings from people who lived through it.' },

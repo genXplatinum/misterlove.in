@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import Prose from '../components/Prose';
+import ThemeToggle from '../components/ThemeToggle';
 import {
   getPiece,
   getPieceForLanguage,
@@ -13,7 +14,6 @@ import {
 import { profile } from '../data/site';
 import './Article.css';
 
-const THEME_KEY = 'lws:reader-theme';
 const RAIL_KEY = 'lws:reader-rail';
 
 function getStoredPreference(key) {
@@ -60,8 +60,10 @@ const COPY = {
     thisPart: 'This part',
     minute: 'min',
     words: 'words',
-    dark: 'Dark reading',
-    light: 'Light reading',
+    themeLabel: 'Dark mode',
+    themeAria: 'Dark reading theme',
+    themeDarkAction: 'Switch to dark mode',
+    themeLightAction: 'Switch to light mode',
     showContents: 'Show contents',
     hideContents: 'Hide contents',
     contents: 'Contents',
@@ -104,8 +106,10 @@ const COPY = {
     thisPart: 'यह भाग',
     minute: 'मिनट',
     words: 'शब्द',
-    dark: 'गहरे रंग में पढ़ें',
-    light: 'हल्के रंग में पढ़ें',
+    themeLabel: 'गहरा रंग',
+    themeAria: 'गहरा पठन रंग',
+    themeDarkAction: 'गहरे रंग में पढ़ें',
+    themeLightAction: 'हल्के रंग में पढ़ें',
     showContents: 'विषय सूची दिखाएं',
     hideContents: 'विषय सूची छिपाएं',
     contents: 'विषय सूची',
@@ -138,24 +142,14 @@ function scrollToTop() {
   else window.scrollTo(0, 0);
 }
 
-function useReaderTheme() {
-  const [theme, setTheme] = useState(() => {
-    return getStoredPreference(THEME_KEY) === 'dark' ? 'dark' : 'light';
-  });
-
+function useReadingSurface() {
   useEffect(() => {
-    const root = document.documentElement;
-    root.dataset.theme = theme;
     document.body.classList.add('is-reading');
-    try { localStorage.setItem(THEME_KEY, theme); } catch { /* private mode */ }
 
     return () => {
-      delete root.dataset.theme;
       document.body.classList.remove('is-reading');
     };
-  }, [theme]);
-
-  return [theme, setTheme];
+  }, []);
 }
 
 function useRail() {
@@ -381,7 +375,7 @@ export default function Article() {
 
   const [parts, setParts] = useState(null);
   const [loadError, setLoadError] = useState(false);
-  const [theme, setTheme] = useReaderTheme();
+  useReadingSurface();
   const [railOpen, setRailOpen] = useRail();
   const bodyRef = useRef(null);
   const railCloseRef = useRef(null);
@@ -476,26 +470,35 @@ export default function Article() {
               <Link to={base} className="article__crumb" data-cursor>{piece.title}</Link>
             </nav>
 
-            {hasHindi && (
-              <nav className="language-switch" aria-label={copy.switchLabel}>
-                <Link
-                  to={`/writing/${piece.slug}/part-${n}`}
-                  className={language === 'en' ? 'is-active' : ''}
-                  aria-current={language === 'en' ? 'page' : undefined}
-                  data-cursor
-                >
-                  {copy.english}
-                </Link>
-                <Link
-                  to={`/hi/writing/${piece.slug}/part-${n}`}
-                  className={language === 'hi' ? 'is-active' : ''}
-                  aria-current={language === 'hi' ? 'page' : undefined}
-                  data-cursor
-                >
-                  {copy.hindi}
-                </Link>
-              </nav>
-            )}
+            <div className="article__reading-tools" role="group" aria-label="Reading preferences">
+              {hasHindi && (
+                <nav className="language-switch" aria-label={copy.switchLabel}>
+                  <Link
+                    to={`/writing/${piece.slug}/part-${n}`}
+                    className={language === 'en' ? 'is-active' : ''}
+                    aria-current={language === 'en' ? 'page' : undefined}
+                    data-cursor
+                  >
+                    {copy.english}
+                  </Link>
+                  <Link
+                    to={`/hi/writing/${piece.slug}/part-${n}`}
+                    className={language === 'hi' ? 'is-active' : ''}
+                    aria-current={language === 'hi' ? 'page' : undefined}
+                    data-cursor
+                  >
+                    {copy.hindi}
+                  </Link>
+                </nav>
+              )}
+              <ThemeToggle
+                className="article__theme-toggle"
+                label={copy.themeLabel}
+                ariaLabel={copy.themeAria}
+                darkAction={copy.themeDarkAction}
+                lightAction={copy.themeLightAction}
+              />
+            </div>
           </div>
 
           <div className="article__head-grid">
@@ -520,15 +523,6 @@ export default function Article() {
                   </div>
                 )}
               </dl>
-              <button
-                type="button"
-                className="article__themetoggle"
-                onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-                data-cursor
-              >
-                <span className="mono">{theme === 'light' ? copy.dark : copy.light}</span>
-                <span className={`article__themedot ${theme === 'dark' ? 'is-dark' : ''}`} aria-hidden="true" />
-              </button>
             </aside>
           </div>
         </div>
@@ -614,13 +608,13 @@ export default function Article() {
               <section className="article__prologue">
                 {part.prologueTitle && <h2 className="article__prologue-head">{part.prologueTitle}</h2>}
                 {part.prologueTag && <p className="mono article__prologue-tag">{part.prologueTag}</p>}
-                <Prose html={part.prologue} dark={theme === 'dark'} />
+                <Prose html={part.prologue} />
                 <div className="article__prologue-rule" aria-hidden="true" />
                 <span className="mono article__prologue-next">{copy.begins(n)}</span>
               </section>
             )}
 
-            {part && <Prose html={part.html} dark={theme === 'dark'} />}
+            {part && <Prose html={part.html} />}
 
             {part?.sources && (
               <details className="article__sources">
@@ -628,7 +622,7 @@ export default function Article() {
                   <span className="mono">{copy.sources(n)}</span>
                   <span className="article__sources-icon" aria-hidden="true" />
                 </summary>
-                <Prose html={part.sources} className="prose--sources" dark={theme === 'dark'} />
+                <Prose html={part.sources} className="prose--sources" />
               </details>
             )}
 

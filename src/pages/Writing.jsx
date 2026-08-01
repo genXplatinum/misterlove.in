@@ -27,7 +27,7 @@ function TopicCard({ piece, i }) {
           </span>
 
           <span className="link topic__cta">
-            Open this research <span className="link__arrow">→</span>
+            Read this work <span className="link__arrow">→</span>
           </span>
         </span>
       </Link>
@@ -75,7 +75,7 @@ export default function Writing() {
             <p className="writingpage__lead lead muted">{writingMeta.lead}</p>
 
             <dl className="writingpage__totals">
-              <div><dt className="mono">Research</dt><dd>{writingTotals.pieces}</dd></div>
+              <div><dt className="mono">Works</dt><dd>{writingTotals.pieces}</dd></div>
               <div><dt className="mono">Parts</dt><dd>{writingTotals.parts}</dd></div>
               <div><dt className="mono">Words</dt><dd>{writingTotals.words.toLocaleString('en-IN')}</dd></div>
             </dl>
@@ -86,9 +86,9 @@ export default function Writing() {
       <div className="container">
         <div className="section-head">
           <span className="mono">
-            <span className="section-head__id">ALL RESEARCH</span>&nbsp;&nbsp;/&nbsp;&nbsp;newest first
+            <span className="section-head__id">ALL WRITING</span>&nbsp;&nbsp;/&nbsp;&nbsp;newest first
           </span>
-          <span className="mono hide-sm">SELECT A TOPIC TO OPEN IT</span>
+          <span className="mono hide-sm">CHOOSE A WORK TO BEGIN</span>
         </div>
 
         <ul className="topics">

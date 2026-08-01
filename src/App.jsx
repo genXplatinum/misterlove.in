@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useRef } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { Link, Route, Routes, useLocation } from 'react-router-dom';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
@@ -6,66 +6,21 @@ import ScrollProgress from './components/ScrollProgress';
 import ErrorBoundary from './components/ErrorBoundary';
 import Home from './pages/Home';
 
-const Scene = lazy(() => import('./components/three/Scene'));
-const SmoothScroll = lazy(() => import('./components/SmoothScroll'));
 const Writing = lazy(() => import('./pages/Writing'));
 const Topic = lazy(() => import('./pages/Topic'));
 const Article = lazy(() => import('./pages/Article'));
 
-function SceneFailure() {
-  useEffect(() => {
-    document.documentElement.classList.remove('scene-ready');
-  }, []);
-  return null;
-}
-
-function HomeScene() {
-  const markReady = useCallback(() => {
-    document.documentElement.classList.add('scene-ready');
-  }, []);
-  const markUnavailable = useCallback(() => {
-    document.documentElement.classList.remove('scene-ready');
-  }, []);
-
-  useEffect(() => markUnavailable, [markUnavailable]);
-
-  // The archive object belongs to the hero, but its canvas is fixed to the
-  // viewport and sits above every section background while staying below the
-  // text. Left running it drew pale sheets across the paper sections below.
-  // Park it once the hero has gone.
-  useEffect(() => {
-    const hero = document.querySelector('.archive-hero');
-    const root = document.documentElement;
-    if (!hero || typeof IntersectionObserver !== 'function') return undefined;
-
-    const io = new IntersectionObserver(
-      ([entry]) => root.classList.toggle('scene-parked', !entry.isIntersecting),
-      { threshold: 0 }
-    );
-    io.observe(hero);
-
-    return () => {
-      io.disconnect();
-      root.classList.remove('scene-parked');
-    };
-  }, []);
-
-  return (
-    <div className="canvas-layer" aria-hidden="true">
-      <ErrorBoundary fallback={<SceneFailure />} onError={markUnavailable}>
-        <Suspense fallback={null}>
-          <Scene onReady={markReady} onUnavailable={markUnavailable} />
-        </Suspense>
-      </ErrorBoundary>
-    </div>
-  );
-}
-
 function NotFound() {
+  useEffect(() => {
+    const previousTitle = document.title;
+    document.title = 'Page not found | Lovepreet Singh';
+    return () => { document.title = previousTitle; };
+  }, []);
+
   return (
     <section className="not-found">
       <p className="archive-label">404 · Page not found</p>
-      <h1>This page is not in the archive.</h1>
+      <h1>This page could not be found.</h1>
       <p>The address may have changed, or the page may never have existed.</p>
       <div>
         <Link to="/" className="btn">Return home</Link>
@@ -81,7 +36,6 @@ function AppFrame({ isHome, resetKey }) {
       <ScrollProgress />
       <div className="surface-noise" aria-hidden="true" />
       <a href="#main" className="skip-link">Skip to content</a>
-      {isHome && <HomeScene />}
       <Nav />
 
       <main id="main" tabIndex="-1" className={isHome ? 'main--home' : 'main--reading'}>
@@ -99,7 +53,7 @@ function AppFrame({ isHome, resetKey }) {
             </div>
           }
         >
-          <Suspense fallback={<div className="route-fallback" role="status" aria-live="polite">Opening the archive…</div>}>
+          <Suspense fallback={<div className="route-fallback" role="status" aria-live="polite">Opening…</div>}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/writing" element={<Writing />} />
@@ -124,7 +78,6 @@ export default function App() {
 
   useEffect(() => {
     document.body.classList.toggle('is-home', isHome);
-    if (!isHome) document.documentElement.classList.remove('scene-ready');
     return () => document.body.classList.remove('is-home');
   }, [isHome]);
 
@@ -135,16 +88,5 @@ export default function App() {
     requestAnimationFrame(() => document.getElementById('main')?.focus({ preventScroll: true }));
   }, [location.pathname, location.state]);
 
-  const frame = <AppFrame isHome={isHome} resetKey={location.key} />;
-
-  return (
-    <>
-      {isHome && (
-        <Suspense fallback={null}>
-          <SmoothScroll />
-        </Suspense>
-      )}
-      {frame}
-    </>
-  );
+  return <AppFrame isHome={isHome} resetKey={location.key} />;
 }
