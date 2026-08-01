@@ -301,6 +301,59 @@ export const pieces = [
     load: () => import('./writing/debunked-sikhism.js'),
   },
   {
+    slug: 'debunked',
+    /* The first Debunked volume. It shares the series name with the Sikhism
+       one directly above, which is correct — they are two volumes of one
+       project — so the subtitle carries the distinction and the plates take
+       different registers. */
+    kicker: 'A field guide, in eleven parts',
+    title: 'Debunked',
+    subtitle: 'Modern Myths Sold as Ancient Indian Science',
+    standfirst:
+      'A grounded look at the claims flooding our feeds — vimanas, brahmastras, cow urine cures, ancient nuclear weapons — and how to test any one of them in sixty seconds, using six simple steps.',
+    summary:
+      'Your uncle forwards you a message. Lord Hanuman calculated the exact distance from the Earth to the Sun seven thousand years ago, it is written in the Hanuman Chalisa, NASA confirmed it, forward to ten people. Most of us either forward it on or believe it quietly and move along. This book is for anyone who wants to learn the third option — stop, ask one question, find out whether it is actually true — even when the claim arrives wrapped in a flag, a god’s name, or your grandfather’s voice. It takes about seventy-nine such claims one at a time: flying machines and ancient aircraft, the brahmastra as a nuclear weapon, Ganesha’s head as plastic surgery, cow urine as a cancer cure, relativity hidden in the Vedas, the world having stolen everything from us. It is not anti-Hindu and it is not pro-anything-else. Every religion has people who insist their oldest book predicted everything; this one is about the Indian version because that is what is filling our own feeds. And where the record does support a real Indian achievement — and it does, in mathematics, astronomy, surgery and linguistics — that gets stated at full strength, with the date and the manuscript.',
+    topic: 'India · Science · Evidence',
+    keywords: [
+      'Debunked', 'ancient Indian science claims', 'vimana', 'Vaimanika Shastra',
+      'brahmastra nuclear weapon', 'cow urine cancer', 'Ganesha plastic surgery',
+      'Sushruta', 'Aryabhata', 'zero invented in India', 'Sanskrit NASA',
+      'Aryan invasion theory', 'pseudoscience India', 'Hindutva pseudoscience',
+      'fact check WhatsApp forwards', 'Hindu vs Hindutva',
+    ],
+    published: '2026-06-01',
+    displayDate: 'June 2026',
+    parts: 11,
+    words: 100136,
+    minutes: 455,
+    status: 'Complete',
+    accent: 'harvest',
+    pdf: 'debunked-part-1.pdf',
+    pdfSize: '352 KB',
+    pdfLabel: 'Part 1 PDF',
+    pdfs: [
+      { n: 1, file: 'debunked-part-1.pdf', size: '352 KB', label: 'Part 1 PDF' },
+      { n: 2, file: 'debunked-part-2.pdf', size: '464 KB', label: 'Part 2 PDF' },
+      { n: 3, file: 'debunked-part-3.pdf', size: '532 KB', label: 'Part 3 PDF' },
+      { n: 4, file: 'debunked-part-4.pdf', size: '592 KB', label: 'Part 4 PDF' },
+      { n: 5, file: 'debunked-part-5.pdf', size: '458 KB', label: 'Part 5 PDF' },
+      { n: 6, file: 'debunked-part-6.pdf', size: '490 KB', label: 'Part 6 PDF' },
+      { n: 7, file: 'debunked-part-7.pdf', size: '488 KB', label: 'Part 7 PDF' },
+      { n: 8, file: 'debunked-part-8.pdf', size: '301 KB', label: 'Part 8 PDF' },
+      { n: 9, file: 'debunked-part-9.pdf', size: '336 KB', label: 'Part 9 PDF' },
+      { n: 10, file: 'debunked-part-10.pdf', size: '456 KB', label: 'Part 10 PDF' },
+      { n: 11, file: 'debunked-part-11.pdf', size: '338 KB', label: 'Part 11 PDF' },
+    ],
+    principlesTitle: 'What this book is, and what it is not',
+    principles: [
+      { n: '01', t: 'It is not anti-Hindu', d: 'The tradition produced the Gita and the Upanishads, six schools of philosophy, Aryabhata’s astronomy, Sushruta’s surgery, Panini’s grammar. None of that is mocked here. The target is the inflation, never the tradition it is attached to.' },
+      { n: '02', t: 'The same six steps, on every claim', d: 'What exactly is being claimed · where the claim came from · what the text actually says · what the evidence shows · the debunk · the honest picture. Seventy-nine claims, one method.' },
+      { n: '03', t: 'What is real gets its own box', d: 'Where India genuinely did it first — zero as a number, the decimal system, the sine table, the Kerala calculus, rhinoplasty — it is stated at full strength, with the date and the manuscript named.' },
+      { n: '04', t: 'Simple words on purpose', d: 'Big words are a good way to hide a weak argument. Every unfamiliar term is explained where it first appears, so any claim in the book can be checked by the reader rather than taken on trust.' },
+    ],
+    load: () => import('./writing/debunked.js'),
+  },
+  {
     slug: 'forgotten-gods',
     kicker: 'A grounded, plain-language history',
     title: 'The Forgotten Gods',
