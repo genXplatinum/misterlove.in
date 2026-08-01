@@ -277,14 +277,11 @@ export const pieces = [
        in a row read as one. `quartz` is the deep green the source already uses
        for its definition panels and its Gurbani rules. */
     accent: 'quartz',
-    pdf: 'debunked-sikhism-part-1.pdf',
-    pdfSize: '365 KB',
-    pdfLabel: 'Part 1 PDF',
-    pdfs: [
-      { n: 1, file: 'debunked-sikhism-part-1.pdf', size: '365 KB', label: 'Part 1 PDF' },
-      { n: 2, file: 'debunked-sikhism-part-2.pdf', size: '295 KB', label: 'Part 2 PDF' },
-      { n: 3, file: 'debunked-sikhism-part-3.pdf', size: '313 KB', label: 'Part 3 PDF' },
-    ],
+    // One book, not three downloads — bound by scripts/make-book-pdfs.mjs.
+    // The series is still being written, so the label says how far it goes.
+    pdf: 'debunked-sikhism.pdf',
+    pdfSize: '847 KB',
+    pdfLabel: 'Parts 1–3, collected',
     principlesTitle: 'The rules this series argues by',
     principles: [
       { n: '01', t: 'The same five steps, ten times a part', d: 'Where the claim came from · what the Sikh texts say · the real history · the debunk · the honest picture. Every chapter, no exceptions, so the method can be checked as easily as the conclusion.' },
@@ -328,22 +325,10 @@ export const pieces = [
     minutes: 455,
     status: 'Complete',
     accent: 'harvest',
-    pdf: 'debunked-part-1.pdf',
-    pdfSize: '352 KB',
-    pdfLabel: 'Part 1 PDF',
-    pdfs: [
-      { n: 1, file: 'debunked-part-1.pdf', size: '352 KB', label: 'Part 1 PDF' },
-      { n: 2, file: 'debunked-part-2.pdf', size: '464 KB', label: 'Part 2 PDF' },
-      { n: 3, file: 'debunked-part-3.pdf', size: '532 KB', label: 'Part 3 PDF' },
-      { n: 4, file: 'debunked-part-4.pdf', size: '592 KB', label: 'Part 4 PDF' },
-      { n: 5, file: 'debunked-part-5.pdf', size: '458 KB', label: 'Part 5 PDF' },
-      { n: 6, file: 'debunked-part-6.pdf', size: '490 KB', label: 'Part 6 PDF' },
-      { n: 7, file: 'debunked-part-7.pdf', size: '488 KB', label: 'Part 7 PDF' },
-      { n: 8, file: 'debunked-part-8.pdf', size: '301 KB', label: 'Part 8 PDF' },
-      { n: 9, file: 'debunked-part-9.pdf', size: '336 KB', label: 'Part 9 PDF' },
-      { n: 10, file: 'debunked-part-10.pdf', size: '456 KB', label: 'Part 10 PDF' },
-      { n: 11, file: 'debunked-part-11.pdf', size: '338 KB', label: 'Part 11 PDF' },
-    ],
+    // One book, not eleven downloads — bound by scripts/make-book-pdfs.mjs.
+    pdf: 'debunked.pdf',
+    pdfSize: '3.2 MB',
+    pdfLabel: 'The complete book',
     principlesTitle: 'What this book is, and what it is not',
     principles: [
       { n: '01', t: 'It is not anti-Hindu', d: 'The tradition produced the Gita and the Upanishads, six schools of philosophy, Aryabhata’s astronomy, Sushruta’s surgery, Panini’s grammar. None of that is mocked here. The target is the inflation, never the tradition it is attached to.' },
