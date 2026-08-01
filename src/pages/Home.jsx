@@ -179,7 +179,7 @@ function About() {
 
           <Reveal as="figure" className="intellect-about__portrait" variant="fade">
             <div className="intellect-about__portrait-frame">
-              <img src={profile.photo} alt="Lovepreet Singh speaking at SecurityVerse in Delhi" />
+              <img src={profile.photo} alt="Lovepreet Singh" />
             </div>
             <figcaption>{about.photoCaption}</figcaption>
           </Reveal>
