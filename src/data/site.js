@@ -62,7 +62,7 @@ export const home = {
       { label: 'Reading toward', value: 'Doctoral research, after the MBA' },
       { label: 'Writing principle', value: 'Simple language, checkable claims' },
     ],
-    photoCaption: 'Speaking about digital systems and security, Delhi, 2025.',
+    photoCaption: 'Lovepreet Singh.',
   },
 
   practice: {

@@ -625,7 +625,7 @@
   width: 100%;
   aspect-ratio: 4 / 5;
   object-fit: cover;
-  object-position: 48% center;
+  object-position: center;
   filter: saturate(0.58) sepia(0.12) contrast(0.96);
 }
 
