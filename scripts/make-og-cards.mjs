@@ -111,15 +111,14 @@ function clampLines(text, size, maxW, maxLines) {
   return kept;
 }
 
-/* Every register belongs to the olive Living Archive. Individual series keep
-   a quiet accent so their cards remain recognisable without breaking the
-   shared visual system. */
+/* Every card belongs to the same warm private-press system. Individual series
+   keep a cloth-and-ink accent so they remain recognisable on the shelf. */
 const PALETTES = {
-  harvest: { a: '#14170f', b: '#1c2116', c: '#252c1c', lift: '#7f925a', accent: '#c6b56a', tab: '#526536', paper: '#f3f0e5', sub: '#c8cbbb', ink: '#192010', foot: '#aab09d', rule: '#5c674e' },
-  ember:   { a: '#15170f', b: '#202219', c: '#2b2920', lift: '#a6664f', accent: '#c1915e', tab: '#655238', paper: '#f3eee2', sub: '#d1c7b8', ink: '#21170f', foot: '#b4aa9b', rule: '#665a49' },
-  ink:     { a: '#12160f', b: '#192018', c: '#222b22', lift: '#71846d', accent: '#b58b48', tab: '#40533a', paper: '#f1eee2', sub: '#c5c8b9', ink: '#171c12', foot: '#a7ad9d', rule: '#536050' },
-  quartz:  { a: '#121711', b: '#19231d', c: '#233129', lift: '#789b8d', accent: '#a8b99a', tab: '#405c4c', paper: '#f1eee4', sub: '#c3cec7', ink: '#132019', foot: '#9fafa6', rule: '#4d6559' },
-  site:    { a: '#14170f', b: '#1c2116', c: '#252c1c', lift: '#4b602e', accent: '#b9c78b', tab: '#4b602e', paper: '#f3f0e5', sub: '#c5c8b9', ink: '#171c10', foot: '#a5aa99', rule: '#4c5640' },
+  harvest: { a: '#f3efe6', b: '#fcfaf5', c: '#eae2d5', lift: '#9a7742', accent: '#8a6638', tab: '#dcc9a5', paper: '#1d1a16', sub: '#5e574d', ink: '#fcfaf5', foot: '#867d70', rule: '#b7aa97' },
+  ember:   { a: '#f3efe6', b: '#fcfaf5', c: '#eaded8', lift: '#7c3032', accent: '#8f443d', tab: '#dec2b8', paper: '#1d1a16', sub: '#5e574d', ink: '#fcfaf5', foot: '#867d70', rule: '#b7aa97' },
+  ink:     { a: '#f3efe6', b: '#fcfaf5', c: '#e1e2df', lift: '#4d5660', accent: '#4d5660', tab: '#cbd0d0', paper: '#1d1a16', sub: '#5e574d', ink: '#fcfaf5', foot: '#867d70', rule: '#b7aa97' },
+  quartz:  { a: '#f3efe6', b: '#fcfaf5', c: '#dfe7e1', lift: '#536d67', accent: '#536d67', tab: '#c5d5cb', paper: '#1d1a16', sub: '#5e574d', ink: '#fcfaf5', foot: '#867d70', rule: '#b7aa97' },
+  site:    { a: '#f3efe6', b: '#fcfaf5', c: '#eae2d5', lift: '#7c3032', accent: '#7c3032', tab: '#eadcdd', paper: '#1d1a16', sub: '#5e574d', ink: '#fcfaf5', foot: '#867d70', rule: '#b7aa97' },
 };
 
 const frame = (p) => `
@@ -130,21 +129,14 @@ const frame = (p) => `
       <stop offset="100%" stop-color="${p.c}"/>
     </linearGradient>
     <radialGradient id="lift" cx="83%" cy="10%" r="76%">
-      <stop offset="0%" stop-color="${p.lift}" stop-opacity="0.24"/>
-      <stop offset="58%" stop-color="${p.lift}" stop-opacity="0.04"/>
+      <stop offset="0%" stop-color="${p.lift}" stop-opacity="0.08"/>
+      <stop offset="58%" stop-color="${p.lift}" stop-opacity="0.02"/>
       <stop offset="100%" stop-color="${p.lift}" stop-opacity="0"/>
     </radialGradient>
     <pattern id="fibre" width="38" height="38" patternUnits="userSpaceOnUse">
       <path d="M3 8h13 M25 28h9 M7 34h5 M29 6h4" stroke="${p.paper}" stroke-opacity="0.025" stroke-width="1"/>
       <circle cx="20" cy="18" r="0.8" fill="${p.paper}" fill-opacity="0.035"/>
     </pattern>
-    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="${p.paper}"/>
-      <stop offset="100%" stop-color="#d8d0bb"/>
-    </linearGradient>
-    <filter id="folio-shadow" x="-30%" y="-30%" width="170%" height="190%">
-      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#050703" flood-opacity="0.26"/>
-    </filter>
     <style>
       .r{font-family:'Newsreader',Georgia,serif}
       .s{font-family:'Inter','Segoe UI',sans-serif}
@@ -156,26 +148,17 @@ const frame = (p) => `
   <rect width="${W}" height="${H}" fill="url(#bg)"/>
   <rect width="${W}" height="${H}" fill="url(#lift)"/>
   <rect width="${W}" height="${H}" fill="url(#fibre)"/>
-  <rect x="28" y="28" width="1144" height="574" rx="18" fill="none" stroke="${p.rule}" stroke-width="1.2"/>
+  <rect x="28" y="28" width="10" height="574" fill="${p.accent}"/>
+  <rect x="28" y="28" width="1144" height="574" rx="1" fill="none" stroke="${p.rule}" stroke-width="1.2"/>
+  <rect x="34" y="34" width="1132" height="562" rx="1" fill="none" stroke="${p.rule}" stroke-width="0.7" opacity="0.58"/>
   <line x1="62" y1="112" x2="1138" y2="112" stroke="${p.rule}" stroke-width="1"/>
 
-  <!-- A quiet folio stack echoes the scroll-reactive archive object. -->
-  <g transform="translate(966,147) rotate(-4 95 110)" filter="url(#folio-shadow)" opacity="0.23">
-    <rect x="8" y="12" width="176" height="228" rx="14" fill="${p.tab}"/>
-    <rect x="-4" y="2" width="176" height="228" rx="14" fill="url(#paper)"/>
-    <rect x="19" y="-9" width="176" height="228" rx="14" fill="${p.tab}"/>
-    <rect x="8" y="-19" width="176" height="228" rx="14" fill="url(#paper)"/>
-    <line x1="104" y1="-19" x2="104" y2="209" stroke="${p.accent}" stroke-width="3"/>
-  </g>
-
-  <!-- CSS-folio mark translated into the raster share system. -->
+  <!-- A small printer's mark and the author masthead. -->
   <g transform="translate(62,56)">
-    <rect x="0" y="2" width="27" height="7" rx="3.5" fill="${p.accent}"/>
-    <rect x="4" y="12" width="27" height="7" rx="3.5" fill="${p.paper}" opacity="0.9"/>
-    <rect x="0" y="22" width="27" height="7" rx="3.5" fill="${p.accent}" opacity="0.7"/>
-    <text class="s" x="47" y="24" fill="${p.paper}" font-size="21" font-weight="600" letter-spacing="1.7">LOVEPREET SINGH</text>
+    <text class="r" x="0" y="25" fill="${p.accent}" font-size="25" font-weight="600">LS</text>
+    <text class="s" x="48" y="24" fill="${p.paper}" font-size="21" font-weight="600" letter-spacing="1.2">LOVEPREET SINGH</text>
   </g>
-  <text class="s" x="${W - 62}" y="78" text-anchor="end" fill="${p.foot}" font-size="16" font-weight="500" letter-spacing="2.5">THE LIVING ARCHIVE · MISTERLOVE.IN</text>
+  <text class="s" x="${W - 62}" y="78" text-anchor="end" fill="${p.foot}" font-size="16" font-weight="500" letter-spacing="1.8">ESSAYS · RESEARCH · MISTERLOVE.IN</text>
 `;
 
 /** One route card. */
@@ -242,7 +225,7 @@ ${frame(p)}
   ${standLines}
 
   <g transform="translate(${LEFT}, ${BADGE_Y})">
-    <rect x="0" y="0" width="${badgeW.toFixed(0)}" height="34" rx="17" fill="${p.accent}"/>
+    <rect x="0" y="0" width="${badgeW.toFixed(0)}" height="34" rx="1" fill="${p.accent}"/>
     <text class="${labelClass}" x="17" y="23" fill="${p.ink}" font-size="17" font-weight="700" letter-spacing="${language === 'hi' ? '0' : '1.2'}">${esc(badge)}</text>
     <text class="${labelClass}" x="${(badgeW + 24).toFixed(0)}" y="22" fill="${p.foot}" font-size="17" font-weight="500" letter-spacing="${language === 'hi' ? '0' : '0.4'}">${esc(byline)}</text>
   </g>
@@ -323,13 +306,13 @@ ${frame(p)}
   <rect x="${LEFT}" y="${ruleY.toFixed(0)}" width="72" height="3" rx="1.5" fill="${p.accent}"/>
   ${leadLines}
 
-  <text class="s" x="${COL}" y="${TOP}" fill="${p.foot}" font-size="16" font-weight="600" letter-spacing="2.5">IN THE ARCHIVE</text>
+  <text class="s" x="${COL}" y="${TOP}" fill="${p.foot}" font-size="16" font-weight="600" letter-spacing="2.5">IN THE LIBRARY</text>
   <line x1="${COL}" y1="${TOP + 18}" x2="${W - 62}" y2="${TOP + 18}" stroke="${p.rule}" stroke-width="1"/>
 ${rows}
 ${more}
 
   <g transform="translate(${LEFT}, ${H - 88})">
-    <rect x="0" y="0" width="${badgeW.toFixed(0)}" height="34" rx="17" fill="${p.accent}"/>
+    <rect x="0" y="0" width="${badgeW.toFixed(0)}" height="34" rx="1" fill="${p.accent}"/>
     <text class="s" x="17" y="23" fill="${p.ink}" font-size="17" font-weight="700" letter-spacing="1.2">${esc(badge)}</text>
     <text class="s" x="${(badgeW + 24).toFixed(0)}" y="22" fill="${p.foot}" font-size="17" font-weight="500">Research and writing by Lovepreet Singh</text>
   </g>

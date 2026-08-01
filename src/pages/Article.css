@@ -1,15 +1,14 @@
 /* ============================================================
-   ARTICLE — the paper room inside the Living Archive.
-   A three-track editorial layout: contents · prose · citations.
+   ARTICLE — a quiet, consistently light reading room.
+   Contents · prose · citations, with the writing kept central.
    ============================================================ */
 
 .article {
   --rail: 13.5rem;
-  --measure: 68ch;
+  --measure: 66ch;
   --margin-notes: 16rem;
 
-  /* The reader owns its own light palette so long-form pages remain paper,
-     even though the archive around them is dark olive. */
+  /* Long-form work gets its own calm paper palette and generous measure. */
   --bg: var(--paper);
   --bg-2: var(--parchment);
   --surface: var(--paper-raised);
@@ -20,8 +19,7 @@
   --line: color-mix(in oklab, var(--ink-3) 24%, transparent);
   --line-2: color-mix(in oklab, var(--olive) 42%, transparent);
   --accent: var(--olive);
-  --on-accent: var(--paper-raised);
-  --shadow: rgba(45, 48, 31, 0.3);
+  --on-accent: var(--accent-ink);
   --glow: color-mix(in oklab, var(--olive) 18%, transparent);
   --scan: var(--brass);
 
@@ -31,8 +29,8 @@
   padding-top: clamp(6.5rem, 10vw, 9rem);
   color: var(--text);
   background:
-    radial-gradient(75% 40% at 100% 0%, color-mix(in oklab, var(--olive) 7%, transparent), transparent 72%),
-    radial-gradient(55% 35% at -8% 32%, color-mix(in oklab, var(--brass) 6%, transparent), transparent 76%),
+    radial-gradient(75% 40% at 100% 0%, color-mix(in oklab, var(--cobalt) 8%, transparent), transparent 72%),
+    radial-gradient(55% 35% at -8% 32%, color-mix(in oklab, var(--saffron) 6%, transparent), transparent 76%),
     var(--bg);
 }
 
@@ -48,33 +46,6 @@
     radial-gradient(circle at 74% 62%, currentColor 0 0.3px, transparent 0.6px);
   background-size: 9px 9px, 13px 13px;
   mix-blend-mode: multiply;
-}
-
-[data-theme='dark'] .article {
-  --bg: var(--night);
-  --bg-2: var(--moss);
-  --surface: var(--moss-raised);
-  --surface-2: color-mix(in oklab, var(--moss-raised) 82%, var(--olive));
-  --text: var(--cream);
-  --text-2: var(--cream-2);
-  --text-dim: var(--sage);
-  --line: color-mix(in oklab, var(--sage) 23%, transparent);
-  --line-2: color-mix(in oklab, var(--lichen) 42%, transparent);
-  --accent: var(--lichen);
-  --on-accent: var(--night);
-  --shadow: rgba(2, 4, 1, 0.7);
-  --glow: color-mix(in oklab, var(--lichen) 19%, transparent);
-  --scan: var(--brass);
-
-  background:
-    radial-gradient(70% 42% at 100% 0%, color-mix(in oklab, var(--olive) 22%, transparent), transparent 72%),
-    radial-gradient(50% 35% at -8% 36%, color-mix(in oklab, var(--brass) 7%, transparent), transparent 76%),
-    var(--night);
-}
-
-[data-theme='dark'] .article::before {
-  opacity: 0.08;
-  mix-blend-mode: screen;
 }
 
 .article--hi {
@@ -123,7 +94,7 @@
 .article__meter {
   position: fixed;
   inset: 0 0 auto;
-  z-index: 9400;
+  z-index: 10020;
   height: 3px;
   pointer-events: none;
   background: color-mix(in oklab, var(--moss) 60%, transparent);
@@ -134,8 +105,8 @@
   width: 100%;
   height: 100%;
   transform-origin: left;
-  background: linear-gradient(90deg, var(--olive), var(--brass), var(--lichen));
-  box-shadow: 0 0 12px color-mix(in oklab, var(--olive) 28%, transparent);
+  background: var(--oxblood);
+  box-shadow: none;
   transition: transform 0.14s linear;
 }
 
@@ -195,10 +166,24 @@
   margin-bottom: 0;
 }
 
+.article__reading-tools {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
 @media (max-width: 560px) {
   .article__navrow {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .article__reading-tools {
+    width: 100%;
+    justify-content: flex-start;
   }
 }
 
@@ -240,6 +225,8 @@
   letter-spacing: -0.05em;
   text-wrap: balance;
   color: var(--text);
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .article__standfirst {
@@ -249,6 +236,8 @@
   font-size: clamp(1.24rem, 1.06rem + 0.65vw, 1.58rem);
   line-height: 1.48;
   color: var(--text-2);
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .article__head-aside {
@@ -261,12 +250,6 @@
   box-shadow:
     0 1px 0 color-mix(in oklab, white 40%, transparent) inset,
     0 22px 55px -45px var(--shadow);
-}
-
-[data-theme='dark'] .article__head-aside {
-  background:
-    linear-gradient(140deg, rgba(255, 255, 255, 0.04), transparent 42%),
-    var(--surface);
 }
 
 .article__facts { display: grid; gap: 1rem; }
@@ -288,43 +271,9 @@
   font-size: var(--t-sm);
   line-height: 1.5;
   color: var(--text);
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
-
-.article__themetoggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75em;
-  margin-top: 1.5rem;
-  padding: 0.68em 1.05em;
-  border: 1px solid var(--line-2);
-  border-radius: 100px;
-  color: var(--text-2);
-  background: color-mix(in oklab, var(--surface) 76%, transparent);
-  transition:
-    border-color 0.3s var(--ease-out),
-    color 0.3s var(--ease-out),
-    background 0.3s var(--ease-out);
-}
-
-.article__themetoggle:hover {
-  border-color: var(--accent);
-  color: var(--text);
-  background: var(--surface);
-}
-
-.article__themedot {
-  position: relative;
-  width: 18px;
-  height: 18px;
-  overflow: hidden;
-  border: 1px solid var(--line-2);
-  border-radius: 50%;
-  background: var(--paper);
-  box-shadow: inset -7px 0 0 var(--moss);
-  transition: rotate 0.45s var(--ease-out);
-}
-
-.article__themedot.is-dark { rotate: 180deg; }
 
 /* ---------- Reading grid ---------- */
 .article__body {
@@ -693,6 +642,8 @@
   line-height: 1.25;
   letter-spacing: -0.016em;
   color: var(--text);
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 /* ---------- Full contents ---------- */
@@ -757,6 +708,8 @@
   line-height: 1.18;
   letter-spacing: -0.022em;
   color: var(--text);
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .article__entry-lead {
@@ -789,6 +742,7 @@
 }
 
 .article__grabpdf { margin-top: clamp(2.8rem, 5vw, 4.5rem); }
+.article__grabpdf .btn { max-width: 100%; white-space: normal; text-align: center; line-height: 1.35; }
 
 body.is-reading .statusbar { display: none; }
 
@@ -807,8 +761,6 @@ body.is-reading .statusbar { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .article__meter-fill,
   .article__crumb,
-  .article__themetoggle,
-  .article__themedot,
   .article__rail-reopen,
   .article__rail-btn,
   .article__toc-link,
@@ -826,20 +778,29 @@ body.is-reading .statusbar { display: none; }
 
 @media print {
   .article {
+    --canvas: #fff;
+    --paper: #fff;
+    --paper-alt: #f3f0e8;
+    --paper-deep: #f7f4ed;
+    --ink: #111522;
+    --ink-soft: #394154;
+    --ink-2: #394154;
+    --ink-3: #687085;
+    --rule: #d9d4ca;
+    --rule-dark: #b8b0a2;
     --bg: #fff;
     --surface: #fff;
-    --text: #171b12;
-    --text-2: #38402f;
-    --text-dim: #606755;
+    --text: #111522;
+    --text-2: #394154;
+    --text-dim: #687085;
     padding-top: 0;
     background: #fff;
   }
 
-  .article::before,
-  .article__meter,
-  .article__navrow,
-  .article__themetoggle,
-  .article__rail,
+    .article::before,
+    .article__meter,
+    .article__navrow,
+    .article__rail,
   .article__rail-reopen,
   .article__pager,
   .article__contents,
@@ -949,3 +910,51 @@ body.is-reading .statusbar { display: none; }
 .article__standfirst {
   hanging-punctuation: first allow-end last;
 }
+
+/* ---------- Light private-library finish ---------- */
+
+.article {
+  --measure: 68ch;
+  background:
+    linear-gradient(90deg, transparent calc(50% - 1px), color-mix(in srgb, var(--ink-soft) 3%, transparent) 50%, transparent calc(50% + 1px)),
+    var(--canvas);
+}
+
+.article::before { opacity: 0.055; }
+
+.article__meter { height: 2px; background: var(--paper-deep); }
+.article__meter-fill { background: var(--oxblood); box-shadow: none; }
+
+.article__head { border-bottom: 3px double var(--rule-dark); }
+.article__head::after { height: 1px; background: var(--brass); }
+.article__title { font-weight: 600; letter-spacing: -0.045em; }
+.article__standfirst { line-height: 1.58; }
+
+.article__head-aside {
+  border-color: var(--rule-dark);
+  border-top: 4px solid var(--oxblood);
+  border-radius: 1px;
+  background: var(--paper);
+  box-shadow: var(--shadow-sheet);
+}
+
+.article__rail-inner,
+.article__rail-reopen,
+.article__prologue,
+.article__sources,
+.article__pager-link,
+.article__contents {
+  border-radius: 1px;
+}
+
+.article__rail-inner { border-color: var(--rule-dark); background: color-mix(in srgb, var(--paper) 90%, transparent); box-shadow: var(--shadow-sheet); }
+.article__rail-reopen { border-color: var(--rule-dark); background: var(--paper); box-shadow: var(--shadow-sheet); }
+.article__toc-link.is-active { background: var(--oxblood-wash); }
+.article__rail-btn { border-radius: 1px; }
+
+.article__prologue { border-color: var(--rule-dark); background: var(--paper-alt); box-shadow: none; }
+.article__sources { border-color: var(--rule-dark); background: var(--paper); }
+.article__pager-link { border-color: var(--rule-dark); background: var(--paper); box-shadow: var(--shadow-sheet); }
+.article__pager-link:hover { box-shadow: var(--shadow-book); }
+.article__contents { border-color: var(--rule-dark); background: var(--paper); }
+.article__entry.is-current { background: var(--oxblood-wash); }

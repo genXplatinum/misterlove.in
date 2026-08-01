@@ -11,7 +11,7 @@ import './CoverPlate.css';
  */
 export default function CoverPlate({ piece, className = '' }) {
   return (
-    <span className={`cover cover--${piece.accent} ${className}`}>
+    <span className={`cover cover--${piece.accent} ${className}`} lang={piece.language ?? 'en'}>
       <span className="cover__kicker mono">{piece.kicker}</span>
       <span className="cover__title">
         {piece.title}

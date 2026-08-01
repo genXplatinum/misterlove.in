@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Wordmark } from './Logo';
+import ThemeToggle from './ThemeToggle';
 import { nav, profile } from '../data/site';
 import './Nav.css';
 
@@ -224,6 +225,7 @@ export default function Nav() {
         </nav>
 
         <div className="nav__right">
+          <ThemeToggle className="nav__theme" />
           <a href="#contact" className="nav__cta" onClick={(event) => go(event, '#contact')}>
             Write to me
           </a>

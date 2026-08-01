@@ -9,8 +9,8 @@ export const profile = {
   name: 'Lovepreet Singh',
   first: 'Lovepreet',
   last: 'Singh',
-  descriptor: 'Certified Ethical Hacker · Founder of Lovelace · MBA candidate · Researcher',
-  shortDescriptor: 'Security · Research · Lovelace',
+  descriptor: 'Researcher · Writer · Founder of Lovelace · Student of philosophy',
+  shortDescriptor: 'Research · Writing · Independent study',
   location: 'Punjab, India',
   email: 'lovepreetsinghmk10@gmail.com',
   photo: import.meta.env.BASE_URL + 'founder.jpg',
@@ -22,10 +22,10 @@ export const profile = {
 };
 
 export const nav = [
+  { label: 'Writing', to: '/writing', route: true },
+  { label: 'Method', to: '#method' },
   { label: 'About', to: '#about' },
   { label: 'Practice', to: '#practice' },
-  { label: 'Method', to: '#method' },
-  { label: 'Writing', to: '/writing', route: true },
   { label: 'Education', to: '#education' },
   { label: 'Contact', to: '#contact' },
 ];
@@ -73,13 +73,6 @@ export const home = {
     fields: [
       {
         n: '01',
-        title: 'Cybersecurity',
-        text:
-          'I work on practical questions of risk, failure and trust in digital systems, as a Certified Ethical Hacker who learned the craft outside any syllabus. The work is technical, but the purpose is simple: help people understand what can go wrong and make better decisions before it does.',
-        points: ['Offensive security', 'System review', 'Clear technical advice'],
-      },
-      {
-        n: '02',
         title: 'Research and writing',
         text:
           'I investigate subjects that public debate often reduces to slogans: independence, farmers’ movements, religion, gender, caste, merit and social justice. The method is philosophical before it is historical — establish what kind of question is being asked, then answer that question rather than a louder one standing next to it.',
@@ -89,13 +82,20 @@ export const home = {
         link: 'Open the research archive',
       },
       {
-        n: '03',
+        n: '02',
         title: 'Lovelace',
         text:
           'I founded Lovelace, a design and digital studio. It brings research, visual judgement and engineering together to make websites that feel considered, useful and alive.',
         points: ['Digital design', 'Web experiences', '3D and interaction'],
         href: 'https://lovelace.co.in',
         link: 'Visit lovelace.co.in',
+      },
+      {
+        n: '03',
+        title: 'Cybersecurity',
+        text:
+          'I work on practical questions of risk, failure and trust in digital systems, as a Certified Ethical Hacker who learned the craft outside any syllabus. The work is technical, but the purpose is simple: help people understand what can go wrong and make better decisions before it does.',
+        points: ['Offensive security', 'System review', 'Clear technical advice'],
       },
     ],
   },

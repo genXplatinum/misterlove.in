@@ -9,10 +9,10 @@ import './Prose.css';
  * strips scripts, inline styles and any class outside its allow-list. Prose.css
  * themes the resulting vocabulary.
  */
-export default function Prose({ html, className = '', dark = false, as: Tag = 'div' }) {
+export default function Prose({ html, className = '', as: Tag = 'div' }) {
   return (
     <Tag
-      className={`prose ${dark ? 'is-dark' : ''} ${className}`}
+      className={`prose ${className}`}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
