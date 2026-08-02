@@ -34,12 +34,10 @@ export const pieces = [
     published: '2026-08-02',
     displayDate: 'August 2026',
     parts: 13,
-    /* Four parts are written and are in the collected PDF below. The web
-       edition is not published yet — see src/data/writing/punjab.js — so
-       nothing here claims a readable part that does not exist. */
-    live: 4,
-    words: 38369,
-    minutes: 175,
+    // Ten of the thirteen are written and readable; the rest are announced.
+    live: 10,
+    words: 79815,
+    minutes: 363,
     status: 'In progress',
     accent: 'ember',
     pdf: 'punjab.pdf',
@@ -53,15 +51,19 @@ export const pieces = [
       { n: '04', t: 'Groups of people are never the explanation', d: '“Punjabis are hot-headed” is not analysis; it is an insult wearing a lab coat. It also explains nothing, because it cannot explain change — and Punjab changed enormously, for reasons: geography, money, water, politics, war, named decisions by named people.' },
       { n: '05', t: 'Nobody here is only a hero or only a villain', d: 'The Indian state defeated a genuinely murderous insurgency and also killed innocent people and covered it up. Punjab produced extraordinary courage and also men who machine-gunned bus passengers for their religion. Both halves are true.' },
     ],
-    /* Only the parts the book itself names are listed. Parts 6 to 13 are
-       announced by the cover's "thirteen parts" and appear in the contents
-       unnamed rather than being invented here. */
+    /* Parts 11 to 13 are announced by the cover's 'thirteen parts' and show
+       in the contents unnamed rather than being invented here. */
     outline: [
       { n: 1, label: 'Before the Name', title: 'The Land Before the Name', blurb: 'From the first villages to about 500 BCE — where Punjab actually is, the five rivers that made it, and the awkward fact hidden inside Harappa.' },
       { n: 2, label: 'Antiquity', title: 'Porus to the Huns', blurb: 'Alexander at the Jhelum, the Mauryas, the Greeks who stayed, and the invasions that set the pattern for everything after.' },
       { n: 3, label: 'The Highway', title: 'The Invasion Highway', blurb: 'Why the same road was walked by everyone who wanted India, and what being the corridor does to the people who live in it.' },
       { n: 4, label: 'The Gurus', title: 'Gurus and the Khalsa', blurb: '1469 to 1708 — ten Gurus, two executions, four dead children, and the origin of shaheedi.' },
       { n: 5, label: 'The Empire', title: 'The Sikh Empire', blurb: 'Ranjit Singh, the state he built, and what happened to it.' },
+      { n: 6, label: 'Under the Raj', title: 'Loyal and Rebel at Once', blurb: 'Punjab under British rule — the martial-race army, the canal colonies, Jallianwala Bagh and the Ghadar men.' },
+      { n: 7, label: 'Partition', title: 'The Cut', blurb: 'Why Punjab was the worst of 1947 — the arithmetic, the Radcliffe Line, the killing, and the water.' },
+      { n: 8, label: 'Redrawing', title: 'Redrawing Punjab', blurb: 'Punjabi Suba, the 1966 reorganisation, Chandigarh, and the river waters that were never settled.' },
+      { n: 9, label: 'Bhindranwale', title: 'Bhindranwale: Full Autopsy', blurb: '1977 to June 1984 — who he was, who built him, what he actually said, and the two tests he fails.' },
+      { n: 10, label: 'The Dark Decade', title: 'The Dark Decade', blurb: 'The years after 1984 — the insurgency, the state response, and the evidence graded document by document.' },
     ],
     load: () => import('./writing/punjab.js'),
   },
