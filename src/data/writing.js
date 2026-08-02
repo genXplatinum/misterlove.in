@@ -37,11 +37,9 @@ export const pieces = [
     /* Four parts are written and are in the collected PDF below. The web
        edition is not published yet — see src/data/writing/punjab.js — so
        nothing here claims a readable part that does not exist. */
-    live: 0,
-    // The four written parts, counted from the PDFs. The reader shows 0 of 13
-    // because none is published to the web yet; the book itself is this long.
-    words: 39216,
-    minutes: 178,
+    live: 4,
+    words: 38369,
+    minutes: 175,
     status: 'In progress',
     accent: 'ember',
     pdf: 'punjab.pdf',
