@@ -188,25 +188,36 @@ function blocksOf(lines) {
    their left edge, and a new row begins wherever the leftmost column does.
    ------------------------------------------------------------------ */
 const TABLE_SIZE = 9.5;
+/* Cells whose broken word could not be rejoined, reported at the end. */
+const unhealed = [];
 const COLUMN_TOLERANCE = 6;
 
 function tableFrom(items) {
   const cells = items.filter((i) => i.size === TABLE_SIZE).sort((a, b) => b.y - a.y || a.x - b.x);
   if (!cells.length) return null;
 
-  const columns = [];
+  const clusters = [];
   for (const cell of [...cells].sort((a, b) => a.x - b.x)) {
-    const last = columns[columns.length - 1];
-    if (last && Math.abs(cell.x - last) <= COLUMN_TOLERANCE) continue;
-    columns.push(cell.x);
+    const last = clusters[clusters.length - 1];
+    if (last && Math.abs(cell.x - last.x) <= COLUMN_TOLERANCE) { last.rows.add(Math.round(cell.y)); continue; }
+    clusters.push({ x: cell.x, rows: new Set([Math.round(cell.y)]) });
   }
+  /* A word set in italic mid-sentence becomes its own text item, so a cell
+     containing one looks like two extra columns starting at that word. A real
+     column appears on more than one row; those one-off offsets are folded back
+     into the column to their left. */
+  const columns = clusters
+    .filter((c, i) => i === 0 || c.rows.size > 1)
+    .map((c) => c.x);
   // One column is a timeline, not a table; the caller handles that.
   if (columns.length < 2) return null;
 
+  /* Nearest column at or to the left of the cell: a fragment that starts
+     mid-cell belongs to the cell it is inside, never to the next one over. */
   const columnOf = (cell) => {
     let best = 0;
     for (let c = 1; c < columns.length; c += 1) {
-      if (Math.abs(cell.x - columns[c]) < Math.abs(cell.x - columns[best])) best = c;
+      if (columns[c] <= cell.x + COLUMN_TOLERANCE) best = c;
     }
     return best;
   };
@@ -220,22 +231,68 @@ function tableFrom(items) {
   const bands = [];
   for (const y of baselines) {
     const last = bands[bands.length - 1];
-    if (last && last.top - y <= TABLE_SIZE * 1.9) { last.floor = y; continue; }
+    // Measured against the last baseline already in the band, not its first:
+    // a cell that wraps to a third line is still one row, and comparing with
+    // the band's top would cut it loose after the second.
+    if (last && last.floor - y <= TABLE_SIZE * 1.9) { last.floor = y; continue; }
     bands.push({ top: y, floor: y });
   }
   if (!bands.length) return null;
 
   return bands.map((band, index) => {
-    const ceiling = band.top + 1;
+    const ceiling = band.top;
     const floor = index + 1 < bands.length ? bands[index + 1].top : -Infinity;
     const row = columns.map(() => []);
-    for (const cell of cells) {
-      if (cell.y > ceiling || cell.y <= floor) continue;
-      row[columnOf(cell)].push(cell);
+    // Rounded throughout: the bands were built from rounded baselines, and
+    // comparing a raw y against them lets one row fall into two bands.
+    const inBand = cells.filter((c) => Math.round(c.y) <= ceiling && Math.round(c.y) > floor);
+    if (!inBand.length) return columns.map(() => '');
+    const topLine = Math.max(...inBand.map((c) => Math.round(c.y)));
+    const topCells = inBand.filter((c) => Math.round(c.y) >= topLine);
+    const labelled = topCells.some((c) => columnOf(c) === 0);
+    // The rightmost column this row actually fills — where a wrapped line goes.
+    const lastLabelled = Math.max(0, ...topCells.map(columnOf));
+
+    for (const cell of inBand) {
+      let column = columnOf(cell);
+      /* Some tables hang their text column, so a wrapped line returns to the
+         left margin and lands back under column one — where it would be read
+         as a second label rather than the continuation it is. A cell below
+         the row's own first line, in column one, on a row that already has a
+         label, belongs to the last column instead. */
+      /* Only the two-column layout hangs its text like this. In a wider
+         table a wrapped line stays in its own column, and reassigning it
+         would move half a name into the caste column. */
+      if (columns.length === 2 && column === 0 && Math.round(cell.y) < topLine && labelled) {
+        column = lastLabelled;
+      }
+      row[column].push(cell);
     }
-    return row.map((stack) => joinLines(
+    const filled = row.map((stack) => joinLines(
       stack.sort((a, b) => b.y - a.y || a.x - b.x).map((c) => c.str)
     ));
+
+    /* A word broken across a line can land either side of a column boundary
+       when the cell is narrow. A soft hyphen never legitimately ends a cell,
+       so one that does is joined to the next cell that has content. */
+    for (let c = 0; c < filled.length; c += 1) {
+      if (!filled[c].endsWith('‐')) continue;
+      // Only a cell that opens mid-word continues the broken one; a cell
+      // starting with a capital is the next field, not the rest of the word.
+      const next = filled.findIndex((v, k) => k > c && v && /^[a-z]/.test(v));
+      if (next === -1) {
+        /* The other half of the word is not in this row — a narrow cell can
+           wrap so that the break lands outside the reconstruction. Rather
+           than glue it to whatever happens to sit alongside and invent a
+           word, the hyphen is dropped and the cell reported. */
+        filled[c] = filled[c].slice(0, -1);
+        unhealed.push(filled[c].slice(-28));
+        continue;
+      }
+      filled[c] = joinLines([filled[c], filled[next]]);
+      filled[next] = '';
+    }
+    return filled;
   });
 }
 
@@ -503,7 +560,7 @@ for (const part of parts) {
   if (part.toc.length < 4) throw new Error(`Part ${part.n} recovered only ${part.toc.length} chapters`);
   if (part.words < 3000) throw new Error(`Part ${part.n} is unexpectedly short (${part.words} words)`);
   if (!part.prologue) throw new Error(`Part ${part.n} recovered no front matter`);
-  const stranded = `${part.prologue} ${part.html}`.match(/.{0,60}\u2010.{0,20}/g);
+  const stranded = `${part.prologue} ${part.html}`.match(/.{0,150}\u2010.{0,150}/g);
   if (stranded) {
     throw new Error(
       `Part ${part.n} still contains ${stranded.length} soft hyphen(s):\n`
@@ -531,6 +588,10 @@ mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, output, 'utf8');
 
 console.log(`✓ ${OUT}`);
+if (unhealed.length) {
+  console.log(`  ! ${unhealed.length} table cell(s) had a word break that could not be rejoined:`);
+  for (const cell of unhealed) console.log(`      …${cell}`);
+}
 for (const p of parts) {
   console.log(`  Part ${p.n} — ${p.title.slice(0, 30).padEnd(30)} ${String(p.toc.length).padStart(2)} chapters · ${p.words.toLocaleString('en-IN').padStart(7)} words`);
 }
