@@ -187,6 +187,8 @@ export default function Topic() {
   const base = writingPathOf(piece);
   const read = writingPathOf(piece, 1);
   const inProgress = isInProgress(piece);
+  // Whether any part can actually be opened in the reader yet.
+  const readable = livePartsOf(piece) > 0;
   const contents = contentsOf(piece, parts);
   const hasHindi = Boolean(original.translations?.hi);
   const pdfs = pdfsOf(piece);
@@ -226,10 +228,17 @@ export default function Topic() {
           )}
         </div>
 
+        {/* A series can be announced before any part is readable on the web —
+            the book exists, the PDF is here, the reader is not. Then the cover
+            is not a link, because there is nothing yet to link it to. */}
         <Reveal className="topicpage__cover">
-          <Link to={read} className="topicpage__coverlink" data-cursor aria-label={copy.startAria(piece.title)}>
+          {readable ? (
+            <Link to={read} className="topicpage__coverlink" data-cursor aria-label={copy.startAria(piece.title)}>
+              <CoverPlate piece={piece} className="cover--full" />
+            </Link>
+          ) : (
             <CoverPlate piece={piece} className="cover--full" />
-          </Link>
+          )}
         </Reveal>
 
         <div className="topicpage__body">
@@ -249,11 +258,13 @@ export default function Topic() {
             </dl>
 
             <div className="feature__ctas">
-              <Magnetic>
-                <Link to={read} className="btn" data-cursor>
-                  {copy.start} <span className="btn__dot" />
-                </Link>
-              </Magnetic>
+              {readable && (
+                <Magnetic>
+                  <Link to={read} className="btn" data-cursor>
+                    {copy.start} <span className="btn__dot" />
+                  </Link>
+                </Magnetic>
+              )}
               {pdfs.map((pdf) => (
                 <a
                   key={pdf.file}

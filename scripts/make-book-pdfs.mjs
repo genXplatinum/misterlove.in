@@ -38,6 +38,20 @@ const BOOKS = [
     title: 'Debunked — The Sikhism Series',
     subject: 'The Sikhism series, claim by claim.',
   },
+  {
+    slug: 'punjab',
+    dir: 'C:/Users/rajpa/Documents/Debunk/Punjab - The Whole Truth',
+    // No generated data file yet — the web edition of this series is still
+    // being recovered from the PDFs — so the parts are named outright.
+    parts: [
+      'Punjab_Part_01_The_Land_Before_the_Name.pdf',
+      'Punjab_Part_02_Porus_to_the_Huns.pdf',
+      'Punjab_Part_03_The_Invasion_Highway.pdf',
+      'Punjab_Part_04_Gurus_and_the_Khalsa.pdf',
+    ],
+    title: 'Punjab: The Whole Truth',
+    subject: 'Five thousand years of history, one honest look — from the first farmers to the Khalistan question.',
+  },
 ];
 
 const only = process.argv[2];
@@ -49,8 +63,10 @@ const human = (bytes) => (bytes >= 1024 * 1024
   : `${Math.round(bytes / 1024)} KB`);
 
 for (const book of wanted) {
-  const parts = (await import(book.data)).default;
-  if (!parts.length) throw new Error(`${book.slug}: the data file has no parts`);
+  const parts = book.parts
+    ? book.parts.map((file, i) => ({ n: i + 1, file }))
+    : (await import(book.data)).default;
+  if (!parts.length) throw new Error(`${book.slug}: no parts to bind`);
 
   const merged = await PDFDocument.create();
   merged.setTitle(`${book.title} — Parts ${parts[0].n} to ${parts[parts.length - 1].n}`);
@@ -60,7 +76,7 @@ for (const book of wanted) {
 
   let pages = 0;
   for (const part of parts) {
-    const path = resolve(book.dir, book.file(part.n));
+    const path = resolve(book.dir, part.file ?? book.file(part.n));
     // A missing source here would silently publish a book with a part cut out
     // of the middle, so it stops instead.
     if (!existsSync(path)) throw new Error(`${book.slug}: missing ${path}`);

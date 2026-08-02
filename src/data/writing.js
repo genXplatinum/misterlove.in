@@ -16,6 +16,58 @@ export const writingMeta = {
 
 export const pieces = [
   {
+    slug: 'punjab',
+    kicker: 'A 13-part investigation',
+    title: 'Punjab: The Whole Truth',
+    subtitle: 'Five Thousand Years, One Honest Look',
+    standfirst:
+      'From the first farmers to the Khalistan question — every disputed number shown with its range and its source, and every side given its strongest argument before it is answered.',
+    summary:
+      'Punjab is one of the most argued-about places on earth. Say the word and people reach for a story. One person says Punjab is the sword-arm of India, the land that fed the country and guarded its border. Another says Punjab is a colony that India bled dry. One says Bhindranwale was a saint; another says he was a terrorist. One says Khalistan is a freedom movement; another says it is a Pakistani intelligence project run by lawyers in New Jersey. All of these people can produce facts — that is the problem. Almost every claim in the Punjab argument has some evidence behind it, and what people do is pick the facts that suit them and hide the rest. This tries to do the opposite: put all of it on the table, the glory and the shame, what Punjab did to others and what was done to Punjab, and then ask what the full picture actually supports. Most writing on the subject is a lawyer’s argument — pick a side, then hunt for evidence. This is meant to be a doctor’s report: look at everything, then say what you found, even if nobody likes it.',
+    topic: 'Punjab · History · Politics',
+    keywords: [
+      'Punjab history', 'Punjab: The Whole Truth', 'Khalistan', 'Bhindranwale',
+      '1984', 'Operation Blue Star', 'Sikh history', 'Harappa', 'Rigveda',
+      'the five rivers', 'doab', 'Miri-Piri', 'Anandpur Sahib Resolution',
+      'Punjab partition', 'Sikh Empire', 'Ranjit Singh',
+    ],
+    published: '2026-08-02',
+    displayDate: 'August 2026',
+    parts: 13,
+    /* Four parts are written and are in the collected PDF below. The web
+       edition is not published yet — see src/data/writing/punjab.js — so
+       nothing here claims a readable part that does not exist. */
+    live: 0,
+    // The four written parts, counted from the PDFs. The reader shows 0 of 13
+    // because none is published to the web yet; the book itself is this long.
+    words: 39216,
+    minutes: 178,
+    status: 'In progress',
+    accent: 'ember',
+    pdf: 'punjab.pdf',
+    pdfSize: '1.2 MB',
+    pdfLabel: 'Parts 1–4, collected',
+    principlesTitle: 'The five rules every part follows',
+    principles: [
+      { n: '01', t: 'Plain English, always', d: 'If a student in Class 6 cannot follow a sentence, that sentence is badly written. Every specialist word — doab, Miri-Piri, riparian rights, the Anandpur Sahib Resolution — is explained in ordinary words the first time it appears.' },
+      { n: '02', t: 'When the numbers are disputed, you see the dispute', d: 'How many died in Operation Blue Star? The White Paper said 493; independent estimates run to several thousand. Both are shown, with who said what and why they disagree. A book that hides its uncertainty is not being confident, it is being dishonest.' },
+      { n: '03', t: 'Every side gets its best case, not its worst', d: 'The case for Khalistan is stated the way its cleverest supporter would state it, and then answered. The Indian state’s justification is stated at full strength, and then tested. Beating a weak opponent proves nothing.' },
+      { n: '04', t: 'Groups of people are never the explanation', d: '“Punjabis are hot-headed” is not analysis; it is an insult wearing a lab coat. It also explains nothing, because it cannot explain change — and Punjab changed enormously, for reasons: geography, money, water, politics, war, named decisions by named people.' },
+      { n: '05', t: 'Nobody here is only a hero or only a villain', d: 'The Indian state defeated a genuinely murderous insurgency and also killed innocent people and covered it up. Punjab produced extraordinary courage and also men who machine-gunned bus passengers for their religion. Both halves are true.' },
+    ],
+    /* Only the parts the book itself names are listed. Parts 6 to 13 are
+       announced by the cover's "thirteen parts" and appear in the contents
+       unnamed rather than being invented here. */
+    outline: [
+      { n: 1, label: 'Before the Name', title: 'The Land Before the Name', blurb: 'From the first villages to about 500 BCE — where Punjab actually is, the five rivers that made it, and the awkward fact hidden inside Harappa.' },
+      { n: 2, label: 'Antiquity', title: 'Porus to the Huns', blurb: 'Alexander at the Jhelum, the Mauryas, the Greeks who stayed, and the invasions that set the pattern for everything after.' },
+      { n: 3, label: 'The Highway', title: 'The Invasion Highway', blurb: 'Why the same road was walked by everyone who wanted India, and what being the corridor does to the people who live in it.' },
+      { n: 4, label: 'The Gurus', title: 'Gurus and the Khalsa', blurb: '1469 to 1708 — ten Gurus, two executions, four dead children, and the origin of shaheedi.' },
+      { n: 5, label: 'The Empire', title: 'The Sikh Empire', blurb: 'Ranjit Singh, the state he built, and what happened to it.' },
+    ],
+    load: () => import('./writing/punjab.js'),
+  },
+  {
     slug: 'reservation-files',
     kicker: 'A 14-part investigation',
     title: 'The Reservation Files',
