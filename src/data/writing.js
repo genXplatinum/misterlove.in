@@ -64,6 +64,13 @@ export const pieces = [
       { n: 8, label: 'Redrawing', title: 'Redrawing Punjab', blurb: 'Punjabi Suba, the 1966 reorganisation, Chandigarh, and the river waters that were never settled.' },
       { n: 9, label: 'Bhindranwale', title: 'Bhindranwale: Full Autopsy', blurb: '1977 to June 1984 — who he was, who built him, what he actually said, and the two tests he fails.' },
       { n: 10, label: 'The Dark Decade', title: 'The Dark Decade', blurb: 'The years after 1984 — the insurgency, the state response, and the evidence graded document by document.' },
+      /* Part 11 is named by Part 10's closing line. Parts 12 and 13 the book
+         describes but does not title, so these two are drawn from its own
+         words — "whether an independent Punjab is feasible", and the crisis
+         Part 10 says Part 13 has to begin from. */
+      { n: 11, label: 'The Network', title: 'Khalistan: The Idea and the Network', blurb: 'Where the idea came from, who funds and organises it now, and the ideology examined in its own words.' },
+      { n: 12, label: 'The Arithmetic', title: 'Could an Independent Punjab Work?', blurb: 'The full arithmetic — land-locked borders, river water, army, currency and trade — against the claim that Punjab is an ancient nation temporarily occupied.' },
+      { n: 13, label: 'Punjab Now', title: 'What Punjab Is Living Through Now', blurb: 'The inheritance of the dark decade: capital flight, halted investment, a lost generation, and the crisis the state still has to account for.' },
     ],
     load: () => import('./writing/punjab.js'),
   },
