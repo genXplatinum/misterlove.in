@@ -16,6 +16,55 @@ export const writingMeta = {
 
 export const pieces = [
   {
+    slug: 'punjab-history',
+    kicker: 'A 14-part history',
+    title: 'The Complete History of Punjab',
+    subtitle: 'Every Argument, Every Assumption, in Plain English',
+    standfirst:
+      'A narrative history of Punjab from the making of the land itself to the present — written so that anyone can follow it, with every dispute shown as a dispute and every assumption named rather than assumed.',
+    summary:
+      'There are two kinds of book about Punjab. Scholarly ones that are honest but unreadable, and popular ones that are readable but leave out all the arguments and present one clean version of contested events. This is meant to be a third kind. Every argument is included, every hidden assumption is pointed at, and the whole thing is written at a reading level anyone can follow. That makes the books longer, not shorter: explaining something plainly takes more words than explaining it technically, and nothing is dropped for being complicated. Where the field genuinely disagrees — and on Punjab’s deep past it disagrees a great deal — both sides get their strongest case and the open questions are left open.',
+    topic: 'Punjab · History · Archaeology',
+    keywords: [
+      'Punjab history', 'history of Punjab', 'Harappa', 'Indus Valley',
+      'the five rivers', 'Rigveda', 'Aryan migration', 'Soanian', 'Mehrgarh',
+      'Saraswati', 'Vedic age', 'Punjab prehistory',
+    ],
+    published: '2026-08-04',
+    displayDate: 'August 2026',
+    parts: 14,
+    live: 3,
+    words: 49249,
+    minutes: 224,
+    status: 'In progress',
+    accent: 'harvest',
+    /* No download yet: the parts are rendered as PDFs but the author is
+       holding them back until all fourteen exist and can go up as one book. */
+    principlesTitle: 'The three house rules',
+    principles: [
+      { n: '01', t: 'Plain language', d: 'Hard ideas explained in ordinary words, with nothing left out to make them fit. Simpler words, not less content — if a sentence needs a difficult word, the word gets explained where it appears rather than avoided.' },
+      { n: '02', t: 'Evidence first', d: 'Show the thing itself — a bone, a broken pot, a mark on a rock, a line of a hymn — and then be clear about what it can and cannot prove. History is only as good as its evidence, so the evidence is put in front of you.' },
+      { n: '03', t: 'Competing views', d: 'Where the field disagrees, both sides get their strongest case, stated the way its own best advocate would state it. Open questions stay open. Nobody is told what to think about an argument that is genuinely unsettled.' },
+    ],
+    outline: [
+      { n: 1, label: 'The Land', title: 'The Land Itself', blurb: 'Plate tectonics, the Himalayas, how the rivers built the soil, the five rivers one by one, the ice ages, the Soanian stone tools and the arrival of farming.' },
+      { n: 2, label: 'Harappa', title: 'Harappa', blurb: 'Discovery, scale, city planning, the kingless problem, the undeciphered script, trade and craft, religion, the Saraswati question and the decline.' },
+      { n: 3, label: 'The Vedic Age', title: 'The Vedic Age and the Aryan Question', blurb: 'The Rigveda in the land of seven rivers, the Battle of the Ten Kings on the Ravi, the emergence of varna, and the full Aryan migration debate.' },
+      { n: 4, label: 'Antiquity', title: 'Persians, Alexander, Mauryas', blurb: 'Achaemenid satrapy, Alexander and Porus at the Jhelum, the army’s refusal at the Beas, Chandragupta, Ashoka and Taxila.' },
+      { n: 5, label: 'Indo-Greeks', title: 'Indo-Greeks to Hunas', blurb: 'Menander, the Sakas and Parthians, the Kushans and Kanishka, Gandhara art, the Guptas, Toramana and Mihirakula.' },
+      { n: 6, label: 'Sultans & Sufis', title: 'Sultans and Sufis', blurb: 'The Hindu Shahis, Mahmud of Ghazni, Muhammad Ghori and Tarain, the Delhi Sultanate, Lahore and Multan, Timur in 1398, Baba Farid and the birth of written Punjabi.' },
+      { n: 7, label: 'The First Gurus', title: 'Guru Nanak to Guru Arjan', blurb: 'The first five Gurus, the founding of Amritsar, the compilation of the Adi Granth, Babur and Akbar, and the martyrdom of Guru Arjan.' },
+      { n: 8, label: 'The Khalsa', title: 'Guru Hargobind to Guru Gobind Singh', blurb: 'Miri-Piri and the turn to arms, Aurangzeb, the martyrdom of Guru Tegh Bahadur, the Khalsa in 1699, and the Guru Granth Sahib as eternal Guru.' },
+      { n: 9, label: 'The Misls', title: 'Banda Singh Bahadur to the Misls', blurb: 'The rising of 1710–16, the persecutions and the Ghallugharas, Nadir Shah, Ahmad Shah Abdali, and the twelve misls.' },
+      { n: 10, label: 'The Sikh Empire', title: 'Ranjit Singh and the Fall', blurb: 'The Sikh Empire, the Lahore Durbar, the army, the succession collapse, the Anglo-Sikh Wars and annexation in 1849.' },
+      { n: 11, label: 'Under the Raj', title: 'British Punjab', blurb: 'Canal colonies, the remaking of the agrarian economy, the martial-races policy and army recruitment, land alienation, famine and revenue.' },
+      { n: 12, label: 'Ghadar', title: 'Ghadar to Independence', blurb: 'Ghadar, Jallianwala Bagh in 1919, Bhagat Singh, the Unionist Party, the Muslim League and the politics of the 1940s.' },
+      { n: 13, label: 'Partition', title: 'Partition and Indian Punjab', blurb: '1947 and the Radcliffe Line, the Punjabi Suba movement, the 1966 reorganisation, the Green Revolution, the 1980s, 1984, the 1990s, water disputes and the present.' },
+      { n: 14, label: 'The Diaspora', title: 'Pakistani Punjab and the Diaspora', blurb: 'Lahore, One Unit, Punjab’s dominance in Pakistan, 1971 and the present — plus the global Punjabi diaspora in the UK, Canada, the US and Australia.' },
+    ],
+    load: () => import('./writing/punjab-history.js'),
+  },
+  {
     slug: 'punjab',
     kicker: 'A 13-part investigation',
     title: 'Punjab: The Whole Truth',
