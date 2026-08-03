@@ -1,8 +1,8 @@
 /**
  * import-punjab.mjs
  *
- * Importer for "Punjab: The Whole Truth" — a thirteen-part investigation, of
- * which ten are written.
+ * Importer for "Punjab: The Whole Truth" — a thirteen-part investigation, all
+ * thirteen of which are written.
  *
  * The series was first published as PDFs and this importer used to recover the
  * prose from their typography. It no longer has to: the authored HTML for
@@ -25,14 +25,15 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
+/* The book's own folder. The sources used to be read from a session scratchpad,
+   which is temporary and was very nearly lost once — the authored HTML now
+   lives with the book and is the only copy this reads. */
 const SRC_DIR = process.argv[2]
-  ?? 'C:/Users/rajpa/AppData/Local/Packages/Claude_pzs8sxrjxfjjc/LocalCache/Roaming/Claude'
-   + '/local-agent-mode-sessions/af55257f-c9f6-4a66-a0df-7648b3f3ba0b'
-   + '/f2772cd1-4920-4c81-adc9-d8eb96d06038/local_6ac3f4ca-00f1-4fca-9bdd-b15e953f0a7d/outputs';
+  ?? 'C:/Users/rajpa/Documents/books/The Punjab Files/_source-html';
 const OUT = 'src/data/writing/punjab.js';
 const PUBLISHED = '2026-08-02';
 const WORDS_PER_MINUTE = 220;
-const LAST_PART = 10;
+const LAST_PART = 13;
 
 /* The editorial label in each part chip. Everything else — title, strapline,
    chapter list — is read from the source and cannot drift from the book. */
@@ -47,6 +48,9 @@ const LABELS = {
   8: 'Redrawing',
   9: 'Bhindranwale',
   10: 'The Dark Decade',
+  11: 'The Network',
+  12: 'The Arithmetic',
+  13: 'Punjab Now',
 };
 
 /* ------------------------------------------------------------------
@@ -166,6 +170,20 @@ const TAGS = { t: 'true', f: 'false', p: 'half', n: 'half' };
 /* Evidence grading used in the Bhindranwale and Dark Decade parts. */
 const GRADES = { doc: 'fact', fab: 'claim', inf: 'interp' };
 
+/* Parts 11 and 13 sort claims by what the record actually did to them. The
+   three print statuses are the site's three colours of truth. */
+const STATUSES = { proved: 'fact', alleged: 'interp', denied: 'claim' };
+
+/* Part 12 audits a proposal claim by claim and Part 13 grades every claim the
+   series made. Print draws six shades; the site carries the three it already
+   uses, plus grey for a question the evidence leaves open. */
+const VERDICT_TONES = {
+  't-true': 'fact', 't-most': 'fact', pass: 'fact',
+  't-half': 'interp', 't-mis': 'interp', marg: 'interp',
+  't-false': 'claim', fail: 'claim',
+  't-open': 'open',
+};
+
 const INLINE = new Set(['strong', 'b', 'em', 'i', 'sup', 'sub', 'br', 'span', 'a', 'code', 'small']);
 
 class Importer {
@@ -190,6 +208,10 @@ class Importer {
         }
         const grade = classesOf(node).map((c) => GRADES[c]).find(Boolean);
         if (grade) return `<span class="w-tone-${grade}">${this.inline(node.children)}</span>`;
+        /* A verdict named mid-sentence: print sets it bold and coloured, and
+           the colour is the whole point of it. */
+        const tone = classesOf(node).map((c) => VERDICT_TONES[c]).find(Boolean);
+        if (tone) return `<strong class="w-tone-${tone}">${this.inline(node.children)}</strong>`;
         return this.inline(node.children);
       }
       if (node.tag === 'a') {
@@ -282,6 +304,29 @@ class Importer {
       + `<div class="w-sides${panels.length === 2 ? ' w-sides--pair' : ''}">${panels.join('')}</div>`;
   }
 
+  /* Two panels that are the same shape underneath: a heading, then one
+     labelled row per claim. In "status" the label is the verdict and carries
+     the colour; in "audit" it is the thing being tested. */
+  rows(node, { keyClass, rowClass, tone }) {
+    const head = findClass(node, 'hd');
+    const lines = elements(node)
+      .filter((row) => row !== head && hasClass(row, rowClass))
+      .map((row) => {
+        const key = findClass(row, keyClass);
+        const rest = row.children.filter((child) => child !== key);
+        const colour = tone ? classesOf(row).map((c) => STATUSES[c]).find(Boolean) : null;
+        const label = key
+          ? `<strong${colour ? ` class="w-tone-${colour}"` : ''}>${this.inline(key.children)}</strong> `
+          : '';
+        return `<p>${label}${this.inline(rest)}</p>`;
+      });
+    if (!lines.length) this.fail(`a ${rowClass} panel with no rows`);
+    return '<div class="w-box w-box--key">'
+      + (head ? `<span class="w-box-label">${this.inline(head.children)}</span>` : '')
+      + lines.join('')
+      + '</div>';
+  }
+
   timeline(node) {
     const rows = elements(node).map((row) => {
       const year = findClass(row, 'y');
@@ -357,9 +402,14 @@ class Importer {
       return this.box(node);
     }
     if (hasClass(node, 'verdict')) return this.verdict(node);
+    if (hasClass(node, 'status')) return this.rows(node, { keyClass: 'k', rowClass: 'row', tone: true });
+    if (hasClass(node, 'audit')) return this.rows(node, { keyClass: 'q', rowClass: 'line' });
     if (hasClass(node, 'twoside')) return this.twoside(node);
     if (hasClass(node, 'timeline')) return this.timeline(node);
-    if (hasClass(node, 'pullquote')) return `<div class="w-pullquote">${this.inline(node.children)}</div>`;
+    /* "finis" is the couplet that closes the last part, and the whole series. */
+    if (hasClass(node, 'pullquote') || hasClass(node, 'finis')) {
+      return `<div class="w-pullquote">${this.inline(node.children)}</div>`;
+    }
     if (hasClass(node, 'lbl')) return `<span class="w-box-label">${this.inline(node.children)}</span>`;
     // Layout furniture the reader replaces with its own.
     if (['rule', 'foot', 'toc', 'bio', 'contact', 'cover'].some((c) => hasClass(node, c))) return '';

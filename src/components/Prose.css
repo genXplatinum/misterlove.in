@@ -691,6 +691,8 @@
 .prose .w-tone-fact { color: var(--w-field); }
 .prose .w-tone-interp { color: var(--w-gold); }
 .prose .w-tone-claim { color: var(--w-clay); }
+/* And a fourth, for a question the evidence leaves open rather than settles. */
+.prose .w-tone-open { color: var(--w-slate); }
 
 /* A gloss set back to normal weight inside an emphasised cell. */
 .prose .w-plain { font-weight: 400; color: var(--text-2); }
