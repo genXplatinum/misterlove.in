@@ -34,11 +34,10 @@ export const pieces = [
     published: '2026-08-02',
     displayDate: 'August 2026',
     parts: 13,
-    // Ten of the thirteen are written and readable; the rest are announced.
-    live: 10,
-    words: 79815,
-    minutes: 363,
-    status: 'In progress',
+    live: 13,
+    words: 110992,
+    minutes: 505,
+    status: 'Complete',
     accent: 'ember',
     pdf: 'punjab.pdf',
     pdfSize: '1.2 MB',
@@ -51,8 +50,6 @@ export const pieces = [
       { n: '04', t: 'Groups of people are never the explanation', d: '“Punjabis are hot-headed” is not analysis; it is an insult wearing a lab coat. It also explains nothing, because it cannot explain change — and Punjab changed enormously, for reasons: geography, money, water, politics, war, named decisions by named people.' },
       { n: '05', t: 'Nobody here is only a hero or only a villain', d: 'The Indian state defeated a genuinely murderous insurgency and also killed innocent people and covered it up. Punjab produced extraordinary courage and also men who machine-gunned bus passengers for their religion. Both halves are true.' },
     ],
-    /* Parts 11 to 13 are announced by the cover's 'thirteen parts' and show
-       in the contents unnamed rather than being invented here. */
     outline: [
       { n: 1, label: 'Before the Name', title: 'The Land Before the Name', blurb: 'From the first villages to about 500 BCE — where Punjab actually is, the five rivers that made it, and the awkward fact hidden inside Harappa.' },
       { n: 2, label: 'Antiquity', title: 'Porus to the Huns', blurb: 'Alexander at the Jhelum, the Mauryas, the Greeks who stayed, and the invasions that set the pattern for everything after.' },
@@ -64,13 +61,9 @@ export const pieces = [
       { n: 8, label: 'Redrawing', title: 'Redrawing Punjab', blurb: 'Punjabi Suba, the 1966 reorganisation, Chandigarh, and the river waters that were never settled.' },
       { n: 9, label: 'Bhindranwale', title: 'Bhindranwale: Full Autopsy', blurb: '1977 to June 1984 — who he was, who built him, what he actually said, and the two tests he fails.' },
       { n: 10, label: 'The Dark Decade', title: 'The Dark Decade', blurb: 'The years after 1984 — the insurgency, the state response, and the evidence graded document by document.' },
-      /* Part 11 is named by Part 10's closing line. Parts 12 and 13 the book
-         describes but does not title, so these two are drawn from its own
-         words — "whether an independent Punjab is feasible", and the crisis
-         Part 10 says Part 13 has to begin from. */
       { n: 11, label: 'The Network', title: 'Khalistan: The Idea and the Network', blurb: 'Where the idea came from, who funds and organises it now, and the ideology examined in its own words.' },
-      { n: 12, label: 'The Arithmetic', title: 'Could an Independent Punjab Work?', blurb: 'The full arithmetic — land-locked borders, river water, army, currency and trade — against the claim that Punjab is an ancient nation temporarily occupied.' },
-      { n: 13, label: 'Punjab Now', title: 'What Punjab Is Living Through Now', blurb: 'The inheritance of the dark decade: capital flight, halted investment, a lost generation, and the crisis the state still has to account for.' },
+      { n: 12, label: 'The Arithmetic', title: 'The Feasibility Audit', blurb: 'The full arithmetic — land-locked borders, river water, army, currency and trade — against the claim that Punjab is an ancient nation temporarily occupied.' },
+      { n: 13, label: 'Punjab Now', title: 'The Reckoning', blurb: 'The inheritance of the dark decade: capital flight, halted investment, a lost generation, and the crisis the state still has to account for.' },
     ],
     load: () => import('./writing/punjab.js'),
   },
