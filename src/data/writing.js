@@ -40,8 +40,8 @@ export const pieces = [
     status: 'Complete',
     accent: 'ember',
     pdf: 'punjab.pdf',
-    pdfSize: '1.2 MB',
-    pdfLabel: 'Parts 1–4, collected',
+    pdfSize: '8.6 MB',
+    pdfLabel: 'The complete book',
     principlesTitle: 'The five rules every part follows',
     principles: [
       { n: '01', t: 'Plain English, always', d: 'If a student in Class 6 cannot follow a sentence, that sentence is badly written. Every specialist word — doab, Miri-Piri, riparian rights, the Anandpur Sahib Resolution — is explained in ordinary words the first time it appears.' },
