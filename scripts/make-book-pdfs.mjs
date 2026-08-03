@@ -40,14 +40,23 @@ const BOOKS = [
   },
   {
     slug: 'punjab',
-    dir: 'C:/Users/rajpa/Documents/Debunk/Punjab - The Whole Truth',
-    // No generated data file yet — the web edition of this series is still
-    // being recovered from the PDFs — so the parts are named outright.
+    dir: 'C:/Users/rajpa/Documents/books/The Punjab Files/PDF',
+    // Each file carries its part's title, so the names are listed rather than
+    // built from a number. scripts/render-punjab-pdfs.mjs writes them.
     parts: [
       'Punjab_Part_01_The_Land_Before_the_Name.pdf',
       'Punjab_Part_02_Porus_to_the_Huns.pdf',
       'Punjab_Part_03_The_Invasion_Highway.pdf',
       'Punjab_Part_04_Gurus_and_the_Khalsa.pdf',
+      'Punjab_Part_05_The_Sikh_Empire.pdf',
+      'Punjab_Part_06_Loyal_and_Rebel_at_Once.pdf',
+      'Punjab_Part_07_The_Cut.pdf',
+      'Punjab_Part_08_Redrawing_Punjab.pdf',
+      'Punjab_Part_09_Bhindranwale_Full_Autopsy.pdf',
+      'Punjab_Part_10_The_Dark_Decade.pdf',
+      'Punjab_Part_11_Khalistan_The_Idea_and_the_Network.pdf',
+      'Punjab_Part_12_The_Feasibility_Audit.pdf',
+      'Punjab_Part_13_The_Reckoning.pdf',
     ],
     title: 'Punjab: The Whole Truth',
     subject: 'Five thousand years of history, one honest look — from the first farmers to the Khalistan question.',
