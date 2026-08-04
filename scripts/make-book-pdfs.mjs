@@ -39,6 +39,30 @@ const BOOKS = [
     subject: 'The Sikhism series, claim by claim.',
   },
   {
+    slug: 'punjab-history',
+    dir: 'C:/Users/rajpa/Documents/books/Punjab history',
+    // Part 12 was named to a different pattern from the rest, and typeset on
+    // A5 while every other part is A4 — see the page normalising below.
+    parts: [
+      'Punjab_History_Part_1_The_Land_Itself.pdf',
+      'Punjab_History_Part_2_Harappa.pdf',
+      'Punjab_History_Part_3_The_Vedic_Age_and_the_Aryan_Question.pdf',
+      'Punjab_History_Part_4_Persians_Alexander_Mauryas.pdf',
+      'Punjab_History_Part_5_Greeks_Kushans_and_the_Face_of_the_Buddha.pdf',
+      'Punjab_History_Part_6_Sultans_and_Sufis.pdf',
+      'Punjab_History_Part_7_Guru_Nanak_to_Guru_Arjan.pdf',
+      'Punjab_History_Part_8_Guru_Hargobind_to_Guru_Gobind_Singh.pdf',
+      'Punjab_History_Part_9_Banda_Singh_Bahadur_to_the_Misls.pdf',
+      'Punjab_History_Part_10_Ranjit_Singh_and_the_Fall.pdf',
+      'Punjab_History_Part_11_British_Punjab.pdf',
+      'Punjab_Part12_Ghadar_to_Independence.pdf',
+      'Punjab_History_Part_13_Partition_and_Indian_Punjab.pdf',
+      'Punjab_History_Part_14_Pakistani_Punjab_and_the_Diaspora.pdf',
+    ],
+    title: 'The Complete History of Punjab',
+    subject: 'A fourteen-part history of Punjab, from the making of the land itself to the present.',
+  },
+  {
     slug: 'punjab',
     dir: 'C:/Users/rajpa/Documents/books/The Punjab Files/PDF',
     // Each file carries its part's title, so the names are listed rather than
@@ -83,15 +107,51 @@ for (const book of wanted) {
   merged.setSubject(book.subject);
   merged.setCreator('misterlove.in');
 
-  let pages = 0;
+  const loaded = [];
   for (const part of parts) {
     const path = resolve(book.dir, part.file ?? book.file(part.n));
     // A missing source here would silently publish a book with a part cut out
     // of the middle, so it stops instead.
     if (!existsSync(path)) throw new Error(`${book.slug}: missing ${path}`);
     const source = await PDFDocument.load(await readFile(path), { ignoreEncryption: true });
+    loaded.push({ part, source });
+  }
+
+  /* A book that changes paper size halfway through reads as a mistake, and one
+     part of Punjab's history was typeset on A5 while the rest are A4. The
+     majority size wins and the odd part is scaled into it — the proportions
+     are the same, so nothing is cropped and the type stays vector-sharp. */
+  const sizeOf = (page) => `${Math.round(page.getWidth())}x${Math.round(page.getHeight())}`;
+  const tally = new Map();
+  for (const { source } of loaded) {
+    for (const page of source.getPages()) tally.set(sizeOf(page), (tally.get(sizeOf(page)) ?? 0) + 1);
+  }
+  const [dominant] = [...tally.entries()].sort((a, b) => b[1] - a[1])[0];
+  const [sheetWidth, sheetHeight] = dominant.split('x').map(Number);
+
+  let pages = 0;
+  let rescaled = 0;
+  for (const { part, source } of loaded) {
     const indices = source.getPageIndices();
-    for (const page of await merged.copyPages(source, indices)) merged.addPage(page);
+    const odd = source.getPages().some((page) => sizeOf(page) !== dominant);
+
+    if (!odd) {
+      for (const page of await merged.copyPages(source, indices)) merged.addPage(page);
+    } else {
+      const embedded = await merged.embedPages(source.getPages());
+      for (const stamp of embedded) {
+        const scale = Math.min(sheetWidth / stamp.width, sheetHeight / stamp.height);
+        const sheet = merged.addPage([sheetWidth, sheetHeight]);
+        sheet.drawPage(stamp, {
+          xScale: scale,
+          yScale: scale,
+          x: (sheetWidth - stamp.width * scale) / 2,
+          y: (sheetHeight - stamp.height * scale) / 2,
+        });
+        rescaled += 1;
+      }
+      console.log(`    ${part.file ?? book.file(part.n)} was not ${dominant}; scaled to fit`);
+    }
     pages += indices.length;
   }
 
@@ -101,6 +161,7 @@ for (const book of wanted) {
 
   console.log(
     `✓ public/${book.slug}.pdf — ${parts.length} parts · ${pages} pages · ${human(size)}`
+    + (rescaled ? ` · ${rescaled} pages scaled to ${dominant}` : '')
   );
   console.log(`    set pdfSize: '${human(size)}' in the manifest`);
 }

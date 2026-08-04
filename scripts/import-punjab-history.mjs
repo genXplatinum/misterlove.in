@@ -30,16 +30,27 @@ const PUBLISHED = '2026-08-04';
 const WORDS_PER_MINUTE = 220;
 
 /* The written parts, and the file each lives in. The web pages are named for
-   their slugs rather than numbered, so the mapping is spelled out.
+   their slugs rather than numbered, and part 12 was named to a different
+   pattern again, so the mapping is spelled out.
 
-   `label` is the chip beside the part in the contents. The hero of each page
-   carries a span of years instead, which reads well on its own but not next
-   to the fourteen unwritten parts in the manifest outline, which can only be
-   named by subject. So the chips are subjects throughout. */
+   `label` is the chip beside the part in the contents. Each page carries a
+   span of years too, which reads well on its own but is kept out of the chip
+   so every row in the contents is labelled the same way. */
 const PARTS = [
   { n: 1, label: 'The Land', file: 'part-1-the-land-itself.html' },
   { n: 2, label: 'Harappa', file: 'part-2-harappa.html' },
   { n: 3, label: 'The Vedic Age', file: 'part-3-the-vedic-age-and-the-aryan-question.html' },
+  { n: 4, label: 'Antiquity', file: 'part-4-persians-alexander-mauryas.html' },
+  { n: 5, label: 'Greeks & Kushans', file: 'part-5-greeks-kushans-and-the-face-of-the-buddha.html' },
+  { n: 6, label: 'Sultans & Sufis', file: 'part-6-sultans-and-sufis.html' },
+  { n: 7, label: 'The First Gurus', file: 'part-7-guru-nanak-to-guru-arjan.html' },
+  { n: 8, label: 'The Khalsa', file: 'part-8-guru-hargobind-to-guru-gobind-singh.html' },
+  { n: 9, label: 'The Misls', file: 'part-9-banda-singh-bahadur-to-the-misls.html' },
+  { n: 10, label: 'The Sikh Empire', file: 'part-10-ranjit-singh-and-the-fall.html' },
+  { n: 11, label: 'Under the Raj', file: 'part-11-british-punjab.html' },
+  { n: 12, label: 'Ghadar', file: 'punjab-part-12-ghadar-to-independence.html' },
+  { n: 13, label: 'Partition', file: 'part-13-partition-and-indian-punjab.html' },
+  { n: 14, label: 'The Diaspora', file: 'part-14-pakistani-punjab-and-the-diaspora.html' },
 ];
 
 /* ------------------------------------------------------------------
@@ -152,7 +163,9 @@ const BOX_TONES = {
   real: 'number',       // green — makes an unimaginable number ordinary
   know: 'answer',       // brown — shows the actual evidence
   arg: 'arg',           // orange — the experts disagree
+  argument: 'arg',      //   part 12 spells the same box out in full
   assume: 'weigh',      // purple — something taken for granted
+  hidden: 'weigh',      //   and calls this one "hidden" instead
   remember: 'remember', // dark — the one thing to take away
 };
 /* The book's six box colours have to stay six colours here. `fact` was the
@@ -162,9 +175,15 @@ const BOX_TONES = {
 
 const INLINE = new Set(['strong', 'b', 'em', 'i', 'sup', 'sub', 'br', 'span', 'a', 'code', 'small', 'cite']);
 
-/* Page furniture the site supplies itself, and the two back-matter sections
-   that are the author's sign-off rather than the book. */
-const FURNITURE = ['hero', 'contents', 'seriesnav', 'skip', 'dl', 'anchor', 'rule'];
+/* Page furniture the site supplies itself. The series was typeset three times
+   over — parts 1 to 11 in the original markup, 13 and 14 in a later one, and
+   12 in a third of its own — so several of these are the same thing under
+   different names: `hero`/`masthead`, `contents`/`toc`, `anchor`/`hash`,
+   `rule`/`hrule`/`orn`, `arch`/`archive`. */
+const FURNITURE = [
+  'hero', 'masthead', 'contents', 'toc', 'seriesnav', 'skip', 'dl',
+  'anchor', 'hash', 'rule', 'hrule', 'orn', 'arch', 'archive', 'credit',
+];
 
 class Importer {
   constructor(where) { this.where = where; this.unmapped = new Map(); }
@@ -199,12 +218,45 @@ class Importer {
   paragraph(node) {
     const body = this.inline(node.children);
     if (!body) return '';
-    if (hasClass(node, 'standfirst')) return `<p class="w-lead">${body}</p>`;
+    /* The chapter strapline under its title. Parts 1 to 11 and 13 to 14 call
+       it a standfirst; part 12 calls it a kicker and uses `lead` for its own
+       opening paragraph instead, which is ordinary prose. */
+    if (hasClass(node, 'standfirst') || hasClass(node, 'kicker')) return `<p class="w-lead">${body}</p>`;
     if (hasClass(node, 'sig') || hasClass(node, 'endnote')) return `<p class="w-small">${body}</p>`;
     return `<p>${body}</p>`;
   }
 
+  /* Part 12 sets its "at a glance" spread as a list of year and event, which
+     is the timeline the reader already draws for the other series. */
+  timeline(node) {
+    const rows = elements(node).map((row) => {
+      const year = findClass(row, 'tl-year');
+      const rest = row.children.filter((child) => child !== year);
+      return '<div class="w-tl-item">'
+        + (year ? `<div class="w-tl-year">${this.inline(year.children)}</div>` : '')
+        + `<div class="w-tl-text">${this.inline(rest)}</div>`
+        + '</div>';
+    });
+    return `<div class="w-timeline">${rows.join('')}</div>`;
+  }
+
+  /* Part 12 sets its glossary as a real definition list. The reader has no
+     styling for one, so each entry becomes a list item with the term in bold
+     — which is how the other parts write their glossaries by hand anyway. */
+  glossary(node) {
+    const items = [];
+    for (const child of elements(node)) {
+      if (child.tag === 'dt') { items.push({ term: this.inline(child.children), body: '' }); continue; }
+      if (child.tag !== 'dd') this.fail(`<${child.tag}> inside a definition list`);
+      if (!items.length) this.fail('a definition with no term before it');
+      items[items.length - 1].body = this.inline(child.children);
+    }
+    if (!items.length) this.fail('an empty definition list');
+    return `<ul>${items.map(({ term, body }) => `<li><strong>${term}</strong> ${body}</li>`).join('')}</ul>`;
+  }
+
   list(node) {
+    if (hasClass(node, 'tl')) return this.timeline(node);
     const items = elements(node).map((item) => {
       if (item.tag !== 'li') this.fail(`<${item.tag}> inside a list`);
       const blocks = item.children.filter((c) => isTag(c) && !INLINE.has(c.tag));
@@ -248,7 +300,11 @@ class Importer {
         continue;
       }
       if (hasClass(child, 'verdict')) {
-        parts.push(`<div class="w-verdict">${this.inline(child.children)}</div>`);
+        /* Usually one sentence, but part 12 sets some verdicts as full
+           paragraphs, which cannot go through the inline reader. */
+        const blocky = child.children.some((c) => isTag(c) && !INLINE.has(c.tag));
+        const body = blocky ? this.loose(child.children) : this.inline(child.children);
+        parts.push(`<div class="w-verdict">${body}</div>`);
         continue;
       }
       parts.push(this.block(child));
@@ -303,6 +359,7 @@ class Importer {
       case 'h4': return `<h4 class="w-h4">${this.inline(node.children)}</h4>`;
       case 'ul':
       case 'ol': return this.list(node);
+      case 'dl': return this.glossary(node);
       case 'table': return this.table(node);
       case 'hr': return '<hr class="w-soft" />';
       case 'blockquote': return `<div class="w-pullquote">${this.inline(node.children)}</div>`;
@@ -318,9 +375,10 @@ class Importer {
     /* A "◆ ◆ ◆" break between movements of a chapter — the reader draws its
        own rule for this rather than setting the glyphs. */
     if (hasClass(node, 'divider')) return '<hr class="w-soft" />';
-    /* `.table-scroll` is the source's own horizontal scroller; the site wraps
-       its tables in one of its own, so only the table inside is wanted. */
-    if (hasClass(node, 'table-scroll')) return this.blocks(node.children);
+    /* The source's own horizontal scroller, called `table-scroll` in the early
+       parts and `tablewrap` later. The site wraps its tables in one of its
+       own, so only the table inside is wanted. */
+    if (hasClass(node, 'table-scroll') || hasClass(node, 'tablewrap')) return this.blocks(node.children);
     if (!flat(node)) return '';
 
     this.note(node);
@@ -363,48 +421,75 @@ function importPart({ n, label, file }) {
   const io = new Importer(where);
   const document = parse(bodyMatch[1], where);
 
-  /* The hero carries the part's own title, its strapline and the span of time
-     it covers — none of which repeat anywhere else in the page. */
-  const hero = deepFind(document, (node) => hasClass(node, 'hero'));
-  if (!hero) throw new Error(`${where}: no hero`);
-  const heading = deepFind(hero, (node) => node.tag === 'h2');
-  const title = flat(heading ?? { children: [] }).replace(/^Part\s+\w+\s*[—–-]\s*/i, '');
-  const lead = flat(deepFindClass(hero, 'sub') ?? { children: [] });
-  const range = flat(deepFindClass(hero, 'range') ?? { children: [] });
-  if (!title || !lead) throw new Error(`${where}: hero has no title or strapline`);
+  /* The masthead carries the part's own title, its strapline and the span of
+     years it covers, none of which repeat anywhere else in the page. Parts 1
+     to 11 call it a hero and put the part title in an h2 under the series
+     name; part 12 calls it a masthead and puts the part title in the h1,
+     because it does not print the series name at all. */
+  const masthead = deepFind(document, (node) => hasClass(node, 'hero') || hasClass(node, 'masthead'));
+  if (!masthead) throw new Error(`${where}: no hero or masthead`);
+  const seriesFirst = !!deepFind(masthead, (node) => node.tag === 'h2');
+  const heading = deepFind(masthead, (node) => node.tag === (seriesFirst ? 'h2' : 'h1'));
+  const title = flat(heading ?? { children: [] })
+    .replace(/^Part\s+[\w-]+\s*[—–-]\s*/i, '')
+    .replace(/\s*#$/, '');
+  const lead = flat(deepFindClass(masthead, 'sub') ?? deepFindClass(masthead, 'blurb') ?? { children: [] });
+  const range = flat(deepFindClass(masthead, 'range') ?? deepFindClass(masthead, 'dates') ?? { children: [] });
+  if (!title || !lead) throw new Error(`${where}: masthead has no title or strapline`);
 
-  const main = deepFind(document, (node) => node.tag === 'main');
-  if (!main) throw new Error(`${where}: no <main>`);
+  /* Parts 1 to 11 wrap the body in <main>; 12 uses <article class="wrap">. */
+  const main = deepFind(document, (node) => node.tag === 'main')
+    ?? deepFind(document, (node) => node.tag === 'article')
+    ?? document;
 
-  /* Chapters open with a `.chapter-open` section and then run flat until the
-     next one, so the document is split on those rather than nested inside. */
+  /* Two shapes again. In parts 1 to 11 a `.chapter-open` section holds only
+     the chapter's title block and the prose runs flat after it until the next
+     one; in 12 to 14 each `.chapter` section contains its whole chapter. */
   const sections = [];
-  let current = { kicker: '', title: '', blocks: [] };
-  for (const node of elements(main)) {
-    if (hasClass(node, 'chapter-open')) {
-      sections.push(current);
-      current = {
-        kicker: flat(findClass(node, 'chapnum') ?? { children: [] }),
-        title: flat(find(node, (c) => c.tag === 'h2') ?? { children: [] }),
-        id: node.attrs.id ?? '',
-        blocks: elements(node).filter((c) => hasClass(c, 'standfirst')),
-      };
-      continue;
+  const openChapter = (node, nested) => ({
+    kicker: flat(deepFindClass(node, 'chapnum') ?? { children: [] }),
+    title: flat(deepFind(node, (c) => c.tag === 'h2') ?? { children: [] }).replace(/\s*#$/, ''),
+    blocks: nested
+      ? elements(node).filter((c) => !hasClass(c, 'chapnum') && c.tag !== 'h2')
+      : elements(node).filter((c) => hasClass(c, 'standfirst')),
+  });
+
+  if (deepFind(main, (node) => hasClass(node, 'chapter-open'))) {
+    let current = { kicker: '', title: '', blocks: [] };
+    for (const node of elements(main)) {
+      if (hasClass(node, 'chapter-open')) {
+        sections.push(current);
+        current = openChapter(node, false);
+        continue;
+      }
+      current.blocks.push(node);
     }
-    current.blocks.push(node);
+    sections.push(current);
+  } else {
+    for (const node of elements(main)) {
+      if (hasClass(node, 'chapter')) { sections.push(openChapter(node, true)); continue; }
+      /* Anything outside a chapter section is page furniture in these two
+         layouts, but it is checked rather than assumed. */
+      const stray = io.block(node);
+      if (stray) throw new Error(`${where}: prose outside a chapter section: ${stray.slice(0, 80)}`);
+    }
   }
-  sections.push(current);
 
   const isChapter = (s) => /^Chapter\b/i.test(s.kicker);
   const firstChapter = sections.findIndex(isChapter);
   if (firstChapter < 1) throw new Error(`${where}: no chapters, or none preceded by front matter`);
 
-  /* Everything before chapter one is the author's own opening. The closing
-     "What comes next" and "About the Author" are the site's job — it has a
-     pager and carries the bio on every page. */
+  /* Everything before chapter one is the author's own opening. "About" and
+     "What comes next" are the site's job — it has a pager and carries the bio
+     on every page — but part 14 closes the whole series with an afterword,
+     which is the book talking and stays. */
+  const isDropped = (s) => /^(About|What comes next)\b/i.test(s.kicker);
+  const isReference = (s) => /^Reference\b/i.test(s.kicker);
   const front = sections.slice(0, firstChapter).filter((s) => s.title || s.blocks.length);
   const chapters = sections.filter(isChapter);
-  const reference = sections.filter((s) => /^Reference\b/i.test(s.kicker));
+  const reference = sections.filter(isReference);
+  const closing = sections.slice(firstChapter)
+    .filter((s) => !isChapter(s) && !isReference(s) && !isDropped(s) && (s.title || s.blocks.length));
 
   const prologue = front
     .map((section, index) => (index === 0 || !section.title ? '' : `<h3 class="w-h3">${esc(section.title)}</h3>`)
@@ -412,12 +497,20 @@ function importPart({ n, label, file }) {
     .join('');
 
   const toc = [];
-  const html = chapters.map((section, index) => {
+  const chaptered = chapters.map((section, index) => {
     const num = index + 1;
     const id = `ph${n}-${num}-${slugify(section.title)}`;
     toc.push({ id, num: String(num), text: section.title });
     return `<h2 class="w-h2" id="${id}"><span class="w-num">${num}</span>${esc(section.title)}</h2>`
       + io.blocks(section.blocks);
+  }).join('');
+
+  /* Part 14's afterword closes the series rather than a chapter, so it is set
+     without a number but still belongs in the contents. */
+  const html = chaptered + closing.map((section) => {
+    const id = `ph${n}-${slugify(section.title)}`;
+    toc.push({ id, num: '·', text: section.title });
+    return `<h2 class="w-h2" id="${id}">${esc(section.title)}</h2>` + io.blocks(section.blocks);
   }).join('');
 
   /* The timeline and the glossary are reference matter the reader keeps in
