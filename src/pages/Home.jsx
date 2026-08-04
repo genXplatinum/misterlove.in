@@ -269,9 +269,15 @@ function Method() {
   );
 }
 
+/* The homepage shows the newest work and stops. Every piece is one line in the
+   manifest, so without a limit the front page grows without end and the button
+   below it — which is what the full library is for — stops meaning anything.
+   The totals above still count everything published. */
+const HOME_PIECES = 7;
+
 function WritingLibrary() {
   const { writing } = home;
-  const [featured, ...rest] = pieces;
+  const [featured, ...rest] = pieces.slice(0, HOME_PIECES);
 
   return (
     <section id="research" className="intellect-writing">
@@ -309,7 +315,7 @@ function WritingLibrary() {
           {rest.map((piece, index) => (
             <Reveal as="li" key={piece.slug} delay={index * 40}>
               <Link to={`/writing/${piece.slug}`} className="dossier-row">
-                <span className="dossier-row__number">0{index + 2}</span>
+                <span className="dossier-row__number">{String(index + 2).padStart(2, '0')}</span>
                 <span className="dossier-row__title">
                   <strong>{piece.title}</strong>
                   <small>{piece.subtitle}</small>
