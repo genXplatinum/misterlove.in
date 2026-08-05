@@ -39,6 +39,32 @@ const BOOKS = [
     subject: 'The Sikhism series, claim by claim.',
   },
   {
+    slug: 'rules-about-women',
+    dir: 'C:/Users/rajpa/Documents/books/Females',
+    /* The naming pattern changed midway: parts 1 to 14 are
+       `Rules_About_Women_...`, parts 15 to 16 gained a `The_` prefix. */
+    parts: [
+      'Rules_About_Women_Part_1_The_Question_Underneath_the_Question.pdf',
+      'Rules_About_Women_Part_2_Where_the_Rules_Came_From.pdf',
+      'Rules_About_Women_Part_3_The_Indian_Machine.pdf',
+      'Rules_About_Women_Part_4_The_Bodies_Themselves.pdf',
+      'Rules_About_Women_Part_5_The_Paradox_of_the_Free_Countries.pdf',
+      'Rules_About_Women_Part_6_The_Case_for_the_Old_Rules.pdf',
+      'Rules_About_Women_Part_7_What_Feminism_Actually_Claims.pdf',
+      'Rules_About_Women_Part_8_The_Ledger_of_the_Equality_Project.pdf',
+      'Rules_About_Women_Part_9_The_Arithmetic_of_Descendants.pdf',
+      'Rules_About_Women_Part_10_What_the_Evidence_Says_Happens_to_a_Woman.pdf',
+      'Rules_About_Women_Part_11_The_Half_Nobody_Studied.pdf',
+      'Rules_About_Women_Part_12_The_Community_With_No_Edges.pdf',
+      'Rules_About_Women_Part_13_When_History_Ran_the_Experiment.pdf',
+      'Rules_About_Women_Part_14_What_Would_Actually_Work.pdf',
+      'The_Rules_About_Women_Part_15_The_Case_Against_This_Series.pdf',
+      'The_Rules_About_Women_Part_16_What_Survived.pdf',
+    ],
+    title: 'The Rules About Women',
+    subject: 'A sixteen-part audit of the argument about women, tested against evidence.',
+  },
+  {
     slug: 'punjab-history',
     dir: 'C:/Users/rajpa/Documents/books/Punjab history',
     // Part 12 was named to a different pattern from the rest, and typeset on
