@@ -17,7 +17,10 @@
   --ink-soft: #5e574d;
   --ink-2: var(--ink-soft);
   --ink-3: #867d70;
-  --muted: var(--ink-3);
+  /* Muted label/metadata text resolves to --ink-soft so small type clears WCAG
+     AA (4.5:1) on the light paper; --ink-3 stays the palette's third grey for
+     hairlines and non-text use. Dark mode keeps --muted on --ink-3 (line below). */
+  --muted: var(--ink-soft);
 
   --rule: #cfc5b6;
   --rule-dark: #a99d8d;

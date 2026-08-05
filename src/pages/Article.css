@@ -15,7 +15,8 @@
   --surface-2: color-mix(in oklab, var(--parchment) 72%, var(--paper-raised));
   --text: var(--ink);
   --text-2: var(--ink-2);
-  --text-dim: var(--ink-3);
+  /* Inherit the global --text-dim (--ink-soft in light, --ink-3 in dark) so the
+     article's fine print clears WCAG AA on paper; dark is unchanged. */
   --line: color-mix(in oklab, var(--ink-3) 24%, transparent);
   --line-2: color-mix(in oklab, var(--olive) 42%, transparent);
   --accent: var(--olive);
@@ -420,6 +421,51 @@
 .article__rail-chev.is-flipped {
   translate: -1px 0;
   rotate: -135deg;
+}
+
+/* ---------- Mobile contents disclosure (the rail is hidden below 1080px) ---------- */
+.article__toc-mobile {
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: color-mix(in oklab, var(--surface) 72%, transparent);
+}
+
+.article__toc-mobile-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 3.2rem;
+  padding: 0.85rem 1.1rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  list-style: none;
+}
+
+.article__toc-mobile-summary::-webkit-details-marker { display: none; }
+.article__toc-mobile-summary:hover { color: var(--text); }
+
+.article__toc-mobile-chev {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  translate: 0 -2px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  rotate: 45deg;
+  transition: rotate 0.25s var(--ease-out);
+}
+
+.article__toc-mobile[open] .article__toc-mobile-chev { translate: 0 1px; rotate: -135deg; }
+
+.article__toc-mobile-panel {
+  padding: 0.35rem 1.1rem 1.3rem;
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 1080px) {
+  .article__toc-mobile { display: none; }
 }
 
 .article__toc { display: grid; gap: 0.18rem; }
