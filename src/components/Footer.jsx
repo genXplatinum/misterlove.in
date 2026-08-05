@@ -7,14 +7,7 @@ import './Footer.css';
 function toTop(event) {
   event.preventDefault();
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (window.lenis) {
-    window.lenis.scrollTo(0, {
-      duration: reduceMotion ? 0 : 1,
-      immediate: reduceMotion,
-    });
-  } else {
-    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
-  }
+  window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
 }
 
 export default function Footer() {

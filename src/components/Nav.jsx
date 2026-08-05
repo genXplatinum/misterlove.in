@@ -13,19 +13,11 @@ function scrollToTarget(target, immediate = false) {
   const navHeight = document.querySelector('.nav')?.getBoundingClientRect().height ?? 72;
   const clearance = Math.ceil(navHeight + 12);
 
-  if (window.lenis) {
-    window.lenis.scrollTo(element, {
-      offset: -clearance,
-      duration: jump ? 0 : 1.05,
-      immediate: jump,
-    });
-  } else {
-    const top = Math.max(
-      0,
-      element.getBoundingClientRect().top + window.scrollY - clearance
-    );
-    window.scrollTo({ top, behavior: jump ? 'auto' : 'smooth' });
-  }
+  const top = Math.max(
+    0,
+    element.getBoundingClientRect().top + window.scrollY - clearance
+  );
+  window.scrollTo({ top, behavior: jump ? 'auto' : 'smooth' });
   return true;
 }
 
@@ -106,7 +98,6 @@ export default function Nav() {
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
     background.forEach((element) => { element.inert = true; });
-    window.lenis?.stop();
     requestAnimationFrame(() => first?.focus());
 
     const onKey = (event) => {
@@ -130,7 +121,6 @@ export default function Nav() {
       document.body.classList.remove('nav-open');
       document.removeEventListener('keydown', onKey);
       background.forEach((element) => { element.inert = false; });
-      window.lenis?.start();
     };
   }, [open]);
 
@@ -139,8 +129,7 @@ export default function Nav() {
     const target = state.scrollTo;
     const frame = requestAnimationFrame(() => {
       if (target === '#main') {
-        if (window.lenis) window.lenis.scrollTo(0, { immediate: true });
-        else window.scrollTo(0, 0);
+        window.scrollTo(0, 0);
       } else {
         scrollToTarget(target);
       }
@@ -162,14 +151,7 @@ export default function Nav() {
     setOpen(false);
     if (isHome) {
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (window.lenis) {
-        window.lenis.scrollTo(0, {
-          duration: reduceMotion ? 0 : 1,
-          immediate: reduceMotion,
-        });
-      } else {
-        window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
-      }
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
     } else {
       navigate('/');
     }

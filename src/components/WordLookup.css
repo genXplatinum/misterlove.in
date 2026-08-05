@@ -1,0 +1,178 @@
+/* ============================================================
+   WORD LOOKUP — a small dictionary card raised over the reading.
+   ============================================================ */
+
+.wl-card {
+  position: fixed;
+  z-index: 10050;
+  width: min(23rem, calc(100vw - 1.5rem));
+  max-height: min(60vh, 30rem);
+  overflow-y: auto;
+  padding: 1.05rem 1.2rem 0.95rem;
+  border: 1px solid var(--rule-dark);
+  border-top: 3px solid var(--oxblood);
+  border-radius: 3px;
+  color: var(--ink);
+  background: var(--paper);
+  box-shadow: var(--shadow-book);
+  font-family: var(--font-body);
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule-dark) transparent;
+  animation: wl-in 180ms var(--ease-out);
+}
+
+@keyframes wl-in {
+  from { opacity: 0; transform: translateY(0.35rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.wl-card__close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.55rem;
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  color: var(--ink-3);
+  font-size: 0.78rem;
+  transition: color 180ms var(--ease-out), background 180ms var(--ease-out);
+}
+
+.wl-card__close:hover { color: var(--oxblood); background: var(--oxblood-wash); }
+
+.wl-card__head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.7rem;
+  padding-right: 1.6rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.wl-card__word {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.wl-card__phon {
+  font-family: var(--font-reading);
+  font-style: italic;
+  font-size: 0.98rem;
+  color: var(--ink-soft);
+}
+
+.wl-card__say {
+  display: grid;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border: 1px solid var(--rule-dark);
+  border-radius: 50%;
+  color: var(--oxblood);
+  font-size: 0.6rem;
+  transition: color 180ms var(--ease-out), background 180ms var(--ease-out), border-color 180ms var(--ease-out);
+}
+
+.wl-card__say:hover { color: var(--accent-ink); background: var(--oxblood); border-color: var(--oxblood); }
+
+.wl-card__body { padding-top: 0.85rem; }
+.wl-card__note { font-family: var(--font-reading); font-size: 0.98rem; color: var(--ink-soft); }
+
+.wl-sense { margin-bottom: 0.95rem; }
+.wl-sense:last-child { margin-bottom: 0; }
+
+.wl-sense__pos {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--oxblood);
+  font-style: italic;
+  letter-spacing: 0.04em;
+}
+
+.wl-sense__defs {
+  display: grid;
+  gap: 0.55rem;
+  counter-reset: wl-def;
+  list-style: none;
+}
+
+.wl-sense__defs li {
+  display: grid;
+  grid-template-columns: 1.25rem minmax(0, 1fr);
+  gap: 0.15rem 0.5rem;
+}
+
+.wl-sense__defs li::before {
+  counter-increment: wl-def;
+  content: counter(wl-def);
+  grid-row: 1 / span 2;
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-weight: 650;
+  color: var(--brass);
+}
+
+.wl-sense__def {
+  font-family: var(--font-reading);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.wl-sense__eg {
+  display: block;
+  margin-top: 0.15rem;
+  padding-left: 0.7rem;
+  border-left: 2px solid var(--rule);
+  font-family: var(--font-reading);
+  font-style: italic;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.wl-sense__syn {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.wl-sense__syn .mono { color: var(--brass); }
+
+.wl-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.9rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--rule);
+}
+
+.wl-card__foot .mono { color: var(--ink-3); }
+
+.wl-card__link {
+  min-height: 2.4rem;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+  color: var(--oxblood);
+  transition: color 180ms var(--ease-out);
+}
+
+.wl-card__link:hover { color: var(--oxblood-hover); }
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-card { animation: none; }
+}

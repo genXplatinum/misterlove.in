@@ -145,8 +145,7 @@ function useTopicMeta(piece, original) {
       );
     }
 
-    if (window.lenis) window.lenis.scrollTo(0, { immediate: true });
-    else window.scrollTo(0, 0);
+    window.scrollTo(0, 0);
 
     return () => {
       document.title = prevTitle;
@@ -201,7 +200,7 @@ export default function Topic() {
       <div className="container">
         <div className="topicpage__navrow">
           <nav className="article__crumbs" aria-label={copy.breadcrumb}>
-            <Link to="/writing" className="article__crumb" data-cursor>{copy.writing}</Link>
+            <Link to="/writing" className="article__crumb">{copy.writing}</Link>
             <span className="article__crumb-sep" aria-hidden="true">/</span>
             <span className="article__crumb is-current">{piece.title}</span>
           </nav>
@@ -212,7 +211,6 @@ export default function Topic() {
                 to={`/writing/${piece.slug}`}
                 className={language === 'en' ? 'is-active' : ''}
                 aria-current={language === 'en' ? 'page' : undefined}
-                data-cursor
               >
                 {copy.english}
               </Link>
@@ -220,7 +218,6 @@ export default function Topic() {
                 to={`/hi/writing/${piece.slug}`}
                 className={language === 'hi' ? 'is-active' : ''}
                 aria-current={language === 'hi' ? 'page' : undefined}
-                data-cursor
               >
                 {copy.hindi}
               </Link>
@@ -233,7 +230,7 @@ export default function Topic() {
             is not a link, because there is nothing yet to link it to. */}
         <Reveal className="topicpage__cover">
           {readable ? (
-            <Link to={read} className="topicpage__coverlink" data-cursor aria-label={copy.startAria(piece.title)}>
+            <Link to={read} className="topicpage__coverlink" aria-label={copy.startAria(piece.title)}>
               <CoverPlate piece={piece} className="cover--full" />
             </Link>
           ) : (
@@ -260,7 +257,7 @@ export default function Topic() {
             <div className="feature__ctas">
               {readable && (
                 <Magnetic>
-                  <Link to={read} className="btn" data-cursor>
+                  <Link to={read} className="btn">
                     {copy.start} <span className="btn__dot" />
                   </Link>
                 </Magnetic>
@@ -271,7 +268,6 @@ export default function Topic() {
                   className="btn btn--ghost"
                   href={`${import.meta.env.BASE_URL}${pdf.file}`}
                   download
-                  data-cursor
                 >
                   {copy.pdf(pdf.label, pdf.size)}
                 </a>
@@ -325,7 +321,7 @@ export default function Topic() {
                 <li key={part.n}>
                   <Reveal delay={Math.min(i, 6) * 40}>
                     {part.live ? (
-                      <Link to={`${base}/part-${part.n}`} className="partrow" data-cursor>
+                      <Link to={`${base}/part-${part.n}`} className="partrow">
                         {body}
                       </Link>
                     ) : (

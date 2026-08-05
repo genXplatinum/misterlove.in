@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import Prose from '../components/Prose';
 import ThemeToggle from '../components/ThemeToggle';
+import WordLookup from '../components/WordLookup';
 import {
   getPiece,
   getPieceForLanguage,
@@ -138,8 +139,7 @@ const COPY = {
 };
 
 function scrollToTop() {
-  if (window.lenis) window.lenis.scrollTo(0, { immediate: true });
-  else window.scrollTo(0, 0);
+  window.scrollTo(0, 0);
 }
 
 function useReadingSurface() {
@@ -380,6 +380,7 @@ export default function Article() {
   const bodyRef = useRef(null);
   const railCloseRef = useRef(null);
   const railReopenRef = useRef(null);
+  const mobileNavRef = useRef(null);
 
   const n = partParam ? Number(String(partParam).replace(/^part-/, '')) : 1;
   const valid = Number.isInteger(n) && n >= 1 && piece && n <= piece.parts;
@@ -421,16 +422,15 @@ export default function Article() {
     const element = document.getElementById(id);
     if (!element) return;
     const reduced = prefersReducedMotion();
-    if (window.lenis) {
-      window.lenis.scrollTo(element, {
-        offset: -100,
-        duration: reduced ? 0 : 1.1,
-        immediate: reduced,
-      });
-    } else {
-      const top = element.getBoundingClientRect().top + window.scrollY - 100;
-      window.scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' });
-    }
+    const top = element.getBoundingClientRect().top + window.scrollY - 100;
+    window.scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' });
+  };
+
+  // On small screens the rail is hidden, so the same jump also closes the
+  // mobile contents disclosure to hand the screen back to the reader.
+  const goSectionMobile = (event, id) => {
+    goSection(event, id);
+    if (mobileNavRef.current) mobileNavRef.current.open = false;
   };
 
   return (
@@ -454,7 +454,6 @@ export default function Article() {
           aria-label={copy.showContents}
           aria-expanded="false"
           aria-controls="article-rail"
-          data-cursor
         >
           <span className="article__rail-chev is-flipped" aria-hidden="true" />
           <span className="mono">{copy.contents}</span>
@@ -465,9 +464,9 @@ export default function Article() {
         <div className="container">
           <div className="article__navrow">
             <nav className="article__crumbs" aria-label={copy.breadcrumb}>
-              <Link to="/writing" className="article__crumb" data-cursor>{copy.writing}</Link>
+              <Link to="/writing" className="article__crumb">{copy.writing}</Link>
               <span className="article__crumb-sep" aria-hidden="true">/</span>
-              <Link to={base} className="article__crumb" data-cursor>{piece.title}</Link>
+              <Link to={base} className="article__crumb">{piece.title}</Link>
             </nav>
 
             <div className="article__reading-tools" role="group" aria-label="Reading preferences">
@@ -477,7 +476,6 @@ export default function Article() {
                     to={`/writing/${piece.slug}/part-${n}`}
                     className={language === 'en' ? 'is-active' : ''}
                     aria-current={language === 'en' ? 'page' : undefined}
-                    data-cursor
                   >
                     {copy.english}
                   </Link>
@@ -485,7 +483,6 @@ export default function Article() {
                     to={`/hi/writing/${piece.slug}/part-${n}`}
                     className={language === 'hi' ? 'is-active' : ''}
                     aria-current={language === 'hi' ? 'page' : undefined}
-                    data-cursor
                   >
                     {copy.hindi}
                   </Link>
@@ -545,7 +542,6 @@ export default function Article() {
                   aria-label={copy.hideContents}
                   aria-expanded="true"
                   aria-controls="article-rail"
-                  data-cursor
                 >
                   <span className="article__rail-chev" aria-hidden="true" />
                 </button>
@@ -576,7 +572,6 @@ export default function Article() {
                     className={`article__pip ${entry.n === n ? 'is-current' : ''}`}
                     title={`${copy.part} ${entry.n} — ${entry.title}`}
                     aria-current={entry.n === n ? 'page' : undefined}
-                    data-cursor
                   >
                     {entry.n}
                   </Link>
@@ -594,6 +589,63 @@ export default function Article() {
           </aside>
 
           <div className="article__col">
+            {toc.length > 0 && (
+              <details className="article__toc-mobile" ref={mobileNavRef}>
+                <summary className="article__toc-mobile-summary">
+                  <span className="mono">{copy.contents}</span>
+                  <span className="article__toc-mobile-chev" aria-hidden="true" />
+                </summary>
+                <div className="article__toc-mobile-panel">
+                  <nav aria-label={copy.inThisPart}>
+                    <span className="mono article__rail-title">{copy.inThisPart}</span>
+                    <ol className="article__toc">
+                      {toc.map((entry) => (
+                        <li key={entry.id}>
+                          <a
+                            href={`#${entry.id}`}
+                            onClick={(event) => goSectionMobile(event, entry.id)}
+                            className={`article__toc-link ${active === entry.id ? 'is-active' : ''}`}
+                          >
+                            <span className="article__toc-n mono">{entry.num}</span>
+                            <span>{entry.text}</span>
+                          </a>
+                        </li>
+                      ))}
+                    </ol>
+                  </nav>
+
+                  {contents.length > 1 && (
+                    <nav aria-label={copy.allParts(piece.parts)}>
+                      <span className="mono article__rail-title article__rail-title--sub">
+                        {copy.allParts(piece.parts)}
+                      </span>
+                      <div className="article__pips">
+                        {contents.map((entry) => (entry.live ? (
+                          <Link
+                            key={entry.n}
+                            to={`${base}/part-${entry.n}`}
+                            className={`article__pip ${entry.n === n ? 'is-current' : ''}`}
+                            title={`${copy.part} ${entry.n} — ${entry.title}`}
+                            aria-current={entry.n === n ? 'page' : undefined}
+                          >
+                            {entry.n}
+                          </Link>
+                        ) : (
+                          <span
+                            key={entry.n}
+                            className="article__pip is-soon"
+                            title={`${copy.part} ${entry.n} — ${entry.title} (${copy.preparing})`}
+                          >
+                            {entry.n}
+                          </span>
+                        )))}
+                      </div>
+                    </nav>
+                  )}
+                </div>
+              </details>
+            )}
+
             {!parts && !loadError && <p className="article__loading mono">{copy.loading(n)}</p>}
             {loadError && (
               <p className="article__loading">
@@ -618,7 +670,7 @@ export default function Article() {
 
             {part?.sources && (
               <details className="article__sources">
-                <summary data-cursor>
+                <summary>
                   <span className="mono">{copy.sources(n)}</span>
                   <span className="article__sources-icon" aria-hidden="true" />
                 </summary>
@@ -645,25 +697,25 @@ export default function Article() {
             {part && (
               <nav className="article__pager" aria-label={copy.partsAria}>
                 {prev ? (
-                  <Link to={`${base}/part-${prev}`} className="article__pager-link article__pager-link--prev" data-cursor>
+                  <Link to={`${base}/part-${prev}`} className="article__pager-link article__pager-link--prev">
                     <span className="mono">← {copy.part} {String(prev).padStart(2, '0')}</span>
                     <span className="article__pager-title">{parts[prev - 1].title}</span>
                   </Link>
                 ) : <span />}
                 {next ? (
-                  <Link to={`${base}/part-${next}`} className="article__pager-link article__pager-link--next" data-cursor>
+                  <Link to={`${base}/part-${next}`} className="article__pager-link article__pager-link--next">
                     <span className="mono">{copy.part} {String(next).padStart(2, '0')} →</span>
                     <span className="article__pager-title">{parts[next - 1].title}</span>
                   </Link>
                 ) : isInProgress(piece) ? (
-                  <Link to={base} className="article__pager-link article__pager-link--next" data-cursor>
+                  <Link to={base} className="article__pager-link article__pager-link--next">
                     <span className="mono">{copy.allSoFar}</span>
                     <span className="article__pager-title">
                       {copy.beingWritten(n + 1, contents[n]?.title)}
                     </span>
                   </Link>
                 ) : (
-                  <Link to="/writing" className="article__pager-link article__pager-link--next" data-cursor>
+                  <Link to="/writing" className="article__pager-link article__pager-link--next">
                     <span className="mono">{copy.finished}</span>
                     <span className="article__pager-title">{copy.backWriting}</span>
                   </Link>
@@ -709,7 +761,6 @@ export default function Article() {
                       <Link
                         to={`${base}/part-${entry.n}`}
                         className={`article__entry ${entry.n === n ? 'is-current' : ''}`}
-                        data-cursor
                       >
                         {inner}
                       </Link>
@@ -727,7 +778,6 @@ export default function Article() {
                   className="btn btn--ghost"
                   href={`${import.meta.env.BASE_URL}${articlePdf.file}`}
                   download
-                  data-cursor
                 >
                   {copy.download(piece, articlePdf)} <span className="btn__dot" />
                 </a>
@@ -736,6 +786,8 @@ export default function Article() {
           </div>
         </section>
       )}
+
+      <WordLookup scope=".prose" />
     </article>
   );
 }
