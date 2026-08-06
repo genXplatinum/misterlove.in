@@ -52,6 +52,9 @@
 .cover--ember { --cover-cloth: #7b3430; --cover-cloth-2: #a14e43; --cover-ink: #faeadc; --cover-muted: #e7c5b2; --cover-foil: #dcb17c; }
 .cover--ink { --cover-cloth: #3e4651; --cover-cloth-2: #58626d; --cover-ink: #f5efe3; --cover-muted: #d9d2c5; --cover-foil: #ceb783; }
 .cover--quartz { --cover-cloth: #3f5a56; --cover-cloth-2: #58736d; --cover-ink: #f3eee2; --cover-muted: #d1d8cb; --cover-foil: #c8b786; }
+/* Dark arterial cloth under a bile-yellow foil: the one cover in the archive
+   that is meant to look like a dossier on something diseased. */
+.cover--blight { --cover-cloth: #2e0f12; --cover-cloth-2: #5c1a18; --cover-ink: #f7e6e2; --cover-muted: #d8bcb5; --cover-foil: #a8b638; }
 
 .cover__kicker {
   width: 100%;

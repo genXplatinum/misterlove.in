@@ -16,6 +16,78 @@ export const writingMeta = {
 
 export const pieces = [
   {
+    slug: 'congress-record',
+    kicker: 'A nineteen-part audit',
+    title: 'The Congress Record',
+    subtitle: 'What a Party Did With Seventy Years of Power',
+    standfirst:
+      'An audit of what Congress governments did with power in India, from 1947 to the present day. Every charge carries a grade, every source is named, and the accusations that were invented are marked as invented.',
+    summary:
+      'This book says on its own first page that it argues one side. It selects like a prosecutor and checks like an auditor, and it holds that the distinction matters: choosing which government to examine is a legitimate editorial act, while inventing evidence against it is not — and is also self-defeating, because a single fabricated charge rescues the accused from twenty real ones. So every claim here carries a grade that states what kind of thing it is: court-found, audited, contested, alleged. Part One sets the rules before a single accusation is made — what counts as a blunder rather than a bad outcome, why "they should have done otherwise" is usually not an argument, where the evidence comes from, how numbers are made to lie, and what would prove the author wrong. Its sixth chapter is given over entirely to the charges against Congress that are false. The series then works forward through the record: the inheritance of 1947, the amending of the constitution, the licence-permit economy and the map of who it rewarded, China and 1962, the wars and Kashmir, the Emergency, Punjab, November 1984, and on to the two UPA governments and a like-for-like comparison with what followed. It ends with an honest accounting of what held, what did not, and what could not be proved either way.',
+    topic: 'India · Politics · Accountability',
+    keywords: [
+      'Congress record', 'Indian National Congress', 'Indian political history',
+      'Emergency 1975', 'government accountability', 'Nehru', 'Indira Gandhi',
+      'Rajiv Gandhi', 'UPA', '1984 anti-Sikh violence', 'Operation Blue Star',
+      'licence raj', 'freight equalisation', 'India China 1962', 'evidence grading',
+    ],
+    published: '2026-08-07',
+    displayDate: 'August 2026',
+    // The series as planned. `live` is what is actually published — the sitemap,
+    // share cards, RSS and pager all follow the data file, never this number.
+    parts: 19,
+    live: 6,
+    words: 110335,
+    minutes: 501,
+    status: 'In progress',
+    accent: 'blight',
+    pdf: 'the-congress-record-part-1.pdf',
+    pdfSize: '276 KB',
+    pdfLabel: 'Part 1 PDF',
+    pdfs: [
+      { n: 1, file: 'the-congress-record-part-1.pdf', size: '276 KB', label: 'Part 1 PDF' },
+      { n: 2, file: 'the-congress-record-part-2.pdf', size: '275 KB', label: 'Part 2 PDF' },
+      { n: 3, file: 'the-congress-record-part-3.pdf', size: '274 KB', label: 'Part 3 PDF' },
+      { n: 4, file: 'the-congress-record-part-4.pdf', size: '273 KB', label: 'Part 4 PDF' },
+      { n: 5, file: 'the-congress-record-part-5.pdf', size: '281 KB', label: 'Part 5 PDF' },
+      { n: 6, file: 'the-congress-record-part-6.pdf', size: '274 KB', label: 'Part 6 PDF' },
+    ],
+    principlesTitle: 'The rules this audit runs on',
+    principles: [
+      { n: '01', t: 'Selects like a prosecutor, checks like an auditor', d: 'Choosing to examine one party’s time in power is a legitimate editorial choice, and the book says so on its first page. Inventing evidence is not legitimate — and it is also stupid, because one made-up charge rescues the accused from the true ones.' },
+      { n: '02', t: 'Every claim carries a grade', d: 'Court-found, audited, contested, alleged. The grade states what kind of thing the claim is, so a finding of fact and an accusation are never allowed to wear the same clothes.' },
+      { n: '03', t: 'The fabrications are named as fabrications', d: 'An entire chapter of Part One is given to the accusations against Congress that are false. A charge that cannot survive its own sourcing is struck out here before anyone else has to do it.' },
+      { n: '04', t: 'What would prove me wrong is written down', d: 'Each part states the evidence that would overturn its own conclusion, and closes with an honest list of what is still not known.' },
+    ],
+    /* The author's own printed index, from the "ground this series covers"
+       table in Part 1. Published parts come from the data file; everything
+       else shows here as announced-but-unwritten, so the shape of the series
+       is visible from day one and a part landing later changes nothing but
+       the data. */
+    outline: [
+      { n: 1, label: 'The Method', title: 'How to Judge a Government', blurb: 'What counts as a blunder, where the evidence comes from, how charges are graded — and which accusations against Congress are fabricated.' },
+      { n: 2, label: 'The Inheritance', title: 'The Inheritance, 1947–1950', blurb: 'Independence and partition. The princely states absorbed, Kashmir’s accession and the reference to the United Nations, and the writing of the constitution.' },
+      { n: 3, label: 'The Constitution', title: 'The Constitution Amended, 1950–1959', blurb: 'The First Amendment restricts speech. Land reform begins. The first general elections. The elected Kerala government is dismissed by the centre.' },
+      { n: 4, label: 'The Economy', title: 'The Economic Model, 1950–1991', blurb: 'The planning and licensing system in operation, what it was meant to do, and what it actually did.' },
+      { n: 5, label: 'Who Got What', title: 'The Map of Who Got What', blurb: 'Freight equalisation from 1952 to 1993, and the geography of who the model rewarded and who paid for it.' },
+      { n: 6, label: 'China and 1962', title: 'China, Tibet and 1962', blurb: 'The agreement on Tibet, how the border dispute developed, and the war that followed.' },
+      { n: 7, label: 'Pakistan and Kashmir', title: 'The Wars and Kashmir, 1947–1989', blurb: 'Wars with Pakistan in 1947–48, 1965 and 1971. The Simla agreement. The governing of Kashmir up to the insurgency.' },
+      { n: 8, label: 'Indira', title: 'The Rise of Indira Gandhi, 1966–1975', blurb: 'Her rise, the party split, the nationalisation of the banks, and the confrontation with the judiciary.' },
+      { n: 9, label: 'The Emergency', title: 'The Emergency, 1975–1977', blurb: 'Censorship, detention without trial, the forced sterilisation programme, and the postponed election.' },
+      { n: 10, label: 'Punjab', title: 'Punjab, 1978–1993', blurb: 'The rise of militancy, Operation Blue Star in 1984, and the decade that followed.' },
+      { n: 11, label: 'November 1984', title: 'The Killing of Sikhs, November 1984', blurb: 'Delhi and elsewhere after the assassination, and the four decades of impunity that followed.' },
+      { n: 12, label: 'Rajiv', title: 'Rajiv Gandhi, 1984–1989', blurb: 'Shah Bano. The Babri locks. Bofors. Sri Lanka. The 1987 Kashmir election.' },
+      { n: 13, label: 'The Margins', title: 'The North East, the Tribal Belt and the Naxal Corridor', blurb: 'From 1958 to the present — the geography these accounts usually skip.' },
+      { n: 14, label: '1991–1996', title: 'Liberalisation and Babri', blurb: 'Economic liberalisation and the demolition of the Babri Masjid, under one government.' },
+      { n: 15, label: 'UPA I', title: 'The First UPA Government, 2004–2009', blurb: 'The nuclear deal, the terror wave, and Mumbai in 2008.' },
+      { n: 16, label: 'UPA II', title: 'The Second UPA Government, 2009–2014', blurb: 'Spectrum, coal, the games — and what the courts later actually found.' },
+      { n: 17, label: 'What Was Said', title: 'The Record of Words', blurb: 'The statements themselves, with dates and full wording rather than the version that circulates.' },
+      { n: 18, label: 'The Comparison', title: '2014–2026, on the Same Ruler', blurb: 'The comparison, measured the same way in both directions.' },
+      { n: 19, label: 'The Verdict', title: 'The Final Accounting', blurb: 'What held, what did not, and everything I could not prove.' },
+    ],
+    load: () => import('./writing/congress-record.js'),
+  },
+  {
     slug: 'rules-about-women',
     kicker: 'A 16-part audit',
     title: 'The Rules About Women',
