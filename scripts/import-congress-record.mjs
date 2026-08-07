@@ -72,6 +72,48 @@ const PARTS = [
     file: 'part-6-china-tibet-and-1962.html',
     pdf: 'The_Congress_Record_Part_6_China_Tibet_and_1962.pdf',
   },
+  {
+    n: 7,
+    label: 'The Wars',
+    file: 'part-7-pakistan-kashmir-and-the-wars.html',
+    pdf: 'The_Congress_Record_Part_7_Pakistan_Kashmir_and_the_Wars.pdf',
+  },
+  {
+    n: 8,
+    label: 'Indira Rising',
+    file: 'part-8-indira-rising.html',
+    pdf: 'The_Congress_Record_Part_8_Indira_Rising.pdf',
+  },
+  {
+    n: 9,
+    label: 'The Emergency',
+    file: 'part-9-the-emergency.html',
+    pdf: 'The_Congress_Record_Part_9_The_Emergency.pdf',
+  },
+  {
+    n: 10,
+    label: 'Punjab',
+    file: 'part-10-punjab.html',
+    pdf: 'The_Congress_Record_Part_10_Punjab.pdf',
+  },
+  {
+    n: 11,
+    label: 'November 1984',
+    file: 'part-11-november-1984.html',
+    pdf: 'The_Congress_Record_Part_11_November_1984.pdf',
+  },
+  {
+    n: 12,
+    label: 'Rajiv Gandhi',
+    file: 'part-12-rajiv-gandhi.html',
+    pdf: 'The_Congress_Record_Part_12_Rajiv_Gandhi.pdf',
+  },
+  {
+    n: 13,
+    label: 'The Other India',
+    file: 'part-13-the-other-india.html',
+    pdf: 'The_Congress_Record_Part_13_The_Other_India.pdf',
+  },
 ];
 
 const PUBLISHED = '2026-08-07';
