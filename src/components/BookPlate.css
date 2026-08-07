@@ -1,0 +1,21 @@
+/* The shelf at /books holds other people's books, so their plates carry one
+   mark the archive's own covers do not: a foil corner rule, the way a library
+   stamps a book it did not publish. Everything else is inherited. */
+
+.cover--book .cover__kicker {
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
+  margin-bottom: clamp(1.5rem, 3.4vw, 2.6rem);
+  padding: 0.4em 0.75em 0.36em;
+  border: 1px solid rgba(237, 217, 182, 0.34);
+  font-size: 0.6rem;
+  letter-spacing: 0.11em;
+  color: var(--cover-ink);
+}
+
+.cover--book::after {
+  border-color: rgba(233, 213, 179, 0.16);
+  border-top-width: 3px;
+  border-top-color: var(--cover-foil);
+}

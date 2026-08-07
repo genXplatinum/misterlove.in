@@ -1117,3 +1117,45 @@
 .prose .w-box::after { display: none; }
 .prose .w-takeaways,
 .prose .w-stat { background: var(--paper); }
+
+/* ============================================================
+   THE SHOT ARGUMENTS vocabulary — the studies at /books.
+
+   Those documents number every section they contain, because the whole method
+   is "here is assumption 7 of 11". The chapter chip already exists as .w-num;
+   this gives the same chip a second, smaller life beside a section heading,
+   where "Axiom 7" or "5.14" is doing the same job one level down.
+   ============================================================ */
+
+.prose .w-h3--num {
+  display: flex;
+  align-items: baseline;
+  gap: 0.62em;
+  scroll-margin-top: 6.5rem;
+}
+
+.prose .w-h3--num .w-num {
+  min-width: 0;
+  padding: 0.44em 0.62em 0.38em;
+  font-size: 0.52em;
+  letter-spacing: 0.09em;
+  text-indent: 0;
+  white-space: nowrap;
+}
+
+/* A part opening carries its printed folio ("Part 04", "Appendix") rather
+   than a bare number, so the chip has to take a word without squeezing. */
+.prose .w-h2 .w-num {
+  padding-inline: 0.62em;
+  text-indent: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .prose .w-h3--num { display: block; }
+  .prose .w-h3--num .w-num {
+    display: inline-block;
+    margin-bottom: 0.5em;
+    font-size: 0.44em;
+  }
+}

@@ -1,0 +1,706 @@
+/* ============================================================
+   THE LOAD TEST — the room at /books.
+
+   The rest of the archive is a warm private-press library: cream paper,
+   Cormorant, book cloth. This section is the next room along, where the books
+   are taken off the shelf and put under load, and it is furnished accordingly
+   — cool drafting linen, an engineered display face, and every number set in
+   an instrument mono.
+
+   Its colour is not invented. The print editions of these studies already run
+   on three named threads, and those are lifted straight in:
+
+       claim      #8B3A2F   the sentence being tested
+       steelman   #2F4A4E   the argument rebuilt at its strongest
+       evidence   #6B6A2E   what the record actually says
+
+   Everything below is scoped to `body.books-room`, which is set while a
+   /books route is mounted. The nav, footer and buttons are entirely
+   token-driven, so re-declaring the tokens here moves the whole room without
+   touching a line of the shared furniture.
+   ============================================================ */
+
+.books-room {
+  --linen: #e8e6de;
+  --linen-2: #f4f3ee;
+  --linen-3: #dcdbcf;
+
+  --thread-claim: #8b3a2f;
+  --thread-steel: #2f4a4e;
+  --thread-evidence: #6b6a2e;
+
+  --canvas: var(--linen);
+  --paper: var(--linen-2);
+  --paper-alt: var(--linen-3);
+  --paper-deep: #e1e0d4;
+  --parchment: var(--paper-deep);
+  --paper-raised: var(--paper);
+
+  --ink: #1b1f1e;
+  --ink-soft: #4f5557;
+  --ink-3: #79807d;
+  --muted: var(--ink-soft);
+
+  --rule: #c2c2b4;
+  --rule-dark: #9aa096;
+
+  --oxblood: var(--thread-claim);
+  --oxblood-hover: #6d2c23;
+  --oxblood-wash: #e2d9d4;
+  --forest: var(--thread-steel);
+  --brass: var(--thread-evidence);
+  --clay: var(--thread-claim);
+  --accent-ink: #f4f3ee;
+
+  --bg: var(--canvas);
+  --bg-2: var(--paper-deep);
+  --surface: var(--paper);
+  --surface-2: var(--paper-alt);
+  --line: rgba(27, 31, 30, 0.18);
+  --line-2: rgba(139, 58, 47, 0.4);
+  --text: var(--ink);
+  --text-2: var(--ink-soft);
+  --text-dim: var(--muted);
+  --accent: var(--thread-claim);
+  --on-accent: var(--accent-ink);
+  --scan: var(--thread-evidence);
+  --shadow: rgba(27, 31, 30, 0.2);
+  --shadow-book: 0 16px 38px rgba(27, 31, 30, 0.11);
+  --shadow-sheet: 0 6px 20px rgba(27, 31, 30, 0.07);
+
+  /* Instrument Serif is drawn tight and sharp where Cormorant is soft and
+     wide — the difference is what tells a reader they have changed rooms.
+     Newsreader stays: a sixty-five-minute read is not the place to
+     experiment with a body face. */
+  --font-display: "Instrument Serif", "Cormorant Garamond", Georgia, serif;
+  --font-ui: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-mono: var(--font-ui);
+
+  --radius: 0;
+
+  background: var(--canvas);
+}
+
+:root[data-theme="dark"] .books-room {
+  --linen: #15191a;
+  --linen-2: #1d2223;
+  --linen-3: #272d2d;
+
+  /* The threads lift off a dark ground rather than sinking into it. */
+  --thread-claim: #d38b7d;
+  --thread-steel: #8fb3b3;
+  --thread-evidence: #b6b473;
+
+  --paper-deep: #222829;
+  --ink: #e8e7dd;
+  --ink-soft: #b3b8b3;
+  --ink-3: #8b918d;
+  --rule: #363d3c;
+  --rule-dark: #5f6765;
+  --oxblood-hover: #e2a396;
+  --oxblood-wash: #33261f;
+  --accent-ink: #15191a;
+  --line: rgba(232, 231, 221, 0.16);
+  --line-2: rgba(211, 139, 125, 0.4);
+  --shadow: rgba(0, 0, 0, 0.45);
+  --shadow-book: 0 18px 44px rgba(0, 0, 0, 0.4);
+  --shadow-sheet: 0 8px 24px rgba(0, 0, 0, 0.26);
+}
+
+/* The archive's paper grain is a printing artefact and belongs to the library.
+   A drafting sheet has a grid instead — pitched to the type, and kept faint
+   enough that it reads as squared paper rather than as a pattern. It is laid
+   on the index pages only; the reader gets a clean sheet. */
+.books-room .surface-noise { display: none; }
+
+.books-room .bookspage,
+.books-room .bookpage {
+  background-image:
+    linear-gradient(to right, rgba(27, 31, 30, 0.035) 1px, transparent 1px),
+    linear-gradient(rgba(27, 31, 30, 0.035) 1px, transparent 1px);
+  background-size: 1.75rem 1.75rem;
+}
+
+:root[data-theme="dark"] .books-room .bookspage,
+:root[data-theme="dark"] .books-room .bookpage {
+  background-image:
+    linear-gradient(to right, rgba(232, 231, 221, 0.045) 1px, transparent 1px),
+    linear-gradient(rgba(232, 231, 221, 0.045) 1px, transparent 1px);
+}
+
+/* ---------- Furniture, retuned for a mono utility face ---------- */
+
+/* IBM Plex Mono already carries its own generous sidebearings, so the
+   tracking the sans labels needed would tear these apart. */
+.books-room .mono,
+.books-room .eyebrow {
+  font-weight: 500;
+  letter-spacing: 0.11em;
+}
+
+.books-room .btn,
+.books-room .link {
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.books-room .btn:hover { transform: none; }
+
+/* A drawing is titled on a rule, not under a double line. */
+.books-room .section-head {
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--rule-dark);
+}
+
+.books-room .eyebrow::before { width: 1.6rem; background: var(--thread-claim); }
+
+.books-room .writingpage__title,
+.books-room .topic__title,
+.books-room .article__title {
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- The shelf ---------- */
+
+.shelfbook__by {
+  font-family: var(--font-reading);
+  font-size: 0.72em;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--text-2);
+}
+
+.shelfmethod {
+  margin: clamp(2.4rem, 5vw, 3.6rem) 0 clamp(2rem, 4vw, 3rem);
+  padding: clamp(1.4rem, 3.2vw, 2.2rem) 0 0;
+  border-top: 1px solid var(--rule-dark);
+}
+
+.shelfmethod__title {
+  display: block;
+  margin-bottom: clamp(1.2rem, 2.6vw, 1.9rem);
+  font-size: var(--t-label);
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.shelfmethod__steps {
+  display: grid;
+  gap: clamp(1.2rem, 2.6vw, 2rem);
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each step is a stage of the test, so it is numbered on a rule the way a
+   drawing numbers its sections rather than sitting under a coloured bar. */
+.shelfmethod__steps li {
+  display: grid;
+  align-content: start;
+  gap: 0.45rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--rule-dark);
+}
+
+.shelfmethod__n {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--thread-claim);
+}
+
+.shelfmethod__t {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1rem + 0.5vw, 1.45rem);
+  font-weight: 400;
+  line-height: 1.18;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+  color: var(--text);
+}
+
+.shelfmethod__d {
+  font-family: var(--font-reading);
+  font-size: 0.95rem;
+  line-height: 1.62;
+  color: var(--text-2);
+}
+
+.shelfnote {
+  max-width: 46rem;
+  margin: clamp(2.4rem, 5vw, 3.6rem) 0 clamp(3rem, 6vw, 4.5rem);
+  padding-top: clamp(1.2rem, 2.6vw, 1.8rem);
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-reading);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-2);
+}
+
+/* ---------- One book ---------- */
+
+.bookpage__by {
+  margin: 0 0 1.1rem;
+  padding: 0.75rem 0 0.8rem;
+  border-top: 1px solid var(--rule-dark);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-reading);
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+
+.bookpage__by .mono {
+  margin-right: 0.5em;
+  font-size: 0.66rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--thread-claim);
+}
+
+.studylist__sentence {
+  display: block;
+  margin: 0.3rem 0 0.15rem;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  line-height: 1.32;
+  text-wrap: pretty;
+  color: var(--thread-claim);
+}
+
+/* ============================================================
+   THE LOAD DIAGRAM — the signature.
+
+   A quotable sentence is a lintel: it looks like one solid piece, and it is
+   actually resting on numbered assumptions, some of which are cracked. The
+   diagram draws exactly that, from the study's own scorecard, so the picture
+   and the argument cannot drift apart. Every pier is a link to the
+   assumption it stands for.
+   ============================================================ */
+
+.load {
+  margin: clamp(1.8rem, 4vw, 2.8rem) 0 0;
+  padding: 0;
+}
+
+.load__cap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* The beam. Its underside is the datum every pier is measured from. */
+.load__lintel {
+  height: 0.62rem;
+  border: 1px solid var(--ink);
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent 0 3px,
+    color-mix(in oklab, var(--ink) 22%, transparent) 3px 4px
+  );
+}
+
+.load__piers {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pier {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: clamp(3.2rem, 7vw, 4.6rem);
+  padding-bottom: 0.32rem;
+  font-family: var(--font-ui);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  color: var(--accent-ink);
+  transition: height 0.16s var(--ease-out);
+}
+
+.pier--holds { background: var(--thread-steel); }
+.pier--partly { background: var(--thread-evidence); }
+
+/* A failed pier is hatched, the way a survey drawing marks a defect — so the
+   diagram still reads correctly in greyscale, and to anyone who cannot
+   separate the two colours. */
+.pier--fails {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      var(--thread-claim) 0 4px,
+      color-mix(in oklab, var(--thread-claim) 62%, var(--linen-2)) 4px 8px
+    );
+}
+
+.pier:hover,
+.pier:focus-visible,
+.pier.is-current { height: clamp(3.9rem, 8.4vw, 5.6rem); }
+
+.pier:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* The readout under the beam. It carries the tally until a pier is pointed
+   at, then the assumption that pier stands for — so the diagram explains
+   itself without a tooltip anyone on a touchscreen would never see. */
+.load__readout {
+  display: grid;
+  grid-template-columns: 3.1rem 1fr;
+  gap: 0.2rem 0.9rem;
+  min-height: 4.4rem;
+  margin-top: 0.75rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--rule);
+}
+
+.load__readout-n {
+  grid-row: span 2;
+  padding: 0.28rem 0;
+  border: 1px solid var(--rule-dark);
+  font-size: 0.66rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text);
+}
+
+.load__readout-t {
+  font-family: var(--font-reading);
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.load__readout-d {
+  font-family: var(--font-reading);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+.load__readout-v {
+  font-family: var(--font-ui);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.load__readout--idle { grid-template-columns: 1fr; }
+
+.grade-holds { color: var(--thread-steel); }
+.grade-partly { color: var(--thread-evidence); }
+.grade-fails { color: var(--thread-claim); }
+
+.load__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.3rem;
+  margin-top: 0.85rem;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.load__legend span { display: inline-flex; align-items: center; gap: 0.45rem; }
+
+.load__swatch {
+  width: 0.72rem;
+  height: 0.72rem;
+  border: 1px solid color-mix(in oklab, var(--ink) 34%, transparent);
+}
+
+.load__swatch--holds { background: var(--thread-steel); }
+.load__swatch--partly { background: var(--thread-evidence); }
+.load__swatch--fails {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--thread-claim) 0 3px,
+    color-mix(in oklab, var(--thread-claim) 62%, var(--linen-2)) 3px 6px
+  );
+}
+
+/* Below the beam's usable width the piers stop being readable as a drawing,
+   so the same rows are listed out in full instead of squeezed. Nothing is
+   hidden and nothing needs a hover to be understood. */
+.load__list {
+  display: none;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.load__row {
+  display: grid;
+  grid-template-columns: 2.1rem 1fr auto;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+}
+
+.load__row-n {
+  font-family: var(--font-ui);
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.load__row-t {
+  font-family: var(--font-reading);
+  font-size: 0.98rem;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.load__row-v {
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* The same object at index size: condition at a glance on a contents row,
+   with no readout and nothing to point at. */
+.loadstrip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 2px;
+  width: min(100%, 11rem);
+  margin-top: 0.5rem;
+}
+
+.loadstrip span { height: 0.5rem; }
+.loadstrip .pier--holds,
+.loadstrip .pier--partly,
+.loadstrip .pier--fails { height: 0.5rem; }
+
+@media (max-width: 640px) {
+  .load__beam,
+  .load__readout,
+  .load__legend { display: none; }
+  .load__list { display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pier { transition: none; }
+}
+
+/* ---------- The study reader ---------- */
+
+.study__sentence {
+  max-width: 34rem;
+  margin: clamp(1.4rem, 3vw, 2.1rem) 0 0;
+  padding: 0 0 0 clamp(1rem, 2.4vw, 1.6rem);
+  border-left: 3px solid var(--thread-claim);
+}
+
+.study__sentence p {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 1.1rem + 1.1vw, 2.05rem);
+  font-weight: 400;
+  line-height: 1.16;
+  letter-spacing: -0.012em;
+  text-wrap: pretty;
+  color: var(--text);
+}
+
+.study__sentence-2 {
+  font-size: clamp(1.05rem, 0.95rem + 0.45vw, 1.35rem) !important;
+  color: var(--text-2) !important;
+}
+
+.study__sentence cite {
+  display: block;
+  margin-top: 0.7rem;
+  font-family: var(--font-ui);
+  font-size: 0.64rem;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.study__sentence cite i { font-style: italic; }
+
+.study__toc-kids {
+  margin: 0.35rem 0 0.9rem;
+  padding: 0 0 0 1.55rem;
+  border-left: 1px solid var(--rule);
+  list-style: none;
+  display: grid;
+  gap: 0.08rem;
+}
+
+.study__toc-kid {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 0.45rem;
+  padding: 0.26rem 0;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  line-height: 1.42;
+  text-decoration: none;
+  color: var(--text-dim);
+  transition: color 0.18s var(--ease-out);
+}
+
+.study__toc-kid:hover { color: var(--text); }
+.study__toc-kid.is-active { font-weight: 600; color: var(--accent); }
+
+.study__toc-kidn {
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text-dim);
+}
+
+.study__toc-kid.is-active .study__toc-kidn { color: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .study__toc-kid { transition: none; }
+}
+
+/* ============================================================
+   The prose, skinned for the survey.
+
+   Same vocabulary the whole archive uses — the importer emits one set of
+   classes — but here each callout is marked the way a condition report marks
+   its own sections, and the three threads do the colouring.
+   ============================================================ */
+
+.books-room .prose .w-h2 {
+  border-bottom: 1px solid var(--rule-dark);
+  font-weight: 400;
+  letter-spacing: -0.022em;
+}
+
+/* The fleuron belongs to the library. A drawing closes a section with a
+   measured rule instead. */
+.books-room .prose .w-h2::before {
+  content: "";
+  inset: 0 auto auto 0;
+  top: 1.05em;
+  width: 2.6rem;
+  height: 1px;
+  background: var(--thread-claim);
+  opacity: 1;
+}
+
+/* The first chapter opens the study: there is nothing above it to close, and
+   it carries no top padding for the mark to sit in. Restated at a specificity
+   that beats the rule above regardless of which stylesheet loads first. */
+.books-room .prose .w-h2:first-child::before { content: none; }
+
+/* Folio marks become drawing callouts: boxed, mono, squared off. */
+.books-room .prose .w-num {
+  padding: 0.42em 0.7em 0.36em;
+  border: 1px solid var(--rule-dark);
+  font-family: var(--font-ui);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--thread-claim);
+}
+
+.books-room .prose .w-h3 { font-weight: 400; }
+
+.books-room .prose .w-box,
+.books-room .prose .w-table-scroll,
+.books-room .prose .w-stat,
+.books-room .prose .w-takeaways,
+.books-room .prose .w-verdict { border-radius: 0; }
+
+/* Each callout is a marked-up finding, so its edge says which of the three
+   threads it belongs to and its label is set in the instrument face. */
+.books-room .prose .w-box {
+  border-left: 3px solid var(--w-tone, var(--rule-dark));
+}
+
+.books-room .prose .w-box-label {
+  font-family: var(--font-ui);
+  font-size: 0.63em;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.books-room .prose .w-box--key { --w-tone: var(--thread-claim); }
+.books-room .prose .w-box--claim { --w-tone: var(--thread-steel); }
+.books-room .prose .w-box--remember { --w-tone: var(--thread-evidence); }
+/* A plain-language gloss is not one of the three threads and should not
+   pretend to be: it gets the neutral rule. */
+.books-room .prose .w-box--simple { --w-tone: var(--rule-dark); }
+
+/* "Where it cracks" is a defect, and carries the drawing's defect hatching
+   on its edge rather than a fourth colour. */
+.books-room .prose .w-box--worry {
+  --w-tone: var(--thread-claim);
+  border-left-color: transparent;
+  border-image: repeating-linear-gradient(
+    45deg,
+    var(--thread-claim) 0 4px,
+    color-mix(in oklab, var(--thread-claim) 55%, transparent) 4px 8px
+  ) 1;
+  border-width: 0 0 0 3px;
+}
+
+.books-room .prose .w-tone-fact { color: var(--thread-steel); }
+.books-room .prose .w-tone-interp { color: var(--thread-evidence); }
+.books-room .prose .w-tone-claim { color: var(--thread-claim); }
+
+.books-room .prose .w-stat-big {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--thread-claim);
+}
+
+.books-room .prose .w-pullquote {
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+
+.books-room .prose .w-dropcap {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--thread-claim);
+}
+
+.books-room .prose .w-h4 {
+  font-family: var(--font-ui);
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--thread-evidence);
+}
+
+.books-room .prose .w-table th {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}

@@ -26,6 +26,13 @@ import {
   isInProgress,
   getPieceForLanguage,
 } from '../src/data/writing.js';
+import {
+  books,
+  booksMeta,
+  booksTotals,
+  liveStudiesOf,
+  isOpen,
+} from '../src/data/books.js';
 
 const W = 1200;
 const H = 630;
@@ -319,6 +326,81 @@ ${more}
 </svg>`;
 }
 
+/**
+ * The shelf card for /books — the section, not a book.
+ *
+ * Same composition as the writing shelf, but each row is somebody else's book
+ * with its author under it, because that is the fact a reader needs first.
+ */
+function booksShelfCard() {
+  const p = PALETTES.site;
+  const LEFT = 62;
+  const COL = 660;
+  const LEFT_W = COL - LEFT - 40;
+  const ROWS = 4;
+
+  const shown = books.slice(0, ROWS);
+  const rest = books.length - shown.length;
+  const TOP = 150;
+
+  const t = fitLines(booksMeta.title, { max: 56, min: 34, maxW: LEFT_W, maxLines: 4 });
+  const leading = t.size * 1.06;
+  const titleTop = TOP + t.size * 0.92;
+
+  const titleLines = t.lines
+    .map((l, i) => `<text class="r" x="${LEFT}" y="${(titleTop + i * leading).toFixed(0)}" fill="${p.paper}" font-size="${t.size}" font-weight="600" letter-spacing="-${(t.size * 0.024).toFixed(1)}">${esc(l)}</text>`)
+    .join('\n  ');
+
+  const ruleY = titleTop + (t.lines.length - 1) * leading + 40;
+  const leadY = ruleY + 44;
+  const leadLines = clampLines(booksMeta.lead, 22, LEFT_W, 3)
+    .map((l, i) => `<text class="s" x="${LEFT}" y="${(leadY + i * 31).toFixed(0)}" fill="${p.sub}" font-size="22" font-weight="400">${esc(l)}</text>`)
+    .join('\n  ');
+
+  const rowH = 74;
+  const listTop = TOP + 56;
+  const rows = shown
+    .map((book, i) => {
+      const tone = (PALETTES[book.accent] ?? PALETTES.harvest).accent;
+      const y = listTop + i * rowH;
+      const name = clampLines(book.title, 27, 380, 1)[0];
+      const size = isOpen(book)
+        ? `${book.author} · ${liveStudiesOf(book)} of ${book.studies} studies`
+        : `${book.author} · ${book.studies} ${book.studies === 1 ? 'study' : 'studies'}`;
+      return `  <rect x="${COL}" y="${y - 20}" width="4" height="26" fill="${tone}"/>
+  <text class="r" x="${COL + 20}" y="${y}" fill="${p.paper}" font-size="27" font-weight="600" letter-spacing="-0.4">${esc(name)}</text>
+  <text class="s" x="${COL + 20}" y="${y + 27}" fill="${p.foot}" font-size="15" font-weight="500" letter-spacing="0.7">${esc(clampLines(size, 15, 470, 1)[0])}</text>`;
+    })
+    .join('\n');
+
+  const more = rest > 0
+    ? `  <text class="s" x="${COL + 20}" y="${listTop + shown.length * rowH}" fill="${p.accent}" font-size="16" font-weight="600" letter-spacing="1">+ ${rest} more</text>`
+    : '';
+
+  const badge = `${booksTotals.studies} ${booksTotals.studies === 1 ? 'STUDY' : 'STUDIES'} · ${booksTotals.axioms} AXIOMS GRADED`;
+  const badgeW = labelWidth(badge, 17, 1.2) + 34;
+
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Books, taken apart — close readings by Lovepreet Singh</title>
+${frame(p)}
+  <text class="s" x="${LEFT}" y="${TOP}" fill="${p.accent}" font-size="18" font-weight="600" letter-spacing="3.2">${esc(`${booksMeta.index} · ${booksMeta.label}`.toUpperCase())}</text>
+  ${titleLines}
+  <rect x="${LEFT}" y="${ruleY.toFixed(0)}" width="72" height="3" rx="1.5" fill="${p.accent}"/>
+  ${leadLines}
+
+  <text class="s" x="${COL}" y="${TOP}" fill="${p.foot}" font-size="16" font-weight="600" letter-spacing="2.5">ON THE SHELF</text>
+  <line x1="${COL}" y1="${TOP + 18}" x2="${W - 62}" y2="${TOP + 18}" stroke="${p.rule}" stroke-width="1"/>
+${rows}
+${more}
+
+  <g transform="translate(${LEFT}, ${H - 88})">
+    <rect x="0" y="0" width="${badgeW.toFixed(0)}" height="34" rx="1" fill="${p.accent}"/>
+    <text class="s" x="17" y="23" fill="${p.ink}" font-size="17" font-weight="700" letter-spacing="1.2">${esc(badge)}</text>
+    <text class="s" x="${(badgeW + 24).toFixed(0)}" y="22" fill="${p.foot}" font-size="17" font-weight="500">Close readings by Lovepreet Singh</text>
+  </g>
+</svg>`;
+}
+
 const renderedCards = [];
 const expectedFiles = new Set();
 
@@ -474,6 +556,65 @@ for (const piece of pieces) {
           byline: 'Lovepreet Singh · misterlove.in',
           accent: edition.accent,
           language,
+        }),
+        file
+      );
+      console.log(`${relative(ROOT, file).padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
+      total += r.kb;
+    }
+  }
+}
+
+/* ---- The shelf at /books ------------------------------------------------
+   Books cards are namespaced `books-…` so a book and a research piece can
+   share a slug without their cards colliding. render() would catch a collision
+   anyway; the prefix means it never happens. */
+if (!hindiOnly) {
+  const shelfFile = `${OUT}/books.png`;
+  let r = render(booksShelfCard(), shelfFile);
+  console.log(`${relative(ROOT, shelfFile).padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
+  total += r.kb;
+
+  for (const book of books) {
+    registerSlug(book.slug, book.title);
+    const studies = (await book.load()).default;
+    if (liveStudiesOf(book) !== studies.length) {
+      throw new Error(`${book.title} declares ${liveStudiesOf(book)} live studies but loads ${studies.length}`);
+    }
+    validateParts(studies, book.title);
+
+    // The book card — used by /books and as the book-level fallback.
+    const bookFile = `${OUT}/books-${book.slug}.png`;
+    r = render(
+      card({
+        kicker: `${book.kicker} · ${book.author}`,
+        title: book.title,
+        sub: book.subtitle,
+        standfirst: book.standfirst,
+        badge: isOpen(book)
+          ? `${studies.length} OF ${book.studies} STUDIES LIVE`
+          : `${book.studies} ${book.studies === 1 ? 'STUDY' : 'STUDIES'}`,
+        byline: 'Taken apart by Lovepreet Singh',
+        accent: book.accent,
+      }),
+      bookFile
+    );
+    console.log(`${relative(ROOT, bookFile).padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
+    total += r.kb;
+
+    for (const study of studies) {
+      // The card leads with the sentence under the knife rather than the
+      // study's own title — that line is what anyone sharing this recognises.
+      const file = `${OUT}/books-${book.slug}-${study.slug}.png`;
+      r = render(
+        card({
+          kicker: `${book.title} · ${study.label} · ${study.axioms} hidden axioms`,
+          title: `“${study.sentence}”`,
+          sub: `${study.title} — ${book.author} taken apart`,
+          standfirst: study.lead,
+          badge: `${study.minutes} MIN READ`,
+          byline: 'Lovepreet Singh · misterlove.in',
+          accent: book.accent,
         }),
         file
       );

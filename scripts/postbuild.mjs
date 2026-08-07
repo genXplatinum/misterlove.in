@@ -17,6 +17,14 @@ import {
   publishedOf,
   writingPathOf,
 } from '../src/data/writing.js';
+import {
+  books,
+  booksMeta,
+  booksTotals,
+  studiesOf,
+  liveStudiesOf,
+  isOpen,
+} from '../src/data/books.js';
 
 const SITE = 'https://misterlove.in';
 const today = new Date().toISOString().slice(0, 10);
@@ -42,14 +50,29 @@ for (const piece of pieces) {
   }
 }
 
+/* The shelf at /books. Same rule as above: what is written, never what is
+   announced — a book here plans three studies and has published one. */
+const shelved = [];
+for (const book of books) {
+  const studies = (await book.load()).default;
+  if (liveStudiesOf(book) !== studies.length) {
+    throw new Error(`${book.title} declares ${liveStudiesOf(book)} live studies but loads ${studies.length}`);
+  }
+  shelved.push({ book, studies });
+}
+
 /* The HTML below promises a route-specific social image. Fail the build before
    deployment if generation was skipped, a filename drifted, or a card has the
    wrong dimensions. PNG stores width and height in the IHDR header. */
-const expectedOgCards = new Set(['writing.png']);
+const expectedOgCards = new Set(['writing.png', 'books.png']);
 for (const { piece, parts } of editions) {
   const imageSlug = piece.ogSlug ?? piece.slug;
   expectedOgCards.add(`${imageSlug}.png`);
   for (const part of parts) expectedOgCards.add(`${imageSlug}-part-${part.n}.png`);
+}
+for (const { book, studies } of shelved) {
+  expectedOgCards.add(`books-${book.slug}.png`);
+  for (const study of studies) expectedOgCards.add(`books-${book.slug}-${study.slug}.png`);
 }
 
 const ogErrors = [];
@@ -125,7 +148,43 @@ const urls = [
       title: 'Writing — long-form research by Lovepreet Singh',
     },
   }),
+  url({
+    loc: `${SITE}/books/`,
+    lastmod: today,
+    changefreq: 'monthly',
+    priority: '0.9',
+    image: {
+      loc: `${SITE}/og/books.png`,
+      title: 'Books, taken apart — close readings by Lovepreet Singh',
+    },
+  }),
 ];
+
+for (const { book, studies } of shelved) {
+  urls.push(
+    url({
+      loc: `${SITE}/books/${book.slug}/`,
+      lastmod: studies.at(-1)?.published ?? book.published,
+      changefreq: 'monthly',
+      priority: '0.8',
+      image: {
+        loc: `${SITE}/og/books-${book.slug}.png`,
+        title: `${book.title} by ${book.author}, taken apart`.replace(/&/g, '&amp;'),
+      },
+    })
+  );
+
+  for (const study of studies) {
+    urls.push(
+      url({
+        loc: `${SITE}/books/${book.slug}/${study.slug}/`,
+        lastmod: study.published,
+        changefreq: 'yearly',
+        priority: '0.7',
+      })
+    );
+  }
+}
 
 for (const { piece, parts } of editions) {
   const base = writingPathOf(piece);
@@ -196,7 +255,11 @@ const cssFor = (name) => {
   const hit = readdirSync('dist/assets').find((f) => f.startsWith(`${name}-`) && f.endsWith('.css'));
   return hit ? `  <link rel="stylesheet" href="/assets/${hit}" />` : '';
 };
-const ROUTE_CSS = { article: cssFor('Article'), writing: cssFor('Writing') };
+const ROUTE_CSS = {
+  article: cssFor('Article'),
+  writing: cssFor('Writing'),
+  books: cssFor('Books'),
+};
 
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -356,6 +419,127 @@ function shelfBody(loaded) {
 </div></div></main>`;
 }
 
+/* ---- Static bodies for the shelf at /books ---- */
+
+/* The room's ground, set before first paint so a phone's browser chrome does
+   not flash the library's cream on the way in. */
+const BOOKS_GROUND = { light: '#E8E6DE', dark: '#15191A' };
+
+const gradeCount = (scorecard, grade) => scorecard.filter((r) => r.grade === grade).length;
+
+const loadStrip = (scorecard) => `<span class="loadstrip" role="img" aria-label="${
+  scorecard.length} assumptions: ${gradeCount(scorecard, 'holds')} hold, ${
+  gradeCount(scorecard, 'partly')} partly, ${gradeCount(scorecard, 'fails')} fail">${scorecard
+  .map((r) => `<span class="pier pier--${r.grade}"></span>`)
+  .join('')}</span>`;
+
+/* The static form of the load diagram. The beam is drawn for anyone who gets
+   the CSS, and the full list underneath carries the same information as text
+   — so a crawler, a reader with no JavaScript and a screen reader all get the
+   scorecard rather than a picture they cannot use. */
+function loadDiagram(study, book) {
+  const s = study.scorecard;
+  // Condition words, so the tally reads correctly at a count of one.
+  const summary = [
+    [gradeCount(s, 'holds'), 'sound'],
+    [gradeCount(s, 'partly'), 'partial'],
+    [gradeCount(s, 'fails'), 'failed'],
+  ].filter(([n]) => n > 0).map(([n, g]) => `${n} ${g}`).join(' · ');
+
+  return `<figure class="load">
+    <figcaption class="load__cap mono"><span>${esc(`Load test — ${book.title}, ${study.label}`)}</span><span>${s.length} assumptions · ${summary}</span></figcaption>
+    <div class="load__beam">
+      <div class="load__lintel" role="img" aria-label="The sentence: ${esc(study.sentence)}"></div>
+      <ol class="load__piers">${s
+        .map((r) => `<li><a class="pier pier--${r.grade}" href="#${r.href}"><span aria-hidden="true">${String(r.n).padStart(2, '0')}</span><span class="sr-only">Assumption ${r.n}: ${esc(r.axiom)} — ${esc(r.verdict)}</span></a></li>`)
+        .join('')}</ol>
+      <div class="load__legend mono">
+        <span><i class="load__swatch load__swatch--holds"></i>Holds</span>
+        <span><i class="load__swatch load__swatch--partly"></i>Partly, or contested</span>
+        <span><i class="load__swatch load__swatch--fails"></i>Fails</span>
+      </div>
+    </div>
+    <ol class="load__list">${s
+      .map((r) => `<li><a class="load__row" href="#${r.href}"><span class="load__row-n">${String(r.n).padStart(2, '0')}</span><span class="load__row-t">${esc(r.axiom)}</span><span class="load__row-v grade-${r.grade}">${esc(r.verdict)}</span></a></li>`)
+      .join('')}</ol>
+  </figure>`;
+}
+
+function booksShelfBody(shelved) {
+  return `<main id="main"><div class="writingpage bookspage"><div class="container">
+  <h1 class="writingpage__title">${esc(booksMeta.title)}</h1>
+  <p class="writingpage__lead">${esc(booksMeta.lead)}</p>
+  <p class="mono">${booksTotals.books} ${booksTotals.books === 1 ? 'book' : 'books'} · ${booksTotals.studies} ${booksTotals.studies === 1 ? 'study' : 'studies'} · ${booksTotals.axioms} axioms graded</p>
+  <ol class="shelfmethod__steps">${booksMeta.method
+    .map((step) => `<li><span class="mono shelfmethod__n">${esc(step.n)}</span><span class="shelfmethod__t">${esc(step.t)}</span><span class="shelfmethod__d">${esc(step.d)}</span></li>`)
+    .join('')}</ol>
+  <ul class="topics">${shelved
+    .map(({ book, studies }) => `<li class="topic shelfbook"><a class="topic__link" href="/books/${book.slug}/"><span class="topic__body"><span class="mono topic__topic">${esc(book.topic)}</span><span class="topic__title">${esc(book.title)} — ${esc(book.author)}</span><span class="topic__stand">${esc(book.standfirst)}</span><span class="topic__meta mono">${isOpen(book) ? `${studies.length} of ${book.studies} studies` : `${book.studies} ${book.studies === 1 ? 'study' : 'studies'}`} · ${book.axioms} axioms graded · ${esc(book.displayDate)}</span></span></a><ol>${studies
+      .map((s) => `<li><a href="/books/${book.slug}/${s.slug}/">${esc(s.title)} — “${esc(s.sentence)}”</a></li>`)
+      .join('')}</ol></li>`)
+    .join('')}</ul>
+</div></div></main>`;
+}
+
+function bookBody(book, studies) {
+  const contents = studiesOf(book, studies);
+  return `<main id="main"><div class="topicpage bookpage"><div class="container">
+  ${crumbs([{ name: 'Books', href: '/books/' }, { name: book.title }])}
+  <h1 class="topic__title">${esc(book.title)} — ${esc(book.subtitle)}, taken apart</h1>
+  <p class="bookpage__by">The book: ${esc(book.title)} — ${esc(book.subtitle)}, by ${esc(book.author)}. ${esc(book.bookNote)}.</p>
+  <p class="topicpage__stand">${esc(book.standfirst)}</p>
+  <p class="topicpage__summary">${esc(book.summary)}</p>
+  <p class="mono">${isOpen(book) ? `${studies.length} / ${book.studies} studies published` : `${book.studies} ${book.studies === 1 ? 'study' : 'studies'}`} · ${book.axioms} axioms graded · ${esc(book.displayDate)} · by Lovepreet Singh</p>
+  <h2>The studies</h2>
+  <ol class="feature__parts studylist">${contents
+    .map((s) => {
+      const row = `<span class="partrow__n mono">${String(s.n).padStart(2, '0')}</span><span class="partrow__body"><span class="partrow__label mono">${esc(s.label)}</span><span class="partrow__title">${esc(s.title)}</span>${s.sentence ? `<span class="studylist__sentence">“${esc(s.sentence)}”</span>` : ''}<span class="partrow__lead">${esc(s.lead)}</span>${s.scorecard ? loadStrip(s.scorecard) : ''}</span><span class="partrow__meta mono">${s.live ? `${s.minutes} min` : 'In preparation'}</span>`;
+      return `<li>${s.live
+        ? `<a class="partrow" href="/books/${book.slug}/${s.slug}/">${row}</a>`
+        : `<span class="partrow partrow--soon">${row}</span>`}</li>`;
+    })
+    .join('')}</ol>
+</div></div></main>`;
+}
+
+function studyBody(book, study, studies) {
+  const contents = studiesOf(book, studies);
+  const next = contents.find((s) => s.n === study.n + 1);
+  const prev = contents.find((s) => s.n === study.n - 1 && s.live);
+  const download = study.pdf
+    ? `<p><a class="btn btn--ghost" href="/${study.pdf}" download>Download ${esc(study.pdfLabel ?? 'the PDF')} (${esc(study.pdfSize)})</a></p>`
+    : '';
+
+  return `<main id="main"><article class="article study">
+  <header class="article__head"><div class="container">
+    ${crumbs([
+      { name: 'Books', href: '/books/' },
+      { name: book.title, href: `/books/${book.slug}/` },
+      { name: study.title },
+    ])}
+    <div class="article__head-grid"><div class="article__head-main">
+      <span class="article__partno mono">Study ${String(study.n).padStart(2, '0')} <span class="dim">of ${book.studies}</span><span class="article__partlabel">${esc(study.label)}</span></span>
+      <h1 class="article__title">${esc(study.title)}</h1>
+      <p class="article__standfirst">${esc(study.subtitle)}</p>
+      <blockquote class="study__sentence"><p>“${esc(study.sentence)}”</p>${study.secondary ? `<p class="study__sentence-2">“${esc(study.secondary)}”</p>` : ''}<cite class="mono">${esc(book.author)}, <i>${esc(book.title)}</i> — ${esc(study.source)}</cite></blockquote>
+    </div></div>
+    ${study.scorecard ? loadDiagram(study, book) : ''}
+  </div></header>
+  <div class="container"><div class="article__body"><div class="article__col">
+    ${study.prologue ? `<section class="article__prologue">${study.prologueTitle ? `<h2 class="article__prologue-head">${esc(study.prologueTitle)}</h2>` : ''}<div class="prose">${study.prologue}</div></section>` : ''}
+    <div class="prose">${study.html}</div>
+    ${study.sources ? `<section class="article__sources" open><p class="mono">Glossary, timeline and sources</p><div class="prose prose--sources">${study.sources}</div></section>` : ''}
+    ${download}
+    <nav class="article__pager" aria-label="Studies on this book">
+      ${prev ? `<a class="article__pager-link article__pager-link--prev" href="/books/${book.slug}/${prev.slug}/"><span class="mono">← Study ${String(prev.n).padStart(2, '0')}</span></a>` : '<span></span>'}
+      ${next?.live
+        ? `<a class="article__pager-link article__pager-link--next" href="/books/${book.slug}/${next.slug}/"><span class="mono">Study ${String(next.n).padStart(2, '0')} →</span></a>`
+        : `<a class="article__pager-link article__pager-link--next" href="${next ? `/books/${book.slug}/` : '/books/'}"><span class="mono">${next ? 'That’s all so far →' : 'Back to the shelf →'}</span></a>`}
+    </nav>
+  </div></div></div>
+</article></main>`;
+}
+
 function shell({
   path,
   title,
@@ -373,6 +557,8 @@ function shell({
   language = 'en',
   locale = 'en_US',
   alternates = [],
+  bodyClass,
+  themeColor,
 }) {
   let html = template
     .replace(/<html lang="[^"]*"/, `<html lang="${language}"`)
@@ -450,6 +636,20 @@ function shell({
     /<noscript>\s*<h1>[\s\S]*?<\/noscript>/,
     `<noscript>\n${noscript}\n    </noscript>`
   );
+
+  /* A section that declares its own room needs the class before first paint,
+     or the shell renders in the library's cream and repaints when React
+     mounts. Same reason the reader sets its theme in the head. */
+  if (bodyClass) html = html.replace('<body>', `<body class="${bodyClass}">`);
+  if (themeColor) {
+    html = html.replace(
+      /(<meta name="theme-color" content=")[^"]*(")/,
+      `$1${themeColor.light}$2`
+    ).replace(
+      /(document\.querySelector\('meta\[name="theme-color"\]'\)\.setAttribute\('content', ')[^']*(')/,
+      `$1${themeColor.dark}$2`
+    );
+  }
 
   // Ship the real content inside #root. React replaces it on mount.
   if (body) html = html.replace('<div id="root"></div>', `<div id="root">${body}</div>`);
@@ -670,6 +870,172 @@ for (const { piece, parts } of editions) {
   }
 }
 
+/* ---- /books — the shelf of other people's books. -------------------------
+   A different content type from /writing, and it says so in its structured
+   data: each study is a Review whose itemReviewed is the book, not a part of
+   a series of mine. That is what it actually is, and it is what lets a search
+   engine show it against the book rather than against me. */
+shell({
+  path: '/books',
+  title: 'Books, taken apart — close readings by Lovepreet Singh',
+  description:
+    'Famous books read one sentence at a time. The most quoted line gets pulled out, '
+    + 'its hidden axioms named and graded, the argument steelmanned before it is attacked.',
+  canonical: `${SITE}/books/`,
+  keywords: `close reading, book criticism, hidden axioms, steelman, ${books.map((b) => `${b.title} ${b.author}`).join(', ')}, Lovepreet Singh`,
+  image: `${SITE}/og/books.png`,
+  imageAlt: `Books, taken apart — ${booksTotals.books} ${booksTotals.books === 1 ? 'book' : 'books'}, ${booksTotals.studies} single-sentence ${booksTotals.studies === 1 ? 'study' : 'studies'}, ${booksTotals.axioms} axioms graded.`,
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Books, taken apart — Lovepreet Singh',
+    url: `${SITE}/books/`,
+    author: { '@id': `${SITE}/#lovepreet-singh` },
+    hasPart: books.map((b) => ({
+      '@type': 'Book',
+      name: `${b.title}: ${b.subtitle}`,
+      author: { '@type': 'Person', name: b.author },
+      url: `${SITE}/books/${b.slug}/`,
+      abstract: b.standfirst,
+    })),
+  },
+  body: booksShelfBody(shelved),
+  css: [ROUTE_CSS.writing, ROUTE_CSS.books],
+  bodyClass: 'books-room',
+  themeColor: BOOKS_GROUND,
+  noscript:
+    '      <p><strong>Books, taken apart — Lovepreet Singh</strong></p>\n'
+    + shelved
+      .map(({ book, studies }) =>
+        `      <h2><a href="/books/${book.slug}/">${esc(book.title)} — ${esc(book.author)}</a></h2>\n`
+        + `      <p>${esc(book.standfirst)}</p>\n`
+        + `      <ul>\n${studies
+          .map((s) => `        <li><a href="/books/${book.slug}/${s.slug}/">${esc(s.title)}: “${esc(s.sentence)}”</a></li>`)
+          .join('\n')}\n      </ul>`
+      )
+      .join('\n'),
+});
+shells += 1;
+
+for (const { book, studies } of shelved) {
+  const bookUrl = `${SITE}/books/${book.slug}/`;
+  shell({
+    path: `/books/${book.slug}`,
+    title: `${book.title} by ${book.author}, taken apart | Lovepreet Singh`,
+    description: book.standfirst,
+    canonical: bookUrl,
+    keywords: [book.title, book.author, ...book.keywords, 'Lovepreet Singh'].join(', '),
+    image: `${SITE}/og/books-${book.slug}.png`,
+    imageAlt: `${book.title} by ${book.author}, taken apart sentence by sentence. Close readings by Lovepreet Singh.`,
+    body: bookBody(book, studies),
+    css: [ROUTE_CSS.writing, ROUTE_CSS.books],
+    bodyClass: 'books-room',
+    themeColor: BOOKS_GROUND,
+    jsonLd: [{
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Books', item: `${SITE}/books/` },
+        { '@type': 'ListItem', position: 2, name: book.title, item: bookUrl },
+      ],
+    }, {
+      '@context': 'https://schema.org',
+      '@type': 'Book',
+      name: `${book.title}: ${book.subtitle}`,
+      author: { '@type': 'Person', name: book.author },
+      datePublished: book.bookYear,
+      url: bookUrl,
+      review: studies.map((s) => ({
+        '@type': 'Review',
+        name: s.title,
+        url: `${SITE}/books/${book.slug}/${s.slug}/`,
+        datePublished: s.published,
+        reviewBody: s.lead,
+        author: { '@id': `${SITE}/#lovepreet-singh` },
+      })),
+    }],
+    noscript:
+      `      <p><strong>${esc(book.title)} — ${esc(book.subtitle)}, by ${esc(book.author)}</strong></p>\n`
+      + `      <p>${esc(book.standfirst)}</p>\n`
+      + `      <p>${esc(book.summary)}</p>\n`
+      + `      <h2>The studies</h2>\n      <ul>\n${studiesOf(book, studies)
+        .map((s) => (s.live
+          ? `        <li><a href="/books/${book.slug}/${s.slug}/">${esc(s.title)}: “${esc(s.sentence)}”</a></li>`
+          : `        <li>${esc(s.title)}: “${esc(s.sentence)}” (In preparation)</li>`))
+        .join('\n')}\n      </ul>`,
+  });
+  shells += 1;
+
+  for (const study of studies) {
+    const canonical = `${SITE}/books/${book.slug}/${study.slug}/`;
+    shell({
+      path: `/books/${book.slug}/${study.slug}`,
+      title: `${study.title} — ${book.title} taken apart | Lovepreet Singh`,
+      description: study.lead,
+      canonical,
+      keywords: [
+        study.title, study.sentence, book.title, book.author,
+        'hidden axioms', 'steelman', ...book.keywords, 'Lovepreet Singh',
+      ].join(', '),
+      image: `${SITE}/og/books-${book.slug}-${study.slug}.png`,
+      imageAlt: `${study.title} — ${study.subtitle}. A study of one sentence from ${book.title} by ${book.author}, by Lovepreet Singh.`,
+      body: studyBody(book, study, studies),
+      css: [ROUTE_CSS.article, ROUTE_CSS.writing, ROUTE_CSS.books],
+      bodyClass: 'books-room',
+      themeColor: BOOKS_GROUND,
+      theme: 'light',
+      extraMeta: {
+        'article:published_time': `${study.published}T00:00:00+05:30`,
+        'article:modified_time': `${study.published}T00:00:00+05:30`,
+        'article:author': 'Lovepreet Singh',
+        'article:section': book.title,
+        'article:tag': book.keywords.slice(0, 6).join(', '),
+      },
+      jsonLd: [{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Books', item: `${SITE}/books/` },
+          { '@type': 'ListItem', position: 2, name: book.title, item: bookUrl },
+          { '@type': 'ListItem', position: 3, name: study.title, item: canonical },
+        ],
+      }, {
+        '@context': 'https://schema.org',
+        '@type': 'Review',
+        headline: `${study.title} — ${study.subtitle}`,
+        name: study.title,
+        description: study.lead,
+        url: canonical,
+        mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+        datePublished: study.published,
+        inLanguage: 'en',
+        wordCount: study.words,
+        reviewBody: study.lead,
+        itemReviewed: {
+          '@type': 'Book',
+          name: `${book.title}: ${book.subtitle}`,
+          author: { '@type': 'Person', name: book.author },
+          datePublished: book.bookYear,
+        },
+        author: { '@type': 'Person', '@id': `${SITE}/#lovepreet-singh`, name: 'Lovepreet Singh' },
+        publisher: { '@id': `${SITE}/#lovepreet-singh` },
+        about: book.topic.split(' · ').map((t) => ({ '@type': 'Thing', name: t })),
+        isAccessibleForFree: true,
+      }],
+      noscript:
+        `      <p><strong>${esc(study.title)} — ${esc(study.subtitle)}</strong></p>\n`
+        + `      <p>The sentence under the knife: “${esc(study.sentence)}” — ${esc(book.author)}, ${esc(study.source)}.</p>\n`
+        + `      <p>${esc(study.lead)}</p>\n`
+        + `      <h2>In this study</h2>\n      <ul>\n${study.toc
+          .map((t) => `        <li>${esc(t.text)}</li>`)
+          .join('\n')}\n      </ul>\n`
+        + `      <p>${esc(stripTags(study.html).slice(0, 900))}…</p>\n`
+        + `      <p><a href="${canonical}">Read the full study</a></p>`,
+    });
+    shells += 1;
+  }
+}
+
 /* ---- Retired routes ------------------------------------------------------
    A piece that has been withdrawn or renamed still has its old URL in feeds,
    in search results and in whatever anyone shared. GitHub Pages cannot issue a
@@ -710,8 +1076,9 @@ for (const [from, to] of Object.entries(RETIRED)) {
    into every part alongside the sitemap. */
 const rssDate = (d) => new Date(`${d}T00:00:00+05:30`).toUTCString();
 
-const items = loaded.flatMap(({ piece, parts }) =>
-  parts.map((part) => `    <item>
+const items = [
+  ...loaded.flatMap(({ piece, parts }) =>
+    parts.map((part) => `    <item>
       <title>${esc(`${piece.title} — Part ${part.n}: ${part.title}`)}</title>
       <link>${SITE}/writing/${piece.slug}/part-${part.n}/</link>
       <guid isPermaLink="true">${SITE}/writing/${piece.slug}/part-${part.n}/</guid>
@@ -719,7 +1086,19 @@ const items = loaded.flatMap(({ piece, parts }) =>
       <category>${esc(piece.topic.split(' · ')[0])}</category>
       <description>${esc(part.lead || piece.standfirst)}</description>
     </item>`)
-);
+  ),
+  // The shelf feeds the same channel: one archive, one thing to subscribe to.
+  ...shelved.flatMap(({ book, studies }) =>
+    studies.map((study) => `    <item>
+      <title>${esc(`${book.title} taken apart — ${study.title}`)}</title>
+      <link>${SITE}/books/${book.slug}/${study.slug}/</link>
+      <guid isPermaLink="true">${SITE}/books/${book.slug}/${study.slug}/</guid>
+      <pubDate>${rssDate(study.published)}</pubDate>
+      <category>Books</category>
+      <description>${esc(`“${study.sentence}” — ${book.author}. ${study.lead}`)}</description>
+    </item>`)
+  ),
+];
 
 writeFileSync(
   'dist/feed.xml',
