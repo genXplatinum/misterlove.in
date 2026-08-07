@@ -111,6 +111,33 @@ const BOOKS = [
     title: 'Punjab: The Whole Truth',
     subject: 'Five thousand years of history, one honest look — from the first farmers to the Khalistan question.',
   },
+  {
+    slug: 'congress-record',
+    dir: 'C:/Users/rajpa/Documents/books/Congress Files',
+    parts: [
+      'The_Congress_Record_Part_1_How_to_Judge_a_Government.pdf',
+      'The_Congress_Record_Part_2_The_Inheritance.pdf',
+      'The_Congress_Record_Part_3_The_Constitution_Amended.pdf',
+      'The_Congress_Record_Part_4_The_Economic_Model.pdf',
+      'The_Congress_Record_Part_5_The_Map_of_Who_Got_What.pdf',
+      'The_Congress_Record_Part_6_China_Tibet_and_1962.pdf',
+      'The_Congress_Record_Part_7_Pakistan_Kashmir_and_the_Wars.pdf',
+      'The_Congress_Record_Part_8_Indira_Rising.pdf',
+      'The_Congress_Record_Part_9_The_Emergency.pdf',
+      'The_Congress_Record_Part_10_Punjab.pdf',
+      'The_Congress_Record_Part_11_November_1984.pdf',
+      'The_Congress_Record_Part_12_Rajiv_Gandhi.pdf',
+      'The_Congress_Record_Part_13_The_Other_India.pdf',
+      'The_Congress_Record_Part_14_Reform_and_Demolition.pdf',
+      'The_Congress_Record_Part_15_UPA_I.pdf',
+      'The_Congress_Record_Part_16_UPA_II.pdf',
+      'The_Congress_Record_Part_17_What_Was_Said.pdf',
+      'The_Congress_Record_Part_18_The_Comparison.pdf',
+      'The_Congress_Record_Part_19_The_Honest_List.pdf',
+    ],
+    title: 'The Congress Record',
+    subject: 'A nineteen-part audit of what Congress governments did with power in India, 1947 to the present.',
+  },
 ];
 
 const only = process.argv[2];

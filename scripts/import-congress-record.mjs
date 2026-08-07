@@ -132,6 +132,24 @@ const PARTS = [
     file: 'part-16-upa-ii.html',
     pdf: 'The_Congress_Record_Part_16_UPA_II.pdf',
   },
+  {
+    n: 17,
+    label: 'What Was Said',
+    file: 'part-17-what-was-said.html',
+    pdf: 'The_Congress_Record_Part_17_What_Was_Said.pdf',
+  },
+  {
+    n: 18,
+    label: 'The Comparison',
+    file: 'part-18-the-comparison.html',
+    pdf: 'The_Congress_Record_Part_18_The_Comparison.pdf',
+  },
+  {
+    n: 19,
+    label: 'The Verdict',
+    file: 'part-19-the-honest-list.html',
+    pdf: 'The_Congress_Record_Part_19_The_Honest_List.pdf',
+  },
 ];
 
 const PUBLISHED = '2026-08-07';
