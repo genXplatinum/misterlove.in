@@ -67,6 +67,7 @@ function AppFrame({ isHome, resetKey }) {
               <Route path="/books" element={<Books />} />
               <Route path="/books/:book" element={<Book />} />
               <Route path="/books/:book/:study" element={<Study />} />
+              <Route path="/hi/books/:book/:study" element={<Study />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>

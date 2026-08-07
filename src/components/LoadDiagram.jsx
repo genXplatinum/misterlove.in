@@ -15,11 +15,26 @@ import { useMemo, useState } from 'react';
  */
 
 /* Condition words rather than verbs: "5 sound · 5 partial · 1 failed" reads
-   correctly at every count, where "1 holds / 5 holds" does not. */
-const CONDITION = {
-  holds: 'sound',
-  partly: 'partial',
-  fails: 'failed',
+   correctly at every count, where "1 holds / 5 holds" does not. The drawing is
+   the first argument the page makes, so it is translated with the prose rather
+   than left in English above a Hindi study. */
+const COPY = {
+  en: {
+    condition: { holds: 'sound', partly: 'partial', fails: 'failed' },
+    assumptions: (n) => `${n} assumptions`,
+    assumption: (n) => `Assumption ${n}`,
+    sentence: (s) => `The sentence: ${s}`,
+    idle: 'Point at a pier to read the assumption it stands for, or open it to jump to the chapter where it is argued.',
+    legend: { holds: 'Holds', partly: 'Partly, or contested', fails: 'Fails' },
+  },
+  hi: {
+    condition: { holds: 'टिकीं', partly: 'आंशिक', fails: 'नाकाम' },
+    assumptions: (n) => `${n} मान्यताएँ`,
+    assumption: (n) => `मान्यता ${n}`,
+    sentence: (s) => `वाक्य: ${s}`,
+    idle: 'किसी खंभे पर इशारा कीजिए और वह मान्यता पढ़िए जिस पर वह टिका है, या उसे खोलकर उस अध्याय पर जाइए जहाँ उस पर बहस है।',
+    legend: { holds: 'टिकती है', partly: 'आंशिक, या विवादित', fails: 'नाकाम' },
+  },
 };
 
 const ORDER = ['holds', 'partly', 'fails'];
@@ -40,24 +55,25 @@ export function LoadStrip({ scorecard, label }) {
   );
 }
 
-export default function LoadDiagram({ scorecard, sentence, caption }) {
+export default function LoadDiagram({ scorecard, sentence, caption, language = 'en' }) {
   const [active, setActive] = useState(null);
   const tally = useMemo(() => tallyOf(scorecard ?? []), [scorecard]);
+  const copy = COPY[language] ?? COPY.en;
 
   if (!scorecard?.length) return null;
 
   const row = scorecard.find((entry) => entry.n === active);
-  const summary = tally.map(({ grade, n }) => `${n} ${CONDITION[grade]}`).join(' · ');
+  const summary = tally.map(({ grade, n }) => `${n} ${copy.condition[grade]}`).join(' · ');
 
   return (
     <figure className="load">
       <figcaption className="load__cap mono">
         <span>{caption}</span>
-        <span>{scorecard.length} assumptions · {summary}</span>
+        <span>{copy.assumptions(scorecard.length)} · {summary}</span>
       </figcaption>
 
       <div className="load__beam">
-        <div className="load__lintel" role="img" aria-label={`The sentence: ${sentence}`} />
+        <div className="load__lintel" role="img" aria-label={copy.sentence(sentence)} />
 
         <ol className="load__piers">
           {scorecard.map((entry) => (
@@ -72,7 +88,7 @@ export default function LoadDiagram({ scorecard, sentence, caption }) {
               >
                 <span aria-hidden="true">{String(entry.n).padStart(2, '0')}</span>
                 <span className="sr-only">
-                  Assumption {entry.n}: {entry.axiom} — {entry.verdict}
+                  {copy.assumption(entry.n)}: {entry.axiom} — {entry.verdict}
                 </span>
               </a>
             </li>
@@ -93,17 +109,14 @@ export default function LoadDiagram({ scorecard, sentence, caption }) {
               <span className="load__readout-d">{row.why}</span>
             </>
           ) : (
-            <span className="load__readout-d">
-              Point at a pier to read the assumption it stands for, or open it to jump
-              to the chapter where it is argued.
-            </span>
+            <span className="load__readout-d">{copy.idle}</span>
           )}
         </div>
 
         <div className="load__legend mono">
-          <span><i className="load__swatch load__swatch--holds" />Holds</span>
-          <span><i className="load__swatch load__swatch--partly" />Partly, or contested</span>
-          <span><i className="load__swatch load__swatch--fails" />Fails</span>
+          <span><i className="load__swatch load__swatch--holds" />{copy.legend.holds}</span>
+          <span><i className="load__swatch load__swatch--partly" />{copy.legend.partly}</span>
+          <span><i className="load__swatch load__swatch--fails" />{copy.legend.fails}</span>
         </div>
       </div>
 

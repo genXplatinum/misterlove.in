@@ -53,12 +53,31 @@ for (const piece of pieces) {
 /* The shelf at /books. Same rule as above: what is written, never what is
    announced — a book here plans three studies and has published one. */
 const shelved = [];
+/* Language editions of individual studies, kept beside the shelf rather than
+   inside it — a translation is another way to read one study, not another
+   study, so it never counts towards the shelf's totals. */
+const studyEditions = [];
 for (const book of books) {
   const studies = (await book.load()).default;
   if (liveStudiesOf(book) !== studies.length) {
     throw new Error(`${book.title} declares ${liveStudiesOf(book)} live studies but loads ${studies.length}`);
   }
   shelved.push({ book, studies });
+
+  for (const [language, edition] of Object.entries(book.translations ?? {})) {
+    const translated = (await edition.load()).default;
+    const declared = [...(edition.studies ?? [])].sort();
+    const loaded = translated.map((s) => s.slug).sort();
+    if (JSON.stringify(declared) !== JSON.stringify(loaded)) {
+      throw new Error(`${book.title} [${language}] declares [${declared}] but loads [${loaded}]`);
+    }
+    for (const study of translated) {
+      if (!studies.some((s) => s.slug === study.slug)) {
+        throw new Error(`${book.title} [${language}]: ${study.slug} has no English edition`);
+      }
+      studyEditions.push({ book, study, language });
+    }
+  }
 }
 
 /* The HTML below promises a route-specific social image. Fail the build before
@@ -73,6 +92,9 @@ for (const { piece, parts } of editions) {
 for (const { book, studies } of shelved) {
   expectedOgCards.add(`books-${book.slug}.png`);
   for (const study of studies) expectedOgCards.add(`books-${book.slug}-${study.slug}.png`);
+}
+for (const { book, study, language } of studyEditions) {
+  expectedOgCards.add(`books-${book.slug}-${study.slug}-${language}.png`);
 }
 
 const ogErrors = [];
@@ -175,14 +197,42 @@ for (const { book, studies } of shelved) {
   );
 
   for (const study of studies) {
+    const editionsOfStudy = studyEditions.filter((e) => (
+      e.book.slug === book.slug && e.study.slug === study.slug
+    ));
+    /* A study that exists in one language claims no alternates; one that exists
+       in two points each edition at the other, and names English as the default
+       a crawler should fall back to. */
+    const alternates = editionsOfStudy.length ? [
+      { language: 'en', href: `${SITE}/books/${book.slug}/${study.slug}/` },
+      ...editionsOfStudy.map((e) => ({
+        language: e.language,
+        href: `${SITE}/${e.language}/books/${book.slug}/${study.slug}/`,
+      })),
+      { language: 'x-default', href: `${SITE}/books/${book.slug}/${study.slug}/` },
+    ] : [];
+
     urls.push(
       url({
         loc: `${SITE}/books/${book.slug}/${study.slug}/`,
         lastmod: study.published,
         changefreq: 'yearly',
         priority: '0.7',
+        alternates,
       })
     );
+
+    for (const edition of editionsOfStudy) {
+      urls.push(
+        url({
+          loc: `${SITE}/${edition.language}/books/${book.slug}/${study.slug}/`,
+          lastmod: edition.study.published,
+          changefreq: 'yearly',
+          priority: '0.7',
+          alternates,
+        })
+      );
+    }
   }
 }
 
@@ -437,26 +487,48 @@ const loadStrip = (scorecard) => `<span class="loadstrip" role="img" aria-label=
    the CSS, and the full list underneath carries the same information as text
    — so a crawler, a reader with no JavaScript and a screen reader all get the
    scorecard rather than a picture they cannot use. */
-function loadDiagram(study, book) {
+/* Kept in step with src/components/LoadDiagram.jsx — the drawing is the first
+   argument the page makes, so it is translated with the prose. */
+const LOAD_COPY = {
+  en: {
+    condition: ['sound', 'partial', 'failed'],
+    caption: (book, label) => `Load test — ${book}, ${label}`,
+    assumptions: (n) => `${n} assumptions`,
+    assumption: (n) => `Assumption ${n}`,
+    sentence: 'The sentence',
+    legend: ['Holds', 'Partly, or contested', 'Fails'],
+  },
+  hi: {
+    condition: ['टिकीं', 'आंशिक', 'नाकाम'],
+    caption: (book, label) => `भार-परीक्षा — ${book}, ${label}`,
+    assumptions: (n) => `${n} मान्यताएँ`,
+    assumption: (n) => `मान्यता ${n}`,
+    sentence: 'वाक्य',
+    legend: ['टिकती है', 'आंशिक, या विवादित', 'नाकाम'],
+  },
+};
+
+function loadDiagram(study, book, language = 'en') {
   const s = study.scorecard;
+  const copy = LOAD_COPY[language];
   // Condition words, so the tally reads correctly at a count of one.
   const summary = [
-    [gradeCount(s, 'holds'), 'sound'],
-    [gradeCount(s, 'partly'), 'partial'],
-    [gradeCount(s, 'fails'), 'failed'],
+    [gradeCount(s, 'holds'), copy.condition[0]],
+    [gradeCount(s, 'partly'), copy.condition[1]],
+    [gradeCount(s, 'fails'), copy.condition[2]],
   ].filter(([n]) => n > 0).map(([n, g]) => `${n} ${g}`).join(' · ');
 
   return `<figure class="load">
-    <figcaption class="load__cap mono"><span>${esc(`Load test — ${book.title}, ${study.label}`)}</span><span>${s.length} assumptions · ${summary}</span></figcaption>
+    <figcaption class="load__cap mono"><span>${esc(copy.caption(book.title, study.label))}</span><span>${esc(copy.assumptions(s.length))} · ${esc(summary)}</span></figcaption>
     <div class="load__beam">
-      <div class="load__lintel" role="img" aria-label="The sentence: ${esc(study.sentence)}"></div>
+      <div class="load__lintel" role="img" aria-label="${esc(copy.sentence)}: ${esc(study.sentence)}"></div>
       <ol class="load__piers">${s
-        .map((r) => `<li><a class="pier pier--${r.grade}" href="#${r.href}"><span aria-hidden="true">${String(r.n).padStart(2, '0')}</span><span class="sr-only">Assumption ${r.n}: ${esc(r.axiom)} — ${esc(r.verdict)}</span></a></li>`)
+        .map((r) => `<li><a class="pier pier--${r.grade}" href="#${r.href}"><span aria-hidden="true">${String(r.n).padStart(2, '0')}</span><span class="sr-only">${esc(copy.assumption(r.n))}: ${esc(r.axiom)} — ${esc(r.verdict)}</span></a></li>`)
         .join('')}</ol>
       <div class="load__legend mono">
-        <span><i class="load__swatch load__swatch--holds"></i>Holds</span>
-        <span><i class="load__swatch load__swatch--partly"></i>Partly, or contested</span>
-        <span><i class="load__swatch load__swatch--fails"></i>Fails</span>
+        <span><i class="load__swatch load__swatch--holds"></i>${esc(copy.legend[0])}</span>
+        <span><i class="load__swatch load__swatch--partly"></i>${esc(copy.legend[1])}</span>
+        <span><i class="load__swatch load__swatch--fails"></i>${esc(copy.legend[2])}</span>
       </div>
     </div>
     <ol class="load__list">${s
@@ -502,39 +574,71 @@ function bookBody(book, studies) {
 </div></div></main>`;
 }
 
-function studyBody(book, study, studies) {
-  const contents = studiesOf(book, studies);
+/* The furniture the static shell says for itself, per language. The prose it
+   wraps arrives already translated from the importer. */
+const STUDY_COPY = {
+  en: {
+    books: 'Books',
+    studyOf: (n, total) => `Study ${n} <span class="dim">of ${total}</span>`,
+    sources: 'Glossary, timeline and sources',
+    download: (label, size) => `Download ${label ?? 'the PDF'} (${size})`,
+    pager: 'Studies on this book',
+  },
+  hi: {
+    books: 'किताबें',
+    studyOf: (n, total) => `अध्ययन ${n} <span class="dim">/ ${total}</span>`,
+    sources: 'शब्दावली, समय-रेखा और स्रोत',
+    download: (label, size) => `${label ?? 'PDF'} डाउनलोड करें (${size})`,
+    pager: 'इस किताब पर अध्ययन',
+  },
+};
+
+function studyBody(book, study, studies, language = 'en', translated = false) {
+  const copy = STUDY_COPY[language];
+  const contents = language === 'en' ? studiesOf(book, studies) : [];
+  /* The switch is in the shell as well as in the app, so it works on the first
+     paint and for a reader with no JavaScript at all. */
+  const languageSwitch = translated
+    ? `<nav class="language-switch" aria-label="${language === 'hi' ? 'पढ़ने की भाषा' : 'Reading language'}">`
+      + `<a href="/books/${book.slug}/${study.slug}/" lang="en"${language === 'en' ? ' class="is-active" aria-current="page"' : ''}>English</a>`
+      + `<a href="/hi/books/${book.slug}/${study.slug}/" lang="hi"${language === 'hi' ? ' class="is-active" aria-current="page"' : ''}>हिन्दी</a>`
+      + '</nav>'
+    : '';
   const next = contents.find((s) => s.n === study.n + 1);
   const prev = contents.find((s) => s.n === study.n - 1 && s.live);
   const download = study.pdf
-    ? `<p><a class="btn btn--ghost" href="/${study.pdf}" download>Download ${esc(study.pdfLabel ?? 'the PDF')} (${esc(study.pdfSize)})</a></p>`
+    ? `<p><a class="btn btn--ghost" href="/${study.pdf}" download>${esc(copy.download(study.pdfLabel, study.pdfSize))}</a></p>`
     : '';
+  const hi = language === 'hi';
 
-  return `<main id="main"><article class="article study">
+  return `<main id="main"><article class="article study${hi ? ' article--hi' : ''}" lang="${language}">
   <header class="article__head"><div class="container">
     ${crumbs([
-      { name: 'Books', href: '/books/' },
+      { name: copy.books, href: '/books/' },
       { name: book.title, href: `/books/${book.slug}/` },
       { name: study.title },
     ])}
+    ${languageSwitch}
     <div class="article__head-grid"><div class="article__head-main">
-      <span class="article__partno mono">Study ${String(study.n).padStart(2, '0')} <span class="dim">of ${book.studies}</span><span class="article__partlabel">${esc(study.label)}</span></span>
+      <span class="article__partno mono">${copy.studyOf(String(study.n).padStart(2, '0'), book.studies)}<span class="article__partlabel">${esc(study.label)}</span></span>
       <h1 class="article__title">${esc(study.title)}</h1>
       <p class="article__standfirst">${esc(study.subtitle)}</p>
       <blockquote class="study__sentence"><p>“${esc(study.sentence)}”</p>${study.secondary ? `<p class="study__sentence-2">“${esc(study.secondary)}”</p>` : ''}<cite class="mono">${esc(book.author)}, <i>${esc(book.title)}</i> — ${esc(study.source)}</cite></blockquote>
     </div></div>
-    ${study.scorecard ? loadDiagram(study, book) : ''}
+    ${study.scorecard ? loadDiagram(study, book, language) : ''}
   </div></header>
   <div class="container"><div class="article__body"><div class="article__col">
     ${study.prologue ? `<section class="article__prologue">${study.prologueTitle ? `<h2 class="article__prologue-head">${esc(study.prologueTitle)}</h2>` : ''}<div class="prose">${study.prologue}</div></section>` : ''}
     <div class="prose">${study.html}</div>
-    ${study.sources ? `<section class="article__sources" open><p class="mono">Glossary, timeline and sources</p><div class="prose prose--sources">${study.sources}</div></section>` : ''}
+    ${study.sources ? `<section class="article__sources" open><p class="mono">${esc(copy.sources)}</p><div class="prose prose--sources">${study.sources}</div></section>` : ''}
     ${download}
-    <nav class="article__pager" aria-label="Studies on this book">
-      ${prev ? `<a class="article__pager-link article__pager-link--prev" href="/books/${book.slug}/${prev.slug}/"><span class="mono">← Study ${String(prev.n).padStart(2, '0')}</span></a>` : '<span></span>'}
+    <nav class="article__pager" aria-label="${esc(copy.pager)}">
+      ${hi
+        ? `<span></span><a class="article__pager-link article__pager-link--next" href="/books/${book.slug}/"><span class="mono">बाकी अध्ययन →</span></a>`
+        : `${prev ? `<a class="article__pager-link article__pager-link--prev" href="/books/${book.slug}/${prev.slug}/"><span class="mono">← Study ${String(prev.n).padStart(2, '0')}</span></a>` : '<span></span>'}
       ${next?.live
         ? `<a class="article__pager-link article__pager-link--next" href="/books/${book.slug}/${next.slug}/"><span class="mono">Study ${String(next.n).padStart(2, '0')} →</span></a>`
-        : `<a class="article__pager-link article__pager-link--next" href="${next ? `/books/${book.slug}/` : '/books/'}"><span class="mono">${next ? 'That’s all so far →' : 'Back to the shelf →'}</span></a>`}
+        : `<a class="article__pager-link article__pager-link--next" href="${next ? `/books/${book.slug}/` : '/books/'}"><span class="mono">${next ? 'That’s all so far →' : 'Back to the shelf →'}</span></a>`}`}
     </nav>
   </div></div></div>
 </article></main>`;
@@ -979,7 +1083,13 @@ for (const { book, studies } of shelved) {
       ].join(', '),
       image: `${SITE}/og/books-${book.slug}-${study.slug}.png`,
       imageAlt: `${study.title} — ${study.subtitle}. A study of one sentence from ${book.title} by ${book.author}, by Lovepreet Singh.`,
-      body: studyBody(book, study, studies),
+      body: studyBody(
+        book,
+        study,
+        studies,
+        'en',
+        studyEditions.some((e) => e.book.slug === book.slug && e.study.slug === study.slug)
+      ),
       css: [ROUTE_CSS.article, ROUTE_CSS.writing, ROUTE_CSS.books],
       bodyClass: 'books-room',
       themeColor: BOOKS_GROUND,
@@ -1031,6 +1141,74 @@ for (const { book, studies } of shelved) {
           .join('\n')}\n      </ul>\n`
         + `      <p>${esc(stripTags(study.html).slice(0, 900))}…</p>\n`
         + `      <p><a href="${canonical}">Read the full study</a></p>`,
+    });
+    shells += 1;
+  }
+
+  /* Language editions of individual studies. Same route shape under a language
+     prefix, same shell machinery — only the copy and the prose change. */
+  for (const { study, language } of studyEditions.filter((e) => e.book.slug === book.slug)) {
+    const canonical = `${SITE}/${language}/books/${book.slug}/${study.slug}/`;
+    const englishUrl = `${SITE}/books/${book.slug}/${study.slug}/`;
+    shell({
+      path: `/${language}/books/${book.slug}/${study.slug}`,
+      language,
+      title: `${study.title} — ${book.title} टुकड़ा-टुकड़ा करके | लवप्रीत सिंह`,
+      description: study.lead,
+      canonical,
+      keywords: [
+        study.title, study.sentence, book.title, book.author,
+        'छिपी मान्यताएँ', 'स्टीलमैन', 'हिंदी', ...book.keywords, 'Lovepreet Singh',
+      ].join(', '),
+      image: `${SITE}/og/books-${book.slug}-${study.slug}-${language}.png`,
+      imageAlt: `${study.title} — ${study.subtitle}। ${book.author} की ${book.title} के एक वाक्य का अध्ययन, लवप्रीत सिंह द्वारा।`,
+      body: studyBody(book, study, [], language, true),
+      css: [ROUTE_CSS.article, ROUTE_CSS.writing, ROUTE_CSS.books],
+      bodyClass: 'books-room',
+      themeColor: BOOKS_GROUND,
+      theme: 'light',
+      alternates: [
+        { language: 'en', href: englishUrl },
+        { language, href: canonical },
+        { language: 'x-default', href: englishUrl },
+      ],
+      extraMeta: {
+        'article:published_time': `${study.published}T00:00:00+05:30`,
+        'article:modified_time': `${study.published}T00:00:00+05:30`,
+        'article:author': 'Lovepreet Singh',
+        'article:section': book.title,
+      },
+      jsonLd: [{
+        '@context': 'https://schema.org',
+        '@type': 'Review',
+        headline: `${study.title} — ${study.subtitle}`,
+        name: study.title,
+        description: study.lead,
+        url: canonical,
+        mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+        datePublished: study.published,
+        inLanguage: language,
+        wordCount: study.words,
+        reviewBody: study.lead,
+        /* Same work, another language — so the English edition is named as the
+           translation of record rather than left to look like a separate study. */
+        translationOfWork: { '@type': 'CreativeWork', url: englishUrl },
+        itemReviewed: {
+          '@type': 'Book',
+          name: `${book.title}: ${book.subtitle}`,
+          author: { '@type': 'Person', name: book.author },
+          datePublished: book.bookYear,
+        },
+        author: { '@type': 'Person', '@id': `${SITE}/#lovepreet-singh`, name: 'Lovepreet Singh' },
+        publisher: { '@id': `${SITE}/#lovepreet-singh` },
+        isAccessibleForFree: true,
+      }],
+      noscript:
+        `      <p><strong>${esc(study.title)} — ${esc(study.subtitle)}</strong></p>\n`
+        + `      <p>जिस वाक्य की जाँच है: “${esc(study.sentence)}” — ${esc(book.author)}, ${esc(study.source)}।</p>\n`
+        + `      <p>${esc(study.lead)}</p>\n`
+        + `      <p>${esc(stripTags(study.html).slice(0, 900))}…</p>\n`
+        + `      <p><a href="${canonical}">पूरा अध्ययन पढ़ें</a></p>`,
     });
     shells += 1;
   }

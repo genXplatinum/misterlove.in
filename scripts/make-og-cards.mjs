@@ -621,6 +621,41 @@ if (!hindiOnly) {
       console.log(`${relative(ROOT, file).padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
       total += r.kb;
     }
+
+    /* Language editions get their own card, in their own script — a Hindi
+       study shared to a Hindi reader should not preview in English. The
+       manifest's list of translated slugs is checked against the file that
+       actually loads, so the reader's language switch cannot offer a study
+       whose prose was never generated. */
+    for (const [language, edition] of Object.entries(book.translations ?? {})) {
+      const translated = (await edition.load()).default;
+      const declared = [...(edition.studies ?? [])].sort();
+      const loaded = translated.map((s) => s.slug).sort();
+      if (JSON.stringify(declared) !== JSON.stringify(loaded)) {
+        throw new Error(
+          `${book.title} [${language}] declares [${declared}] but loads [${loaded}]`
+        );
+      }
+
+      for (const study of translated) {
+        const file = `${OUT}/books-${book.slug}-${study.slug}-${language}.png`;
+        r = render(
+          card({
+            kicker: `${book.title} · ${study.label} · ${study.axioms} छिपी मान्यताएँ`,
+            title: `“${study.sentence}”`,
+            sub: `${study.title} — ${book.author} टुकड़ा-टुकड़ा करके`,
+            standfirst: study.lead,
+            badge: `${study.minutes} मिनट`,
+            byline: 'लवप्रीत सिंह · misterlove.in',
+            accent: book.accent,
+            language,
+          }),
+          file
+        );
+        console.log(`${relative(ROOT, file).padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
+        total += r.kb;
+      }
+    }
   }
 }
 

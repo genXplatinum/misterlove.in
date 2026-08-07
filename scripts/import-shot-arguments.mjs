@@ -40,7 +40,28 @@ import { join } from 'node:path';
 
 const SRC_DIR = process.argv[2] ?? 'C:/Users/rajpa/Documents/books/shot argumens';
 const OUT_DIR = 'src/data/books';
-const WORDS_PER_MINUTE = 220;
+
+/* The print furniture a study is built out of is worded in the language it was
+   written in, so the four labels the importer has to recognise are declared per
+   edition rather than matched in English and hoped for. Devanagari reads slower
+   than Latin on the same word count, which is why the rate moves too — the same
+   180 the Hindi writing edition is timed at. */
+const LANGUAGES = {
+  en: {
+    wordsPerMinute: 220,
+    appendix: /^Appendix$/i,
+    axiom: /^Axiom\s+(\d+)$/i,
+    scorecard: { axiom: 'axiom', verdict: 'verdict' },
+    prologueTag: (title) => `Before you begin · ${title}`,
+  },
+  hi: {
+    wordsPerMinute: 180,
+    appendix: /^परिशिष्ट$/,
+    axiom: /^मान्यता\s+(\d+)$/,
+    scorecard: { axiom: 'मान्यता', verdict: 'फ़ैसला' },
+    prologueTag: (title) => `शुरू करने से पहले · ${title}`,
+  },
+};
 
 /* One entry per book on the shelf. The prose lives in the source files; the
    facts that the printed cover carries — the sentence under the knife, where
@@ -96,6 +117,32 @@ const BOOKS = [
         pdf: 'the-imagined-order.pdf',
         pdfSize: '0.4 MB',
         pdfLabel: 'The study, as printed',
+        /* A full Hindi edition of the same study, not a summary of it. Only the
+           reader-facing fields are restated; `n`, `slug` and `published` are the
+           study's identity and stay in one language, so both editions answer to
+           the same URL under a /hi prefix. */
+        translations: {
+          hi: {
+            language: 'hi',
+            locale: 'hi_IN',
+            file: 'the-imagined-order-hindi.html',
+            title: 'काल्पनिक व्यवस्था',
+            subtitle: 'हरारी की “साझी कल्पना”, टुकड़ा-टुकड़ा करके',
+            label: 'अध्याय 2 और 6',
+            source: 'अध्याय 2 और 6, “ज्ञान का वृक्ष” तथा “पिरामिड बनाना”',
+            sentence:
+              'ब्रह्मांड में न कोई देवता है, न कोई राष्ट्र, न पैसा, न मानव अधिकार, न क़ानून, '
+              + 'और न ही न्याय — मनुष्यों की साझी कल्पना के बाहर।',
+            lead:
+              'एक वाक्य, बारह छिपी हुई मान्यताएँ, और हर एक पर अलग फ़ैसला। हमला करने से पहले '
+              + 'तर्क को दो बार स्टीलमैन किया गया है, फिर उसकी परीक्षा याप, 1970 का आयरलैंड, '
+              + 'ज़िम्बाब्वे, यूगोस्लाविया, सैलोमन बनाम सैलोमन और नूरेम्बर्ग पर की गई है।',
+            verdict: 'निरीक्षण टिकता है। “कल्पना” शब्द नहीं टिकता — और सारा काम वही शब्द कर रहा है।',
+            pdf: 'the-imagined-order-hi.pdf',
+            pdfSize: '0.5 MB',
+            pdfLabel: 'यह अध्ययन, छपे हुए रूप में',
+          },
+        },
       },
     ],
   },
@@ -382,6 +429,14 @@ class Importer {
       case 'svg': return '';
       default: break;
     }
+    /* A translated edition sets the original sentence beneath its translation.
+       That is not decoration — it is the line under the knife, in the language
+       it was written in — so it keeps its own lang attribute and is read as
+       English by a screen reader working through Hindi prose. */
+    if (node.tag === 'span' && hasClass(node, 'orig')) {
+      return `<p class="w-orig" lang="en">${this.inline(node.children)}</p>`;
+    }
+
     if (node.tag !== 'div' && node.tag !== 'section' && node.tag !== 'aside') {
       this.fail(`unexpected block <${node.tag}>`);
     }
@@ -447,7 +502,7 @@ function deepTables(node, found = []) {
   return found;
 }
 
-function readScorecard(chapters, where) {
+function readScorecard(chapters, where, headings) {
   const rowsOf = (table) => {
     const rows = [];
     const walk = (parent) => {
@@ -468,7 +523,11 @@ function readScorecard(chapters, where) {
     for (const table of section.blocks.flatMap((b) => (isTag(b) ? deepTables(b, b.tag === 'table' ? [b] : []) : []))) {
       const rows = rowsOf(table);
       const head = rows[0]?.map((c) => flat(c).toLowerCase()) ?? [];
-      if (head.length < 4 || !head.includes('axiom') || !head.includes('verdict')) continue;
+      if (
+        head.length < 4
+        || !head.includes(headings.axiom)
+        || !head.includes(headings.verdict)
+      ) continue;
 
       const graded = rows.slice(1).map((cells) => {
         const grade = classesOf(cells[2] ?? {}).map((c) => VERDICT_GRADES[c]).find(Boolean);
@@ -493,14 +552,19 @@ function readScorecard(chapters, where) {
 /* ------------------------------------------------------------------
    Reading one study.
    ------------------------------------------------------------------ */
-function importStudy(book, study) {
+function importStudy(book, study, { language = 'en', borrow = null } = {}) {
+  const vocabulary = LANGUAGES[language];
+  if (!vocabulary) throw new Error(`${book.slug}/${study.slug}: no vocabulary for "${language}"`);
+
   const path = join(SRC_DIR, study.file);
   if (!existsSync(path)) throw new Error(`Missing source for ${book.slug}/${study.slug}: ${path}`);
   const raw = readFileSync(path, 'utf8');
   const bodyMatch = raw.match(/<body[^>]*>([\s\S]*)<\/body>/i);
   if (!bodyMatch) throw new Error(`${study.slug}: no <body>`);
 
-  const where = `${book.slug}/${study.slug}`;
+  const where = language === 'en'
+    ? `${book.slug}/${study.slug}`
+    : `${book.slug}/${study.slug} [${language}]`;
   const io = new Importer(where);
   const document = parse(bodyMatch[1], where);
 
@@ -528,7 +592,7 @@ function importStudy(book, study) {
 
   /* The appendix is reference matter, not argument: it becomes the reader's
      collapsible sources block so the study ends on its own last line. */
-  const isAppendix = (s) => /^Appendix$/i.test(s.kicker);
+  const isAppendix = (s) => vocabulary.appendix.test(s.kicker);
   const appendix = parts.filter(isAppendix);
   const chapters = parts.filter((s) => !isAppendix(s));
   if (!appendix.length) throw new Error(`${where}: no appendix`);
@@ -544,8 +608,19 @@ function importStudy(book, study) {
      piers can link straight to the assumption they stand for. */
   const axiomIds = new Map();
 
-  const body = chapters.map((section) => {
-    const id = `${study.slug}-${slugify(section.kicker || section.title)}`;
+  /* A translation is a parallel setting of the same study, so it takes the
+     original's anchors rather than minting its own. Two reasons: a Devanagari
+     heading slugifies to nothing, and identical ids are what lets the two
+     editions be diffed against each other structurally. */
+  const borrowed = borrow
+    ? { part: (i) => borrow[i]?.id, section: (i, j) => borrow[i]?.kids?.[j]?.id }
+    : null;
+
+  const body = chapters.map((section, index) => {
+    const id = borrowed
+      ? borrowed.part(index)
+      : `${study.slug}-${slugify(section.kicker || section.title)}`;
+    if (!id) throw new Error(`${where}: part ${index + 1} has no id to borrow`);
     const kids = [];
 
     const html = section.blocks.map((node) => {
@@ -553,10 +628,13 @@ function importStudy(book, study) {
       if (isTag(node) && node.tag === 'h3') {
         const numbered = findClass(node, 'n');
         const text = flat({ children: node.children.filter((c) => c !== numbered) });
-        const kidId = `${id}-${slugify(text)}`;
+        const kidId = borrowed
+          ? borrowed.section(index, kids.length)
+          : `${id}-${slugify(text)}`;
+        if (!kidId) throw new Error(`${where}: part ${index + 1} section ${kids.length + 1} has no id to borrow`);
         const num = flat(numbered ?? { children: [] });
         kids.push({ id: kidId, num, text });
-        const axiom = num.match(/^Axiom\s+(\d+)$/i);
+        const axiom = num.match(vocabulary.axiom);
         if (axiom) axiomIds.set(Number(axiom[1]), kidId);
         return out.replace('<h3 class="w-h3', `<h3 id="${kidId}" class="w-h3`);
       }
@@ -574,7 +652,7 @@ function importStudy(book, study) {
     (section.lead ? `<p class="w-lead">${esc(section.lead)}</p>` : '') + io.blocks(section.blocks)
   )).join('');
 
-  const scorecard = readScorecard(chapters, where).map((row) => ({
+  const scorecard = readScorecard(chapters, where, vocabulary.scorecard).map((row) => ({
     ...row,
     href: axiomIds.get(row.n) ?? null,
   }));
@@ -590,17 +668,18 @@ function importStudy(book, study) {
     .replace(/<[^>]+>/g, ' ').replace(/&[a-z0-9#]+;/gi, ' ')
     .split(/\s+/).filter(Boolean).length;
 
-  /* The source filename is the importer's business, not the reader's. */
-  const { file: _file, ...declared } = study;
+  /* The source filename and the translation table are the importer's business,
+     not the reader's. */
+  const { file: _file, translations: _translations, ...declared } = study;
   return {
     ...declared,
     words,
-    minutes: Math.max(1, Math.round(words / WORDS_PER_MINUTE)),
+    minutes: Math.max(1, Math.round(words / vocabulary.wordsPerMinute)),
     chapters: chapters.length,
     scorecard,
     toc,
     prologueTitle: opening.title,
-    prologueTag: `Before you begin · ${study.title}`,
+    prologueTag: vocabulary.prologueTag(study.title),
     prologue,
     html: body,
     sources,
@@ -612,11 +691,12 @@ function importStudy(book, study) {
    ------------------------------------------------------------------ */
 mkdirSync(OUT_DIR, { recursive: true });
 
-for (const book of BOOKS) {
-  const studies = book.studies.map((study) => importStudy(book, study));
-
+/* Everything a reader or a crawler is promised is true of the file that ships,
+   so every edition goes through the same gate. Only the English one has to run
+   1..n without a gap; a translation covers whichever studies have been done. */
+function check(book, studies, { contiguous }) {
   for (const [index, study] of studies.entries()) {
-    if (study.n !== index + 1) throw new Error(`${book.slug}: studies must be contiguous from 1; found ${study.n}`);
+    if (contiguous && study.n !== index + 1) throw new Error(`${book.slug}: studies must be contiguous from 1; found ${study.n}`);
     if (study.toc.length < 3) throw new Error(`${book.slug}/${study.slug}: recovered only ${study.toc.length} parts`);
     if (study.words < 5000) throw new Error(`${book.slug}/${study.slug} is short (${study.words} words)`);
     if (!study.prologue) throw new Error(`${book.slug}/${study.slug} recovered no front matter`);
@@ -637,11 +717,37 @@ for (const book of BOOKS) {
       if (!study.html.includes(`id="${id}"`)) throw new Error(`${book.slug}/${study.slug}: ${id} has no heading`);
     }
   }
+}
 
+/* A translation is only usable if it is the same argument in another language.
+   Same parts, same sections, same anchors in the same order, and every axiom
+   graded the same way — because both editions draw the same load diagram, and
+   a reader switching language mid-study lands on the anchor they came from. */
+function checkParity(book, original, translated, language) {
+  const where = `${book.slug}/${translated.slug} [${language}]`;
+  const idsOf = (s) => [...s.toc.map((t) => t.id), ...s.toc.flatMap((t) => t.kids.map((k) => k.id))];
+  if (JSON.stringify(idsOf(original)) !== JSON.stringify(idsOf(translated))) {
+    throw new Error(`${where}: section ids or their order differ from the original`);
+  }
+  if (original.toc.length !== translated.toc.length) {
+    throw new Error(`${where}: ${translated.toc.length} parts against the original's ${original.toc.length}`);
+  }
+  const gradesOf = (s) => s.scorecard.map((row) => `${row.n}:${row.grade}`).join(',');
+  if (gradesOf(original) !== gradesOf(translated)) {
+    throw new Error(`${where}: the scorecard grades differ from the original`);
+  }
+  const devanagari = (translated.html.match(/[ऀ-ॿ]/g) ?? []).length;
+  if (language === 'hi' && devanagari < 5000) {
+    throw new Error(`${where}: only ${devanagari} Devanagari characters — is this actually translated?`);
+  }
+}
+
+function emit(book, studies, language) {
   const total = studies.reduce((sum, s) => sum + s.words, 0);
-  const out = join(OUT_DIR, `${book.slug}.js`);
+  const suffix = language === 'en' ? '' : `-${language}`;
+  const out = join(OUT_DIR, `${book.slug}${suffix}.js`);
   writeFileSync(out, `/* ============================================================
-   ${book.slug.toUpperCase()} — the studies on this book.
+   ${book.slug.toUpperCase()}${suffix.toUpperCase()} — the studies on this book${language === 'en' ? '' : `, in ${language}`}.
    Generated by scripts/import-shot-arguments.mjs from the authored HTML.
    Do not hand-edit: re-run the importer.
 
@@ -660,5 +766,28 @@ export default studies;
       + `${String(s.toc.length).padStart(2)} parts · ${String(s.toc.reduce((a, t) => a + t.kids.length, 0)).padStart(3)} sections`
       + ` · ${s.words.toLocaleString('en-IN').padStart(7)} words · ${s.minutes} min`
     );
+  }
+}
+
+for (const book of BOOKS) {
+  const studies = book.studies.map((study) => importStudy(book, study));
+  check(book, studies, { contiguous: true });
+  emit(book, studies, 'en');
+
+  const languages = [...new Set(book.studies.flatMap((s) => Object.keys(s.translations ?? {})))];
+  for (const language of languages) {
+    const translated = book.studies
+      .map((study, index) => {
+        const edition = study.translations?.[language];
+        if (!edition) return null;
+        const merged = { ...study, ...edition };
+        const out = importStudy(book, merged, { language, borrow: studies[index].toc });
+        checkParity(book, studies[index], out, language);
+        return out;
+      })
+      .filter(Boolean);
+
+    check(book, translated, { contiguous: false });
+    emit(book, translated, language);
   }
 }
