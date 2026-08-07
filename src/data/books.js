@@ -62,38 +62,45 @@ export const books = [
     bookNote: 'Hebrew 2011 · English 2014 · tens of millions of copies sold',
     kicker: 'Book 01 on the shelf',
     standfirst:
-      'The most quoted popular history of the century, and the chapter everybody remembers: '
-      + 'that farming was “history’s biggest fraud.” One sentence, eleven hidden axioms, and a '
-      + 'verdict on each of them.',
+      'The most quoted popular history of the century, taken one sentence at a time: that farming '
+      + 'was “history’s biggest fraud,” and that nothing social exists outside our common '
+      + 'imagination. Twenty-three hidden axioms, and a verdict on each of them.',
     summary:
       'Sapiens sold on the strength of its reversals — the lines that take something you assumed '
       + 'was progress and turn it over. The most famous of them is in Chapter 5: the Agricultural '
       + 'Revolution was history’s biggest fraud, and wheat domesticated us rather than the other '
       + 'way round. That sentence is doing an enormous amount of work on very little stated '
-      + 'evidence, and almost nobody who quotes it has looked at what it assumes. The studies on '
-      + 'this shelf entry take it apart: the eleven axioms it stands on, where the idea came from '
-      + 'before Harari inherited it, the strongest version of the argument that survives every '
-      + 'objection, the places the evidence genuinely cracks — and then the whole thing tested on '
-      + 'Indian ground, at Mehrgarh, in the Indus Valley, and against the water table under Punjab '
-      + 'today. The verdict is split, and both halves are stated plainly.',
+      + 'evidence, and almost nobody who quotes it has looked at what it assumes. The first study '
+      + 'on this shelf entry takes it apart: the eleven axioms it stands on, where the idea came '
+      + 'from before Harari inherited it, the strongest version of the argument that survives '
+      + 'every objection, the places the evidence genuinely cracks — and then the whole thing '
+      + 'tested on Indian ground, at Mehrgarh, in the Indus Valley, and against the water table '
+      + 'under Punjab today. The second goes after the line the book is actually built on: that '
+      + 'there are no gods, nations, money, rights, laws or justice outside the common imagination '
+      + 'of human beings. Twelve axioms come out of that one, and the argument turns on a single '
+      + 'word — Harari calls these things fictions, and a ten-rupee note still buys tea. The '
+      + 'claim is put through Yap, Ireland in 1970, Zimbabwe, Yugoslavia, Salomon v Salomon and '
+      + 'Nuremberg. Both verdicts are split, and both halves are stated plainly.',
     topic: 'History · Anthropology · Argument',
     keywords: [
       'Sapiens', 'Yuval Noah Harari', 'Agricultural Revolution', 'history’s biggest fraud',
       'luxury trap', 'steelman', 'hidden axioms', 'osteological paradox', 'Jared Diamond',
       'Graeber and Wengrow', 'Göbekli Tepe', 'Mehrgarh', 'Indus Valley', 'Green Revolution',
-      'Punjab groundwater', 'book criticism', 'close reading',
+      'Punjab groundwater', 'imagined order', 'inter-subjective', 'social construction',
+      'institutional facts', 'John Searle', 'Benedict Anderson', 'Yap stones',
+      'Salomon v Salomon', 'Nuremberg', 'book criticism', 'close reading',
     ],
     published: '2026-08-07',
     displayDate: 'August 2026',
     /* The shelf entry as planned. `live` is what is actually published — the
        sitemap, share cards and RSS all follow the data file, never this. */
     studies: 3,
-    live: 1,
-    words: 14259,
-    minutes: 65,
+    live: 2,
+    words: 29981,
+    minutes: 136,
     /* Axioms dug out and graded across the published studies. The shelf header
        counts these, so it only ever claims work that exists. */
-    axioms: 11,
+    axioms: 23,
     status: 'Open',
     accent: 'ember',
     /* Studies announced but not yet written, so the shape of the work on this
