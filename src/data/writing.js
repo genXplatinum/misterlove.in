@@ -36,9 +36,9 @@ export const pieces = [
     // The series as planned. `live` is what is actually published — the sitemap,
     // share cards, RSS and pager all follow the data file, never this number.
     parts: 19,
-    live: 13,
-    words: 231215,
-    minutes: 1051,
+    live: 16,
+    words: 289908,
+    minutes: 1318,
     status: 'In progress',
     accent: 'blight',
     pdf: 'the-congress-record-part-1.pdf',
@@ -58,6 +58,9 @@ export const pieces = [
       { n: 11, file: 'the-congress-record-part-11.pdf', size: '272 KB', label: 'Part 11 PDF' },
       { n: 12, file: 'the-congress-record-part-12.pdf', size: '270 KB', label: 'Part 12 PDF' },
       { n: 13, file: 'the-congress-record-part-13.pdf', size: '266 KB', label: 'Part 13 PDF' },
+      { n: 14, file: 'the-congress-record-part-14.pdf', size: '286 KB', label: 'Part 14 PDF' },
+      { n: 15, file: 'the-congress-record-part-15.pdf', size: '267 KB', label: 'Part 15 PDF' },
+      { n: 16, file: 'the-congress-record-part-16.pdf', size: '268 KB', label: 'Part 16 PDF' },
     ],
     principlesTitle: 'The rules this audit runs on',
     principles: [
