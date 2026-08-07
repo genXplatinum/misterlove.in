@@ -9,6 +9,9 @@ import Home from './pages/Home';
 const Writing = lazy(() => import('./pages/Writing'));
 const Topic = lazy(() => import('./pages/Topic'));
 const Article = lazy(() => import('./pages/Article'));
+const Books = lazy(() => import('./pages/Books'));
+const Book = lazy(() => import('./pages/Book'));
+const Study = lazy(() => import('./pages/Study'));
 
 function NotFound() {
   useEffect(() => {
@@ -61,6 +64,9 @@ function AppFrame({ isHome, resetKey }) {
               <Route path="/hi/writing/:slug" element={<Topic />} />
               <Route path="/writing/:slug/:part" element={<Article />} />
               <Route path="/hi/writing/:slug/:part" element={<Article />} />
+              <Route path="/books" element={<Books />} />
+              <Route path="/books/:book" element={<Book />} />
+              <Route path="/books/:book/:study" element={<Study />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
