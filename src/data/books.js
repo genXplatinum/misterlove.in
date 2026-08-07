@@ -130,6 +130,19 @@ export const books = [
       },
     ],
     load: () => import('./books/sapiens.js'),
+    /* Language editions, study by study. A translated study is a separate
+       chunk, so an English reader never downloads Hindi prose and vice versa;
+       `studies` lists which slugs exist in that edition, which is what lets the
+       reader offer the switch without first fetching the other language. */
+    translations: {
+      hi: {
+        language: 'hi',
+        locale: 'hi_IN',
+        displayDate: 'अगस्त 2026',
+        studies: ['the-imagined-order'],
+        load: () => import('./books/sapiens-hi.js'),
+      },
+    },
   },
 ];
 
@@ -140,8 +153,35 @@ export const books = [
 export const getBook = (slug) => books.find((book) => book.slug === slug);
 
 /** Canonical client-side path for a book, or one study inside it. */
-export const bookPathOf = (book, study) => (
-  study ? `/books/${book.slug}/${study}` : `/books/${book.slug}`
+export const bookPathOf = (book, study, language = 'en') => {
+  const prefix = language === 'hi' ? '/hi' : '';
+  return study ? `${prefix}/books/${book.slug}/${study}` : `${prefix}/books/${book.slug}`;
+};
+
+/**
+ * Whether one study has been set in a given language. Declared in the manifest
+ * rather than discovered from the prose file, so the reader can offer the
+ * switch without downloading the edition it would switch to.
+ */
+export const hasEdition = (book, slug, language) => (
+  language === 'en'
+    ? Boolean(book)
+    : Boolean(book?.translations?.[language]?.studies?.includes(slug))
+);
+
+/** Every language one study can be read in, English first. */
+export const editionsOf = (book, slug) => [
+  'en',
+  ...Object.keys(book?.translations ?? {}).filter((l) => hasEdition(book, slug, l)),
+];
+
+/**
+ * The prose loader for one edition. Returns undefined for a language this book
+ * has no edition in, which lets the router redirect instead of rendering a page
+ * that is half translated.
+ */
+export const loaderFor = (book, language = 'en') => (
+  language === 'en' ? book?.load : book?.translations?.[language]?.load
 );
 
 /**

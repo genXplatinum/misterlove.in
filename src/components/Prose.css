@@ -760,6 +760,21 @@
   color: var(--text-2);
 }
 
+/* In a translated edition, the sentence as its author actually wrote it, set
+   under the translation. Quieter than the prose around it and ruled off at the
+   start, because it is evidence rather than argument — the reader is being
+   shown the original so they can check the translation against it. */
+.prose .w-orig {
+  margin-top: 0.5em;
+  padding-left: 0.9em;
+  border-left: 2px solid var(--rule);
+  font-family: var(--font-body);
+  font-size: 0.84em;
+  line-height: 1.6;
+  font-style: italic;
+  color: var(--text-dim);
+}
+
 /* A caveat hung under the table it qualifies. */
 .prose .w-tnote {
   margin-top: -1em;

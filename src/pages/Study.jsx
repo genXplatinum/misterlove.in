@@ -1,16 +1,92 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import Prose from '../components/Prose';
 import ThemeToggle from '../components/ThemeToggle';
 import WordLookup from '../components/WordLookup';
 import LoadDiagram from '../components/LoadDiagram';
 import useBooksRoom from '../components/BooksRoom';
-import { getBook, getStudy, studiesOf } from '../data/books';
+import { getBook, getStudy, hasEdition, loaderFor, studiesOf } from '../data/books';
 import { profile } from '../data/site';
 import './Article.css';
 import './Books.css';
 
 const RAIL_KEY = 'lws:reader-rail';
+
+/* Every word the page says for itself, in each language it can be read in. The
+   prose comes from the importer already translated; this is only the furniture
+   around it. */
+const COPY = {
+  en: {
+    books: 'Books',
+    breadcrumb: 'Breadcrumb',
+    studyOf: (n, total) => [`Study ${n}`, `of ${total}`],
+    theBook: 'The book',
+    axiomsFound: 'Axioms found',
+    verdict: 'Verdict',
+    thisStudy: 'This study',
+    minutes: 'min',
+    words: 'words',
+    loadCaption: (book, label) => `Load test — ${book}, ${label}`,
+    contents: 'Contents',
+    inThisStudy: 'In this study',
+    showContents: 'Show contents',
+    hideContents: 'Hide contents',
+    opening: 'Opening the study…',
+    failed: 'This study didn’t load.',
+    tryAgain: 'Try again',
+    beginsNow: 'The study begins',
+    sources: 'Glossary, timeline and sources',
+    endOfStudy: 'End of the study',
+    writtenBy: (name) => `Researched and written by ${name}`,
+    colophon: (date, words) => `Single-sentence study · ${date} · ${words} words`,
+    download: (label, size) => `Download ${label ?? 'the PDF'} (${size})`,
+    theStudies: 'THE STUDIES',
+    axiomsGraded: (n) => `${n} axioms graded`,
+    inPreparation: 'In preparation',
+    darkMode: 'Dark mode',
+    darkAria: 'Dark reading theme',
+    toDark: 'Switch to dark mode',
+    toLight: 'Switch to light mode',
+    switchLabel: 'Reading language',
+    english: 'English',
+    hindi: 'हिन्दी',
+  },
+  hi: {
+    books: 'किताबें',
+    breadcrumb: 'पृष्ठ क्रम',
+    studyOf: (n, total) => [`अध्ययन ${n}`, `/ ${total}`],
+    theBook: 'किताब',
+    axiomsFound: 'मान्यताएँ मिलीं',
+    verdict: 'फ़ैसला',
+    thisStudy: 'यह अध्ययन',
+    minutes: 'मिनट',
+    words: 'शब्द',
+    loadCaption: (book, label) => `भार-परीक्षा — ${book}, ${label}`,
+    contents: 'विषय सूची',
+    inThisStudy: 'इस अध्ययन में',
+    showContents: 'विषय सूची दिखाएँ',
+    hideContents: 'विषय सूची छिपाएँ',
+    opening: 'अध्ययन खुल रहा है…',
+    failed: 'यह अध्ययन नहीं खुला।',
+    tryAgain: 'दोबारा कोशिश करें',
+    beginsNow: 'अध्ययन यहाँ से शुरू',
+    sources: 'शब्दावली, समय-रेखा और स्रोत',
+    endOfStudy: 'अध्ययन समाप्त',
+    writtenBy: () => 'शोध और लेखन: लवप्रीत सिंह',
+    colophon: (date, words) => `एक-वाक्य अध्ययन · ${date} · ${words} शब्द`,
+    download: (label, size) => `${label ?? 'PDF'} डाउनलोड करें (${size})`,
+    theStudies: 'सभी अध्ययन',
+    axiomsGraded: (n) => `${n} मान्यताओं पर फ़ैसला`,
+    inPreparation: 'तैयार हो रहा है',
+    darkMode: 'गहरा रूप',
+    darkAria: 'पढ़ने के लिए गहरा रूप',
+    toDark: 'गहरे रूप में बदलें',
+    toLight: 'हल्के रूप में बदलें',
+    switchLabel: 'पढ़ने की भाषा',
+    english: 'English',
+    hindi: 'हिन्दी',
+  },
+};
 
 function getStoredPreference(key) {
   if (typeof window === 'undefined') return null;
@@ -42,14 +118,23 @@ function useRail() {
   return [open, setOpen];
 }
 
-function useStudyMeta(book, study) {
+function useStudyMeta(book, study, language, translated) {
   useEffect(() => {
     if (!book || !study) return undefined;
     const prevTitle = document.title;
-    const url = `https://misterlove.in/books/${book.slug}/${study.slug}/`;
-    const image = `https://misterlove.in/og/books-${book.slug}-${study.slug}.png`;
-    const imageAlt = `${study.title} — ${study.subtitle}. A study of one sentence from ${book.title} by ${book.author}, by ${profile.name}.`;
-    document.title = `${study.title} — ${book.title} taken apart | ${profile.name}`;
+    const prevLang = document.documentElement.lang;
+    const prefix = language === 'hi' ? '/hi' : '';
+    const enUrl = `https://misterlove.in/books/${book.slug}/${study.slug}/`;
+    const url = `https://misterlove.in${prefix}/books/${book.slug}/${study.slug}/`;
+    const suffix = language === 'hi' ? '-hi' : '';
+    const image = `https://misterlove.in/og/books-${book.slug}-${study.slug}${suffix}.png`;
+    const imageAlt = language === 'hi'
+      ? `${study.title} — ${study.subtitle}। ${book.author} की ${book.title} के एक वाक्य का अध्ययन, ${profile.name} द्वारा।`
+      : `${study.title} — ${study.subtitle}. A study of one sentence from ${book.title} by ${book.author}, by ${profile.name}.`;
+    document.title = language === 'hi'
+      ? `${study.title} — ${book.title} टुकड़ा-टुकड़ा करके | लवप्रीत सिंह`
+      : `${study.title} — ${book.title} taken apart | ${profile.name}`;
+    document.documentElement.lang = language;
 
     const set = (selector, tag, attrs) => {
       let el = document.head.querySelector(selector);
@@ -87,7 +172,27 @@ function useStudyMeta(book, study) {
       set('meta[name="twitter:description"]', 'meta', { name: 'twitter:description', content: study.lead }),
       set('meta[name="twitter:image"]', 'meta', { name: 'twitter:image', content: image }),
       set('meta[name="twitter:image:alt"]', 'meta', { name: 'twitter:image:alt', content: imageAlt }),
+      set('meta[property="og:locale"]', 'meta', {
+        property: 'og:locale',
+        content: language === 'hi' ? 'hi_IN' : 'en_IN',
+      }),
     ];
+
+    /* Only a study that exists in both languages claims alternates. Pointing a
+       crawler at a translation that was never written is worse than staying
+       quiet about the one that was. */
+    if (translated) {
+      const hiUrl = `https://misterlove.in/hi/books/${book.slug}/${study.slug}/`;
+      restores.push(
+        set('meta[property="og:locale:alternate"]', 'meta', {
+          property: 'og:locale:alternate',
+          content: language === 'hi' ? 'en_IN' : 'hi_IN',
+        }),
+        set('link[rel="alternate"][hreflang="en"]', 'link', { rel: 'alternate', hreflang: 'en', href: enUrl }),
+        set('link[rel="alternate"][hreflang="hi"]', 'link', { rel: 'alternate', hreflang: 'hi', href: hiUrl }),
+        set('link[rel="alternate"][hreflang="x-default"]', 'link', { rel: 'alternate', hreflang: 'x-default', href: enUrl })
+      );
+    }
 
     /* A study is a critical review of a named work, so it says so in its
        structured data: the thing being reviewed is the book, not this page. */
@@ -102,7 +207,7 @@ function useStudyMeta(book, study) {
       url,
       mainEntityOfPage: { '@type': 'WebPage', '@id': url },
       datePublished: study.published,
-      inLanguage: 'en',
+      inLanguage: language,
       wordCount: study.words,
       reviewBody: study.lead,
       itemReviewed: {
@@ -121,10 +226,11 @@ function useStudyMeta(book, study) {
 
     return () => {
       document.title = prevTitle;
+      document.documentElement.lang = prevLang;
       restores.forEach((restore) => restore());
       ld.remove();
     };
-  }, [book, study]);
+  }, [book, study, language, translated]);
 }
 
 function useReadingProgress(ref) {
@@ -226,7 +332,13 @@ function Contents({ toc, active, onJump }) {
 /** One study: a single sentence from a shelved book, taken apart. */
 export default function Study() {
   const { book: bookSlug, study: studySlug } = useParams();
+  const { pathname } = useLocation();
+  const language = pathname.startsWith('/hi/') ? 'hi' : 'en';
   const book = getBook(bookSlug);
+  const copy = COPY[language];
+  /* Declared in the manifest, so the switch can be drawn before either edition
+     has been fetched. */
+  const translated = hasEdition(book, studySlug, 'hi');
 
   const [studies, setStudies] = useState(null);
   const [loadError, setLoadError] = useState(false);
@@ -239,15 +351,16 @@ export default function Study() {
   const mobileNavRef = useRef(null);
 
   useEffect(() => {
-    if (!book) return undefined;
+    const load = loaderFor(book, language);
+    if (!load) return undefined;
     let alive = true;
     setStudies(null);
     setLoadError(false);
-    book.load()
+    load()
       .then((module) => { if (alive) setStudies(module.default); })
       .catch(() => { if (alive) setLoadError(true); });
     return () => { alive = false; };
-  }, [book]);
+  }, [book, language]);
 
   const study = studies ? getStudy(studies, studySlug) : null;
   const toc = useMemo(() => study?.toc ?? [], [study]);
@@ -257,12 +370,20 @@ export default function Study() {
   );
   const progress = useReadingProgress(bodyRef);
   const active = useActiveSection(watched, [watched]);
-  useStudyMeta(book, study);
+  useStudyMeta(book, study, language, translated);
 
   if (!book) return <Navigate to="/books" replace />;
+  /* A study nobody has set in this language sends the reader to the edition
+     that does exist, rather than to a page that is half translated. */
+  if (language !== 'en' && !translated) {
+    return <Navigate to={`/books/${book.slug}/${studySlug}`} replace />;
+  }
   if (studies && !study) return <Navigate to={`/books/${book.slug}`} replace />;
 
-  const contents = studiesOf(book, studies);
+  /* The shelf around a study — its siblings and the pager — is only built in
+     English, because that is the only language every study exists in. */
+  const contents = language === 'en' ? studiesOf(book, studies) : [];
+  const displayDate = book.translations?.[language]?.displayDate ?? book.displayDate;
   const n = study?.n ?? 0;
   const prev = contents.find((s) => s.n === n - 1 && s.live);
   const next = contents.find((s) => s.n === n + 1 && s.live);
@@ -282,7 +403,7 @@ export default function Study() {
   };
 
   return (
-    <article className="article study">
+    <article className={`article study ${language === 'hi' ? 'article--hi' : ''}`} lang={language}>
       <div className="article__meter" aria-hidden="true">
         <span className="article__meter-fill" style={{ transform: `scaleX(${progress})` }} />
       </div>
@@ -296,31 +417,54 @@ export default function Study() {
             setRailOpen(true);
             requestAnimationFrame(() => railCloseRef.current?.focus());
           }}
-          aria-label="Show contents"
+          aria-label={copy.showContents}
           aria-expanded="false"
           aria-controls="study-rail"
         >
           <span className="article__rail-chev is-flipped" aria-hidden="true" />
-          <span className="mono">Contents</span>
+          <span className="mono">{copy.contents}</span>
         </button>
       )}
 
       <header className="article__head">
         <div className="container">
           <div className="article__navrow">
-            <nav className="article__crumbs" aria-label="Breadcrumb">
-              <Link to="/books" className="article__crumb">Books</Link>
+            <nav className="article__crumbs" aria-label={copy.breadcrumb}>
+              <Link to="/books" className="article__crumb">{copy.books}</Link>
               <span className="article__crumb-sep" aria-hidden="true">/</span>
               <Link to={`/books/${book.slug}`} className="article__crumb">{book.title}</Link>
             </nav>
 
             <div className="article__reading-tools" role="group" aria-label="Reading preferences">
+              {/* Only offered where both editions exist, so the switch never
+                  promises a translation that was never written. */}
+              {translated && (
+                <nav className="language-switch" aria-label={copy.switchLabel}>
+                  <Link
+                    to={`/books/${book.slug}/${studySlug}`}
+                    className={language === 'en' ? 'is-active' : ''}
+                    aria-current={language === 'en' ? 'page' : undefined}
+                    lang="en"
+                  >
+                    {copy.english}
+                  </Link>
+                  <Link
+                    to={`/hi/books/${book.slug}/${studySlug}`}
+                    className={language === 'hi' ? 'is-active' : ''}
+                    aria-current={language === 'hi' ? 'page' : undefined}
+                    lang="hi"
+                  >
+                    {copy.hindi}
+                  </Link>
+                </nav>
+              )}
+
               <ThemeToggle
                 className="article__theme-toggle"
-                label="Dark mode"
-                ariaLabel="Dark reading theme"
-                darkAction="Switch to dark mode"
-                lightAction="Switch to light mode"
+                label={copy.darkMode}
+                ariaLabel={copy.darkAria}
+                darkAction={copy.toDark}
+                lightAction={copy.toLight}
               />
             </div>
           </div>
@@ -328,7 +472,8 @@ export default function Study() {
           <div className="article__head-grid">
             <div className="article__head-main">
               <span className="article__partno mono">
-                Study {String(n || 1).padStart(2, '0')} <span className="dim">of {book.studies}</span>
+                {copy.studyOf(String(n || 1).padStart(2, '0'), book.studies)[0]}{' '}
+                <span className="dim">{copy.studyOf(String(n || 1).padStart(2, '0'), book.studies)[1]}</span>
                 <span className="article__partlabel">{study?.label ?? book.title}</span>
               </span>
               <h1 className="article__title">{study ? study.title : book.title}</h1>
@@ -350,13 +495,15 @@ export default function Study() {
 
             <aside className="article__head-aside">
               <dl className="article__facts">
-                <div><dt className="mono">The book</dt><dd>{book.title} — {book.author}, {book.bookYear}</dd></div>
-                <div><dt className="mono">Axioms found</dt><dd>{study?.axioms ?? '—'}</dd></div>
-                <div><dt className="mono">Verdict</dt><dd>{study?.verdict ?? '—'}</dd></div>
+                <div><dt className="mono">{copy.theBook}</dt><dd>{book.title} — {book.author}, {book.bookYear}</dd></div>
+                <div><dt className="mono">{copy.axiomsFound}</dt><dd>{study?.axioms ?? '—'}</dd></div>
+                <div><dt className="mono">{copy.verdict}</dt><dd>{study?.verdict ?? '—'}</dd></div>
                 {study && (
                   <div>
-                    <dt className="mono">This study</dt>
-                    <dd>{study.minutes} min · {study.words.toLocaleString('en-IN')} words</dd>
+                    <dt className="mono">{copy.thisStudy}</dt>
+                    <dd>
+                      {study.minutes} {copy.minutes} · {study.words.toLocaleString('en-IN')} {copy.words}
+                    </dd>
                   </div>
                 )}
               </dl>
@@ -370,7 +517,8 @@ export default function Study() {
             <LoadDiagram
               scorecard={study.scorecard}
               sentence={study.sentence}
-              caption={`Load test — ${book.title}, ${study.label}`}
+              caption={copy.loadCaption(book.title, study.label)}
+              language={language}
             />
           )}
         </div>
@@ -381,7 +529,7 @@ export default function Study() {
           <aside className="article__rail" id="study-rail" hidden={!railOpen}>
             <div className="article__rail-inner">
               <div className="article__rail-head">
-                <span className="mono article__rail-title">In this study</span>
+                <span className="mono article__rail-title">{copy.inThisStudy}</span>
                 <button
                   ref={railCloseRef}
                   type="button"
@@ -390,7 +538,7 @@ export default function Study() {
                     setRailOpen(false);
                     requestAnimationFrame(() => railReopenRef.current?.focus());
                   }}
-                  aria-label="Hide contents"
+                  aria-label={copy.hideContents}
                   aria-expanded="true"
                   aria-controls="study-rail"
                 >
@@ -406,24 +554,24 @@ export default function Study() {
             {toc.length > 0 && (
               <details className="article__toc-mobile" ref={mobileNavRef}>
                 <summary className="article__toc-mobile-summary">
-                  <span className="mono">Contents</span>
+                  <span className="mono">{copy.contents}</span>
                   <span className="article__toc-mobile-chev" aria-hidden="true" />
                 </summary>
                 <div className="article__toc-mobile-panel">
-                  <nav aria-label="In this study">
-                    <span className="mono article__rail-title">In this study</span>
+                  <nav aria-label={copy.inThisStudy}>
+                    <span className="mono article__rail-title">{copy.inThisStudy}</span>
                     <Contents toc={toc} active={active} onJump={goSectionMobile} />
                   </nav>
                 </div>
               </details>
             )}
 
-            {!studies && !loadError && <p className="article__loading mono">Opening the study…</p>}
+            {!studies && !loadError && <p className="article__loading mono">{copy.opening}</p>}
             {loadError && (
               <p className="article__loading">
-                This study didn’t load.{' '}
+                {copy.failed}{' '}
                 <button type="button" className="link" onClick={() => window.location.reload()}>
-                  Try again
+                  {copy.tryAgain}
                 </button>
               </p>
             )}
@@ -434,7 +582,7 @@ export default function Study() {
                 {study.prologueTag && <p className="mono article__prologue-tag">{study.prologueTag}</p>}
                 <Prose html={study.prologue} />
                 <div className="article__prologue-rule" aria-hidden="true" />
-                <span className="mono article__prologue-next">The study begins</span>
+                <span className="mono article__prologue-next">{copy.beginsNow}</span>
               </section>
             )}
 
@@ -443,7 +591,7 @@ export default function Study() {
             {study?.sources && (
               <details className="article__sources">
                 <summary>
-                  <span className="mono">Glossary, timeline and sources</span>
+                  <span className="mono">{copy.sources}</span>
                   <span className="article__sources-icon" aria-hidden="true" />
                 </summary>
                 <Prose html={study.sources} className="prose--sources" />
@@ -453,11 +601,11 @@ export default function Study() {
             {study && (
               <div className="article__colophon">
                 <span className="article__colophon-mark" aria-hidden="true">❦</span>
-                <p className="mono article__colophon-end">End of the study</p>
+                <p className="mono article__colophon-end">{copy.endOfStudy}</p>
                 <p className="article__colophon-title">{study.title} — {book.title}</p>
-                <p className="article__colophon-by">Researched and written by {profile.name}</p>
+                <p className="article__colophon-by">{copy.writtenBy(profile.name)}</p>
                 <p className="mono article__colophon-meta">
-                  Single-sentence study · {book.displayDate} · {study.words.toLocaleString('en-IN')} words
+                  {copy.colophon(displayDate, study.words.toLocaleString('en-IN'))}
                 </p>
               </div>
             )}
@@ -469,12 +617,27 @@ export default function Study() {
                   href={`${import.meta.env.BASE_URL}${study.pdf}`}
                   download
                 >
-                  Download {study.pdfLabel ?? 'the PDF'} ({study.pdfSize}) <span className="btn__dot" />
+                  {copy.download(study.pdfLabel, study.pdfSize)} <span className="btn__dot" />
                 </a>
               </div>
             )}
 
-            {study && (
+            {/* The other studies on this book have only been set in English, so
+                a Hindi reader is offered the shelf entry rather than a pager
+                into pages they cannot read. */}
+            {study && language !== 'en' && (
+              <nav className="article__pager" aria-label="इस किताब पर अध्ययन">
+                <span />
+                <Link to={`/books/${book.slug}`} className="article__pager-link article__pager-link--next">
+                  <span className="mono">बाकी अध्ययन →</span>
+                  <span className="article__pager-title">
+                    इस किताब के दूसरे अध्ययन अभी अंग्रेज़ी में हैं
+                  </span>
+                </Link>
+              </nav>
+            )}
+
+            {study && language === 'en' && (
               <nav className="article__pager" aria-label="Studies on this book">
                 {prev ? (
                   <Link to={`/books/${book.slug}/${prev.slug}`} className="article__pager-link article__pager-link--prev">
@@ -507,15 +670,15 @@ export default function Study() {
         </div>
       </div>
 
-      {studies && (
+      {studies && language === 'en' && (
         <section className="article__contents">
           <div className="container">
             <div className="section-head">
               <span className="mono">
-                <span className="section-head__id">THE STUDIES</span>&nbsp;&nbsp;/&nbsp;&nbsp;
+                <span className="section-head__id">{copy.theStudies}</span>&nbsp;&nbsp;/&nbsp;&nbsp;
                 {book.title} — {book.author}
               </span>
-              <span className="mono hide-sm">{book.axioms} axioms graded</span>
+              <span className="mono hide-sm">{copy.axiomsGraded(book.axioms)}</span>
             </div>
 
             <ol className="article__contents-list">
