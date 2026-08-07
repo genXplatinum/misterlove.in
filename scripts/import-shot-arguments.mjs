@@ -73,6 +73,30 @@ const BOOKS = [
         pdfSize: '0.4 MB',
         pdfLabel: 'The study, as printed',
       },
+      {
+        n: 2,
+        file: 'the-imagined-order.html',
+        slug: 'the-imagined-order',
+        title: 'The Imagined Order',
+        subtitle: 'Harari’s “common imagination”, taken apart',
+        label: 'Chapters 2 & 6',
+        /* The sentence is written in Chapter 2; the machinery it describes is
+           argued in Chapter 6, and neither reads correctly without the other. */
+        source: 'Chapters 2 and 6, “The Tree of Knowledge” and “Building Pyramids”',
+        sentence:
+          'There are no gods in the universe, no nations, no money, no human rights, no laws, '
+          + 'and no justice outside the common imagination of human beings.',
+        lead:
+          'One sentence, twelve hidden axioms, and a verdict on each. The argument is '
+          + 'steelmanned twice before it is attacked, then tested against Yap, Ireland in '
+          + '1970, Zimbabwe, Yugoslavia, Salomon v Salomon and Nuremberg.',
+        axioms: 12,
+        verdict: 'The observation holds. The word “fiction” does not — and it is the word doing all the work.',
+        published: '2026-08-07',
+        pdf: 'the-imagined-order.pdf',
+        pdfSize: '0.4 MB',
+        pdfLabel: 'The study, as printed',
+      },
     ],
   },
 ];
@@ -368,7 +392,17 @@ class Importer {
     if (hasClass(node, 'part-lede')) return `<p class="w-lead">${this.inline(node.children)}</p>`;
     /* The printed "· · ·" between movements of a part. */
     if (hasClass(node, 'divider')) return '<hr class="w-soft" />';
-    if (hasClass(node, 'colophon')) return `<p class="w-small">${this.inline(node.children)}</p>`;
+    /* Signed off either as one run of inline copy or as a few short
+       paragraphs, depending on which generation of the print template the
+       study was set in. Both end up as the same small type. */
+    if (hasClass(node, 'colophon')) {
+      const paragraphs = elements(node).filter((c) => !INLINE.has(c.tag));
+      if (!paragraphs.length) return `<p class="w-small">${this.inline(node.children)}</p>`;
+      return paragraphs.map((c) => {
+        if (c.tag !== 'p') this.fail(`<${c.tag}> inside the colophon`);
+        return `<p class="w-small">${this.inline(c.children)}</p>`;
+      }).join('');
+    }
     if (!flat(node)) return '';
 
     this.note(node);
