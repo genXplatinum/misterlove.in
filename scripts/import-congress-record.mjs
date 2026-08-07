@@ -114,6 +114,24 @@ const PARTS = [
     file: 'part-13-the-other-india.html',
     pdf: 'The_Congress_Record_Part_13_The_Other_India.pdf',
   },
+  {
+    n: 14,
+    label: 'Reform & Demolition',
+    file: 'part-14-1991.html',
+    pdf: 'The_Congress_Record_Part_14_Reform_and_Demolition.pdf',
+  },
+  {
+    n: 15,
+    label: 'UPA I',
+    file: 'part-15-upa-i.html',
+    pdf: 'The_Congress_Record_Part_15_UPA_I.pdf',
+  },
+  {
+    n: 16,
+    label: 'UPA II',
+    file: 'part-16-upa-ii.html',
+    pdf: 'The_Congress_Record_Part_16_UPA_II.pdf',
+  },
 ];
 
 const PUBLISHED = '2026-08-07';
@@ -221,6 +239,9 @@ const hasClass = (node, name) => classesOf(node).includes(name);
 const elements = (node) => node.children.filter(isTag);
 const find = (node, predicate) => elements(node).find(predicate);
 const findClass = (node, name) => find(node, (child) => hasClass(child, name));
+const deepHasClass = (node, name) => elements(node).some(
+  (child) => hasClass(child, name) || deepHasClass(child, name),
+);
 
 function textOf(node) {
   if (!isTag(node)) return decode(node);
@@ -257,6 +278,7 @@ const BOX_TONES = {
   know: 'fact',
   real: 'number',
   assume: 'interp',
+  hidden: 'interp', // parts 14-16 renamed "the hidden assumption" box to `.box.hidden`
   arg: 'arg',
 };
 
@@ -286,12 +308,17 @@ class Importer {
         if (hasClass(node, 'dc')) {
           return `<span class="w-dropcap">${this.inline(node.children)}</span>`;
         }
-        // The grade chip: "Court-found", "Audited", "Contested"… The grade is
-        // the claim's evidentiary status, so it is kept as a visible tag.
-        if (hasClass(node, 'grade')) {
+        // The grade chip: "Court-found", "Audited", "Contested"… (parts 1-13
+        // spell it `.grade`; parts 14-16 use `.g <grade>`). The grade is the
+        // claim's evidentiary status, so it is kept as a visible tag.
+        if (hasClass(node, 'grade') || hasClass(node, 'g')) {
           return `<span class="w-lawtag">${this.inline(node.children)}</span>`;
         }
-        if (hasClass(node, 'dis')) return this.inline(node.children);
+        // Furniture that only carries its text: chapter numerals, source
+        // attributions inline, the discreet run-in.
+        if (hasClass(node, 'dis') || hasClass(node, 'src') || hasClass(node, 'cnum')) {
+          return this.inline(node.children);
+        }
         return this.inline(node.children);
       }
       if (node.tag === 'a') {
@@ -310,6 +337,10 @@ class Importer {
   paragraph(node) {
     const body = this.inline(node.children);
     if (!body) return '';
+    // parts 14-16: `.ni` and `.sub` are lead paragraphs; `.tbl-note` is the
+    // small note hung under a table.
+    if (hasClass(node, 'ni') || hasClass(node, 'sub')) return `<p class="w-lead">${body}</p>`;
+    if (hasClass(node, 'tbl-note')) return `<p class="w-tnote">${body}</p>`;
     // `.dropcap` needs no class of its own — the <span class="w-dropcap"> it
     // wraps is what Prose.css styles.
     return `<p>${body}</p>`;
@@ -399,9 +430,43 @@ class Importer {
     return `<div class="w-side w-side--${variant}">${out.join('')}</div>`;
   }
 
-  /** The line that closes an argument box: who is right, and how we know. */
+  /**
+   * The line that closes an argument: who is right, and how we know. Parts 1-13
+   * write it as inline bold lines; parts 14-16 give it a `.lbl` label and
+   * full paragraphs. Both are handled without changing the earlier output.
+   */
   verdict(node) {
-    return `<div class="w-verdict">${this.blocksOrInline(node)}</div>`;
+    const hasLabel = elements(node).some((child) => hasClass(child, 'lbl'));
+    const hasBlocks = elements(node).some((child) => !INLINE.has(child.tag));
+    if (!hasLabel && !hasBlocks) {
+      return `<div class="w-verdict">${this.inline(node.children)}</div>`;
+    }
+    const out = [];
+    for (const child of node.children) {
+      if (!isTag(child)) { const t = this.inline([child]); if (t) out.push(`<p>${t}</p>`); continue; }
+      if (hasClass(child, 'lbl')) {
+        out.unshift(`<span class="w-box-label">${this.inline(child.children)}</span>`);
+        continue;
+      }
+      if (INLINE.has(child.tag)) { const t = this.inline([child]); if (t) out.push(`<p>${t}</p>`); continue; }
+      out.push(this.block(child));
+    }
+    return `<div class="w-verdict">${out.join('')}</div>`;
+  }
+
+  /** parts 14-16: an epigraph — a quotation with its source, opening a chapter. */
+  epi(node) {
+    const parts = [];
+    for (const child of node.children) {
+      if (!isTag(child)) continue;
+      if (hasClass(child, 'src')) {
+        parts.push(`<span class="w-attrib">${this.inline(child.children)}</span>`);
+      } else {
+        const inner = this.inline(child.children);
+        if (inner) parts.push(inner);
+      }
+    }
+    return `<div class="w-pullquote">${parts.join(' ')}</div>`;
   }
 
   /** The dark emphatic panel that closes a chapter. */
@@ -517,9 +582,13 @@ class Importer {
     if (hasClass(node, 'box')) return this.box(node);
     if (hasClass(node, 'remember')) return this.remember(node);
     if (hasClass(node, 'verdict')) return this.verdict(node);
+    if (hasClass(node, 'epi')) return this.epi(node);
     if (hasClass(node, 'side')) return `<div class="w-sides">${this.side(node, 0)}</div>`;
     if (hasClass(node, 'tw')) return this.blocks(node.children);
     if (hasClass(node, 'authorcard')) return this.authorcard(node);
+    // parts 14-16: the printed contents list, dropped — the reader renders its
+    // own from `toc`.
+    if (hasClass(node, 'toc-list')) { this.dropped.push('toc-list'); return ''; }
     // A kicker above a subheading.
     if (hasClass(node, 'eyebrow')) return `<p class="w-small">${this.inline(node.children)}</p>`;
     if (hasClass(node, 'lede')) return `<p class="w-lead">${this.inline(node.children)}</p>`;
@@ -543,6 +612,141 @@ class Importer {
    Reading one part.
    ------------------------------------------------------------------ */
 
+const stripMarkup = (markup) => markup
+  .replace(/<[^>]+>/g, ' ')
+  .replace(/&[a-z0-9#]+;/gi, ' ')
+  .replace(/\s+/g, ' ')
+  .trim();
+
+/**
+ * The second-generation template (parts 14 onward). Its chapters are not
+ * wrapped in their own <section>; they are a flat run of blocks delimited by
+ * `div.chead` markers, sitting between the front-matter sections and the
+ * back-matter sections inside `div.wrap`.
+ */
+function importNewPart({ n, label, pdf }, body, io, path) {
+  const where = `part ${n}`;
+  const wrap = find(body, (node) => hasClass(node, 'wrap'));
+  if (!wrap) throw new Error(`${where}: no .wrap`);
+  const header = find(wrap, (child) => hasClass(child, 'pg'));
+  if (!header) throw new Error(`${where}: no masthead (.pg)`);
+
+  const h1 = find(header, (child) => child.tag === 'h1');
+  const title = h1 ? flat(h1) : '';
+  if (!title) throw new Error(`${where}: the masthead has no title`);
+  const blurb = flat(findClass(header, 'sub') ?? { children: [] });
+  const warn = flat(findClass(header, 'adv') ?? { children: [] });
+
+  /* One pass over the wrapper's children, sorting them into front-matter
+     sections, the flat chapter run, and back-matter sections. */
+  const frontSecs = [];
+  const chapters = [];
+  const backSecs = [];
+  let phase = 'front';
+  let current = null;
+
+  for (const child of wrap.children) {
+    if (!isTag(child) || child === header) continue;
+    if (hasClass(child, 'pn')) continue; // the printed pager
+    if (child.tag === 'section' && hasClass(child, 'sec')) {
+      if (phase === 'front') frontSecs.push(child);
+      else { phase = 'back'; current = null; backSecs.push(child); }
+      continue;
+    }
+    if (hasClass(child, 'chead')) {
+      phase = 'chapters';
+      current = { head: child, body: [] };
+      chapters.push(current);
+      continue;
+    }
+    if (phase === 'chapters' && current) { current.body.push(child); continue; }
+    if (phase === 'front') { frontSecs.push(child); continue; }
+    backSecs.push(child); // trailing furniture, e.g. div.signoff
+  }
+
+  if (!chapters.length) throw new Error(`${where}: found no chapters`);
+
+  /* The printed contents section carries a `.toc-list`; it is dropped, since
+     the reader renders its own contents from `toc`. */
+  const keptFront = frontSecs.filter((node) => {
+    if (isTag(node) && node.tag === 'section' && deepHasClass(node, 'toc-list')) {
+      io.dropped.push('contents section');
+      return false;
+    }
+    return true;
+  });
+
+  const secHead = (node) => find(node, (c) => c.tag === 'h2' && hasClass(c, 'sec-h'));
+  const firstSec = keptFront.find((node) => isTag(node) && node.tag === 'section');
+  const prologueTitle = firstSec ? flat(secHead(firstSec) ?? { children: [] }) : 'Before We Begin';
+
+  /* The front matter and back matter are shallow — one level of subheads under
+     a single section heading. The section heading becomes an <h2> (the prologue
+     title) or an <h3> (a sources heading), so a source <h4> inside them would
+     skip a level. Demote those to <h3>; the chapter body keeps its own <h4>s. */
+  const shallow = (html) => html
+    .replace(/<h4 class="w-h4"/g, '<h3 class="w-h3"')
+    .replace(/<\/h4>/g, '</h3>');
+
+  const prologueBody = shallow(keptFront.map((node) => {
+    if (isTag(node) && node.tag === 'section') {
+      const h = secHead(node);
+      const rest = node.children.filter((c) => c !== h);
+      const heading = node === firstSec ? '' : (h ? `<h3 class="w-h3">${esc(flat(h))}</h3>` : '');
+      return heading + io.blocks(rest);
+    }
+    return io.block(node);
+  }).join(''));
+
+  const prologue = (warn
+    ? `<div class="w-box w-box--worry"><span class="w-box-label">How to read this</span><p>${esc(warn)}</p></div>`
+    : '') + prologueBody;
+
+  const toc = [];
+  const html = chapters.map((chapter, index) => {
+    const heading = find(chapter.head, (c) => c.tag === 'h2');
+    if (!heading) throw new Error(`${where}: a chapter head with no title`);
+    const chapterTitle = flat(heading);
+    const number = index + 1;
+    const id = `cr${n}-${number}-${slugify(chapterTitle)}`;
+    toc.push({ id, num: String(number), text: chapterTitle });
+    return `<h2 class="w-h2" id="${id}"><span class="w-num">${number}</span>${esc(chapterTitle)}</h2>`
+      + io.blocks(chapter.body);
+  }).join('');
+
+  const sources = shallow(backSecs.map((node) => {
+    if (isTag(node) && node.tag === 'section') {
+      const h = secHead(node);
+      const rest = node.children.filter((c) => c !== h);
+      return (h ? `<h3 class="w-h3">${esc(flat(h))}</h3>` : '') + io.blocks(rest);
+    }
+    return io.block(node);
+  }).join('<hr class="w-soft" />'));
+
+  const pdfPath = resolve(SRC_DIR, pdf);
+  if (!existsSync(pdfPath)) throw new Error(`${where}: missing PDF ${pdfPath}`);
+  const words = stripMarkup(`${prologue} ${html} ${sources}`).split(/\s+/).filter(Boolean).length;
+
+  return {
+    part: {
+      n,
+      label,
+      title,
+      lead: blurb,
+      words,
+      minutes: Math.max(1, Math.round(words / WORDS_PER_MINUTE)),
+      published: PUBLISHED,
+      toc,
+      prologue,
+      prologueTitle,
+      prologueTag: `Before We Begin · The Congress Record, Part ${n}`,
+      html,
+      sources,
+    },
+    source: { path, pdfPath, chapters: toc.length, dropped: io.dropped },
+  };
+}
+
 function importPart({ n, label, file, pdf }) {
   const path = resolve(SRC_DIR, file);
   if (!existsSync(path)) throw new Error(`Missing source for part ${n}: ${path}`);
@@ -555,6 +759,14 @@ function importPart({ n, label, file, pdf }) {
   const io = new Importer(where);
   io.idPrefix = `cr${n}-`;
   const body = parse(bodyMatch[1], where);
+
+  /* Parts 14 onward were typeset with a second-generation template — a
+     `header.pg` masthead, `section.sec` blocks and flat `div.chead`-delimited
+     chapters. It is read by its own function; parts 1-13 fall through to the
+     original reader below. */
+  if (deepHasClass(body, 'pg')) {
+    return importNewPart({ n, label, pdf }, body, io, path);
+  }
 
   /* The part's own title and strapline, read from the masthead so they can
      never drift from the published book. "Part One — How to Judge a
