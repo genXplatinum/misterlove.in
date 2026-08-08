@@ -169,8 +169,8 @@ function nearest(anchors, x) {
 function glue(left, right) {
   if (!left) return right;
   if (!right) return left;
-  if (/\u2010$/.test(left)) return left.slice(0, -1) + right;   // typesetter's wrap
-  if (/-$/.test(left) && /^[a-z]/.test(right)) return left + right; // author's hyphen
+  if (left.endsWith('\u2010')) return left.slice(0, -1) + right;   // typesetter's wrap
+  if (left.endsWith('-') && /^[a-z]/.test(right)) return left + right; // author's hyphen
   if (/^[,.;:!?)}\]]/.test(right)) return left + right;
   return `${left} ${right}`;
 }
@@ -633,7 +633,7 @@ function collect(source, { front = false } = {}) {
       table.anchors ??= line.cells.map((c) => c.x);
       const previous = table.rows[table.rows.length - 1];
       const continues = previous && table.lastY !== undefined && table.lastY - y < 15;
-      const row = continues ? previous : new Array(table.anchors.length).fill('');
+      const row = continues ? previous : Array.from({ length: table.anchors.length }, () => '');
       for (const [at, text] of byColumn(line.items, table.anchors)) {
         row[at] = row[at] ? glue(row[at], text) : text;
       }
@@ -712,7 +712,7 @@ function collect(source, { front = false } = {}) {
            settled here, before the indent test below, because a wrapped source
            line is indented too and would otherwise open a panel of its own. ---- */
     if (near(size, 8.6, EXACT)) {
-      if (/^▸/.test(text)) {
+      if (text.startsWith('▸')) {
         flushPara();
         if (!list) list = { items: [] };
         list.items.push(clean(text.replace(/^▸\s*/, '')));
@@ -743,7 +743,7 @@ function collect(source, { front = false } = {}) {
     /* ---- body copy; 9.2 pt is the tighter setting used under numbered
            subheadings and through the front matter ---- */
     if (near(size, 9.8, EXACT) || (near(size, 9.2, EXACT) && x <= 55)) {
-      if (/^▸/.test(text)) {
+      if (text.startsWith('▸')) {
         flushPara(); flushBox();
         if (!list) list = { items: [] };
         list.items.push(clean(text.replace(/^▸\s*/, '')));
