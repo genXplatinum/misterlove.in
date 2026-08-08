@@ -16,6 +16,42 @@ export const writingMeta = {
 
 export const pieces = [
   {
+    slug: 'architecture-of-money',
+    kicker: 'A nine-part study',
+    title: 'The Architecture of Money',
+    subtitle: 'Money, Power and the Dollar',
+    standfirst:
+      'How money was invented, how one country came to own the world’s accounting system, why every attempt to replace it has failed — and where India actually stands.',
+    summary:
+      'This began at an exchange rate screen. One dollar cost about ninety-five rupees, and the author could not answer a simple question about it: who decided that? Nobody in Washington rings a bell each morning and nobody in Mumbai signs a form, and yet the number decides whether an Indian family can afford a laptop and whether the country’s oil bill goes up by nine billion dollars this year. Pulling at that thread produced forty-four chapters, running from the clay tablets of Mesopotamia to where the rupee stands in 2026. What money actually is, and why the barter story in every textbook never happened. How the world organised itself around one currency at Bretton Woods, and what changed on 15 August 1971. The seven pillars that hold the dollar up, what America earns from them, and the bill it pays for them. Why sterling, the yen, the euro and the yuan each failed to take its place. How an exchange rate is really set, why the same haircut costs two dollars in Patna and forty in Boston, who owes whom, and what India can and cannot do about any of it. One rule runs through every page: if a sentence cannot be said in ordinary words it does not belong, so each technical term is defined where it first appears and again in a glossary of eighty. It is not a collapse story and it is not a nothing-changes story. The dollar is eroding slowly at the edges and unchallenged at the centre, and the report shows exactly which edges and which centre, with the numbers attached.',
+    topic: 'Money · Geopolitics · India',
+    keywords: [
+      'dollar dominance', 'reserve currency', 'history of money', 'Bretton Woods',
+      'Nixon Shock 1971', 'petrodollar', 'eurodollar', 'de-dollarisation',
+      'rupee internationalisation', 'exchange rates explained', 'purchasing power parity',
+      'IMF', 'SWIFT sanctions', 'BRICS currency', 'India economy 2026',
+    ],
+    published: '2026-08-08',
+    displayDate: 'August 2026',
+    parts: 9,
+    words: 38997,
+    minutes: 177,
+    status: 'Complete',
+    accent: 'harvest',
+    // Written as one report rather than a serial, so it ships as one download.
+    pdf: 'the-architecture-of-money.pdf',
+    pdfSize: '1.5 MB',
+    pdfLabel: 'The complete report',
+    principlesTitle: 'The rules this report runs on',
+    principles: [
+      { n: '01', t: 'Ordinary words, or it does not go in', d: 'Every technical term is defined the moment it first appears, and again in a glossary of eighty at the back. There is no equation here that a school student cannot follow.' },
+      { n: '02', t: 'Neither a collapse story nor a nothing-changes story', d: 'The internet is full of confident people announcing that the dollar dies next year, and equally confident people announcing that nothing will ever change. Both are selling something.' },
+      { n: '03', t: 'The uncomfortable part is written down', d: 'Every major section carries a box holding the fact that is inconvenient for the argument just made. The author calls them the most important boxes in the report.' },
+      { n: '04', t: 'India gets no flattery', d: 'The fastest-growing large economy on earth also runs a persistent trade deficit, a currency that is not fully convertible, and a bond market foreigners can barely access. A study that reports only the first half is a press release, not research.' },
+    ],
+    load: () => import('./writing/architecture-of-money.js'),
+  },
+  {
     slug: 'congress-record',
     kicker: 'A nineteen-part audit',
     title: 'The Congress Record',
