@@ -384,6 +384,15 @@ export default function Study() {
      English, because that is the only language every study exists in. */
   const contents = language === 'en' ? studiesOf(book, studies) : [];
   const displayDate = book.translations?.[language]?.displayDate ?? book.displayDate;
+
+  /* A translated edition pages through the studies that exist in that language,
+     which need not be all of them or run from one — so it walks the loaded
+     array rather than the book's numbering. */
+  const here = language === 'en' || !studies
+    ? -1
+    : studies.findIndex((s) => s.slug === studySlug);
+  const alsoPrev = here > 0 ? studies[here - 1] : null;
+  const alsoNext = here >= 0 && here < studies.length - 1 ? studies[here + 1] : null;
   const n = study?.n ?? 0;
   const prev = contents.find((s) => s.n === n - 1 && s.live);
   const next = contents.find((s) => s.n === n + 1 && s.live);
@@ -627,13 +636,32 @@ export default function Study() {
                 into pages they cannot read. */}
             {study && language !== 'en' && (
               <nav className="article__pager" aria-label="इस किताब पर अध्ययन">
-                <span />
-                <Link to={`/books/${book.slug}`} className="article__pager-link article__pager-link--next">
-                  <span className="mono">बाकी अध्ययन →</span>
-                  <span className="article__pager-title">
-                    इस किताब के दूसरे अध्ययन अभी अंग्रेज़ी में हैं
-                  </span>
-                </Link>
+                {alsoPrev ? (
+                  <Link
+                    to={`/hi/books/${book.slug}/${alsoPrev.slug}`}
+                    className="article__pager-link article__pager-link--prev"
+                  >
+                    <span className="mono">← अध्ययन {String(alsoPrev.n).padStart(2, '0')}</span>
+                    <span className="article__pager-title">{alsoPrev.title}</span>
+                  </Link>
+                ) : <span />}
+
+                {alsoNext ? (
+                  <Link
+                    to={`/hi/books/${book.slug}/${alsoNext.slug}`}
+                    className="article__pager-link article__pager-link--next"
+                  >
+                    <span className="mono">अध्ययन {String(alsoNext.n).padStart(2, '0')} →</span>
+                    <span className="article__pager-title">{alsoNext.title}</span>
+                  </Link>
+                ) : (
+                  <Link to={`/books/${book.slug}`} className="article__pager-link article__pager-link--next">
+                    <span className="mono">बाकी अध्ययन →</span>
+                    <span className="article__pager-title">
+                      इस किताब के बाकी अध्ययन अभी अंग्रेज़ी में हैं
+                    </span>
+                  </Link>
+                )}
               </nav>
             )}
 

@@ -593,9 +593,14 @@ const STUDY_COPY = {
   },
 };
 
+/* `studies` is the shelf in English and the translated set in any other
+   language, so a translated edition pages through its own siblings. */
 function studyBody(book, study, studies, language = 'en', translated = false) {
   const copy = STUDY_COPY[language];
   const contents = language === 'en' ? studiesOf(book, studies) : [];
+  const here = language === 'en' ? -1 : studies.findIndex((s) => s.slug === study.slug);
+  const alsoPrev = here > 0 ? studies[here - 1] : null;
+  const alsoNext = here >= 0 && here < studies.length - 1 ? studies[here + 1] : null;
   /* The switch is in the shell as well as in the app, so it works on the first
      paint and for a reader with no JavaScript at all. */
   const languageSwitch = translated
@@ -634,7 +639,10 @@ function studyBody(book, study, studies, language = 'en', translated = false) {
     ${download}
     <nav class="article__pager" aria-label="${esc(copy.pager)}">
       ${hi
-        ? `<span></span><a class="article__pager-link article__pager-link--next" href="/books/${book.slug}/"><span class="mono">बाकी अध्ययन →</span></a>`
+        ? `${alsoPrev ? `<a class="article__pager-link article__pager-link--prev" href="/hi/books/${book.slug}/${alsoPrev.slug}/"><span class="mono">← अध्ययन ${String(alsoPrev.n).padStart(2, '0')}</span></a>` : '<span></span>'}
+      ${alsoNext
+        ? `<a class="article__pager-link article__pager-link--next" href="/hi/books/${book.slug}/${alsoNext.slug}/"><span class="mono">अध्ययन ${String(alsoNext.n).padStart(2, '0')} →</span></a>`
+        : `<a class="article__pager-link article__pager-link--next" href="/books/${book.slug}/"><span class="mono">बाकी अध्ययन →</span></a>`}`
         : `${prev ? `<a class="article__pager-link article__pager-link--prev" href="/books/${book.slug}/${prev.slug}/"><span class="mono">← Study ${String(prev.n).padStart(2, '0')}</span></a>` : '<span></span>'}
       ${next?.live
         ? `<a class="article__pager-link article__pager-link--next" href="/books/${book.slug}/${next.slug}/"><span class="mono">Study ${String(next.n).padStart(2, '0')} →</span></a>`
@@ -1148,6 +1156,11 @@ for (const { book, studies } of shelved) {
   /* Language editions of individual studies. Same route shape under a language
      prefix, same shell machinery — only the copy and the prose change. */
   for (const { study, language } of studyEditions.filter((e) => e.book.slug === book.slug)) {
+    /* The siblings this edition can page to: the studies set in the same
+       language, in the order the importer emitted them. */
+    const siblings = studyEditions
+      .filter((e) => e.book.slug === book.slug && e.language === language)
+      .map((e) => e.study);
     const canonical = `${SITE}/${language}/books/${book.slug}/${study.slug}/`;
     const englishUrl = `${SITE}/books/${book.slug}/${study.slug}/`;
     shell({
@@ -1162,7 +1175,7 @@ for (const { book, studies } of shelved) {
       ].join(', '),
       image: `${SITE}/og/books-${book.slug}-${study.slug}-${language}.png`,
       imageAlt: `${study.title} — ${study.subtitle}। ${book.author} की ${book.title} के एक वाक्य का अध्ययन, लवप्रीत सिंह द्वारा।`,
-      body: studyBody(book, study, [], language, true),
+      body: studyBody(book, study, siblings, language, true),
       css: [ROUTE_CSS.article, ROUTE_CSS.writing, ROUTE_CSS.books],
       bodyClass: 'books-room',
       themeColor: BOOKS_GROUND,
