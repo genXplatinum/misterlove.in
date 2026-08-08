@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Reveal from '../components/Reveal';
 import BookPlate from '../components/BookPlate';
 import useBooksRoom from '../components/BooksRoom';
-import { books, booksMeta, booksTotals, liveStudiesOf, isOpen } from '../data/books';
+import { books, booksMeta, booksTotals, liveStudiesOf, isOpen, axiomWord } from '../data/books';
 import { profile } from '../data/site';
 import './Writing.css';
 import './Books.css';
@@ -29,7 +29,7 @@ function ShelfCard({ book, i }) {
               <b>{isOpen(book) ? `${live} of ${book.studies}` : book.studies}</b>{' '}
               {book.studies === 1 ? 'study' : 'studies'}
             </span>
-            <span><b>{book.axioms}</b> axioms graded</span>
+            <span><b>{book.axioms}</b> axioms {axiomWord(book)}</span>
             <span><b>~{Math.round((book.minutes / 60) * 10) / 10}</b> hrs</span>
             <span className="topic__date">{book.displayDate}</span>
           </span>
@@ -87,7 +87,7 @@ export default function Books() {
             <dl className="writingpage__totals">
               <div><dt className="mono">Books</dt><dd>{booksTotals.books}</dd></div>
               <div><dt className="mono">Studies</dt><dd>{booksTotals.studies}</dd></div>
-              <div><dt className="mono">Axioms graded</dt><dd>{booksTotals.axioms}</dd></div>
+              <div><dt className="mono">Axioms dug out</dt><dd>{booksTotals.axioms}</dd></div>
             </dl>
           </Reveal>
         </div>

@@ -190,6 +190,36 @@ const BOOKS = [
       },
     ],
   },
+  {
+    slug: 'epistles',
+    studies: [
+      {
+        n: 1,
+        file: 'Well Begun is half done/well-begun-is-half-done.html',
+        slug: 'well-begun-is-half-done',
+        title: 'Well Begun Is Half Done',
+        subtitle: 'Who actually said it, and whether it is true',
+        label: 'Letter 2, line 40',
+        source: 'Book I, Letter 2, line 40',
+        sentence: 'Dimidium facti, qui coepit, habet; sapere aude, incipe.',
+        secondary: 'The man who has begun has half the deed done. Dare to be wise. Begin.',
+        lead:
+          'The proverb has no author. Horace is only the oldest named source with a line '
+          + 'number, and Plato and Aristotle both quote it as already old. Seven claims hide '
+          + 'inside the sentence; the argument is steelmanned twice, and then knocked on.',
+        axioms: 7,
+        /* The seven claims are named and opened up, but this note does not rule
+           on each one, so it ships without a load diagram rather than with
+           verdicts nobody wrote. */
+        graded: false,
+        verdict: 'True about resistance, false about progress. An accurate description of where the difficulty sits, and a terrible one of where the work sits.',
+        published: '2026-08-08',
+        pdf: 'well-begun-is-half-done.pdf',
+        pdfSize: '0.2 MB',
+        pdfLabel: 'The note, as printed',
+      },
+    ],
+  },
 ];
 
 /* ------------------------------------------------------------------
@@ -696,10 +726,18 @@ function importStudy(book, study, { language = 'en', borrow = null } = {}) {
     (section.lead ? `<p class="w-lead">${esc(section.lead)}</p>` : '') + io.blocks(section.blocks)
   )).join('');
 
-  const scorecard = readScorecard(chapters, where, vocabulary.scorecard).map((row) => ({
-    ...row,
-    href: axiomIds.get(row.n) ?? null,
-  }));
+  /* Most studies close by grading every axiom, and that table is what the load
+     diagram is drawn from. A study can instead name its axioms and leave them
+     ungraded — a note on a proverb sets out what the sentence assumes without
+     ruling on each one — and then it ships without a diagram rather than with
+     an invented verdict in it. Declared, never inferred: a study that means to
+     grade and has lost its table still fails the import. */
+  const scorecard = study.graded === false
+    ? null
+    : readScorecard(chapters, where, vocabulary.scorecard).map((row) => ({
+      ...row,
+      href: axiomIds.get(row.n) ?? null,
+    }));
 
   if (io.unmapped.size) {
     throw new Error(
@@ -748,11 +786,13 @@ function check(book, studies, { contiguous }) {
     /* The diagram is the study's front door, so a scorecard that has drifted
        from the declared axiom count, or an axiom the reader cannot jump to,
        fails the import rather than shipping a picture that lies. */
-    if (study.scorecard.length !== study.axioms) {
-      throw new Error(`${book.slug}/${study.slug} declares ${study.axioms} axioms but grades ${study.scorecard.length}`);
-    }
-    for (const row of study.scorecard) {
-      if (!row.href) throw new Error(`${book.slug}/${study.slug}: axiom ${row.n} is graded but never written`);
+    if (study.scorecard) {
+      if (study.scorecard.length !== study.axioms) {
+        throw new Error(`${book.slug}/${study.slug} declares ${study.axioms} axioms but grades ${study.scorecard.length}`);
+      }
+      for (const row of study.scorecard) {
+        if (!row.href) throw new Error(`${book.slug}/${study.slug}: axiom ${row.n} is graded but never written`);
+      }
     }
 
     const ids = [...study.toc.map((t) => t.id), ...study.toc.flatMap((t) => t.kids.map((k) => k.id))];
@@ -776,7 +816,7 @@ function checkParity(book, original, translated, language) {
   if (original.toc.length !== translated.toc.length) {
     throw new Error(`${where}: ${translated.toc.length} parts against the original's ${original.toc.length}`);
   }
-  const gradesOf = (s) => s.scorecard.map((row) => `${row.n}:${row.grade}`).join(',');
+  const gradesOf = (s) => (s.scorecard ?? []).map((row) => `${row.n}:${row.grade}`).join(',');
   if (gradesOf(original) !== gradesOf(translated)) {
     throw new Error(`${where}: the scorecard grades differ from the original`);
   }

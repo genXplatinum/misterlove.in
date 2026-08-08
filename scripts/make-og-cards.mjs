@@ -377,7 +377,7 @@ function booksShelfCard() {
     ? `  <text class="s" x="${COL + 20}" y="${listTop + shown.length * rowH}" fill="${p.accent}" font-size="16" font-weight="600" letter-spacing="1">+ ${rest} more</text>`
     : '';
 
-  const badge = `${booksTotals.studies} ${booksTotals.studies === 1 ? 'STUDY' : 'STUDIES'} · ${booksTotals.axioms} AXIOMS GRADED`;
+  const badge = `${booksTotals.studies} ${booksTotals.studies === 1 ? 'STUDY' : 'STUDIES'} · ${booksTotals.axioms} AXIOMS DUG OUT`;
   const badgeW = labelWidth(badge, 17, 1.2) + 34;
 
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">

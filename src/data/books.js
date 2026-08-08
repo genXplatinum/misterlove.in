@@ -53,6 +53,52 @@ export const booksMeta = {
 
 export const books = [
   {
+    slug: 'epistles',
+    title: 'Epistles',
+    subtitle: 'Book I, Letter 2',
+    author: 'Horace',
+    bookYear: 'c. 20 BC',
+    bookNote: 'Written c. 20 BC · twenty verse letters · Letter 2 runs to 71 lines',
+    kicker: 'Book 02 on the shelf',
+    standfirst:
+      'The most repeated piece of advice in English, and nobody wrote it. “Well begun is '
+      + 'half done” has no author — Horace is only the oldest named man with a book and a '
+      + 'line number, and Plato and Aristotle both quote it as already old.',
+    summary:
+      'This one is not a famous book taken apart. It is a famous sentence traced back until '
+      + 'it runs out of authors. “Well begun is half done” is a proverb, and proverbs are not '
+      + 'written by anybody; they get said until somebody writes them down. The oldest named '
+      + 'source with a real line number is Horace, Epistles 1.2.40 — a private verse letter to '
+      + 'a young man who kept putting off the work of becoming someone. Plato quotes the same '
+      + 'saying in the Laws and calls it a proverb already; Aristotle uses it twice, and both '
+      + 'times as a warning that a small error at the start weighs as much as every later error '
+      + 'combined. The reason everybody credits Aristotle turns out to be a translator’s choice '
+      + 'made by Benjamin Jowett in 1885, and the reason you personally know the phrase is '
+      + 'probably Mary Poppins. Seven claims hide inside the sentence, and they are set out one '
+      + 'by one. The argument is then built at its strongest twice over before it is attacked. '
+      + 'The verdict is that the proverb is true about resistance and false about progress.',
+    topic: 'Classics · Philosophy · Language',
+    keywords: [
+      'well begun is half done', 'Horace', 'Epistles', 'dimidium facti', 'sapere aude',
+      'Plato Laws 753e', 'Aristotle Politics 1303b', 'Nicomachean Ethics 1098b',
+      'Hesiod Works and Days', 'Benjamin Jowett', 'Immanuel Kant', 'Thomas Drant',
+      'proverb origin', 'misquotation', 'close reading', 'classical proverb',
+    ],
+    published: '2026-08-08',
+    displayDate: 'August 2026',
+    studies: 1,
+    live: 1,
+    words: 7543,
+    minutes: 34,
+    /* Claims dug out of the sentence. This note names them without ruling on
+       each one, so the shelf counts them as found rather than graded. */
+    axioms: 7,
+    graded: false,
+    status: 'Complete',
+    accent: 'quartz',
+    load: () => import('./books/epistles.js'),
+  },
+  {
     slug: 'sapiens',
     title: 'Sapiens',
     subtitle: 'A Brief History of Humankind',
@@ -230,10 +276,20 @@ export const studiesOf = (book, studies) => {
 /** One study by its slug, from a loaded data file. */
 export const getStudy = (studies, slug) => (studies ?? []).find((s) => s.slug === slug);
 
+/**
+ * How one book's axiom count should be worded. Most studies grade every axiom
+ * they dig out; a note that names them without ruling on each one has not
+ * graded anything, and must not say it has.
+ */
+export const axiomWord = (book) => (book?.graded === false ? 'dug out' : 'graded');
+
 /** Totals for the shelf header — published work only. */
 export const booksTotals = {
   books: books.length,
   studies: books.reduce((a, b) => a + liveStudiesOf(b), 0),
   words: books.reduce((a, b) => a + b.words, 0),
+  /* Every axiom the shelf has pulled out of a sentence, and the subset that
+     also carries a verdict. The header counts the first and says so. */
   axioms: books.reduce((a, b) => a + (b.axioms ?? 0), 0),
+  graded: books.reduce((a, b) => a + (b.graded === false ? 0 : b.axioms ?? 0), 0),
 };
