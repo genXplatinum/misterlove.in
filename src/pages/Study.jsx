@@ -5,7 +5,7 @@ import ThemeToggle from '../components/ThemeToggle';
 import WordLookup from '../components/WordLookup';
 import LoadDiagram from '../components/LoadDiagram';
 import useBooksRoom from '../components/BooksRoom';
-import { getBook, getStudy, hasEdition, loaderFor, studiesOf } from '../data/books';
+import { axiomWord, getBook, getStudy, hasEdition, loaderFor, studiesOf } from '../data/books';
 import { profile } from '../data/site';
 import './Article.css';
 import './Books.css';
@@ -41,7 +41,7 @@ const COPY = {
     colophon: (date, words) => `Single-sentence study · ${date} · ${words} words`,
     download: (label, size) => `Download ${label ?? 'the PDF'} (${size})`,
     theStudies: 'THE STUDIES',
-    axiomsGraded: (n) => `${n} axioms graded`,
+    axiomsGraded: (n, word) => `${n} axioms ${word}`,
     inPreparation: 'In preparation',
     darkMode: 'Dark mode',
     darkAria: 'Dark reading theme',
@@ -480,9 +480,14 @@ export default function Study() {
 
           <div className="article__head-grid">
             <div className="article__head-main">
+              {/* "of 1" is noise on a book with a single study. */}
               <span className="article__partno mono">
                 {copy.studyOf(String(n || 1).padStart(2, '0'), book.studies)[0]}{' '}
-                <span className="dim">{copy.studyOf(String(n || 1).padStart(2, '0'), book.studies)[1]}</span>
+                {book.studies > 1 && (
+                  <span className="dim">
+                    {copy.studyOf(String(n || 1).padStart(2, '0'), book.studies)[1]}
+                  </span>
+                )}
                 <span className="article__partlabel">{study?.label ?? book.title}</span>
               </span>
               <h1 className="article__title">{study ? study.title : book.title}</h1>
@@ -706,7 +711,7 @@ export default function Study() {
                 <span className="section-head__id">{copy.theStudies}</span>&nbsp;&nbsp;/&nbsp;&nbsp;
                 {book.title} — {book.author}
               </span>
-              <span className="mono hide-sm">{copy.axiomsGraded(book.axioms)}</span>
+              <span className="mono hide-sm">{copy.axiomsGraded(book.axioms, axiomWord(book))}</span>
             </div>
 
             <ol className="article__contents-list">

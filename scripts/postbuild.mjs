@@ -24,6 +24,7 @@ import {
   studiesOf,
   liveStudiesOf,
   isOpen,
+  axiomWord,
 } from '../src/data/books.js';
 
 const SITE = 'https://misterlove.in';
@@ -541,12 +542,12 @@ function booksShelfBody(shelved) {
   return `<main id="main"><div class="writingpage bookspage"><div class="container">
   <h1 class="writingpage__title">${esc(booksMeta.title)}</h1>
   <p class="writingpage__lead">${esc(booksMeta.lead)}</p>
-  <p class="mono">${booksTotals.books} ${booksTotals.books === 1 ? 'book' : 'books'} · ${booksTotals.studies} ${booksTotals.studies === 1 ? 'study' : 'studies'} · ${booksTotals.axioms} axioms graded</p>
+  <p class="mono">${booksTotals.books} ${booksTotals.books === 1 ? 'book' : 'books'} · ${booksTotals.studies} ${booksTotals.studies === 1 ? 'study' : 'studies'} · ${booksTotals.axioms} axioms dug out</p>
   <ol class="shelfmethod__steps">${booksMeta.method
     .map((step) => `<li><span class="mono shelfmethod__n">${esc(step.n)}</span><span class="shelfmethod__t">${esc(step.t)}</span><span class="shelfmethod__d">${esc(step.d)}</span></li>`)
     .join('')}</ol>
   <ul class="topics">${shelved
-    .map(({ book, studies }) => `<li class="topic shelfbook"><a class="topic__link" href="/books/${book.slug}/"><span class="topic__body"><span class="mono topic__topic">${esc(book.topic)}</span><span class="topic__title">${esc(book.title)} — ${esc(book.author)}</span><span class="topic__stand">${esc(book.standfirst)}</span><span class="topic__meta mono">${isOpen(book) ? `${studies.length} of ${book.studies} studies` : `${book.studies} ${book.studies === 1 ? 'study' : 'studies'}`} · ${book.axioms} axioms graded · ${esc(book.displayDate)}</span></span></a><ol>${studies
+    .map(({ book, studies }) => `<li class="topic shelfbook"><a class="topic__link" href="/books/${book.slug}/"><span class="topic__body"><span class="mono topic__topic">${esc(book.topic)}</span><span class="topic__title">${esc(book.title)} — ${esc(book.author)}</span><span class="topic__stand">${esc(book.standfirst)}</span><span class="topic__meta mono">${isOpen(book) ? `${studies.length} of ${book.studies} studies` : `${book.studies} ${book.studies === 1 ? 'study' : 'studies'}`} · ${book.axioms} axioms ${axiomWord(book)} · ${esc(book.displayDate)}</span></span></a><ol>${studies
       .map((s) => `<li><a href="/books/${book.slug}/${s.slug}/">${esc(s.title)} — “${esc(s.sentence)}”</a></li>`)
       .join('')}</ol></li>`)
     .join('')}</ul>
@@ -561,7 +562,7 @@ function bookBody(book, studies) {
   <p class="bookpage__by">The book: ${esc(book.title)} — ${esc(book.subtitle)}, by ${esc(book.author)}. ${esc(book.bookNote)}.</p>
   <p class="topicpage__stand">${esc(book.standfirst)}</p>
   <p class="topicpage__summary">${esc(book.summary)}</p>
-  <p class="mono">${isOpen(book) ? `${studies.length} / ${book.studies} studies published` : `${book.studies} ${book.studies === 1 ? 'study' : 'studies'}`} · ${book.axioms} axioms graded · ${esc(book.displayDate)} · by Lovepreet Singh</p>
+  <p class="mono">${isOpen(book) ? `${studies.length} / ${book.studies} studies published` : `${book.studies} ${book.studies === 1 ? 'study' : 'studies'}`} · ${book.axioms} axioms ${axiomWord(book)} · ${esc(book.displayDate)} · by Lovepreet Singh</p>
   <h2>The studies</h2>
   <ol class="feature__parts studylist">${contents
     .map((s) => {
@@ -579,14 +580,15 @@ function bookBody(book, studies) {
 const STUDY_COPY = {
   en: {
     books: 'Books',
-    studyOf: (n, total) => `Study ${n} <span class="dim">of ${total}</span>`,
+    /* "of 1" is noise on a book with a single study. */
+    studyOf: (n, total) => `Study ${n}${total > 1 ? ` <span class="dim">of ${total}</span>` : ''}`,
     sources: 'Glossary, timeline and sources',
     download: (label, size) => `Download ${label ?? 'the PDF'} (${size})`,
     pager: 'Studies on this book',
   },
   hi: {
     books: 'किताबें',
-    studyOf: (n, total) => `अध्ययन ${n} <span class="dim">/ ${total}</span>`,
+    studyOf: (n, total) => `अध्ययन ${n}${total > 1 ? ` <span class="dim">/ ${total}</span>` : ''}`,
     sources: 'शब्दावली, समय-रेखा और स्रोत',
     download: (label, size) => `${label ?? 'PDF'} डाउनलोड करें (${size})`,
     pager: 'इस किताब पर अध्ययन',
@@ -996,7 +998,7 @@ shell({
   canonical: `${SITE}/books/`,
   keywords: `close reading, book criticism, hidden axioms, steelman, ${books.map((b) => `${b.title} ${b.author}`).join(', ')}, Lovepreet Singh`,
   image: `${SITE}/og/books.png`,
-  imageAlt: `Books, taken apart — ${booksTotals.books} ${booksTotals.books === 1 ? 'book' : 'books'}, ${booksTotals.studies} single-sentence ${booksTotals.studies === 1 ? 'study' : 'studies'}, ${booksTotals.axioms} axioms graded.`,
+  imageAlt: `Books, taken apart — ${booksTotals.books} ${booksTotals.books === 1 ? 'book' : 'books'}, ${booksTotals.studies} single-sentence ${booksTotals.studies === 1 ? 'study' : 'studies'}, ${booksTotals.axioms} axioms dug out.`,
   jsonLd: {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
