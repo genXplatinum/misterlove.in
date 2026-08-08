@@ -144,6 +144,50 @@ const BOOKS = [
           },
         },
       },
+      {
+        n: 3,
+        file: 'the-happiness-ledger.html',
+        slug: 'the-happiness-ledger',
+        title: 'The Happiness Ledger',
+        subtitle: 'Harari’s “not much happier”, taken apart',
+        label: 'Chapter 19',
+        source: 'Chapter 19, “And They Lived Happily Ever After”',
+        sentence: 'We are far more powerful than our ancestors, but we are not much happier.',
+        lead:
+          'One sentence, thirteen hidden axioms, and a verdict on each. A measurement '
+          + 'claim wearing a philosophical coat, tested against Japan, the lottery study, '
+          + 'the despair data and Bhutan — and against the fact that the instrument does '
+          + 'not exist before 1946.',
+        axioms: 13,
+        verdict: 'The question is the right one. Whether we are happier is not known — and the sentence states it as a finding.',
+        published: '2026-08-08',
+        pdf: 'the-happiness-ledger.pdf',
+        pdfSize: '0.4 MB',
+        pdfLabel: 'The study, as printed',
+        translations: {
+          hi: {
+            language: 'hi',
+            locale: 'hi_IN',
+            file: 'the-happiness-ledger-hindi.html',
+            title: 'ख़ुशी का बही-खाता',
+            subtitle: 'हरारी का “कुछ ख़ास ज़्यादा ख़ुश नहीं”, टुकड़ा-टुकड़ा करके',
+            label: 'अध्याय 19',
+            /* The chapter's own title is left in English, as the source does —
+               it is the name of a thing, not a sentence to be translated. */
+            source: 'अध्याय 19, “And They Lived Happily Ever After”',
+            sentence:
+              'हम अपने पुरखों से कहीं ज़्यादा ताक़तवर हैं, पर उनसे कुछ ख़ास ज़्यादा ख़ुश नहीं हैं।',
+            lead:
+              'एक वाक्य, तेरह छिपी हुई मान्यताएँ, और हर एक पर अलग फ़ैसला। नाप का दावा, '
+              + 'दर्शन का कोट पहने हुए — जापान, लॉटरी वाले अध्ययन, निराशा के आँकड़ों और भूटान '
+              + 'पर परखा गया, और इस तथ्य पर भी कि 1946 से पहले यह पैमाना कहीं मौजूद ही नहीं है।',
+            verdict: 'सवाल सही है। हम ज़्यादा ख़ुश हैं या नहीं — यह पता नहीं है, और वाक्य इसे नतीजे की तरह पेश करता है।',
+            pdf: 'the-happiness-ledger-hi.pdf',
+            pdfSize: '0.4 MB',
+            pdfLabel: 'यह अध्ययन, छपे हुए रूप में',
+          },
+        },
+      },
     ],
   },
 ];

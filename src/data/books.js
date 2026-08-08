@@ -63,8 +63,8 @@ export const books = [
     kicker: 'Book 01 on the shelf',
     standfirst:
       'The most quoted popular history of the century, taken one sentence at a time: that farming '
-      + 'was “history’s biggest fraud,” and that nothing social exists outside our common '
-      + 'imagination. Twenty-three hidden axioms, and a verdict on each of them.',
+      + 'was “history’s biggest fraud,” that nothing social exists outside our common imagination, '
+      + 'and that none of it made us happier. Thirty-six hidden axioms, and a verdict on each of them.',
     summary:
       'Sapiens sold on the strength of its reversals — the lines that take something you assumed '
       + 'was progress and turn it over. The most famous of them is in Chapter 5: the Agricultural '
@@ -80,7 +80,11 @@ export const books = [
       + 'of human beings. Twelve axioms come out of that one, and the argument turns on a single '
       + 'word — Harari calls these things fictions, and a ten-rupee note still buys tea. The '
       + 'claim is put through Yap, Ireland in 1970, Zimbabwe, Yugoslavia, Salomon v Salomon and '
-      + 'Nuremberg. Both verdicts are split, and both halves are stated plainly.',
+      + 'Nuremberg. The third takes the line the book closes on: that we are far more powerful '
+      + 'than our ancestors but not much happier. Thirteen axioms come out of that one, and it '
+      + 'turns out to be a measurement claim wearing a philosophical coat — the instrument it '
+      + 'depends on does not exist before 1946, and the question it asks has never once steered '
+      + 'anything. Every verdict is split, and both halves are stated plainly.',
     topic: 'History · Anthropology · Argument',
     keywords: [
       'Sapiens', 'Yuval Noah Harari', 'Agricultural Revolution', 'history’s biggest fraud',
@@ -88,20 +92,22 @@ export const books = [
       'Graeber and Wengrow', 'Göbekli Tepe', 'Mehrgarh', 'Indus Valley', 'Green Revolution',
       'Punjab groundwater', 'imagined order', 'inter-subjective', 'social construction',
       'institutional facts', 'John Searle', 'Benedict Anderson', 'Yap stones',
-      'Salomon v Salomon', 'Nuremberg', 'book criticism', 'close reading',
+      'Salomon v Salomon', 'Nuremberg', 'happiness research', 'hedonic treadmill',
+      'Easterlin paradox', 'subjective wellbeing', 'deaths of despair', 'Bhutan',
+      'set point theory', 'book criticism', 'close reading',
     ],
     published: '2026-08-07',
     displayDate: 'August 2026',
     /* The shelf entry as planned. `live` is what is actually published — the
        sitemap, share cards and RSS all follow the data file, never this. */
     studies: 3,
-    live: 2,
-    words: 29981,
-    minutes: 136,
+    live: 3,
+    words: 43824,
+    minutes: 199,
     /* Axioms dug out and graded across the published studies. The shelf header
        counts these, so it only ever claims work that exists. */
-    axioms: 23,
-    status: 'Open',
+    axioms: 36,
+    status: 'Complete',
     accent: 'ember',
     /* Studies announced but not yet written, so the shape of the work on this
        book is visible from the day the first one lands. A written study always
@@ -139,7 +145,7 @@ export const books = [
         language: 'hi',
         locale: 'hi_IN',
         displayDate: 'अगस्त 2026',
-        studies: ['the-imagined-order'],
+        studies: ['the-imagined-order', 'the-happiness-ledger'],
         load: () => import('./books/sapiens-hi.js'),
       },
     },
