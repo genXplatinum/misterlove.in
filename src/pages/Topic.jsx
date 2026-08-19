@@ -48,7 +48,7 @@ const COPY = {
     published: 'प्रकाशित',
     hours: 'घंटे',
     start: 'पढ़ना शुरू करें — भाग 01',
-    pdf: (_label, size) => `अंग्रेज़ी PDF · ${size}`,
+    pdf: (label, size) => `${label ?? 'PDF'} · ${size}`,
     contents: 'सभी भाग',
     contentsSummary: (piece, live, inProgress) => (
       inProgress ? `${piece.parts} भाग तय, ${live} प्रकाशित` : `${piece.parts} भाग, सही क्रम में`

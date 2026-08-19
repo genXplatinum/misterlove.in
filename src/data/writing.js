@@ -642,7 +642,8 @@ export const pieces = [
         words: 56324,
         minutes: 313,
         status: 'पूर्ण',
-        pdfLabel: 'अंग्रेज़ी PDF',
+        pdf: 'the-forgotten-gods-hi.pdf',
+        pdfSize: '1.2 MB',
         principlesTitle: 'यह किताब जिन उसूलों पर लिखी गई है',
         principles: [
           { n: '01', t: 'सरल भाषा जान-बूझकर', d: 'बड़े-बड़े शब्द अक्सर कमज़ोर दलीलों को छिपाने के लिए इस्तेमाल होते हैं। मुझे कुछ भी नहीं छिपाना।' },
