@@ -128,7 +128,13 @@ const COPY = {
     preparing: 'तैयार हो रहा है',
     allSoFar: 'अभी तक इतना ही →',
     beingWritten: (n, title) => `भाग ${String(n).padStart(2, '0')} — ${title} लिखा जा रहा है`,
-    download: (_piece, pdf) => `मूल अंग्रेज़ी PDF डाउनलोड करें (${pdf.size})`,
+    download: (piece, pdf) => (
+      piece.pdfs
+        ? `${pdf.label ?? 'PDF'} डाउनलोड करें (${pdf.size})`
+        : isInProgress(piece)
+          ? `${piece.pdfLabel ?? 'PDF'} डाउनलोड करें (${piece.pdfSize})`
+          : `सभी ${piece.parts} भाग डाउनलोड करें (PDF, ${piece.pdfSize})`
+    ),
     switchLabel: 'पढ़ने की भाषा',
     english: 'English',
     hindi: 'हिन्दी',
