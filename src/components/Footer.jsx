@@ -48,12 +48,15 @@ export default function Footer() {
           <div className="footer__column footer__column--writing">
             <span className="footer__label">Writing</span>
             <div className="footer__links">
-              <Link to="/writing">All research<span aria-hidden="true">→</span></Link>
-              {pieces.map((piece) => (
+              {/* `pieces` is already newest-first (see the comment atop
+                  writing.js) — a handful of recent works, not the whole
+                  archive; everything else stays one click away. */}
+              {pieces.slice(0, 4).map((piece) => (
                 <Link key={piece.slug} to={`/writing/${piece.slug}`}>
                   {piece.title}<span aria-hidden="true">→</span>
                 </Link>
               ))}
+              <Link to="/writing">All research<span aria-hidden="true">→</span></Link>
             </div>
           </div>
         </div>
