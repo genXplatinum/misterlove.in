@@ -3,85 +3,120 @@
  *
  * Same idea as import-forgotten-gods.mjs (structure recovered from typography:
  * font size tells a heading from a paragraph, x-offset tells an indented box
- * from body copy), but with one addition this PDF forces on us: pdf.js's own
- * text strings for this file are unreliable for Devanagari. Two defects, both
- * confirmed by inspecting raw codepoints straight out of the content stream —
- * not an artifact of this script:
+ * from body copy), but reading the PDF with mupdf rather than pdf.js.
  *
- *   1. The pre-base vowel sign "i-matra" is drawn (and therefore extracted)
- *      *before* the consonant it belongs to — "बिसरे" comes out as "िबसरे".
- *   2. Some म+े+ं glyph clusters ("में") carry a broken ToUnicode entry and
- *      extract as one letter followed by a control character — silent data
- *      loss, not reordering.
+ * pdf.js's own text extraction is flatly wrong for this document's
+ * Devanagari — confirmed by inspecting raw codepoints straight out of the
+ * content stream, not an artifact of any script: a pre-base vowel sign is
+ * drawn (and therefore extracted) before the consonant it belongs to
+ * ("बिसरे" comes out "िबसरे"), and some common glyph clusters ("में", and
+ * apparently many more — a scan turned up 119 distinct broken contexts)
+ * carry a broken ToUnicode entry and extract as a control character,
+ * losing the character outright. poppler/xpdf's pdftotext recovers the
+ * characters correctly but, on this specific justified PDF, occasionally
+ * mistakes the extra stretch around a matra for a real word-space —
+ * "कुछ" becomes "कु छ" — with no reliable way to undo it that doesn't risk
+ * merging two words that were genuinely separate.
  *
- * poppler/xpdf's pdftotext does not have either problem — it reorders and
- * maps Devanagari correctly (verified against the same pages). So this
- * importer takes text from pdftotext and structure (size, x, page, y — none
- * of which touch character encoding) from pdf.js, and stitches them together:
- * pdftotext already merges each wrapped visual line into one logical line per
- * paragraph/heading/box, in the same order pdf.js's own paragraph-grouping
- * would produce, so each open block (para/box/quote/heading) pulls exactly
- * one pdftotext line per *distinct page* its rows touch, in order. A block
- * whose rows never leave one page pulls one line; a paragraph that continues
- * across a page break pulls one line from each side and joins them — which
- * is exactly how pdftotext itself broke them.
+ * mupdf turns out to get both of those right: correct character order,
+ * and — because it reads real spaces off the content stream (either their
+ * own glyph or literal spaces embedded in a run) rather than inferring
+ * them from inter-glyph distance — no phantom mid-word spaces either. Its
+ * one defect is the same underlying font problem showing up a third way:
+ * the trailing matra(s) of certain glyph clusters get reported twice
+ * ("क्यों" → "क्योंों", "बड़ा" → "बड़ाा"). That is a narrow, mechanical
+ * pattern — an immediately-repeated run of 1-3 Devanagari characters that
+ * includes at least one vowel sign/virama/anusvara, which Hindi
+ * orthography never produces legitimately — so DEDUPE_RE below collapses
+ * it safely everywhere, not just at word boundaries.
  *
- * A translated edition can't slugify its own anchor ids — Devanagari strips
- * to nothing under the English slugifier — so section ids are borrowed from
- * the English edition by position (1st H2 in Hindi part N ↔ 1st toc entry in
- * English part N, and so on). That is also what keeps the language switch on
- * an article landing on the same section it left.
+ * A translated edition can't slugify its own anchor ids — Devanagari
+ * strips to nothing under the English slugifier — so section ids are
+ * borrowed from the English edition by position (1st H2 in Hindi part N
+ * ↔ 1st toc entry in English part N, and so on). That is also what keeps
+ * the language switch on an article landing on the same section it left.
  *
  *     node scripts/import-forgotten-gods-hi.mjs "<path to the Hindi PDF>"
  */
-import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
+import * as mupdf from 'mupdf';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 
 const SRC = process.argv[2]
   ?? 'C:/Users/rajpa/Downloads/Forgotten Gods Hindi - Simplified.pdf';
 const OUT = 'src/data/writing/forgotten-gods-hi.js';
-const PDFTOTEXT = 'C:/Program Files/Git/mingw64/bin/pdftotext.exe';
 
 const englishModule = await import(pathToFileURL(resolve('src/data/writing/forgotten-gods.js')).href);
 const english = englishModule.default;
 
-/* Typography → meaning. Measured from this document; see the header note.
-   Distinct from the English SIZE map — this PDF was set with different
-   metrics (a 30pt cover title, not 32; an 11pt box vs a 10.5pt citation,
-   where English uses 10.5 for both). */
+/* Typography → meaning, as reported by mupdf (rounder, coarser buckets
+   than pdf.js's raw glyph-transform scale — e.g. box text and its
+   citation, 11pt and 10.5pt in the English PDF, both read as 10pt here).
+   Measured from this document; distinct from the English SIZE map, which
+   was measured off a differently-typeset PDF. */
 const SIZE = {
-  bookTitle: 29,   // part cover (title contains "देवता") — threshold, not exact
-  frontHead: 22,   // "लेखक की एक बात", "विषय-सूची"
-  chapter: 21,     // chapter title → h2
-  section: 14,     // section heading → h3 (the opening epigraph is also 14pt,
-                    // but it always falls inside the stripped contents range —
-                    // see buildPart — so no collision survives into `body`)
-  numeral: 13,     // chapter numeral ("I ."), still plain Latin/roman
-  body: 12,        // body copy
-  pull: 12.5,      // pull-quote / epigraph text
-  boxSmall: 11,    // explainer boxes
-  citeSmall: 10.5, // quote attributions
+  bookTitle: 29,  // part cover (title contains "देवता") — threshold, not exact
+  headBig: 20.5,  // front-matter note/TOC heading AND chapter title — both
+                   // 21pt here (the English PDF's 22pt/21pt split doesn't
+                   // survive into this one); which is which is decided by
+                   // position, not size — see buildPart.
+  section: 13,    // h3 — also the size of the stripped-out cover epigraph,
+                   // but that page never reaches `body` (see buildPart)
+  body: 11.5,     // body copy: 12pt in Part 1's long author's note, 11pt in
+                   // Parts 2-4's shorter transitional notes and nowhere
+                   // else — 0.75 tolerance below catches both
+  boxOrCite: 10,  // explainer boxes and quote citations share one size;
+                   // the quote-open check (same as the English importer)
+                   // tells them apart regardless
 };
 
 const INDENT = 8;
-// Normal body prose in this document has an ~22-23pt same-paragraph line
-// gap and an ~30-35pt between-paragraph gap, with clean daylight between
-// the two — a threshold anywhere in the high 20s tells them apart. Bullet
-// lists break that assumption: consecutive list items sit ~27-29pt apart,
-// inside the "same paragraph" range for normal prose but wide enough to
-// trip a lower threshold into splitting mid-list. 30 sits above every
-// bullet-list gap actually measured in this PDF while still catching every
+// Measured off this document's mupdf bbox.y (top-down, unlike pdf.js's
+// baseline-up y): a same-paragraph line-to-line gap is ~22-24pt, a genuine
+// paragraph break is ~30-43pt. Bullet-list items sit closer together than
+// that but still wider than a wrapped line, ~28-29pt — inside a normal
+// paragraph's gap but outside a normal wrapped-line's, so 30 sits above
+// every bullet-to-bullet gap actually measured while still catching every
 // real paragraph break.
 const PARA_GAP = 30;
 const ORNAMENT = /^[—–-]\s*[◆◇•]\s*[—–-]$/;
 const ENDS_SENTENCE = /[.!?।॥”"'’]\s*$/;
 
-/** Cover copy carries the part's identity; lifted verbatim from each part's
-    cover page via pdftotext (the only place this text needs to be trusted a
-    second time, and it's plain paragraph text, not glyph-cluster-heavy). */
+/** Hindi orthography has no legitimate reason to repeat 1-3 characters
+    back to back when at least one of them is a dependent vowel sign,
+    virama, anusvara, candrabindu or visarga — so wherever this fires, it
+    is mupdf's duplication defect, not real text. See the header note. */
+const DEDUPE_RE = /([\u093E-\u094D\u0951-\u0952\u0902\u0903\u0901]{1,3})\1/gu;
+
+/** A wider net \u2014 consonant *plus* vowel sign, immediately repeated \u2014
+    would also catch this defect (verified: it fixes "\u092B\u0947\u0902\u0915\u0947" from
+    "\u092B\u0947\u0902\u0915\u0947\u0915\u0947"), but it isn't safe in general: "\u092B\u093C\u094D\u0930\u093E\u0902\u0938\u0940\u0938\u0940" legitimately
+    ends in "\u0938\u0940\u0938\u0940" (two real syllables, \u0938\u094D+\u0940 twice), and a document-wide
+    scan turned up twenty-plus other genuine words built the same way
+    (\u0935\u093F\u0936\u094D\u0935\u0935\u093F\u0926\u094D\u092F\u093E\u0932\u092F, \u092A\u0941\u0930\u093E\u0924\u0924\u094D\u0935, \u0928\u094D\u092F\u093E\u092F\u093E\u0932\u092F, \u0905\u092A\u0928\u093E\u0928\u093E\u2026). "\u0928\u0947" is the one
+    exception \u2014 every "\u0928\u0947\u0928\u0947" in this document (161 of them, all traced)
+    is the same postposition/verb-ending duplicated, never two genuine
+    words butted together with no space between \u2014 so it alone is safe to
+    collapse unconditionally; "\u0915\u0947" gets the same narrow treatment for the
+    one confirmed instance ("\u092B\u0947\u0902\u0915\u0947\u0915\u0947"). Broader classes go through
+    DEDUPE_RE above, which never touches a bare consonant and so never
+    risks this. */
+const NARROW_DEDUPE_RE = /(\u0928\u0947|\u0915\u0947)\1/gu; // \u0928\u0947 | \u0915\u0947, doubled
+
+const dedupe = (s) => {
+  let prev;
+  let out = s;
+  do {
+    prev = out;
+    out = out.replace(DEDUPE_RE, '$1').replace(NARROW_DEDUPE_RE, '$1');
+  } while (out !== prev);
+  return out;
+};
+
+/** Cover copy carries the part's identity; lifted verbatim from each
+    part's cover page (plain paragraph text, not glyph-cluster-heavy, and
+    mupdf's own extraction is trustworthy here regardless). */
 const PARTS = [
   { label: 'यूरोप', title: 'यूरोप ने हज़ार जीती-जागती रूहों को आसमान में बैठे एक दूर के राजा के बदले कैसे दे दिया' },
   { label: 'भारत', title: 'वह धरती जो झुकी नहीं' },
@@ -92,43 +127,14 @@ const PARTS = [
 const esc = (s) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-/**
- * This PDF is fully justified, and poppler/xpdf's word-space heuristic
- * occasionally mistakes the extra stretch it inserts around certain matras
- * for a real space — "कुछ" comes back as "कु छ". That is a width-heuristic
- * artifact, not a text error, and it is not reliably reversible without a
- * Hindi wordlist (the same two-token split is sometimes a real word
- * boundary). What *is* always safe: a space can never legitimately precede
- * Hindi sentence punctuation, so that class gets fixed outright.
- */
+/** A space can never legitimately precede Hindi sentence punctuation — a
+    cheap, safe defensive pass in case any slips through. */
 const cleanupSpacing = (s) => (s || '').replace(/ +([।॥,.!?)])/g, '$1');
 
-/** Safety net, not a primary fix: a same-page run of body rows whose gaps
-    all disagree with pdftotext's own paragraph grouping (a rarer case than
-    the bullet-list one PARA_GAP is tuned for, but the same shape of problem)
-    can still leave a genuinely empty heading or paragraph shell — the text
-    that belongs there ends up folded into a neighbour instead of lost, since
-    every page's queue is drained before its accumulator closes (see
-    drainPage below), so the shell itself carries nothing. Drop it rather
-    than render an empty tag. */
 // h2 is excluded deliberately — it carries the id a TOC entry and the
-// language switch both anchor to, and this book's chapter titles are never
-// genuinely empty, so there is nothing to protect against there.
+// language switch both anchor to, and this book's chapter titles are
+// never genuinely empty, so there is nothing to protect against there.
 const dropEmptyTags = (s) => (s || '').replace(/<(h3|p)(?:\s[^>]*)?>\s*<\/\1>/g, '');
-
-/** Some glyph clusters in this font (the same ToUnicode defect that breaks
-    "में" — see the header note) extract as a lone control character, and
-    occasionally at a y a couple of points off the row's real baseline, which
-    would otherwise register as its own spurious one-character "line" and
-    desync the page's pdftotext queue below. Built via codePointAt rather
-    than a regex control-character class, which upstream tooling has a habit
-    of mangling. */
-const stripControlChars = (raw) => Array.from(raw)
-  .filter((ch) => {
-    const c = ch.codePointAt(0);
-    return c > 31 && c !== 127;
-  })
-  .join('');
 
 const ROMAN = { I: 1, V: 5, X: 10, L: 50, C: 100 };
 function fromRoman(s) {
@@ -142,74 +148,56 @@ function fromRoman(s) {
   return n || null;
 }
 
-/* ---------------- clean text, via pdftotext, as one line-queue per page ---------------- */
+/* ---------------- read the PDF into positioned, deduplicated rows ---------------- */
 
-const rawText = execFileSync(
-  PDFTOTEXT,
-  ['-enc', 'UTF-8', SRC, '-'],
-  { maxBuffer: 1024 * 1024 * 64 }
-).toString('utf8');
-
-// pdftotext separates pages with a form feed; pageTexts[0] is page 1.
-const pageTexts = rawText.split('\f');
-const queues = pageTexts.map((t) => t.split('\n').map((l) => l.trim()).filter(Boolean));
-
-const DEBUG = process.env.DEBUG_IMPORT === '1';
-const takeLine = (page) => {
-  const q = queues[page - 1];
-  if (!q || !q.length) {
-    if (DEBUG) console.error(`  [queue empty] page ${page}`);
-    return '';
-  }
-  return q.shift();
-};
-const hasLine = (page) => {
-  const q = queues[page - 1];
-  return Boolean(q && q.length);
-};
-
-/* ---------------- read the PDF into positioned lines (pdf.js, structure only) ----------------
-   `text` below is pdf.js's own extraction and is NOT trusted for Devanagari —
-   it is only used where the pattern is pure Latin/symbols (roman numerals,
-   the ornament rule), which this document's encoding defect does not touch. */
-
-const doc = await getDocument({ data: new Uint8Array(readFileSync(SRC)), useSystemFonts: true }).promise;
+const doc = mupdf.Document.openDocument(new Uint8Array(readFileSync(SRC)), 'application/pdf');
 const lines = [];
 
-for (let p = 1; p <= doc.numPages; p++) {
-  const page = await doc.getPage(p);
-  const rows = new Map();
+for (let p = 0; p < doc.countPages(); p++) {
+  const page = doc.loadPage(p);
+  const structured = JSON.parse(page.toStructuredText('preserve-whitespace').asJSON());
 
-  for (const it of (await page.getTextContent()).items) {
-    if (!it.str) continue;
-    const y = Math.round(it.transform[5]);
-    const key = [...rows.keys()].find((k) => Math.abs(k - y) <= 2) ?? y;
-    if (!rows.has(key)) rows.set(key, []);
-    rows.get(key).push({ x: it.transform[4], str: it.str, size: Math.abs(it.transform[0]) || it.height || 0 });
+  // Flatten every block's lines into one bag first — mupdf's block order
+  // is content-stream order, not visual order, and a bulleted list on this
+  // PDF comes back with its bullet glyphs and item text as separate blocks
+  // that land well out of sequence (verified: a run of six list items
+  // surfaced *after* the paragraph that visually follows them). Grouping
+  // by y across the whole page, then sorting groups top-to-bottom, fixes
+  // both that and mupdf's separate habit of splitting one visual line into
+  // two "lines" at the same y (a mid-word wrap artifact) — a bullet glyph
+  // and its item text are exactly such a same-y pair, just from different
+  // blocks instead of the same one.
+  const flat = [];
+  for (const block of structured.blocks) {
+    if (block.type !== 'text') continue;
+    for (const ln of block.lines) flat.push(ln);
   }
 
-  [...rows.entries()]
-    .sort((a, b) => b[0] - a[0])
-    .forEach(([y, items]) => {
-      items.sort((a, b) => a.x - b.x);
-      const text = stripControlChars(items.map((i) => i.str).join(''))
-        .replace(/\s+/g, ' ')
-        .trim();
-      if (!text) return;
-      lines.push({
-        page: p,
-        y,
-        x: Math.round(items[0].x),
-        size: Math.round(Math.max(...items.map((i) => i.size)) * 10) / 10,
-        text,
-      });
+  const byY = new Map();
+  for (const ln of flat) {
+    const y = Math.round(ln.bbox.y);
+    const key = [...byY.keys()].find((k) => Math.abs(k - y) <= 2) ?? y;
+    if (!byY.has(key)) byY.set(key, []);
+    byY.get(key).push(ln);
+  }
+
+  const rows = [...byY.entries()].sort((a, b) => a[0] - b[0]);
+  for (const [y, group] of rows) {
+    group.sort((a, b) => a.bbox.x - b.bbox.x);
+    const text = dedupe(group.map((ln) => ln.text).join('')).trim();
+    if (!text) continue;
+    lines.push({
+      page: p + 1,
+      y,
+      x: Math.round(group[0].bbox.x),
+      size: Math.round(group[0].font.size * 10) / 10,
+      bold: group[0].font.weight === 'bold',
+      text,
     });
+  }
 }
 
-/* ---------------- split into parts at each cover page ----------------
-   Matched on "देवता" alone (the last word of the title) rather than the full
-   title string — देवता has no pre-base vowel signs, so unlike "बिसरे" it
-   extracts correctly out of pdf.js even with this document's encoding bug. */
+/* ---------------- split into parts at each cover page ---------------- */
 
 const partStarts = lines
   .filter((l) => l.size >= SIZE.bookTitle && /देवता/.test(l.text))
@@ -229,186 +217,149 @@ function buildPart(chunk, index) {
   const coverPage = chunk[0].page;
   let body = chunk.filter((l) => l.page !== coverPage);
 
-  // Contents heading = the 2nd front-matter-level heading in the part (the
-  // 1st is the author's note / transitional note). Matched by position, not
-  // text — "विषय-सूची" itself extracts corrupted out of pdf.js for the same
-  // reason "बिसरे" does (the i-matra is pre-base), so a text regex can't be
-  // trusted here the way it can for the English importer.
-  const frontHeads = body.filter((l) => l.size >= SIZE.frontHead - 0.3);
-  const contentsHead = frontHeads[1];
+  // Colophon lines: a standalone "लवप्रीत सिंह" signature sits on its own
+  // page in two places per part (between the note and the contents, and
+  // again as a closing mark at the part's end), and the closing page also
+  // carries a one-line "खंड X समाप्त…" / "किताब समाप्त" sign-off. All of
+  // it is body-sized but center-indented (~x265-269 against a ~56 margin)
+  // — far past even a box's or quote's indent — so it's cover-adjacent
+  // matter, not prose, and never appears anywhere in the English edition's
+  // own output (its tighter, hand-tuned size thresholds happened to
+  // exclude it as a side effect; this document's wider body-size range,
+  // needed to cover both Part 1's 12pt note and Parts 2-4's 11pt one,
+  // does not get that side effect for free).
+  const isColophon = (l) => l.x > 200 && /^(लवप्रीत सिंह|\d{4})$/.test(l.text.trim());
+  body = body.filter((l) => !isColophon(l) && !/समाप्त/.test(l.text));
+
+  // Contents heading = the 2nd big/bold heading in the part (the 1st is
+  // the author's note / transitional note); matched by position since
+  // both it and the chapter titles share one font size here.
+  const bigHeads = body.filter((l) => l.size >= SIZE.headBig && l.bold);
+  const contentsHead = bigHeads[1];
   if (contentsHead) {
-    const nextChapter = body.find((l) => l.page > contentsHead.page && l.size >= SIZE.chapter - 0.5);
+    const nextChapter = body.find((l) => l.page > contentsHead.page && l.size >= SIZE.headBig && l.bold);
     body = body.filter((l) => !(l.page >= contentsHead.page && (!nextChapter || l.page < nextChapter.page)));
   }
 
   const xTally = {};
   body.forEach((l) => {
-    if (Math.abs(l.size - SIZE.body) < 0.4) xTally[l.x] = (xTally[l.x] || 0) + 1;
+    if (Math.abs(l.size - SIZE.body) < 0.75 && !l.bold) xTally[l.x] = (xTally[l.x] || 0) + 1;
   });
   const bodyX = Number(Object.entries(xTally).sort((a, b) => b[1] - a[1])[0][0]);
-  const indented = (x) => x > bodyX + INDENT;
+  // Capped on the far side: a box/quote's own indent never runs past
+  // roughly +100 from the margin in this document. A handful of short
+  // closing reflections (one per part, present in this Hindi edition
+  // without an English counterpart to check against) sit further right
+  // still — apparently centered rather than left-indented — and those are
+  // ordinary paragraphs, not quotes; leaving the range open-ended would
+  // catch them as quotes instead.
+  const indented = (x) => x > bodyX + INDENT && x < bodyX + 100;
 
   const blocks = [];
   let para = null, box = null, quote = null, heading = null, pendingNum = null;
+  let seenFirstNumeral = false;
 
-  const newAcc = () => ({ text: '', _pages: new Set() });
-
-  // Dense, irregularly-spaced runs (bullet lists especially) can make pdf.js
-  // see more distinct paragraph breaks on one page than pdftotext actually
-  // produced lines for — the row-to-row gap that usually separates
-  // paragraphs doesn't reliably separate "next list item" from "actually a
-  // new paragraph" here. Rather than guess and risk losing a sentence to an
-  // empty block, every page's queue is drained into whichever accumulator
-  // last drew from it, the moment processing moves off that page. Nothing
-  // pdftotext produced is ever dropped; a paragraph boundary the two tools
-  // disagree on merges into its neighbour instead of vanishing.
-  let lastAppender = null; // (extraText) => void — appends into whatever last took from the current page
-  let lastAppenderPage = null;
-  const drainPage = (page) => {
-    if (!lastAppender || lastAppenderPage !== page) return;
-    while (hasLine(page)) {
-      const t = takeLine(page);
-      if (t) lastAppender(t);
-    }
-  };
-
-  /** Pull exactly one pdftotext line into `acc`, but only the first time a
-      row from this page has fed this specific accumulator — a paragraph
-      whose seven pdf.js rows all sit on one page must not pull seven lines,
-      it pulls the one pdftotext already merged them into. */
-  const takeFor = (acc, l) => {
-    lastAppender = (extra) => { acc.text = acc.text ? `${acc.text} ${extra}` : extra; };
-    lastAppenderPage = l.page;
-    if (acc._pages.has(l.page)) return;
-    acc._pages.add(l.page);
-    const t = takeLine(l.page);
-    if (t) acc.text = acc.text ? `${acc.text} ${t}` : t;
-  };
-
-  // A flush snapshots the accumulator's text into a plain object pushed onto
-  // `blocks`; a later drainPage() mutating the accumulator after that point
-  // would be writing into a detached object nothing renders. So every flush
-  // clears the appender too — whatever creates the next accumulator (a
-  // fresh para/box/quote/heading) re-points it via takeFor before any row
-  // could reach a drainPage() call.
-  const flushPara = () => { if (para) { blocks.push({ t: 'p', text: para.text }); para = null; lastAppender = null; } };
-  const flushBox = () => { if (box) { blocks.push({ t: 'box', text: box.text }); box = null; lastAppender = null; } };
-  const flushQuote = () => { if (quote) { blocks.push({ t: 'quote', text: quote.text, cite: quote.cite }); quote = null; lastAppender = null; } };
+  const flushPara = () => { if (para) { blocks.push({ t: 'p', text: para.text }); para = null; } };
+  const flushBox = () => { if (box) { blocks.push({ t: 'box', text: box.text }); box = null; } };
+  const flushQuote = () => { if (quote) { blocks.push({ t: 'quote', text: quote.text, cite: quote.cite }); quote = null; } };
   const flushHeading = () => {
     if (!heading) return;
     blocks.push({ t: heading.level, text: heading.text, num: heading.num });
     heading = null;
-    lastAppender = null;
   };
   const flushAll = () => { flushHeading(); flushPara(); flushBox(); flushQuote(); };
 
-  let prevPage = null;
   for (const l of body) {
     const { size, x, text, page } = l;
 
-    if (page !== prevPage) {
-      if (prevPage !== null) drainPage(prevPage);
-      prevPage = page;
-    }
+    if (ORNAMENT.test(text)) { flushAll(); continue; }
 
-    if (ORNAMENT.test(text)) { flushAll(); takeLine(page); continue; }
-
-    // Chapter numeral, e.g. "I ." — plain Latin, safe to read straight off
-    // pdf.js. Still consumes its own pdftotext line so the queue stays in
-    // step for whatever block comes next.
-    if (size >= SIZE.numeral - 0.3 && size < SIZE.section && /^[IVXLC]+\s*\.?$/i.test(text)) {
+    // Chapter numeral, e.g. "I." — the only thing at body size that is
+    // ever *only* a roman numeral, so safe to key off regardless of the
+    // size collision with body text.
+    if (l.bold && size <= SIZE.body + 1 && /^[IVXLC]+\.?$/i.test(text)) {
       flushAll();
       pendingNum = fromRoman(text);
-      takeLine(page);
+      seenFirstNumeral = true;
       continue;
     }
 
-    // Chapter title (h2) or front-matter heading — both can wrap over two
-    // lines that pdftotext has already joined into one.
-    if (size >= SIZE.chapter - 0.5) {
+    // Chapter title (h2) or front-matter heading — same size and weight
+    // here, told apart by whether the first numeral has appeared yet.
+    if (size >= SIZE.headBig && l.bold) {
       flushPara(); flushBox(); flushQuote();
-      const level = size >= SIZE.frontHead - 0.3 ? 'front' : 'h2';
+      const level = seenFirstNumeral ? 'h2' : 'front';
       if (heading && heading.level === level) {
-        takeFor(heading, l);
+        heading.text += ` ${text}`;
       } else {
         flushHeading();
-        heading = { level, num: pendingNum, text: '', _pages: new Set() };
+        heading = { level, num: pendingNum, text };
         pendingNum = null;
-        takeFor(heading, l);
       }
       continue;
     }
 
     // Section heading (h3), also wraps.
-    if (Math.abs(size - SIZE.section) < 0.3) {
+    if (Math.abs(size - SIZE.section) < 0.4 && l.bold) {
       flushPara(); flushBox(); flushQuote();
       if (heading && heading.level === 'h3') {
-        takeFor(heading, l);
+        heading.text += ` ${text}`;
       } else {
         flushHeading();
-        heading = { level: 'h3', num: null, text: '', _pages: new Set() };
-        takeFor(heading, l);
+        heading = { level: 'h3', num: null, text };
       }
       continue;
     }
     flushHeading();
 
-    // Pull-quote: indented, larger than body.
-    if (Math.abs(size - SIZE.pull) < 0.3 && indented(x)) {
-      flushPara(); flushBox();
-      if (!quote) quote = { text: '', cite: null, _pages: new Set(), _citePages: new Set() };
-      takeFor(quote, l);
-      continue;
-    }
-
     // Small indented type: an attribution if a quote is open, else an
-    // explainer box. Two distinct sizes in this document (11 for boxes,
-    // 10.5 for citations) where the English source uses one (10.5 for both)
-    // — the quote-open check disambiguates regardless of which fires.
-    if ((Math.abs(size - SIZE.boxSmall) < 0.4 || Math.abs(size - SIZE.citeSmall) < 0.4) && indented(x)) {
+    // explainer box.
+    if (Math.abs(size - SIZE.boxOrCite) < 0.6 && indented(x)) {
       flushPara();
       if (quote) {
-        const q = quote;
-        lastAppender = (extra) => { q.cite = (q.cite ? `${q.cite} ` : '') + extra.replace(/^[—–-]\s*/, ''); };
-        lastAppenderPage = page;
-        if (!quote._citePages.has(page)) {
-          quote._citePages.add(page);
-          const t = takeLine(page);
-          if (t) quote.cite = (quote.cite ? `${quote.cite} ` : '') + t.replace(/^[—–-]\s*/, '');
-        }
+        quote.cite = (quote.cite ? `${quote.cite} ` : '') + text.replace(/^[—–-]\s*/, '');
         continue;
       }
-      if (!box) box = newAcc();
-      takeFor(box, l);
+      box = box ? { text: `${box.text} ${text}` } : { text };
       continue;
     }
 
-    // Body copy.
-    if (Math.abs(size - SIZE.body) < 0.4 && !indented(x)) {
-      flushBox(); flushQuote();
+    // Body-sized text: a pull-quote if indented, otherwise a paragraph —
+    // except a bullet item's wrapped line is *also* indented (hanging
+    // indent under the bullet glyph, ~x69-73 against a ~x56 margin, close
+    // enough to a box's or quote's own indent that x alone can't tell
+    // them apart). So: if a paragraph is already open and this row reads
+    // as its natural continuation (small gap, not a fresh page-and-ended
+    // situation), continue it regardless of x — indentation only decides
+    // between starting a new quote and starting a new paragraph, never
+    // interrupts one already in progress.
+    if (Math.abs(size - SIZE.body) < 0.75) {
       if (para) {
         const sameCol = Math.abs(para.y - l.y);
         const newPage = page !== para.page;
         const ended = ENDS_SENTENCE.test(para.text);
-        if (newPage ? ended : sameCol > PARA_GAP) {
-          flushPara();
-          para = { ...newAcc(), page, y: l.y };
-          takeFor(para, l);
-        } else {
-          takeFor(para, l);
+        const continues = newPage ? !ended : sameCol <= PARA_GAP;
+        if (continues) {
+          para.text += ` ${text}`;
           para.page = page;
           para.y = l.y;
+          continue;
         }
-      } else {
-        para = { ...newAcc(), page, y: l.y };
-        takeFor(para, l);
       }
+
+      if (indented(x)) {
+        flushPara(); flushBox();
+        quote = quote ? { ...quote, text: `${quote.text} ${text}` } : { text, cite: null };
+        continue;
+      }
+
+      flushBox(); flushQuote(); flushPara();
+      para = { text, page, y: l.y };
       continue;
     }
 
     flushAll();
   }
-  if (prevPage !== null) drainPage(prevPage);
   flushAll();
 
   /* ---- render ---- */
@@ -472,10 +423,9 @@ function buildPart(chunk, index) {
   const finishedPrologue = finish(prologue) || null;
   const finishedHtml = finish(html);
 
-  // Matches the sitewide convention (see validate-hindi-writing.mjs): word
-  // count is title + lead + prologue + html — everything a reader's eyes
-  // pass over, not just the chaptered prose — computed after cleanup so it
-  // agrees with what actually ships.
+  // Matches the sitewide convention (see validate-forgotten-gods-hindi.mjs):
+  // word count is title + lead + prologue + html, computed after cleanup so
+  // it agrees with what actually ships.
   const words = strip(
     [title, lead, finishedPrologue, finishedHtml].filter(Boolean).join(' ')
   ).split(/\s+/).filter(Boolean).length;
