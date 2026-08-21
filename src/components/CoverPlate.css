@@ -55,6 +55,10 @@
 /* Dark arterial cloth under a bile-yellow foil: the one cover in the archive
    that is meant to look like a dossier on something diseased. */
 .cover--blight { --cover-cloth: #2e0f12; --cover-cloth-2: #5c1a18; --cover-ink: #f7e6e2; --cover-muted: #d8bcb5; --cover-foil: #a8b638; }
+/* Burnt sienna over a herbarium-paper foil, taken off the print edition of the
+   Darwin reading. The one cover in the archive that is meant to look like a
+   specimen label rather than book cloth. */
+.cover--specimen { --cover-cloth: #7c3620; --cover-cloth-2: #a0583a; --cover-ink: #fdf3e0; --cover-muted: #e5cfae; --cover-foil: #cbab63; }
 
 .cover__kicker {
   width: 100%;

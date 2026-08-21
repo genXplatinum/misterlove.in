@@ -1,0 +1,407 @@
+/* ============================================================
+   ROOMS — a reading room belonging to one piece rather than to a section.
+
+   /books already proved the mechanism: Nav, Footer and the buttons name no
+   colour of their own, so re-declaring the design tokens on one ancestor moves
+   the whole page, shared furniture included. The difference here is where the
+   class goes. `body.books-room` cannot reach `html { background: var(--canvas) }`,
+   so the library's cream still shows in the overscroll band and in the
+   scrollbar track. A per-piece room is stamped on the root element instead —
+   `:root.room-origin` — which catches the canvas, the rubber band, the
+   scrollbars and `color-scheme` as well.
+
+   A room is declared once in the manifest (`room: 'origin'`), added by
+   useRoom() while the piece is mounted, and stamped into the pre-rendered
+   shells by postbuild so there is no repaint on the way in.
+   ============================================================ */
+
+/* ============================================================
+   THE SPECIMEN SHEET — the room at /writing/origin-of-species.
+
+   The archive is a warm private-press library and /books is a cool drafting
+   office. This is the third room: a naturalist's mounting sheet, where a
+   specimen is pressed, labelled in a fine hand and filed.
+
+   Its colour is not invented. The print edition of this reading already runs
+   on a palette the author set, and the six that carry type are lifted straight
+   out of the PDFs:
+
+       sepia      #34291f   heading ink
+       sepia-2    #4d4034   body ink
+       sepia-3    #7b6a56   secondary
+       sienna     #8d3f26   the accent, and every rule the author draws in it
+       moss       #4f6041   the green he reserves for what nature does
+       ochre      #b39149   the gold on the figure keys
+
+   Two of those six are too light to carry small type on paper, so the room
+   darkens them and says so where it does it. Everything else is the book's.
+
+   The face is Bodoni Moda. A Didone is the letter of a nineteenth-century
+   engraved plate — the type an 1859 natural-history title page was actually
+   set in — and it is unmistakably neither Cormorant nor Instrument Serif, so a
+   reader knows at a glance they have changed rooms. Newsreader stays for
+   reading: a two-and-a-half hour book is not the place to experiment.
+   ============================================================ */
+
+:root.room-origin {
+  --sheet: #fbf6ea;
+  --sheet-2: #fffcf4;
+  --sheet-3: #efe4cd;
+  --sheet-deep: #f4ebd9;
+
+  --sepia: #34291f;
+  --sepia-2: #4d4034;
+  --sepia-3: #7b6a56;
+
+  --sienna: #8d3f26;
+  /* The print edition's lighter terracotta is #a9603f, which measures 4.4:1 on
+     this ground. Nudged down to clear AA, because it carries box labels. */
+  --sienna-2: #a0583a;
+  --moss: #4f6041;
+  /* Same story for the gold: #b39149 is 2.8:1 and it sets the contents
+     numerals. */
+  --ochre: #8a6a2c;
+
+  --canvas: var(--sheet);
+  --paper: var(--sheet-2);
+  --paper-alt: var(--sheet-3);
+  --paper-deep: var(--sheet-deep);
+  --parchment: var(--paper-deep);
+  --paper-raised: var(--paper);
+
+  --ink: var(--sepia);
+  --ink-soft: var(--sepia-2);
+  --ink-3: var(--sepia-3);
+  --muted: var(--ink-soft);
+
+  --rule: #d5c6a6;
+  --rule-dark: #b09a72;
+
+  --oxblood: var(--sienna);
+  --oxblood-hover: #73301c;
+  --oxblood-wash: #f0e0d3;
+  --forest: var(--moss);
+  --brass: var(--ochre);
+  --clay: var(--sienna-2);
+  --accent-ink: #fffcf4;
+
+  --bg: var(--canvas);
+  --bg-2: var(--paper-deep);
+  --surface: var(--paper);
+  --surface-2: var(--paper-alt);
+  --line: rgba(52, 41, 31, 0.18);
+  --line-2: rgba(141, 63, 38, 0.42);
+  --text: var(--ink);
+  --text-2: var(--ink-soft);
+  --text-dim: var(--muted);
+  --accent: var(--oxblood);
+  --on-accent: var(--accent-ink);
+  --scan: var(--brass);
+  --shadow: rgba(52, 41, 31, 0.2);
+  --shadow-book: 0 16px 40px rgba(52, 41, 31, 0.12);
+  --shadow-sheet: 0 6px 20px rgba(52, 41, 31, 0.08);
+
+  --font-display: "Bodoni Moda", "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --font-ui: "Bodoni Moda", "Cormorant Garamond", Georgia, serif;
+  --font-mono: var(--font-ui);
+
+  color-scheme: light;
+  background: var(--canvas);
+}
+
+/* The dark edition is the sheet under a lamp: the ground goes to walnut and the
+   ink turns to paper, but the three threads are the same threads, lifted so
+   they sit on a dark ground rather than sinking into it. Only the seeds are
+   re-declared — the mapping above still resolves against them. */
+:root.room-origin[data-theme="dark"] {
+  --sheet: #171310;
+  --sheet-2: #1f1a15;
+  --sheet-3: #2a231b;
+  --sheet-deep: #241e18;
+
+  --sepia: #f0e6d3;
+  --sepia-2: #cdbfa6;
+  --sepia-3: #a8997f;
+
+  --sienna: #d98b6a;
+  --sienna-2: #e0a184;
+  --moss: #93ab84;
+  --ochre: #d0ad63;
+
+  --muted: var(--ink-3);
+  --rule: #3a3128;
+  --rule-dark: #62543f;
+  --oxblood-hover: #e6a184;
+  --oxblood-wash: #33231b;
+  --accent-ink: #171310;
+  --line: rgba(240, 230, 211, 0.16);
+  --line-2: rgba(217, 139, 106, 0.42);
+  --shadow: rgba(0, 0, 0, 0.46);
+  --shadow-book: 0 18px 44px rgba(0, 0, 0, 0.42);
+  --shadow-sheet: 0 8px 24px rgba(0, 0, 0, 0.28);
+
+  color-scheme: dark;
+}
+
+/* ---------- The surface ---------- */
+
+/* The archive's grain is a printing artefact and belongs to the library; the
+   drafting office swapped it for a grid. A mounting sheet is laid paper, so
+   this room draws the chain lines instead — close-pitched laid lines with a
+   wider chain every couple of centimetres, kept faint enough to read as paper
+   rather than as a pattern. The reader gets a clean sheet; only the index page
+   is laid. */
+.room-origin .surface-noise { display: none; }
+
+.room-origin .topicpage {
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(52, 41, 31, 0.028) 0 1px,
+      transparent 1px 4px
+    ),
+    repeating-linear-gradient(
+      to right,
+      rgba(52, 41, 31, 0.05) 0 1px,
+      transparent 1px 27px
+    );
+}
+
+:root.room-origin[data-theme="dark"] .topicpage {
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(240, 230, 211, 0.03) 0 1px,
+      transparent 1px 4px
+    ),
+    repeating-linear-gradient(
+      to right,
+      rgba(240, 230, 211, 0.05) 0 1px,
+      transparent 1px 27px
+    );
+}
+
+/* ---------- Furniture, retuned for a Didone ---------- */
+
+/* Bodoni's hairlines are its whole character and its whole risk. At label size
+   they need weight and air, not the tracking a humanist sans wanted; the
+   optical-size axis does the rest. */
+.room-origin .mono,
+.room-origin .eyebrow,
+.room-origin .archive-label {
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.room-origin .btn,
+.room-origin .link,
+.room-origin .language-switch {
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+/* A Didone set large wants to be set tight; the library's Cormorant did not. */
+.room-origin h1,
+.room-origin h2,
+.room-origin h3 {
+  letter-spacing: -0.012em;
+}
+
+.room-origin .prose .w-h2,
+.room-origin .prose .w-h3 {
+  letter-spacing: -0.01em;
+}
+
+/* ---------- The prose vocabulary ---------- */
+
+/* Prose.css declares its callout colours on `.prose` itself, so a room that
+   only re-points the archive's tokens leaves the library's greens and violets
+   sitting on the sheet. The eight are re-cut here out of the book's own
+   palette: the sienna the author uses for his own voice, the moss he keeps for
+   what nature does, the ochre on his figure keys, and greyed relatives of
+   them for everything that is neither. Every one clears 4.5:1 on the sheet. */
+.room-origin .prose {
+  --w-field: #4f6041;
+  --w-gold: #8a6a2c;
+  --w-violet: #6a5470;
+  --w-clay: #985133;
+  --w-teal: #4a6660;
+  --w-slate: #665c4d;
+  --w-indigo: #55596e;
+  --w-quote: #645a4c;
+}
+
+:root.room-origin[data-theme="dark"] .prose {
+  --w-field: #a3bb92;
+  --w-gold: #d0ad63;
+  --w-violet: #bda6c2;
+  --w-clay: #e0a184;
+  --w-teal: #93b4ac;
+  --w-slate: #bdb2a0;
+  --w-indigo: #aeb1d2;
+  --w-quote: #cabda9;
+}
+
+/* The quotation callout sets its whole box in italic, which is right for
+   Darwin's sentence and wrong for the plain-English line under it — that line
+   is the author speaking, not the source. */
+.room-origin .prose .w-box--quote .w-small {
+  font-style: normal;
+}
+
+.room-origin .prose .w-small strong {
+  font-family: var(--font-ui);
+  font-size: 0.82em;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--w-quote);
+}
+
+/* The drop cap is the one place the Didone earns its keep at size. */
+.room-origin .prose .w-dropcap {
+  color: var(--sienna);
+  font-weight: 500;
+}
+
+/* A specimen sheet is ruled, not boxed: the ledger the eight-part map is set
+   in loses its fill and keeps its lines. */
+.room-origin .prose .w-tl-year {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+/* ---------- The chapter run ---------- */
+
+/* Darwin's book is fourteen chapters and an introduction. The run draws all
+   fifteen as a single strip of cells: filled where this reading has walked
+   them, hatched where it has not yet, and outlined on the chapters the part in
+   front of you covers. It is driven entirely by which chapters each part
+   declares, so the picture cannot drift from the series. */
+.chapter-run {
+  margin: 0 0 clamp(1.6rem, 3vw, 2.4rem);
+}
+
+.chapter-run__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.chapter-run__title {
+  font-family: var(--font-ui);
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.chapter-run__count {
+  font-family: var(--font-ui);
+  font-size: var(--t-label);
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.chapter-run__strip {
+  display: grid;
+  grid-template-columns: repeat(15, minmax(0, 1fr));
+  gap: 2px;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.chapter-run__cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.6rem;
+  padding: 0.35rem 0.15rem;
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--text-dim);
+  background: var(--surface);
+  transition: background 160ms var(--ease-out), color 160ms var(--ease-out);
+}
+
+/* Not yet walked: the cell is hatched, the way an unfinished sheet is. */
+.chapter-run__cell--soon {
+  color: color-mix(in oklab, var(--text-dim) 62%, transparent);
+  background-color: var(--bg-2);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    color-mix(in oklab, var(--rule-dark) 34%, transparent) 0 1px,
+    transparent 1px 5px
+  );
+}
+
+.chapter-run__cell--done {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.chapter-run__cell--done:hover {
+  color: var(--on-accent);
+  background: var(--accent);
+}
+
+/* The chapters the part in front of you is walking. */
+.chapter-run__cell--here {
+  color: var(--on-accent);
+  background: var(--accent);
+}
+
+.chapter-run__foot {
+  margin-top: 0.55rem;
+  font-family: var(--font-ui);
+  font-size: 0.76rem;
+  color: var(--text-dim);
+}
+
+/* Below the fold of a phone fifteen cells are two characters wide and unusable,
+   so the strip becomes the same information as a list — one row per part, the
+   chapters it covers, and whether it is written yet. */
+.chapter-run__list { display: none; }
+
+@media (max-width: 640px) {
+  .chapter-run__strip { display: none; }
+  .chapter-run__list { display: block; border-top: 1px solid var(--line); }
+
+  .chapter-run__row {
+    display: grid;
+    grid-template-columns: 4.6rem minmax(0, 1fr);
+    gap: 0.9rem;
+    align-items: baseline;
+    padding: 0.7rem 0.1rem;
+    border-bottom: 1px solid var(--line);
+    color: inherit;
+  }
+
+  .chapter-run__row-n {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .chapter-run__row--soon .chapter-run__row-n { color: var(--text-dim); }
+  .chapter-run__row-t { font-size: 0.88rem; color: var(--text-2); }
+  .chapter-run__row--here .chapter-run__row-t { color: var(--text); font-weight: 600; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter-run__cell { transition: none; }
+}
