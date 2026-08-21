@@ -23,7 +23,7 @@ export const pieces = [
     standfirst:
       'Everybody quotes Darwin and almost nobody has read him. So I read the 1859 first edition myself, slowly, with a pen in my hand, and wrote down what he actually says — chapter by chapter, in the plainest English I could manage.',
     summary:
-      'I picked up On the Origin of Species because everybody talks about it and almost nobody has opened it. So I opened it — the first edition, 1859, fourteen chapters, the version that went through the world’s window like a brick — and read the whole thing with a pen in my hand. It was harder than I expected, and not because the idea is hard. The idea is embarrassingly simple. Darwin is the difficulty. He writes like a man who is terrified of being shouted at, he apologises to the reader roughly every four pages, and he assumed I already knew what a Compositae was, which I did not. Somewhere in the pigeon chapter I nearly quit. Then it clicked, and I couldn’t put it down. This is my reading of the book, written the way I would explain it to a friend over chai. Every time Darwin uses a technical term I stop and explain it before moving on, and every part closes with a glossary of its own. When a chapter is boring I say so, and say why he bothered with it. When Darwin is wrong — about inheritance, about what causes variation, about use and disuse — I say that too, instead of treating him like a saint. Where I am giving you my own opinion rather than his, I make it obvious. Eight parts walk the whole book: the farmyard and the pigeons, the quiet war in the wild, the engine itself, the chapter where Darwin cross-examines his own theory, the two cases he could not explain, the broken record in the rocks, the geography, and the ending. Six are here. Two are being written.',
+      'I picked up On the Origin of Species because everybody talks about it and almost nobody has opened it. So I opened it — the first edition, 1859, fourteen chapters, the version that went through the world’s window like a brick — and read the whole thing with a pen in my hand. It was harder than I expected, and not because the idea is hard. The idea is embarrassingly simple. Darwin is the difficulty. He writes like a man who is terrified of being shouted at, he apologises to the reader roughly every four pages, and he assumed I already knew what a Compositae was, which I did not. Somewhere in the pigeon chapter I nearly quit. Then it clicked, and I couldn’t put it down. This is my reading of the book, written the way I would explain it to a friend over chai. Every time Darwin uses a technical term I stop and explain it before moving on, and every part closes with a glossary of its own. When a chapter is boring I say so, and say why he bothered with it. When Darwin is wrong — about inheritance, about what causes variation, about use and disuse — I say that too, instead of treating him like a saint. Where I am giving you my own opinion rather than his, I make it obvious. Eight parts walk the whole book: the farmyard and the pigeons, the quiet war in the wild, the engine itself, the chapter where Darwin cross-examines his own theory, the two cases he could not explain, the broken record in the rocks, the geography, and the ending. Seven are here. The last one is being written.',
     topic: 'Science · Evolution · Close Reading',
     keywords: [
       'Darwin', 'On the Origin of Species', 'Origin of Species explained',
@@ -38,9 +38,9 @@ export const pieces = [
     // `live` is what is actually published — the sitemap, share cards, RSS and
     // pager all follow the data file, never this number.
     parts: 8,
-    live: 6,
-    words: 33386,
-    minutes: 151,
+    live: 7,
+    words: 37671,
+    minutes: 170,
     status: 'In progress',
     accent: 'specimen',
     /* This piece brings its own reading room — The Specimen Sheet, in
@@ -57,6 +57,7 @@ export const pieces = [
       { n: 4, file: 'origin-of-species-part-4.pdf', size: '4.5 MB', label: 'Part 4 PDF' },
       { n: 5, file: 'origin-of-species-part-5.pdf', size: '4.7 MB', label: 'Part 5 PDF' },
       { n: 6, file: 'origin-of-species-part-6.pdf', size: '4.3 MB', label: 'Part 6 PDF' },
+      { n: 7, file: 'origin-of-species-part-7.pdf', size: '4.3 MB', label: 'Part 7 PDF' },
     ],
     principlesTitle: 'The rules this reading runs on',
     principles: [
@@ -65,12 +66,11 @@ export const pieces = [
       { n: '03', t: 'Where he is wrong, it says so', d: 'Darwin had no idea how inheritance works, thought comfortable conditions cause variation, and believed in use and disuse. All three are wrong. Being honest about that makes the good parts more believable, not less.' },
       { n: '04', t: 'My opinion is labelled as mine', d: 'What Darwin said and what I think of it are two different things. The boxes marked MY TAKE are where the second one lives; everything else is the book.' },
     ],
-    /* The last two parts, taken from the author's own map of the series on page
+    /* The last part, taken from the author's own map of the series on page
        three of Part One, so the shape of the reading is visible from the start
        and a part landing later changes nothing but the data. `chapters` is what
        the chapter run draws with. */
     outline: [
-      { n: 7, label: 'The Geography', title: 'Where Things Live', chapters: ['XI', 'XII'], blurb: 'Chapters 11 & 12: why animals live where they live. Islands, oceans, and Darwin soaking seeds in salt water in his kitchen.' },
       { n: 8, label: 'The Verdict', title: 'The Knockout Evidence, and the End', chapters: ['XIII', 'XIV'], blurb: 'Chapter 13: the knockout evidence — embryos, useless body parts, bones that match. Chapter 14: his conclusion — and what science has learned in the 165 years since.' },
     ],
     load: () => import('./writing/origin-of-species.js'),
