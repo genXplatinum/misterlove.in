@@ -64,7 +64,7 @@ const OUT = 'src/data/writing/origin-of-species.js';
 const PUBLISHED = '2026-08-21';
 const VERBOSE = process.argv.includes('--verbose');
 
-/* The six rendered parts, in order. `label` is the short name the reader's rail
+/* The seven rendered parts, in order. `label` is the short name the reader's rail
    and the share cards want; the PDF names the part but has no short form for
    it. `chapters` is what the cover kicker promises, kept here as the canonical
    spelling so the chapter run can be drawn without parsing English. */
@@ -75,6 +75,7 @@ const PARTS = [
   { label: 'The Cross-Examination', file: 'Origin of Species - Part 4 - The Cross-Examination.pdf', chapters: ['V', 'VI'] },
   { label: 'The Hard Cases', file: 'Origin of Species - Part 5 - The Two Hard Cases.pdf', chapters: ['VII', 'VIII'] },
   { label: 'The Broken Record', file: 'Origin of Species - Part 6 - The Broken Record.pdf', chapters: ['IX', 'X'] },
+  { label: 'The Geography', file: 'Origin of Species - Part 7 - Why Things Live Where They Live.pdf', chapters: ['XI', 'XII'] },
 ];
 
 /* ------------------------------------------------------------------ *
@@ -267,7 +268,7 @@ const SIZE = {
 /* Everything a figure is drawn out of. These sit inside vector diagrams whose
    geometry is the meaning, so they travel in the PDF and not in the web
    edition — the same call the Money import made about its charts. */
-const FIGURE_SIZES = [13.8, 10.3, 10.2, 9.8, 9.7, 9.4, 9.3, 9.1, 9, 8.9, 8.8, 8.7, 8.6, 8.5, 8.3, 8.2, 8.1, 7.9, 7.7, 7.5, 7.3, 6.9, 5.9, 5.4];
+const FIGURE_SIZES = [16.7, 13.8, 10.3, 10.2, 9.8, 9.7, 9.4, 9.3, 9.1, 9, 8.9, 8.8, 8.7, 8.6, 8.5, 8.3, 8.2, 8.1, 7.9, 7.7, 7.5, 7.3, 7.1, 6.9, 5.9, 5.4];
 
 const MARGIN = 53.2;
 const INDENT = 67.4;
