@@ -64,7 +64,8 @@ const OUT = 'src/data/writing/origin-of-species.js';
 const PUBLISHED = '2026-08-21';
 const VERBOSE = process.argv.includes('--verbose');
 
-/* The seven rendered parts, in order. `label` is the short name the reader's rail
+/* The eight rendered parts, in order. `scale` names the template a part was
+   set from; only the finale departs from the one the series opens with. `label` is the short name the reader's rail
    and the share cards want; the PDF names the part but has no short form for
    it. `chapters` is what the cover kicker promises, kept here as the canonical
    spelling so the chapter run can be drawn without parsing English. */
@@ -76,6 +77,7 @@ const PARTS = [
   { label: 'The Hard Cases', file: 'Origin of Species - Part 5 - The Two Hard Cases.pdf', chapters: ['VII', 'VIII'] },
   { label: 'The Broken Record', file: 'Origin of Species - Part 6 - The Broken Record.pdf', chapters: ['IX', 'X'] },
   { label: 'The Geography', file: 'Origin of Species - Part 7 - Why Things Live Where They Live.pdf', chapters: ['XI', 'XII'] },
+  { label: 'The Verdict', file: 'Origin of Species - Part 8 - The Evidence in the Body, and the Last Word.pdf', chapters: ['XIII', 'XIV'], scale: 'finale' },
 ];
 
 /* ------------------------------------------------------------------ *
@@ -147,6 +149,9 @@ const letterspaced = (text) => {
 const FIXED_LABELS = [
   [/^WHATHEMEANS\b/, 'WHAT HE MEANS'],
   [/^INDARWIN(?=[’'])/, "IN DARWIN"],
+  /* The finale letterspaces wider, and this label opens a gap inside a word
+     rather than closing one between two. */
+  [/TAKE AWA Y/, 'TAKE AWAY'],
 ];
 
 /**
@@ -166,7 +171,64 @@ function glue(left, right) {
  * Reading a part.                                                     *
  * ------------------------------------------------------------------ */
 
-async function readPdf(file) {
+const WORD_PART = { ONE: 1, TWO: 2, THREE: 3, FOUR: 4, FIVE: 5, SIX: 6, SEVEN: 7, EIGHT: 8 };
+
+/**
+ * Turn the items sharing one baseline into a line.
+ *
+ * Words come from the measured gap, never from the text layer's own spaces:
+ * display type here is letterspaced, so within a label the two are
+ * indistinguishable. Letters sit under 0.1 em apart and words over 0.6 em, and
+ * a ligature join measures 0.
+ */
+function assembleLine(items, page) {
+  items.sort((a, b) => a.transform[4] - b.transform[4]);
+
+  let text = '';
+  let pen = null;
+  let pua = false;
+  for (const item of items) {
+    const x = item.transform[4];
+    const size = Math.abs(item.transform[0]);
+    const raw = decode(item.str, `p${page}`);
+    if ([...item.str].some((ch) => isPua(ch.codePointAt(0)))) pua = true;
+    if (pen !== null && x - pen > size * 0.1) text += ' ';
+    text += letterspaced(raw) ? raw.replace(/ /g, '') : raw;
+    pen = x + (item.width ?? 0);
+  }
+
+  text = clean(text)
+    /* "F I G U R E 3" closes up to "FIGURE3" — the digit is a word of its own
+       and the display type is all caps, so this cannot bite prose. */
+    .replace(/^([A-Z]{3,})(\d)/, '$1 $2');
+  for (const [pattern, fixed] of FIXED_LABELS) {
+    text = text.replace(pattern, fixed);
+  }
+
+  return {
+    x: round(Math.min(...items.map((i) => i.transform[4]))),
+    right: round(Math.max(...items.map((i) => i.transform[4] + (i.width ?? 0)))),
+    size: round(Math.max(...items.map((i) => Math.abs(i.transform[0])))),
+    text,
+    /* The small-caps face is the private-use one, so a body-size line that
+       carries private-use glyphs is a run-in subheading and nothing else. */
+    pua,
+  };
+}
+
+/** Group a page's items into rows of shared baseline, top of page first. */
+function rowsByY(items) {
+  const rows = new Map();
+  for (const item of items) {
+    const y = Math.round(item.transform[5]);
+    const key = [...rows.keys()].find((candidate) => Math.abs(candidate - y) <= 2) ?? y;
+    if (!rows.has(key)) rows.set(key, []);
+    rows.get(key).push(item);
+  }
+  return [...rows.entries()].sort((a, b) => b[0] - a[0]);
+}
+
+async function readPdf(file, opts = {}) {
   const doc = await getDocument({
     data: new Uint8Array(readFileSync(file)),
     useSystemFonts: true,
@@ -176,56 +238,61 @@ async function readPdf(file) {
 
   for (let page = 1; page <= doc.numPages; page += 1) {
     const view = await doc.getPage(page);
-    const rows = new Map();
+    let items = (await view.getTextContent()).items.filter((item) => item.str.trim());
 
-    for (const item of (await view.getTextContent()).items) {
-      if (!item.str.trim()) continue;
+    /* The finale closes with a ledger of all eight parts set in three columns
+       — the part's label, its title, and what it covered. Sharing a baseline,
+       the three would assemble into one interleaved line, so the columns are
+       taken apart here and each row rebuilt from its own. Nothing else in the
+       series is set this way, which is why it is opt-in per part. */
+    const pageLines = [];
+    if (opts.ledger) {
+      const { bands, sizes } = opts.ledger;
+      const columns = bands.map(() => []);
+      const rest = [];
+      for (const item of items) {
+        const size = round(Math.abs(item.transform[0]));
+        const band = bands.findIndex((x, i) => Math.abs(item.transform[4] - x) <= 8 && near(size, sizes[i]));
+        if (band >= 0) columns[band].push(item);
+        else rest.push(item);
+      }
+      if (columns[0].length >= 3 && columns[1].length) {
+        const built = columns.map((column) => rowsByY(column)
+          .map(([y, group]) => ({ y, ...assembleLine(group, page) })));
+        const [labels, titles, glosses] = built;
+        for (const [k, label] of labels.entries()) {
+          /* A row's title is set a point or two above its own label, so the
+             floor has to clear the next label rather than sit on it. */
+          const floor = (labels[k + 1]?.y ?? -Infinity) + 3;
+          const within = (row) => row.y > floor && row.y <= label.y + 6;
+          const join = (rows) => rows.filter(within).map((r) => r.text)
+            .reduce((a, b) => (a ? glue(a, b) : b), '');
+          /* "PART ONE" letterspaces tighter than a word gap, so it closes up
+             to PARTONE and is opened again by name. */
+          const word = label.text.replace(/^PART\s*/, '');
+          const year = `Part ${WORD_PART[word] ?? word}`;
+          const text = [join(titles), join(glosses)].filter(Boolean).join(' — ');
+          pageLines.push({ page, y: label.y, x: bands[0], right: bands[2], size: round(sizes[1]), text: `${year} ${text}`, pua: false, ledger: { year, text } });
+        }
+        items = rest;
+      }
+    }
+
+    const rows = new Map();
+    for (const item of items) {
       const y = Math.round(item.transform[5]);
       const key = [...rows.keys()].find((candidate) => Math.abs(candidate - y) <= 2) ?? y;
       if (!rows.has(key)) rows.set(key, []);
       rows.get(key).push(item);
     }
 
-    for (const [y, items] of [...rows.entries()].sort((a, b) => b[0] - a[0])) {
-      items.sort((a, b) => a.transform[4] - b.transform[4]);
-
-      /* Words come from the measured gap, never from the text layer's own
-         spaces: display type here is letterspaced, so within a label the two
-         are indistinguishable. Letters sit under 0.1 em apart and words over
-         0.6 em, and a ligature join measures 0. */
-      let text = '';
-      let pen = null;
-      let pua = false;
-      for (const item of items) {
-        const x = item.transform[4];
-        const size = Math.abs(item.transform[0]);
-        const raw = decode(item.str, `p${page}`);
-        if ([...item.str].some((ch) => isPua(ch.codePointAt(0)))) pua = true;
-        if (pen !== null && x - pen > size * 0.1) text += ' ';
-        text += letterspaced(raw) ? raw.replace(/ /g, '') : raw;
-        pen = x + (item.width ?? 0);
-      }
-
-      text = clean(text)
-        /* "F I G U R E 3" closes up to "FIGURE3" — the digit is a word of its
-           own and the display type is all caps, so this cannot bite prose. */
-        .replace(/^([A-Z]{3,})(\d)/, '$1 $2');
-      for (const [pattern, fixed] of FIXED_LABELS) {
-        text = text.replace(pattern, fixed);
-      }
-
-      lines.push({
-        page,
-        y,
-        x: round(Math.min(...items.map((i) => i.transform[4]))),
-        right: round(Math.max(...items.map((i) => i.transform[4] + (i.width ?? 0)))),
-        size: round(Math.max(...items.map((i) => Math.abs(i.transform[0])))),
-        text,
-        /* The small-caps face is the private-use one, so a body-size line that
-           carries private-use glyphs is a run-in subheading and nothing else. */
-        pua,
-      });
+    for (const [y, group] of rows.entries()) {
+      pageLines.push({ page, y, ...assembleLine(group, page) });
     }
+    /* Rebuilt ledger rows have to fall back into the page's reading order, not
+       sit in front of the heading that introduces them. */
+    pageLines.sort((a, b) => b.y - a.y);
+    lines.push(...pageLines);
   }
 
   return { doc, lines };
@@ -268,13 +335,98 @@ const SIZE = {
 /* Everything a figure is drawn out of. These sit inside vector diagrams whose
    geometry is the meaning, so they travel in the PDF and not in the web
    edition — the same call the Money import made about its charts. */
-const FIGURE_SIZES = [16.7, 13.8, 10.3, 10.2, 9.8, 9.7, 9.4, 9.3, 9.1, 9, 8.9, 8.8, 8.7, 8.6, 8.5, 8.3, 8.2, 8.1, 7.9, 7.7, 7.5, 7.3, 7.1, 6.9, 5.9, 5.4];
+const FIGURE_SIZES = [16.7, 13.8, 10.3, 10.2, 9.8, 9.7, 9.6, 9.4, 9.3, 9.1, 9, 8.9, 8.8, 8.7, 8.6, 8.5, 8.3, 8.2, 8.1,
+  7.9, 7.7, 7.5, 7.3, 7.1, 7, 6.9, 6.8, 6.4, 6.3, 6.1, 6, 5.9, 5.7, 5.4];
 
-const MARGIN = 53.2;
-const INDENT = 67.4;
-const LIST = 70.3;
-const NUMBERED = [59.4, 86.4];   // the body's own list, and the one-page summary's
+/* Where things sit across the page. Like the type scale these are per-scale,
+   because the finale is set on its own grid. */
+const X_A = {
+  margin: 53.2,
+  indent: 67.4,
+  list: 70.3,
+  numbered: [59.4, 86.4],   // the body's own list, and the one-page summary's
+};
+const BULLET = /^[▪●•■]\s*/;
+const ORNAMENT = /^[❦❧⁂✱✻]+$/;
 const PARA_GAP = 22;      // 18-19 pt inside a paragraph, 26-28 pt between them
+
+/* ------------------------------------------------------------------ *
+ * The finale's own scale.                                             *
+ * ------------------------------------------------------------------ *
+ *
+ * Part Eight is not parts one to seven at a different size. It is a second
+ * template: the author re-set the closing part, and it carries three sections
+ * that exist nowhere else in the series — an afterword, a ledger recapping all
+ * eight parts, and a one-page summary built out of numbered items rather than
+ * small-caps run-ins.
+ *
+ * The sizes do not merely shift, they trade places, which is why this is a
+ * table of its own rather than a tolerance. 21 pt is a section heading in parts
+ * one to seven and the one-page head here; the glossary sits at 11.4/10.5 where
+ * those sizes mean a kept-line continuation and the "what he means" gloss
+ * elsewhere; and 10.4/10.5 are swapped outright.
+ *
+ *     53 pt  drop cap                    10.8 pt  the one-page summary's body
+ *     33 pt  cover: book title           10.6 pt  callout label *and* its copy
+ *     30 pt  section numeral             10.5 pt  glossary definition
+ *     25 pt  cover: part title           10.4 pt  the "what he means" gloss
+ *     21 pt  "Part Eight on one page"      10 pt  colophon
+ *     20 pt  section heading              9.5 pt  folio
+ *     15 pt  fleuron / cover sub-title    9.2 pt  figure caption
+ *     14 pt  subheading, and the           8.4 pt  divider / callout label
+ *            kept-line numerals            8.2 pt  ledger label / figure label
+ *   12.6 pt  the one-page summary's subheads
+ *   12.4 pt  cover: epigraph
+ *     12 pt  Darwin, quoted
+ *   11.6 pt  ledger: a part's title
+ *   11.5 pt  body copy
+ *   11.4 pt  glossary term
+ *     11 pt  a run-in subheading
+ */
+const SIZE_B = {
+  finale: true,
+  dropcap: 53,
+  numeral: 30,
+  bookTitle: 33,
+  partTitle: 25,
+  head: 20,
+  onePage: [21],
+  keepLine: null,      // no size of its own: a numeral at `sub` size, see below
+  keepCont: null,
+  sub: 14,
+  coverSub: 15,
+  fleuron: 15,         // body only; the cover is page one and read by position
+  chapterGloss: null,  // the finale's leads are body-size
+  summarySub: 12.6,
+  epigraph: 12.4,
+  quote: 12,
+  ledgerTitle: 11.6,
+  body: 11.5,
+  term: 11.4,
+  runIn: 11,
+  summaryLabel: 10.8,
+  boxCopy: 10.6,
+  definition: 10.5,
+  means: 10.4,
+  colophon: 10,
+  keepText: null,
+  figure: 9.2,
+  label: 8.4,
+  ledgerLabel: 8.2,
+  quoteLabel: 7.6,
+  folio: 9.5,
+};
+
+const X_B = {
+  margin: 52,
+  indent: 67,
+  list: 68,
+  numbered: [58, 59, 61, 68],
+  keepText: 102,          // a kept line's text, and its continuation lines
+  ledger: [52, 136, 280],   // the three columns of the eight-part ledger
+};
+
+const SCALES = { standard: { S: SIZE, X: X_A }, finale: { S: SIZE_B, X: X_B } };
 
 const at = (line, x, tol = 1.2) => Math.abs(line.x - x) <= tol;
 
@@ -285,7 +437,7 @@ const at = (line, x, tol = 1.2) => Math.abs(line.x - x) <= tol;
  * claimed by a construct, or explicitly dropped and recorded. Nothing falls
  * through quietly, which is the only way a typographic import stays honest.
  */
-function collect(lines, { part, dropped }) {
+function collect(lines, { part, dropped, S = SIZE, X = X_A }) {
   const blocks = [];
   const toc = [];
 
@@ -312,12 +464,20 @@ function collect(lines, { part, dropped }) {
   for (const line of lines) {
     const { size, text } = line;
 
+    /* ---- a ledger row was rebuilt from its columns upstream ---- */
+    if (line.ledger) {
+      closeBox();
+      push({ t: 'row', year: line.ledger.year, text: line.ledger.text });
+      previous = line;
+      continue;
+    }
+
     /* ---- furniture that never reaches the reader ---- */
-    if (near(size, SIZE.folio) || near(size, SIZE.colophon)) continue;
+    if (near(size, S.folio) || near(size, S.colophon)) continue;
     if (oneOf(size, FIGURE_SIZES)) { dropped.push({ ...line, why: 'figure' }); continue; }
 
     /* ---- the fleuron closes a passage ---- */
-    if (near(size, SIZE.fleuron)) {
+    if (near(size, S.fleuron) || (S.finale && ORNAMENT.test(text))) {
       closeBox();
       push({ t: 'rule' });
       previous = line;
@@ -329,22 +489,22 @@ function collect(lines, { part, dropped }) {
        paragraph, so it arrives mid-paragraph rather than before it. Its owner
        is therefore the block still accumulating, recognised by the deep indent
        the initial itself creates. */
-    if (near(size, SIZE.dropcap)) {
+    if (near(size, S.dropcap)) {
       if (open?.t === 'p' && open.firstX > 75 && !open.dropcap) open.dropcap = text.trim();
       else pendingDropcap = text.trim();
       continue;
     }
 
     /* ---- section numerals ---- */
-    if (near(size, SIZE.numeral)) {
+    if (near(size, S.numeral)) {
       if (awaitingHead) awaitingHead.numeral = text.trim();
       previous = line;
       continue;
     }
 
     /* ---- dividers and callout labels share a size; x tells them apart ---- */
-    if (near(size, SIZE.label)) {
-      if (at(line, MARGIN)) {
+    if (near(size, S.label)) {
+      if (at(line, X.margin)) {
         closeBox();
         awaitingHead = { divider: text.trim(), numeral: '' };
       } else {
@@ -357,7 +517,7 @@ function collect(lines, { part, dropped }) {
     }
 
     /* ---- a quotation callout ---- */
-    if (near(size, SIZE.quoteLabel)) {
+    if (near(size, S.quoteLabel)) {
       closeBox();
       box = { t: 'box', tone: 'quote', label: text.trim(), children: [] };
       blocks.push(box);
@@ -366,7 +526,7 @@ function collect(lines, { part, dropped }) {
     }
 
     /* ---- headings ---- */
-    if (near(size, SIZE.head) || oneOf(size, SIZE.onePage)) {
+    if (near(size, S.head) || oneOf(size, S.onePage)) {
       closeBox();
       const numeral = awaitingHead?.numeral ?? '';
       const divider = awaitingHead?.divider ?? '';
@@ -382,7 +542,15 @@ function collect(lines, { part, dropped }) {
       continue;
     }
 
-    if (near(size, SIZE.sub)) {
+    if (near(size, S.sub)) {
+      /* The finale sets its kept-line numerals at subheading size and on the
+         subheading's own margin, so the two are the same line to a size test.
+         A numeral is the whole line and a subheading never opens with one. */
+      if (S.finale && /^\d+\s+\S/.test(text)) {
+        open = push({ t: 'keep', text: text.replace(/^\d+\s+/, '').trim() });
+        previous = line;
+        continue;
+      }
       closeBox();
       const id = `os${part}-${slugify(text)}`;
       blocks.push({ t: 'h3', id, text: text.trim() });
@@ -392,8 +560,39 @@ function collect(lines, { part, dropped }) {
       continue;
     }
 
+    /* ---- the finale's one-page summary carries plain subheads at its own
+       size, where the earlier parts use small caps at body size ---- */
+    if (S.summarySub && near(size, S.summarySub)) {
+      closeBox();
+      blocks.push({ t: 'h4', text: text.trim() });
+      previous = line;
+      flush();
+      wantLead = false;
+      continue;
+    }
+
+    /* ---- the finale's run-in subheadings are a face of their own rather
+       than the small-caps private-use one. Where body copy shares the
+       baseline the two merge into a single body-size line upstream and never
+       reach here, so what arrives is a run-in standing alone — or a bullet,
+       which carries a real glyph in this part. ---- */
+    if (S.runIn && near(size, S.runIn)) {
+      const bullet = text.replace(BULLET, '');
+      if (bullet !== text) {
+        if (open && (open.t === 'li' || open.t === 'bullet') && !broke(line)) open.text = glue(open.text, bullet);
+        else open = push({ t: 'bullet', text: bullet.trim() });
+      } else {
+        closeBox();
+        blocks.push({ t: 'h4', text: text.trim() });
+        flush();
+        wantLead = false;
+      }
+      previous = line;
+      continue;
+    }
+
     /* ---- the chapter gloss under a section heading ---- */
-    if (near(size, SIZE.chapterGloss)) {
+    if (near(size, S.chapterGloss)) {
       if (open?.t === 'lead' && !broke(line)) open.text = glue(open.text, text);
       else open = push({ t: 'lead', text: text.trim() });
       previous = line;
@@ -401,7 +600,7 @@ function collect(lines, { part, dropped }) {
     }
 
     /* ---- Darwin, quoted ---- */
-    if (near(size, SIZE.quote)) {
+    if (near(size, S.quote)) {
       if (open?.t === 'quote' && !broke(line)) open.text = glue(open.text, text);
       else open = push({ t: 'quote', text: text.trim() });
       previous = line;
@@ -409,7 +608,7 @@ function collect(lines, { part, dropped }) {
     }
 
     /* ---- the plain-English gloss under a quotation ---- */
-    if (near(size, SIZE.means)) {
+    if (near(size, S.means)) {
       const stripped = text.replace(/^WHAT HE MEANS\s*[—-]\s*/, '');
       if (stripped !== text) {
         open = push({ t: 'means', text: stripped });
@@ -423,7 +622,17 @@ function collect(lines, { part, dropped }) {
     }
 
     /* ---- callout copy ---- */
-    if (near(size, SIZE.boxCopy)) {
+    if (near(size, S.boxCopy)) {
+      /* The finale sets a callout's label in the same size as its copy and
+         tells them apart by case alone: the label is letterspaced full caps,
+         the copy is sentence case. */
+      if (S.finale && !/[a-z]/.test(text) && /[A-Z]/.test(text)) {
+        closeBox();
+        box = { t: 'box', tone: toneFor(text), label: text.trim(), children: [] };
+        blocks.push(box);
+        previous = line;
+        continue;
+      }
       /* The eight-part map is a two-column ledger — "PART 3" against what
          part three covers — and the label shares a line with its row. */
       const row = text.match(/^PART (\d+)\s+(.*)$/);
@@ -440,12 +649,15 @@ function collect(lines, { part, dropped }) {
     }
 
     /* ---- glossary ---- */
-    if (near(size, SIZE.term)) {
+    if (near(size, S.term)) {
+      /* The finale signs off in the glossary term's size but centred, so the
+         margin is what separates a term from the closing line. */
+      if (S.finale && !at(line, X.margin, 3)) { previous = line; continue; }
       open = push({ t: 'term', text: text.trim() });
       previous = line;
       continue;
     }
-    if (near(size, SIZE.definition)) {
+    if (near(size, S.definition)) {
       /* Centred at this size means the "tear this out" kicker over the
          one-page summary, not a glossary body. */
       if (line.x > 150) {
@@ -461,27 +673,51 @@ function collect(lines, { part, dropped }) {
     }
 
     /* ---- a line worth remembering ---- */
-    if (near(size, SIZE.keepLine)) {
+    if (near(size, S.keepLine)) {
       open = push({ t: 'keep', text: text.replace(/^\d+\s+/, '').trim() });
       previous = line;
       continue;
     }
-    if (near(size, SIZE.keepCont)) {
+    if (near(size, S.keepCont)) {
       if (open?.t === 'keep') open.text = glue(open.text, text);
       else open = push({ t: 'keep', text: text.trim() });
       previous = line;
       continue;
     }
 
+    /* ---- the one-page summary ----
+       In parts one to seven this size carries only the summary's small-caps
+       labels and stray figure lettering. The finale sets the whole summary at
+       it — the kicker, the prose, and a numbered list whose numeral, run-in
+       and first line share a baseline and so arrive already joined. */
+    if (S.finale && near(size, S.summaryLabel)) {
+      if (line.x > 150) {
+        closeBox();
+        wantLead = false;
+        open = push({ t: 'lead', text: text.trim() });
+        previous = line;
+        continue;
+      }
+      if (/^\d+\.\s/.test(text)) {
+        open = push({ t: 'li', text: text.replace(/^\d+\.\s*/, '').trim() });
+        previous = line;
+        continue;
+      }
+      if (open?.t === 'li' && !broke(line)) open.text = glue(open.text, text);
+      else if (open?.t === 'p' && !broke(line)) open.text = glue(open.text, text);
+      else open = push({ t: 'p', text: text.trim() });
+      previous = line;
+      continue;
+    }
+
     /* ---- the one-page summary's own labels (parts three onward) ---- */
-    if (near(size, SIZE.summaryLabel)) {
+    if (near(size, S.summaryLabel)) {
       if (line.x > 70 && line.x < 90) {
         closeBox();
         blocks.push({ t: 'h4', text: text.trim() });
         previous = line;
         flush();
         wantLead = false;
-      wantLead = false;
         continue;
       }
       dropped.push({ ...line, why: 'figure' });
@@ -489,7 +725,7 @@ function collect(lines, { part, dropped }) {
     }
 
     /* ---- figure captions ---- */
-    if (near(size, SIZE.figure)) {
+    if (near(size, S.figure)) {
       const match = text.match(/^FIGURE\s+(\d+)\s*(.*)$/);
       if (match) {
         closeBox();
@@ -504,7 +740,33 @@ function collect(lines, { part, dropped }) {
     }
 
     /* ---- body copy ---- */
-    if (near(size, SIZE.body)) {
+    if (near(size, S.body)) {
+      /* The finale sets its kept lines in body copy, so only the numeral —
+         which shares the first line's baseline — marks one. Everything after
+         that on the kept-line indent belongs to the line already open. */
+      if (X.keepText && open?.t === 'keep' && !broke(line) && at(line, X.keepText)) {
+        open.text = glue(open.text, text);
+        previous = line;
+        continue;
+      }
+
+      /* Unlike the earlier parts, the finale's bullets carry a real glyph. It
+         sits in the margin and merges into the item's first line, which is the
+         only thing marking the item — the run-on lines that follow simply hold
+         the bullet's own indent. */
+      if (S.finale) {
+        const marked = text.replace(BULLET, '');
+        if (marked !== text) {
+          open = push({ t: 'bullet', text: marked.trim() });
+          previous = line;
+          continue;
+        }
+        if (open?.t === 'bullet' && !broke(line) && at(line, X.list, 1.5)) {
+          open.text = glue(open.text, text);
+          previous = line;
+          continue;
+        }
+      }
       /* A body-size line set in the small-caps face is a run-in subheading. */
       if (line.pua) {
         closeBox();
@@ -512,12 +774,11 @@ function collect(lines, { part, dropped }) {
         previous = line;
         flush();
         wantLead = false;
-      wantLead = false;
         continue;
       }
 
-      const numbered = NUMBERED.some((anchor) => at(line, anchor)) && /^\d+\.\s/.test(text);
-      const kind = numbered ? 'li' : at(line, LIST) ? 'bullet' : 'p';
+      const numbered = X.numbered.some((anchor) => at(line, anchor)) && /^\d+\.\s/.test(text);
+      const kind = numbered ? 'li' : at(line, X.list) ? 'bullet' : 'p';
 
       if (numbered) {
         open = push({ t: 'li', text: text.replace(/^\d+\.\s*/, '').trim() });
@@ -530,7 +791,7 @@ function collect(lines, { part, dropped }) {
         } else {
           open = push({ t: 'bullet', text: text.trim() });
         }
-      } else if ((open?.t === 'p' || open?.t === 'lead') && !broke(line) && !at(line, INDENT)) {
+      } else if ((open?.t === 'p' || open?.t === 'lead') && !broke(line) && !at(line, X.indent)) {
         open.text = glue(open.text, text);
       } else if (wantLead) {
         wantLead = false;
@@ -584,11 +845,28 @@ function toneFor(label) {
  * Rendering.                                                          *
  * ------------------------------------------------------------------ */
 
+/*
+ * A drop cap that is a whole word, not a word's first letter.
+ *
+ * The PDF cannot tell you which it is. The optical gap after the initial is a
+ * constant — 5.7 pt in parts one to seven, 5.0 in the finale — whether the
+ * word carries on or a new one starts, so geometry is no help and pdftotext
+ * reads "I f you had stopped" for exactly that reason. Only A and I stand
+ * alone in English, so the three places they do are named here; anything not
+ * named closes up, which is right for every other initial in the series.
+ */
+const STANDALONE_CAP = [
+  /^picked up On the Origin/,
+  /^rudimentary organ is a body part/,
+  /^said at the start that almost nobody/,
+];
+
 function paragraph(block) {
   const body = esc(block.text);
   if (!block.dropcap) return `<p>${body}</p>`;
   const cap = esc(block.dropcap);
-  return `<p><span class="w-dropcap">${cap}</span>${body}</p>`;
+  const gap = STANDALONE_CAP.some((opening) => opening.test(block.text)) ? ' ' : '';
+  return `<p><span class="w-dropcap">${cap}</span>${gap}${body}</p>`;
 }
 
 function renderBox(box) {
@@ -717,26 +995,29 @@ const MAP = new Map();
 
 for (const [index, spec] of PARTS.entries()) {
   const n = index + 1;
-  const { doc, lines } = await readPdf(`${SRC_DIR}/${spec.file}`);
+  const { S, X } = SCALES[spec.scale ?? 'standard'];
+  const { doc, lines } = await readPdf(`${SRC_DIR}/${spec.file}`, S.finale
+    ? { ledger: { bands: X.ledger, sizes: [S.ledgerLabel, S.ledgerTitle, S.boxCopy] } }
+    : {});
 
   /* The cover is page one and is read by position, because every line on it is
      unique to it and none of it belongs in the body. */
   const cover = lines.filter((line) => line.page === 1);
   const joined = (test) => cover.filter(test).map((l) => l.text).reduce((a, b) => (a ? glue(a, b) : b), '');
-  const bookTitle = joined((l) => near(l.size, SIZE.bookTitle));
+  const bookTitle = joined((l) => near(l.size, S.bookTitle));
   /* "The Cross-/Examination" is wrapped on the cover, so the two lines rejoin
      through the same hyphen rule the body copy uses. */
-  const partTitle = joined((l) => near(l.size, SIZE.partTitle));
+  const partTitle = joined((l) => near(l.size, S.partTitle));
   /* The cover's own kicker names the Darwin chapters this part walks; the
      14 pt line above it is the book's subtitle and belongs to the series. */
-  const kicker = joined((l) => near(l.size, SIZE.boxCopy));
-  const epigraph = joined((l) => near(l.size, SIZE.epigraph));
+  const kicker = joined((l) => near(l.size, S.boxCopy));
+  const epigraph = joined((l) => near(l.size, S.epigraph));
 
   if (!/ORIGIN/.test(bookTitle)) throw new Error(`Part ${n}: no book title on the cover, found "${bookTitle}"`);
   if (!partTitle) throw new Error(`Part ${n}: no part title on the cover`);
 
   const body = lines.filter((line) => line.page > 1);
-  const { blocks, toc } = collect(body, { part: n, dropped });
+  const { blocks, toc } = collect(body, { part: n, dropped, S, X });
 
   for (const block of blocks) {
     if (block.t !== 'row') continue;
