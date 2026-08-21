@@ -3,6 +3,8 @@ import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import Reveal from '../components/Reveal';
 import Magnetic from '../components/Magnetic';
 import CoverPlate from '../components/CoverPlate';
+import useRoom from '../components/PieceRoom';
+import ChapterRun from '../components/ChapterRun';
 import {
   getPiece,
   getPieceForLanguage,
@@ -14,6 +16,7 @@ import {
 } from '../data/writing';
 import { profile } from '../data/site';
 import './Writing.css';
+import './Rooms.css';
 
 const COPY = {
   en: {
@@ -167,6 +170,10 @@ export default function Topic() {
   const [parts, setParts] = useState(null);
   const [failed, setFailed] = useState(false);
 
+  /* A piece may bring its own room. Keyed on the room name, because React
+     Router reuses this component from one piece to the next. */
+  useRoom(piece?.room);
+
   useEffect(() => {
     if (!piece) return undefined;
     let alive = true;
@@ -288,6 +295,10 @@ export default function Topic() {
             </ol>
           </Reveal>
         </div>
+
+        {piece.room && (
+          <ChapterRun piece={piece} parts={parts} base={base} />
+        )}
 
         <div className="feature__contents">
           <div className="section-head">

@@ -3,6 +3,8 @@ import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import Prose from '../components/Prose';
 import ThemeToggle from '../components/ThemeToggle';
 import WordLookup from '../components/WordLookup';
+import useRoom from '../components/PieceRoom';
+import ChapterRun from '../components/ChapterRun';
 import {
   getPiece,
   getPieceForLanguage,
@@ -14,6 +16,7 @@ import {
 } from '../data/writing';
 import { profile } from '../data/site';
 import './Article.css';
+import './Rooms.css';
 
 const RAIL_KEY = 'lws:reader-rail';
 
@@ -382,6 +385,11 @@ export default function Article() {
   const [parts, setParts] = useState(null);
   const [loadError, setLoadError] = useState(false);
   useReadingSurface();
+  /* A piece may declare a room of its own. Keyed on the room name, not on
+     mount: React Router reuses this component across a move from one piece to
+     the next, so a mount-once effect would leak the first room onto every
+     piece after it. */
+  useRoom(piece?.room);
   const [railOpen, setRailOpen] = useRail();
   const bodyRef = useRef(null);
   const railCloseRef = useRef(null);
@@ -650,6 +658,13 @@ export default function Article() {
                   )}
                 </div>
               </details>
+            )}
+
+            {/* The room's own component: where this part sits in Darwin's
+                fourteen chapters, and how much of the book the reading has
+                covered. Only a piece that declares the chapters gets one. */}
+            {piece.room && parts && (
+              <ChapterRun piece={piece} parts={parts} current={n} base={base} />
             )}
 
             {!parts && !loadError && <p className="article__loading mono">{copy.loading(n)}</p>}

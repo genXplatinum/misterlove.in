@@ -14,14 +14,14 @@
   --surface: var(--paper-raised);
   --surface-2: color-mix(in oklab, var(--parchment) 72%, var(--paper-raised));
   --text: var(--ink);
-  --text-2: var(--ink-2);
+  --text-2: var(--ink-soft);
   /* Inherit the global --text-dim (--ink-soft in light, --ink-3 in dark) so the
      article's fine print clears WCAG AA on paper; dark is unchanged. */
   --line: color-mix(in oklab, var(--ink-3) 24%, transparent);
-  --line-2: color-mix(in oklab, var(--olive) 42%, transparent);
-  --accent: var(--olive);
+  --line-2: color-mix(in oklab, var(--oxblood) 42%, transparent);
+  --accent: var(--oxblood);
   --on-accent: var(--accent-ink);
-  --glow: color-mix(in oklab, var(--olive) 18%, transparent);
+  --glow: color-mix(in oklab, var(--oxblood) 18%, transparent);
   --scan: var(--brass);
 
   position: relative;
@@ -30,8 +30,8 @@
   padding-top: clamp(6.5rem, 10vw, 9rem);
   color: var(--text);
   background:
-    radial-gradient(75% 40% at 100% 0%, color-mix(in oklab, var(--cobalt) 8%, transparent), transparent 72%),
-    radial-gradient(55% 35% at -8% 32%, color-mix(in oklab, var(--saffron) 6%, transparent), transparent 76%),
+    radial-gradient(75% 40% at 100% 0%, color-mix(in oklab, var(--oxblood) 8%, transparent), transparent 72%),
+    radial-gradient(55% 35% at -8% 32%, color-mix(in oklab, var(--brass) 6%, transparent), transparent 76%),
     var(--bg);
 }
 
@@ -98,7 +98,7 @@
   z-index: 10020;
   height: 3px;
   pointer-events: none;
-  background: color-mix(in oklab, var(--moss) 60%, transparent);
+  background: color-mix(in oklab, var(--paper-deep) 60%, transparent);
 }
 
 .article__meter-fill {
@@ -697,7 +697,7 @@
   padding-block: clamp(4.5rem, 9vw, 8rem);
   border-top: 1px solid var(--line);
   background:
-    radial-gradient(45% 90% at 100% 50%, color-mix(in oklab, var(--olive) 6%, transparent), transparent),
+    radial-gradient(45% 90% at 100% 50%, color-mix(in oklab, var(--oxblood) 6%, transparent), transparent),
     var(--bg-2);
 }
 

@@ -314,9 +314,9 @@
 
 .prose .w-table th {
   padding: 0.85em 1em;
-  border-bottom: 1px solid color-mix(in oklab, var(--lichen) 22%, transparent);
-  color: var(--cream);
-  background: var(--moss);
+  border-bottom: 1px solid color-mix(in oklab, var(--forest) 22%, transparent);
+  color: var(--ink);
+  background: var(--paper-deep);
   font-weight: 650;
   text-align: left;
   white-space: nowrap;
@@ -332,11 +332,11 @@
 .prose .w-table tbody tr:last-child td { border-bottom: 0; }
 
 .prose .w-table tbody tr:nth-child(even) {
-  background: color-mix(in oklab, var(--olive) 5%, transparent);
+  background: color-mix(in oklab, var(--oxblood) 5%, transparent);
 }
 
 .prose .w-table tbody tr:hover {
-  background: color-mix(in oklab, var(--olive) 9%, transparent);
+  background: color-mix(in oklab, var(--oxblood) 9%, transparent);
 }
 
 .prose .w-table .w-hi {
@@ -418,7 +418,7 @@
   border: 1px solid var(--line);
   border-radius: 0.7rem;
   background:
-    linear-gradient(125deg, color-mix(in oklab, var(--olive) 7%, transparent), transparent 55%),
+    linear-gradient(125deg, color-mix(in oklab, var(--oxblood) 7%, transparent), transparent 55%),
     var(--surface);
   box-shadow: 0 12px 34px -34px var(--shadow);
 }
@@ -837,7 +837,7 @@
 .prose .w-myth-head {
   padding: 1em 1.35em 0.95em;
   border-bottom: 1px solid var(--line);
-  background: color-mix(in oklab, var(--olive) 6%, transparent);
+  background: color-mix(in oklab, var(--oxblood) 6%, transparent);
 }
 
 .prose .w-myth-tag {

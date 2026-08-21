@@ -125,6 +125,9 @@ const PALETTES = {
   ember:   { a: '#f3efe6', b: '#fcfaf5', c: '#eaded8', lift: '#7c3032', accent: '#8f443d', tab: '#dec2b8', paper: '#1d1a16', sub: '#5e574d', ink: '#fcfaf5', foot: '#867d70', rule: '#b7aa97' },
   ink:     { a: '#f3efe6', b: '#fcfaf5', c: '#e1e2df', lift: '#4d5660', accent: '#4d5660', tab: '#cbd0d0', paper: '#1d1a16', sub: '#5e574d', ink: '#fcfaf5', foot: '#867d70', rule: '#b7aa97' },
   quartz:  { a: '#f3efe6', b: '#fcfaf5', c: '#dfe7e1', lift: '#536d67', accent: '#536d67', tab: '#c5d5cb', paper: '#1d1a16', sub: '#5e574d', ink: '#fcfaf5', foot: '#867d70', rule: '#b7aa97' },
+  /* The Darwin reading's own room, so its share cards match the page they
+     link to: the print edition's sheet, sepia ink and burnt sienna. */
+  specimen: { a: '#fbf6ea', b: '#fffcf4', c: '#f0e4cd', lift: '#8d3f26', accent: '#8d3f26', tab: '#eed9c4', paper: '#34291f', sub: '#4d4034', ink: '#fffcf4', foot: '#7b6a56', rule: '#c6b391' },
   site:    { a: '#f3efe6', b: '#fcfaf5', c: '#eae2d5', lift: '#7c3032', accent: '#7c3032', tab: '#eadcdd', paper: '#1d1a16', sub: '#5e574d', ink: '#fcfaf5', foot: '#867d70', rule: '#b7aa97' },
 };
 
