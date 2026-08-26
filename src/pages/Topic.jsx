@@ -313,6 +313,11 @@ export default function Topic() {
 
           <ol className="feature__parts">
             {contents.map((part, i) => {
+              // A part can be announced with its own finished PDF well before
+              // the web edition exists — the row still reads as available,
+              // just pointed at the PDF instead of the in-browser reader.
+              const pdfOnly = !part.live && part.pdf ? part : null;
+
               const body = (
                 <>
                   <span className="partrow__n mono">{String(part.n).padStart(2, '0')}</span>
@@ -322,9 +327,13 @@ export default function Topic() {
                     <span className="partrow__lead">{part.lead}</span>
                   </span>
                   <span className="partrow__meta mono">
-                    {part.live ? `${part.minutes} ${copy.minutes}` : copy.preparing}
+                    {part.live
+                      ? `${part.minutes} ${copy.minutes}`
+                      : pdfOnly ? copy.pdf(pdfOnly.pdfLabel, pdfOnly.pdfSize) : copy.preparing}
                   </span>
-                  <span className="partrow__arrow" aria-hidden="true">{part.live ? '→' : ''}</span>
+                  <span className="partrow__arrow" aria-hidden="true">
+                    {part.live ? '→' : pdfOnly ? '↓' : ''}
+                  </span>
                 </>
               );
 
@@ -335,6 +344,14 @@ export default function Topic() {
                       <Link to={`${base}/part-${part.n}`} className="partrow">
                         {body}
                       </Link>
+                    ) : pdfOnly ? (
+                      <a
+                        href={`${import.meta.env.BASE_URL}${pdfOnly.pdf}`}
+                        className="partrow"
+                        download
+                      >
+                        {body}
+                      </a>
                     ) : (
                       <span className="partrow partrow--soon">{body}</span>
                     )}

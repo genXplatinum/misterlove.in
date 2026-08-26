@@ -16,6 +16,69 @@ export const writingMeta = {
 
 export const pieces = [
   {
+    slug: 'wars-of-punjab',
+    kicker: 'A sixteen-part military history',
+    title: 'The Wars of Punjab',
+    subtitle: 'Every War Fought on the Soil of Punjab, From the Beginning',
+    standfirst:
+      'Every war fought on the land of five rivers, from the Rigveda to 1971 — who fought, why, how, and who actually won — told in plain English, one part at a time, with an honesty label on every single claim.',
+    summary:
+      'Punjab has one geographical fact that decides most of its history: it is the only easy way into the Indian subcontinent by land, so for four thousand years, everybody who wanted in had to fight their way through it first. I set out to write down every war that fact ever produced — not just the famous ones, but the small, forgotten ones too — from the earliest hymns of the Rigveda through Alexander, the Delhi Sultanate, the Mughals, the Sikh Gurus, Ranjit Singh’s empire, the Anglo-Sikh Wars and Partition, up to 1971. Every war carries three things, wherever the sources allow it: an honesty label — Certain, Likely or Story, depending on how good the record actually is — the strategy the winner used, and the specific reason the loser lost. All sixteen parts are finished and downloadable as PDFs today. I am now bringing each one onto the site itself as a full readable page, the same way the rest of this archive works — starting with the first two.',
+    topic: 'Punjab · Military History · India',
+    keywords: [
+      'Wars of Punjab', 'history of Punjab', 'Punjab military history', 'Battle of the Ten Kings',
+      'Alexander in Punjab', 'Anglo-Sikh Wars', 'Ranjit Singh', 'Sikh empire history',
+      'Partition of Punjab 1947', 'Guru Gobind Singh battles', 'Banda Singh Bahadur',
+      'Chamkaur', 'Saragarhi', 'Punjab history explained', 'Mahmud of Ghazni Punjab',
+    ],
+    published: '2026-08-23',
+    displayDate: 'August 2026',
+    // The series as planned — sixteen parts, all sixteen already finished as
+    // PDFs. `live` is what has actually landed as a full web page; see the
+    // outline below for the rest, each carrying its own PDF in the meantime.
+    parts: 16,
+    live: 2,
+    words: 25691,
+    minutes: 117,
+    status: 'In progress',
+    accent: 'cobalt',
+    pdf: 'wars-of-punjab-part-1.pdf',
+    pdfSize: '614 KB',
+    pdfLabel: 'Part 1 PDF',
+    pdfs: [
+      { n: 1, file: 'wars-of-punjab-part-1.pdf', size: '614 KB', label: 'Part 1 PDF' },
+      { n: 2, file: 'wars-of-punjab-part-2.pdf', size: '1.0 MB', label: 'Part 2 PDF' },
+    ],
+    principlesTitle: 'The four rules this history runs on',
+    principles: [
+      { n: '01', t: 'Every war gets an honesty label', d: 'Certain, Likely or Story — stated on every single war, so you always know exactly how much to trust it.' },
+      { n: '02', t: 'The winner’s strategy, the loser’s mistake', d: 'Wherever the record allows it: the tactics and logic that won, and the specific reason the other side lost.' },
+      { n: '03', t: 'Simple English throughout', d: 'Foreign and technical terms are explained in brackets the moment they appear — never left for you to look up.' },
+      { n: '04', t: 'Punjab means what Punjab meant then', d: 'The region’s old borders, not today’s map — until 1947, when the book follows only Indian Punjab from there on.' },
+    ],
+    /* Parts 1-2 are written and live from the data file below. Parts 3-16 are
+       announced here from the author's own finished covers — each already has
+       a real PDF (see pdf/pdfSize/pdfLabel), so a row links straight to it
+       instead of showing as merely "in preparation". */
+    outline: [
+      { n: 3, label: 'Mauryas to Kushans', title: 'Mauryas to Kushans', blurb: 'Four foreign peoples conquer the land of the five rivers in four hundred years — Greeks, Sakas, Parthians, Kushans — and every single one of them arrives as an invader and ends up Indian.', pdf: 'wars-of-punjab-part-3.pdf', pdfSize: '1.0 MB', pdfLabel: 'Part 3 PDF' },
+      { n: 4, label: 'Guptas & Huns', title: 'The Guptas and the Huns', blurb: 'Four hundred years in which India had a golden age and Punjab was not invited to it — invaded from the passes wave after wave, until a king almost nobody remembers finally broke the worst man in this book.', pdf: 'wars-of-punjab-part-4.pdf', pdfSize: '965 KB', pdfLabel: 'Part 4 PDF' },
+      { n: 5, label: 'The Shahis', title: 'The Arabs, the Shahis and Mahmud', blurb: 'Three centuries in which one dynasty finally did what nobody in this book had ever done — stand at the passes and hold them — and what happened to the land of the five rivers on the day they failed.', pdf: 'wars-of-punjab-part-5.pdf', pdfSize: '935 KB', pdfLabel: 'Part 5 PDF' },
+      { n: 6, label: 'Ghurids & Mongols', title: 'Ghurids, Prithviraj and the Mongols', blurb: 'A hundred and fifty years in which Punjab is the wall that northern India shelters behind — and the men who command the wall keep ending up on the throne in Delhi.', pdf: 'wars-of-punjab-part-6.pdf', pdfSize: '1.0 MB', pdfLabel: 'Part 6 PDF' },
+      { n: 7, label: 'Tughlaqs to Lodis', title: 'Tughlaqs, Timur and the Lodis', blurb: 'Two centuries in which Punjab belongs to Delhi on paper and to nobody in practice — held in turn by a chief from the Salt Range, a dynasty in Multan, and finally by a governor of Lahore who hands the whole country to a stranger from Kabul.', pdf: 'wars-of-punjab-part-7.pdf', pdfSize: '1.0 MB', pdfLabel: 'Part 7 PDF' },
+      { n: 8, label: 'Mughals & Gurus', title: 'Mughals, Suris and the Gurus', blurb: 'Eighty years in which India is conquered, lost, and conquered again — Lahore becomes the capital of an empire for thirteen years — and Punjab acquires the one thing it has never had in this book: an institution of its own.', pdf: 'wars-of-punjab-part-8.pdf', pdfSize: '965 KB', pdfLabel: 'Part 8 PDF' },
+      { n: 9, label: 'The Gurus Arm', title: 'The Gurus and the Mughals', blurb: 'A hundred years in which that new institution acquires an army — and then does the one thing no power in this entire book has ever managed: it builds something that does not die when its leader does.', pdf: 'wars-of-punjab-part-9.pdf', pdfSize: '1.0 MB', pdfLabel: 'Part 9 PDF' },
+      { n: 10, label: 'Banda Singh', title: 'Banda Singh and the Hunted Years', blurb: 'Forty years in which a movement with no ruler, no capital and a price on every head takes a province from the largest empire on earth, loses it, is hunted almost out of existence — and comes out of the forests organised into an army.', pdf: 'wars-of-punjab-part-10.pdf', pdfSize: '1.0 MB', pdfLabel: 'Part 10 PDF' },
+      { n: 11, label: 'The Ghallugharas', title: 'The Afghans and the Ghallugharas', blurb: 'Nine invasions in twenty years by a man who never lost a battle in the Punjab and never managed to keep it — and a community that lost perhaps half its people in one morning and took Lahore three years later.', pdf: 'wars-of-punjab-part-11.pdf', pdfSize: '986 KB', pdfLabel: 'Part 11 PDF' },
+      { n: 12, label: 'The Misls', title: 'The Misls', blurb: 'Twelve states, no overlord and one shared capital — the strangest political system in this book — and thirty years to discover that it only ever worked while somebody was trying to destroy it.', pdf: 'wars-of-punjab-part-12.pdf', pdfSize: '955 KB', pdfLabel: 'Part 12 PDF' },
+      { n: 13, label: 'Ranjit Singh', title: 'Ranjit Singh', blurb: 'Forty years in which the Punjab is a country — with a border the British did not cross, an army that Europe took seriously, and one design flaw that destroyed all of it within a decade of the Maharaja’s death.', pdf: 'wars-of-punjab-part-13.pdf', pdfSize: '1.0 MB', pdfLabel: 'Part 13 PDF' },
+      { n: 14, label: 'Anglo-Sikh Wars', title: 'The Anglo-Sikh Wars', blurb: 'Ten years, nine battles and the hardest fighting the British ever met in India — lost by a state that murdered itself, and fought to the end by an army its own government had given up on.', pdf: 'wars-of-punjab-part-14.pdf', pdfSize: '1.0 MB', pdfLabel: 'Part 14 PDF' },
+      { n: 15, label: 'The Loyal Province', title: 'The Loyal Province', blurb: 'Seventy years in which the Punjab is conquered, disarmed, irrigated and turned into the recruiting ground of an empire — and then, on a spring afternoon in a walled garden, told exactly what the arrangement had been worth.', pdf: 'wars-of-punjab-part-15.pdf', pdfSize: '1.0 MB', pdfLabel: 'Part 15 PDF' },
+      { n: 16, label: 'The Line', title: 'The Line', blurb: 'The last part. A province governed across religion for twenty years, a border drawn in five weeks by a man who had never seen it, and about ten weeks in which the Punjab did to itself what nobody in the previous fifteen parts had managed.', pdf: 'wars-of-punjab-part-16.pdf', pdfSize: '1.0 MB', pdfLabel: 'Part 16 PDF' },
+    ],
+    load: () => import('./writing/wars-of-punjab.js'),
+  },
+  {
     slug: 'sapiens-reading',
     kicker: 'An eleven-part reading',
     title: 'Sapiens',
@@ -855,7 +918,12 @@ export const contentsOf = (piece, parts) => {
     const part = written.get(n);
     if (part) return { ...part, n, live: true };
     const o = planned.find((x) => x.n === n);
-    return { n, live: false, label: o?.label ?? '', title: o?.title ?? `Part ${n}`, lead: o?.blurb ?? '' };
+    return {
+      n, live: false, label: o?.label ?? '', title: o?.title ?? `Part ${n}`, lead: o?.blurb ?? '',
+      // An announced part can still carry its own finished PDF ahead of the
+      // web edition — see pdfForPart. Undefined here just means no row link.
+      pdf: o?.pdf, pdfSize: o?.pdfSize, pdfLabel: o?.pdfLabel,
+    };
   });
 };
 
