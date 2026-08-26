@@ -547,6 +547,13 @@
   text-transform: uppercase;
 }
 
+/* An honesty label — how sure the record is of what a heading just claimed.
+   Same chip, tone-mapped to the three colours of truth used everywhere else
+   in this file, plus a fourth for the epics: real events under literature. */
+.prose .w-lawtag--certain { color: var(--w-field); background: color-mix(in oklab, var(--w-field) 9%, transparent); border-color: color-mix(in oklab, var(--w-field) 30%, var(--line-2)); }
+.prose .w-lawtag--likely { color: var(--w-gold); background: color-mix(in oklab, var(--w-gold) 9%, transparent); border-color: color-mix(in oklab, var(--w-gold) 30%, var(--line-2)); }
+.prose .w-lawtag--story { color: var(--w-violet); background: color-mix(in oklab, var(--w-violet) 9%, transparent); border-color: color-mix(in oklab, var(--w-violet) 30%, var(--line-2)); }
+
 /* ---------- Citations ---------- */
 .prose .w-fnref {
   margin-left: 0.14em;
