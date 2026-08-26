@@ -1181,3 +1181,118 @@
     font-size: 0.44em;
   }
 }
+
+/* ============================================================
+   THE WARS OF PUNJAB vocabulary.
+
+   A military history whose every war carries an honesty label, a
+   fact card, and the reasons each side won or lost. Most of that
+   reuses the shelf's existing parts; what follows is the small
+   remainder — plus the list, quote and glossary rules that had
+   only ever been written for prose sitting directly in .prose,
+   and which every callout in this book needs too.
+   ============================================================ */
+
+/* Lists nested inside a callout. The rules above style `.prose > ul`
+   only, so a list inside a win/lose panel or a story box inherited the
+   global `list-style: none` and sat flush against the text. These give
+   nested lists the same brass rule the top-level ones get. */
+.prose .w-side ul,
+.prose .w-box ul,
+.prose .w-myth-body ul,
+.prose .w-def-body ul,
+.prose .w-side ol,
+.prose .w-box ol,
+.prose .w-myth-body ol {
+  display: grid;
+  gap: 0.5em;
+  margin: 0.6em 0 0;
+  padding: 0;
+}
+
+.prose .w-side ul li,
+.prose .w-box ul li,
+.prose .w-myth-body ul li,
+.prose .w-def-body ul li {
+  position: relative;
+  padding-left: 1.15em;
+}
+
+.prose .w-side ul li::before,
+.prose .w-box ul li::before,
+.prose .w-myth-body ul li::before,
+.prose .w-def-body ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 0.55em;
+  height: 1px;
+  background: color-mix(in oklab, var(--w-tone, var(--brass)) 70%, transparent);
+}
+
+.prose .w-side ol,
+.prose .w-box ol,
+.prose .w-myth-body ol {
+  padding-left: 1.4em;
+  list-style: decimal;
+}
+
+.prose .w-side ol li::marker,
+.prose .w-box ol li::marker,
+.prose .w-myth-body ol li::marker {
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--w-tone, var(--accent));
+}
+
+/* The list of works a part was built from, at the end of every part. */
+.prose .w-srcs {
+  display: grid;
+  gap: 0.5em;
+  margin: 1.1em 0 0;
+  padding: 1.15em 0 0;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-body);
+  font-size: 0.82em;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+
+.prose .w-srcs li {
+  position: relative;
+  padding-left: 1.15em;
+  overflow-wrap: anywhere;
+}
+
+.prose .w-srcs li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 0.55em;
+  height: 1px;
+  background: var(--brass);
+}
+
+.prose .w-srcs em { font-style: normal; color: var(--text-dim); }
+
+/* The glossary that closes each part: a run of .w-def entries. */
+.prose .w-gloss-list { margin: 1.5em 0; }
+
+/* A fourth heading level, below .w-h4 — a numbered step inside a section. */
+.prose .w-h5 {
+  margin: 1.5em 0 0.45em;
+  font-family: var(--font-body);
+  font-size: 0.8em;
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: 0.015em;
+  color: var(--text);
+}
+
+/* The source line under a verse quote. */
+.prose .w-box--quote .w-srcline {
+  display: block;
+  font-style: normal;
+}
