@@ -2,10 +2,9 @@
  * import-wars-of-punjab.mjs
  *
  * Importer for "The Wars of Punjab" — a sixteen-part military history, one
- * war at a time, delivered as print-first HTML (one file per part) in the
- * author's working folder. Only the parts that have real authored HTML get
- * imported here; the rest of the series is published PDF-first via the
- * manifest in src/data/writing.js until their own source HTML exists.
+ * war at a time. Parts 1 and 2 are read from the print-HTML they were
+ * rendered from; the other fourteen survive only as finished PDFs and are
+ * rebuilt from those by ./wars-of-punjab-pdf.mjs.
  *
  * Like the Congress Record importer, this reads real semantic markup —
  * chapters, war fact-cards, honesty labels, win/lose panels, timelines,
@@ -19,13 +18,37 @@
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { parsePdfPart, badgeHtml } from './wars-of-punjab-pdf.mjs';
 
 const SRC_DIR = process.argv[2] ?? 'C:/Users/rajpa/Documents/books/Wars of Punjab';
+const PDF_DIR = `${SRC_DIR}/out`;
 const OUT = 'src/data/writing/wars-of-punjab.js';
 
+/**
+ * Parts 1 and 2 still have the print-HTML they were rendered from, so they are
+ * read straight from it. The rest exist only as the finished PDFs, and are
+ * rebuilt from those by scripts/wars-of-punjab-pdf.mjs — a reconstruction
+ * checked against these first two parts, where both sources are available:
+ * it reproduces their text to within three characters in forty-four thousand,
+ * and every structure in them exactly.
+ */
 const PARTS = [
-  { n: 1, file: 'build/part1.html', published: '2026-08-23', label: 'Origins' },
-  { n: 2, file: 'build/part2.html', published: '2026-08-24', label: 'Persia & Alexander' },
+  { n: 1, label: 'Origins', published: '2026-08-23', html: 'build/part1.html' },
+  { n: 2, label: 'Persia & Alexander', published: '2026-08-24', html: 'build/part2.html' },
+  { n: 3, label: 'Mauryas to Kushans', published: '2026-08-24', pdf: 'Wars of Punjab - Part 3 - Mauryas to Kushans.pdf' },
+  { n: 4, label: 'Guptas & Huns', published: '2026-08-24', pdf: 'Wars of Punjab - Part 4 - Guptas and the Huns.pdf' },
+  { n: 5, label: 'The Shahis', published: '2026-08-24', pdf: 'Wars of Punjab - Part 5 - Arabs, Hindu Shahis, Mahmud of Ghazni.pdf' },
+  { n: 6, label: 'Ghurids & Mongols', published: '2026-08-24', pdf: 'Wars of Punjab - Part 6 - Ghurids, Prithviraj and the Mongols.pdf' },
+  { n: 7, label: 'Tughlaqs to Lodis', published: '2026-08-25', pdf: 'Wars of Punjab - Part 7 - Tughlaqs, Timur and the Lodis.pdf' },
+  { n: 8, label: 'Mughals & Gurus', published: '2026-08-25', pdf: 'Wars of Punjab - Part 8 - Mughals, Suris and the Gurus.pdf' },
+  { n: 9, label: 'The Gurus Arm', published: '2026-08-25', pdf: 'Wars of Punjab - Part 9 - The Gurus and the Mughals.pdf' },
+  { n: 10, label: 'Banda Singh', published: '2026-08-25', pdf: 'Wars of Punjab - Part 10 - Banda Singh and the Hunted Years.pdf' },
+  { n: 11, label: 'The Ghallugharas', published: '2026-08-25', pdf: 'Wars of Punjab - Part 11 - The Afghans and the Ghallugharas.pdf' },
+  { n: 12, label: 'The Misls', published: '2026-08-25', pdf: 'Wars of Punjab - Part 12 - The Misls.pdf' },
+  { n: 13, label: 'Ranjit Singh', published: '2026-08-25', pdf: 'Wars of Punjab - Part 13 - Ranjit Singh.pdf' },
+  { n: 14, label: 'Anglo-Sikh Wars', published: '2026-08-25', pdf: 'Wars of Punjab - Part 14 - The Anglo-Sikh Wars.pdf' },
+  { n: 15, label: 'The Loyal Province', published: '2026-08-25', pdf: 'Wars of Punjab - Part 15 - The Loyal Province.pdf' },
+  { n: 16, label: 'The Line', published: '2026-08-25', pdf: 'Wars of Punjab - Part 16 - The Line.pdf' },
 ];
 
 /* ---------- small HTML helpers ---------- */
@@ -240,7 +263,19 @@ function translateSection(rawInner, partN, secIndex) {
   html = html.replace(/<p class="dropcap">([^<])/, '<p><span class="w-dropcap">$1</span>');
   html = html.replace(/<h4>([\s\S]*?)<\/h4>/g, '<h4 class="w-h4">$1</h4>');
   html = html.replace(/<(ul|ol) class="body">/g, '<$1>');
-  html = html.replace(/<div class="divider">[\s\S]*?<\/div>/g, '<hr>');
+  html = html.replace(/<div class="divider">[\s\S]*?<\/div>/g, '<hr class="w-soft">');
+
+  // 11. Verse quotes become the shared quote callout, with the source line
+  // under it — the same shape the PDF-rebuilt parts emit, so all sixteen
+  // parts of the book read identically whichever source they came from.
+  html = replaceBlocks(html, /<blockquote>/, 'blockquote', (inner) => {
+    let credit = '';
+    const body = inner.replace(/<cite>([\s\S]*?)<\/cite>/, (m, c) => {
+      credit = `<span class="w-srcline">${esc(textOf(c))}</span>`;
+      return '';
+    });
+    return `<div class="w-box w-box--quote">${body.trim()}${credit}</div>`;
+  });
 
   // Sanity check: no unrecognised print-only container survived.
   const leftover = html.match(/class="(chapter|wonby|facts|why|win|lose|story|note|tl|tl-row|glossary|srcs|dropcap|lede|divider)"/);
@@ -250,7 +285,27 @@ function translateSection(rawInner, partN, secIndex) {
   return { id, num: String(secIndex), text: title, html: heading + html.trim() };
 }
 
-function importPart({ n, file, published, label }) {
+/** A part rebuilt from its designed PDF, for the fourteen with no source HTML. */
+function importPdfPart({ n, pdf, published, label }) {
+  const { title, lead, sections } = parsePdfPart(resolve(PDF_DIR, pdf));
+
+  const toc = [];
+  const htmlParts = [];
+  sections.forEach((section, index) => {
+    const num = index + 1;
+    const id = `wop${n}-${num}-${slugify(section.title)}`;
+    toc.push({ id, num: String(num), text: section.title });
+    htmlParts.push(`<h2 class="w-h2" id="${id}"><span class="w-num">${num}</span>`
+      + `${esc(section.title)}${section.badge ? badgeHtml(section.badge) : ''}</h2>`
+      + section.html.join(''));
+  });
+
+  const html = htmlParts.join('');
+  const words = wordCount(html);
+  return { n, label, title, lead, published, toc, html, words, minutes: Math.max(1, Math.round(words / 220)) };
+}
+
+function importHtmlPart({ n, html: file, published, label }) {
   const path = resolve(SRC_DIR, file);
   const raw = readFileSync(path, 'utf8');
 
@@ -288,7 +343,7 @@ function importPart({ n, file, published, label }) {
   return { n, label, title, lead, published, toc, html, words, minutes };
 }
 
-const parts = PARTS.map(importPart);
+const parts = PARTS.map((part) => (part.pdf ? importPdfPart(part) : importHtmlPart(part)));
 
 const out = `/* ============================================================
    THE WARS OF PUNJAB — EVERY WAR FOUGHT ON THE SOIL OF PUNJAB
