@@ -811,6 +811,16 @@
 
 .prose .w-side--a { --w-tone: var(--w-clay); }
 .prose .w-side--b { --w-tone: var(--w-teal); }
+/* A third position. Most arguments have two sides; the Augustine reading is
+   the first piece here where three is the usual number, and a third case that
+   borrowed one of the other two tones would read as agreeing with it. */
+.prose .w-side--c { --w-tone: var(--w-gold); }
+
+/* Sides set inside a callout — the case cards of an argument box — sit between
+   the framing and the verdict rather than between two paragraphs of prose, so
+   they take the box's own paragraph rhythm instead of the wider standalone
+   one. */
+.prose .w-box .w-sides { margin: 1.15em 0; }
 
 .prose .w-side p { margin: 0 0 0.75em; }
 .prose .w-side p:last-child { margin-bottom: 0; }

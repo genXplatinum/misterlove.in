@@ -63,6 +63,10 @@
    edition of The Wars of Punjab. The one cover meant to look like a dispatch
    rather than a book. */
 .cover--cobalt { --cover-cloth: #16283f; --cover-cloth-2: #23456b; --cover-ink: #f6ecd8; --cover-muted: #9fb2c8; --cover-foil: #c9a24c; }
+/* The oxblood the print edition of The Confessions rules its chapter heads and
+   sets its drop capitals in, over that edition's own cream. The one cover in
+   the archive meant to look like a devotional binding. */
+.cover--oxblood { --cover-cloth: #5c3522; --cover-cloth-2: #7a4a2e; --cover-ink: #f3efe6; --cover-muted: #d7c6b1; --cover-foil: #c8a86e; }
 
 .cover__kicker {
   width: 100%;

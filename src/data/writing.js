@@ -16,6 +16,43 @@ export const writingMeta = {
 
 export const pieces = [
   {
+    slug: 'confessions',
+    kicker: 'A nine-part reading',
+    title: 'The Confessions, Explained',
+    subtitle: 'All Thirteen Books, in Nine Parts',
+    standfirst:
+      'Everybody has heard of the Confessions and almost nobody has finished it. So I read all thirteen books, slowly, and wrote down what Augustine is actually doing — in the plainest English I could manage, with none of the hard content cut out.',
+    summary:
+      'Augustine finished the Confessions around the year 400, about eleven years after the events in it, and people have been quoting it ever since on the strength of about four pages. The famous bits travel on their own: the stolen pears, “give me chastity, but not yet”, the garden in Milan, the question about what time is. The book they come out of is harder than its reputation, and not because the ideas are too clever. It is a prayer, addressed to God on every page, so you are overhearing it rather than being spoken to. It is soaked in the Bible and quotes it constantly without saying so. And it assumes you already know how a Roman school worked, what a Manichee believed, and what somebody in the year 400 thought a soul was made of. Fix those three and the book opens. That is what this reading does: all thirteen books, first word to last, in nine parts and ninety chapters. Every hard term is explained in a box the moment it appears, so you are never told to look something up later. Every place where scholars genuinely disagree gets each side at its strongest, then a verdict in three parts — where things stand, what would settle it, and why people care so much. No published translation is quoted anywhere in it; every rendering of Augustine here is my own loose paraphrase, and the sources note says so. And one rule holds all the way through, with the last part saying openly what it costs: this is a religious book that a great many people still live by, and I do not tell you whether he was right. I tell you what he claims, why he claims it, what the argument is, and where it has been attacked. Every part ends the same way, with an honest list of what nobody knows and the reason nobody knows it.',
+    topic: 'Augustine · Philosophy · Close Reading',
+    keywords: [
+      'Confessions', 'Augustine', 'Saint Augustine', 'Augustine of Hippo',
+      'Confessions explained', 'Confessions summary', 'Augustine Confessions plain English',
+      'the pear theft', 'Monica', 'Ostia', 'Manichaeism', 'Ambrose of Milan',
+      'Augustine on memory', 'Augustine on time', 'Book XI time', 'Pelagius',
+      'Confessions chapter summary', 'confessio meaning',
+    ],
+    published: '2026-09-02',
+    displayDate: 'September 2026',
+    parts: 9,
+    words: 163607,
+    minutes: 745,
+    status: 'Complete',
+    accent: 'oxblood',
+    // One book, one download: all nine parts bound into the collected volume.
+    pdf: 'the-confessions-explained.pdf',
+    pdfSize: '4.2 MB',
+    pdfLabel: 'The complete book',
+    principlesTitle: 'The four rules this reading runs on',
+    principles: [
+      { n: '01', t: 'Simple words, nothing left out', d: 'Plain English is a decision about vocabulary, not about how much of the book survives. Every argument in it goes in, including the ones that are hard work.' },
+      { n: '02', t: 'Every hard term explained on the spot', d: 'Confessio, Manichee, catechumen, privation: each gets a box the first time it appears, in the plainest words available, so you are never sent to a glossary.' },
+      { n: '03', t: 'Both sides at full strength', d: 'Where readers of Augustine genuinely disagree, each position gets the best case anybody has made for it — then where things stand, what would settle it, and why people care so much.' },
+      { n: '04', t: 'It does not tell you whether he was right', d: 'What he claims, why he claims it, and where the argument has been attacked, yes. A ruling on the claim itself, no — and the final part says in the open what that rule costs.' },
+    ],
+    load: () => import('./writing/confessions.js'),
+  },
+  {
     slug: 'wars-of-punjab',
     kicker: 'A sixteen-part military history',
     title: 'The Wars of Punjab',
