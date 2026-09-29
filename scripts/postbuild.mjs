@@ -563,7 +563,7 @@ function booksShelfBody(shelved) {
     .map((step) => `<li><span class="mono shelfmethod__n">${esc(step.n)}</span><span class="shelfmethod__t">${esc(step.t)}</span><span class="shelfmethod__d">${esc(step.d)}</span></li>`)
     .join('')}</ol>
   <ul class="topics">${shelved
-    .map(({ book, studies }) => `<li class="topic shelfbook"><a class="topic__link" href="/books/${book.slug}/"><span class="topic__body"><span class="mono topic__topic">${esc(book.topic)}</span><span class="topic__title">${esc(book.title)} — ${esc(book.author)}</span><span class="topic__stand">${esc(book.standfirst)}</span><span class="topic__meta mono">${isOpen(book) ? `${studies.length} of ${book.studies} studies` : `${book.studies} ${book.studies === 1 ? 'study' : 'studies'}`} · ${book.axioms} axioms ${axiomWord(book)} · ${esc(book.displayDate)}</span></span></a><ol>${studies
+    .map(({ book, studies }) => `<li class="topic shelfbook"><a class="topic__link" href="/books/${book.slug}/"><span class="topic__body"><span class="mono topic__topic">${esc(book.topic)}</span><span class="topic__title">${esc(book.title)} — ${esc(book.author)}</span><span class="topic__stand">${esc(book.standfirst)}</span><span class="topic__meta mono">${isOpen(book) ? `${studies.length} of ${book.studies} studies` : `${book.studies} ${book.studies === 1 ? 'study' : 'studies'}`}${book.axioms > 0 ? ` · ${book.axioms} axioms ${axiomWord(book)}` : ''} · ${esc(book.displayDate)}</span></span></a><ol>${studies
       .map((s) => `<li><a href="/books/${book.slug}/${s.slug}/">${esc(s.title)} — “${esc(s.sentence)}”</a></li>`)
       .join('')}</ol></li>`)
     .join('')}</ul>
@@ -578,7 +578,7 @@ function bookBody(book, studies) {
   <p class="bookpage__by">The book: ${esc(book.title)} — ${esc(book.subtitle)}, by ${esc(book.author)}. ${esc(book.bookNote)}.</p>
   <p class="topicpage__stand">${esc(book.standfirst)}</p>
   <p class="topicpage__summary">${esc(book.summary)}</p>
-  <p class="mono">${isOpen(book) ? `${studies.length} / ${book.studies} studies published` : `${book.studies} ${book.studies === 1 ? 'study' : 'studies'}`} · ${book.axioms} axioms ${axiomWord(book)} · ${esc(book.displayDate)} · by Lovepreet Singh</p>
+  <p class="mono">${isOpen(book) ? `${studies.length} / ${book.studies} studies published` : `${book.studies} ${book.studies === 1 ? 'study' : 'studies'}`}${book.axioms > 0 ? ` · ${book.axioms} axioms ${axiomWord(book)}` : ''} · ${esc(book.displayDate)} · by Lovepreet Singh</p>
   <h2>The studies</h2>
   <ol class="feature__parts studylist">${contents
     .map((s) => {

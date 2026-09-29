@@ -29,7 +29,9 @@ function ShelfCard({ book, i }) {
               <b>{isOpen(book) ? `${live} of ${book.studies}` : book.studies}</b>{' '}
               {book.studies === 1 ? 'study' : 'studies'}
             </span>
-            <span><b>{book.axioms}</b> axioms {axiomWord(book)}</span>
+            {book.axioms > 0 && (
+              <span><b>{book.axioms}</b> axioms {axiomWord(book)}</span>
+            )}
             <span><b>~{Math.round((book.minutes / 60) * 10) / 10}</b> hrs</span>
             <span className="topic__date">{book.displayDate}</span>
           </span>
