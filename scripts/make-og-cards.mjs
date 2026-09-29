@@ -611,7 +611,7 @@ if (!hindiOnly) {
       const file = `${OUT}/books-${book.slug}-${study.slug}.png`;
       r = render(
         card({
-          kicker: `${book.title} · ${study.label} · ${study.axioms} hidden axioms`,
+          kicker: `${book.title} · ${study.label}${study.axioms > 0 ? ` · ${study.axioms} hidden axioms` : ''}`,
           title: `“${study.sentence}”`,
           sub: `${study.title} — ${book.author} taken apart`,
           standfirst: study.lead,

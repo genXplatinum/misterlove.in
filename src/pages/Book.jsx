@@ -140,7 +140,9 @@ export default function Book() {
                 <dt className="mono">Studies</dt>
                 <dd>{open ? `${live} / ${book.studies}` : book.studies}</dd>
               </div>
-              <div><dt className="mono">Axioms</dt><dd>{book.axioms}</dd></div>
+              {book.axioms > 0 && (
+                <div><dt className="mono">Axioms</dt><dd>{book.axioms}</dd></div>
+              )}
               <div><dt className="mono">Read</dt><dd>~{Math.round((book.minutes / 60) * 10) / 10} hrs</dd></div>
               <div><dt className="mono">Shelved</dt><dd>{book.displayDate}</dd></div>
             </dl>

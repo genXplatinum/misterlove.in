@@ -510,7 +510,9 @@ export default function Study() {
             <aside className="article__head-aside">
               <dl className="article__facts">
                 <div><dt className="mono">{copy.theBook}</dt><dd>{book.title} — {book.author}, {book.bookYear}</dd></div>
-                <div><dt className="mono">{copy.axiomsFound}</dt><dd>{study?.axioms ?? '—'}</dd></div>
+                {study?.axioms > 0 && (
+                  <div><dt className="mono">{copy.axiomsFound}</dt><dd>{study.axioms}</dd></div>
+                )}
                 <div><dt className="mono">{copy.verdict}</dt><dd>{study?.verdict ?? '—'}</dd></div>
                 {study && (
                   <div>
@@ -711,7 +713,9 @@ export default function Study() {
                 <span className="section-head__id">{copy.theStudies}</span>&nbsp;&nbsp;/&nbsp;&nbsp;
                 {book.title} — {book.author}
               </span>
-              <span className="mono hide-sm">{copy.axiomsGraded(book.axioms, axiomWord(book))}</span>
+              {book.axioms > 0 && (
+                <span className="mono hide-sm">{copy.axiomsGraded(book.axioms, axiomWord(book))}</span>
+              )}
             </div>
 
             <ol className="article__contents-list">

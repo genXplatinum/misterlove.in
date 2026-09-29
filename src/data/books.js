@@ -53,6 +53,48 @@ export const booksMeta = {
 
 export const books = [
   {
+    slug: 'the-thing',
+    title: 'The Thing',
+    subtitle: 'Why I Am a Catholic',
+    author: 'G. K. Chesterton',
+    bookYear: '1929',
+    bookNote: 'Published 1929 · essay collection · the fence appears in “The Drift from Domesticity”',
+    kicker: 'Book 03 on the shelf',
+    standfirst:
+      'Chesterton’s famous fence is not a command to keep every old rule. It is a demand to '
+      + 'recover the missing reason before deciding what deserves to stay. This short reading '
+      + 'note carries the idea into safety, trust, boundaries, habits and institutional memory.',
+    summary:
+      'The familiar paraphrase says not to remove a fence until you know why it was put there. '
+      + 'This reading note asks what that pause looks like in ordinary life: a phone rule at '
+      + 'school, a message home, a boundary after broken trust, a flood restriction, or a rule '
+      + 'your earlier self made after learning something the hard way. It does not argue that '
+      + 'old rules should survive merely because they are old. It asks five questions that '
+      + 'separate the purpose from the shape: what problem the rule addressed, what happened '
+      + 'before it was made, whether that problem still exists, what the rule costs now, and '
+      + 'what will do its job if the rule is removed. The conclusion is deliberately practical: '
+      + 'understand first, then keep it, change it, or pull it down with your eyes open.',
+    topic: 'Philosophy · Institutions · Everyday life',
+    keywords: [
+      'Chesterton’s Fence', 'Chesterton fence', 'G. K. Chesterton', 'The Thing',
+      'The Drift from Domesticity', 'rules', 'traditions', 'institutional memory',
+      'boundaries', 'safety', 'reform', 'second-order thinking', 'plain English philosophy',
+    ],
+    published: '2026-09-30',
+    displayDate: 'September 2026',
+    studies: 1,
+    live: 1,
+    words: 2263,
+    minutes: 10,
+    /* This is a reading note, not an axiom scorecard. Keep the count honest and
+       let the interfaces omit the axiom furniture when there is none. */
+    axioms: 0,
+    graded: false,
+    status: 'Complete',
+    accent: 'oxblood',
+    load: () => import('./books/the-thing.js'),
+  },
+  {
     slug: 'epistles',
     title: 'Epistles',
     subtitle: 'Book I, Letter 2',
