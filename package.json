@@ -14,12 +14,14 @@
     "validate:hindi": "node scripts/validate-hindi-writing.mjs",
     "validate:forgotten-gods-hindi": "node scripts/validate-forgotten-gods-hindi.mjs",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:local": "npm run validate:hindi && npm run validate:forgotten-gods-hindi && vite build && node scripts/postbuild.mjs"
   },
   "dependencies": {
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "react-router-dom": "^7.18.0"
+    "react-router-dom": "^7.18.0",
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@fontsource/eb-garamond": "^5.3.0",

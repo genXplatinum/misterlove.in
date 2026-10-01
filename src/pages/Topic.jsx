@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import Reveal from '../components/Reveal';
+import { useExperience } from '../components/ExperienceProvider';
 import Magnetic from '../components/Magnetic';
 import CoverPlate from '../components/CoverPlate';
 import useRoom from '../components/PieceRoom';
@@ -160,6 +161,7 @@ function useTopicMeta(piece, original) {
 
 /** One research topic, including its complete English or Hindi contents. */
 export default function Topic() {
+  const { immersive } = useExperience();
   const { slug } = useParams();
   const { pathname } = useLocation();
   const language = pathname.startsWith('/hi/') ? 'hi' : 'en';
@@ -235,7 +237,8 @@ export default function Topic() {
         {/* A series can be announced before any part is readable on the web —
             the book exists, the PDF is here, the reader is not. Then the cover
             is not a link, because there is nothing yet to link it to. */}
-        <Reveal className="topicpage__cover">
+        <header className={immersive ? "work-opening" : undefined}>
+        <div className="topicpage__cover">
           {readable ? (
             <Link to={read} className="topicpage__coverlink" aria-label={copy.startAria(piece.title)}>
               <CoverPlate piece={piece} className="cover--full" />
@@ -243,12 +246,22 @@ export default function Topic() {
           ) : (
             <CoverPlate piece={piece} className="cover--full" />
           )}
-        </Reveal>
+        </div>
+        {immersive && <div className="work-opening__copy">
+          <p className="work-opening__subject">{piece.topic}</p>
+          <h1>{piece.title}</h1>
+          <p className="work-opening__subtitle">{piece.subtitle}</p>
+          <p className="work-opening__lead">{piece.standfirst}</p>
+          <div className="work-opening__actions">
+            {readable && <Link to={read} className="btn">{copy.start}</Link>}
+            <a href="#contents" className="work-contents-link">{copy.contents}</a>
+          </div>
+        </div>}
+        </header>
 
         <div className="topicpage__body">
           <Reveal className="topicpage__intro">
-            <span className="mono topicpage__topic">{piece.topic}</span>
-            <p className="topicpage__stand">{piece.standfirst}</p>
+            {immersive ? <h2 className="work-about-title">{language === 'hi' ? 'इस अध्ययन के बारे में' : 'Inside the investigation'}</h2> : <><span className="mono topicpage__topic">{piece.topic}</span><p className="topicpage__stand">{piece.standfirst}</p></>}
             <p className="topicpage__summary">{piece.summary}</p>
 
             <dl className="feature__stats">
@@ -300,7 +313,7 @@ export default function Topic() {
           <ChapterRun piece={piece} parts={parts} base={base} />
         )}
 
-        <div className="feature__contents">
+        <div id="contents" className="feature__contents">
           <div className="section-head">
             <span className="mono">
               <span className="section-head__id">{copy.contents}</span>&nbsp;&nbsp;/&nbsp;&nbsp;

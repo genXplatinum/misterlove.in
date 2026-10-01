@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Wordmark } from './Logo';
 import ThemeToggle from './ThemeToggle';
+import EditionSwitch from './EditionSwitch';
+import { useExperience } from './ExperienceProvider';
 import { nav, profile } from '../data/site';
 import './Nav.css';
 
@@ -29,7 +31,8 @@ export default function Nav() {
   const menuRef = useRef(null);
   const { pathname, state } = useLocation();
   const navigate = useNavigate();
-  const isHome = pathname === '/';
+  const { homePath } = useExperience();
+  const isHome = pathname === '/' || pathname.replace(/\/$/, '') === '/observatory';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -143,7 +146,7 @@ export default function Nav() {
     setOpen(false);
     if (open) requestAnimationFrame(() => toggleRef.current?.focus());
     if (isHome) scrollToTarget(target);
-    else navigate('/', { state: { scrollTo: target } });
+    else navigate(homePath, { state: { scrollTo: target } });
   };
 
   const brand = (event) => {
@@ -153,7 +156,7 @@ export default function Nav() {
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
     } else {
-      navigate('/');
+      navigate(homePath);
     }
   };
 
@@ -198,7 +201,7 @@ export default function Nav() {
   return (
     <>
       <header className={`nav ${scrolled ? 'is-scrolled' : ''} ${open ? 'is-menu-open' : ''}`}>
-        <a href="/" className="nav__brand" onClick={brand} aria-label={`${profile.name}, home`}>
+        <a href={homePath} className="nav__brand" onClick={brand} aria-label={`${profile.name}, home`}>
           <Wordmark />
         </a>
 
@@ -207,6 +210,7 @@ export default function Nav() {
         </nav>
 
         <div className="nav__right">
+          <EditionSwitch />
           <ThemeToggle className="nav__theme" />
           <a href="#contact" className="nav__cta" onClick={(event) => go(event, '#contact')}>
             Write to me
@@ -234,6 +238,7 @@ export default function Nav() {
         inert={!open}
       >
         <nav className="navmenu__inner" aria-label="Mobile navigation">
+          <div className="navmenu__edition"><span>Your edition</span><EditionSwitch onChange={() => setOpen(false)} /></div>
           {nav.map((item) => <NavItem key={item.to} item={item} mobile />)}
           <a href="#contact" className="navmenu__contact" onClick={(event) => go(event, '#contact')}>
             Write to me <span aria-hidden="true">↗</span>
