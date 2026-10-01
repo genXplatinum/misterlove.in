@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import ScrollProgress from './components/ScrollProgress';
 import ErrorBoundary from './components/ErrorBoundary';
 import Home from './pages/Home';
+import ClassicHome from './pages/ClassicHome';
 
 const Writing = lazy(() => import('./pages/Writing'));
 const Topic = lazy(() => import('./pages/Topic'));
@@ -58,7 +59,8 @@ function AppFrame({ isHome, resetKey }) {
         >
           <Suspense fallback={<div className="route-fallback" role="status" aria-live="polite">Opening…</div>}>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<ClassicHome />} />
+              <Route path="/observatory" element={<Home />} />
               <Route path="/writing" element={<Writing />} />
               <Route path="/writing/:slug" element={<Topic />} />
               <Route path="/hi/writing/:slug" element={<Topic />} />
@@ -81,7 +83,7 @@ function AppFrame({ isHome, resetKey }) {
 export default function App() {
   const location = useLocation();
   const previousPath = useRef(location.pathname);
-  const isHome = location.pathname === '/';
+  const isHome = location.pathname === '/' || location.pathname.replace(/\/$/, '') === '/observatory';
 
   useEffect(() => {
     document.body.classList.toggle('is-home', isHome);
@@ -91,7 +93,7 @@ export default function App() {
   useEffect(() => {
     if (previousPath.current === location.pathname) return;
     previousPath.current = location.pathname;
-    if (!location.state?.scrollTo) window.scrollTo(0, 0);
+    if (!location.state?.scrollTo) window.scrollTo({ top: 0, behavior: 'instant' });
     requestAnimationFrame(() => document.getElementById('main')?.focus({ preventScroll: true }));
   }, [location.pathname, location.state]);
 

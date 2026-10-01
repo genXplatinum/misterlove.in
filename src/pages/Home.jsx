@@ -1,441 +1,119 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Reveal from '../components/Reveal';
-import CoverPlate from '../components/CoverPlate';
 import { home, profile } from '../data/site';
-import { indianThought } from '../data/indianThought';
-import { pieces, writingTotals, livePartsOf, isInProgress } from '../data/writing';
+import { pieces, writingTotals } from '../data/writing';
+import GodQuote from '../components/GodQuote';
+import ObservatoryMotion from '../components/ObservatoryMotion';
+import CoverPlate from '../components/CoverPlate';
+import InquiryInstrument from '../components/InquiryInstrument';
 import './Home.css';
 
-function SmartLink({ to, route = false, children, className = '', ...rest }) {
-  if (route) return <Link to={to} className={className} {...rest}>{children}</Link>;
-  return <a href={to} className={className} {...rest}>{children}</a>;
-}
-
-function randomIndex(length) {
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    const value = new Uint32Array(1);
-    crypto.getRandomValues(value);
-    return value[0] % length;
-  }
-  return Math.floor(Math.random() * length);
-}
-
-function pickThought(excludeId) {
-  const pool = indianThought.filter((item) => item.id !== excludeId);
-  return pool[randomIndex(pool.length)] ?? indianThought[0];
-}
-
-function rememberThought(thought) {
-  try {
-    window.localStorage.setItem('misterlove:last-thought', thought.id);
-  } catch {
-    // The passage still rotates when browser storage is unavailable.
-  }
-  return thought;
-}
-
-function openingThought() {
-  if (typeof window === 'undefined') return indianThought[0];
-  let previous = null;
-  try {
-    previous = window.localStorage.getItem('misterlove:last-thought');
-  } catch {
-    // A random passage is still a useful fallback.
-  }
-  return rememberThought(pickThought(previous));
-}
-
-const firstThought = openingThought();
-
-function Hero() {
-  const { hero } = home;
+function SelectedResearch() {
   const featured = pieces[0];
-
-  return (
-    <section className="intellect-hero">
-      <div className="container">
-        <div className="intellect-hero__folio">
-          <span>Independent research · essays · inquiry</span>
-          <span>{profile.location}</span>
-        </div>
-
-        <div className="intellect-hero__grid">
-          <div className="intellect-hero__copy">
-            <p className="chapter-label">Researcher, writer and lifelong reader</p>
-            <h1 className="intellect-hero__name">
-              <span>Lovepreet</span>
-              <em>Singh</em>
-            </h1>
-            <p className="intellect-hero__thesis">{hero.title}</p>
-            <p className="intellect-hero__lead">{hero.lead}</p>
-            <div className="intellect-actions">
-              <SmartLink to={hero.primary.to} route={hero.primary.route} className="book-button">
-                {hero.primary.label}<span aria-hidden="true">→</span>
-              </SmartLink>
-              <SmartLink to={hero.secondary.to} className="book-link">
-                {hero.secondary.label}<span aria-hidden="true">↓</span>
-              </SmartLink>
-            </div>
-          </div>
-
-          <aside className="intellect-hero__docket" aria-label="The writing at a glance">
-            <div className="docket__masthead">
-              <span>The independent review</span>
-              <span>Personal journal</span>
-            </div>
-            <p className="docket__edition">The writing is the centre of this site.</p>
-            <div className="docket__feature">
-              <span>Currently featured</span>
-              <Link to={`/writing/${featured.slug}`}>{featured.title}</Link>
-              <p>{featured.standfirst}</p>
-            </div>
-            <dl className="docket__figures">
-              <div><dt>Investigations</dt><dd>{writingTotals.pieces}</dd></div>
-              <div><dt>Published parts</dt><dd>{writingTotals.parts}</dd></div>
-              <div><dt>Words</dt><dd>{writingTotals.words.toLocaleString('en-IN')}</dd></div>
-            </dl>
-            <div className="docket__bookplate">
-              <span>Ex libris</span>
-              <strong>Lovepreet Singh</strong>
-            </div>
-          </aside>
-        </div>
+  const selections = [pieces[1], pieces[3], pieces[4]];
+  return <div className="selected-research obs-wrap">
+    <article className="featured-investigation">
+      <Link className="featured-investigation__cover" to={`/writing/${featured.slug}`} tabIndex={-1} aria-hidden="true"><CoverPlate piece={featured} /></Link>
+      <div className="featured-investigation__copy" data-reveal>
+        <p className="section-note">A place to begin</p>
+        <p className="research-subject">Augustine, memory & the self</p>
+        <h3><Link to={`/writing/${featured.slug}`}>{featured.title}</Link></h3>
+        <p className="feature-description">A slow reading of all thirteen books. What Augustine is actually doing, why it matters, and where the difficult questions remain.</p>
+        <div className="research-details"><span>{featured.parts} parts</span><span>Complete reading</span><span>{featured.words.toLocaleString('en-IN')} words</span></div>
+        <Link to={`/writing/${featured.slug}`} className="atlas-button atlas-button--ghost">Read the investigation</Link>
       </div>
-    </section>
-  );
+    </article>
+    <div className="research-selection-head"><h3>Other paths into the archive</h3><Link to="/writing">View all {writingTotals.pieces} investigations</Link></div>
+    <div className="research-selection" data-reveal>{selections.map((piece)=><article key={piece.slug}>
+      <p className="research-subject">{piece.topic.split(' · ')[0]}</p>
+      <h3><Link to={`/writing/${piece.slug}`}>{piece.title}</Link></h3>
+      <p>{piece.subtitle}</p>
+      <Link className="research-reading-link" to={`/writing/${piece.slug}`}>Read {piece.parts} parts</Link>
+    </article>)}</div>
+    <div className="books-invitation"><p>Reading a book is the beginning of a conversation.</p><Link to="/books">Explore the reading room</Link></div>
+  </div>;
 }
 
-function PhilosophyPassage() {
-  const [thought, setThought] = useState(firstThought);
-  const another = () => setThought((current) => rememberThought(pickThought(current.id)));
-
-  return (
-    <section className="thought-signal" aria-labelledby="thought-heading">
-      <div className="container thought-signal__inner">
-        <div className="thought-signal__folio">
-          <h2 id="thought-heading">A passage from Indian thought</h2>
-          <span>
-            {String(indianThought.findIndex((item) => item.id === thought.id) + 1).padStart(2, '0')}
-            {' '}/ {String(indianThought.length).padStart(2, '0')}
-          </span>
-        </div>
-
-        <figure className="thought-signal__quote" aria-live="polite">
-          <blockquote>“{thought.quote}”</blockquote>
-          <figcaption>
-            <strong>{thought.author}</strong>
-            <span>{thought.life}</span>
-            <a href={thought.sourceUrl} target="_blank" rel="noopener noreferrer">
-              {thought.source} <span aria-hidden="true">↗</span>
-            </a>
-          </figcaption>
-        </figure>
-
-        <button type="button" className="thought-signal__next" onClick={another}>
-          Another passage <span aria-hidden="true">→</span>
-        </button>
+function ResearchMethod({paused}) {
+  const [active,setActive]=useState(0);
+  return <section id="method" className="research-method">
+    <div className="obs-wrap method-layout">
+      <div className="method-visual"><InquiryInstrument paused={paused} focus={active} /></div>
+      <div className="method-copy" data-reveal><p className="section-note">A way of seeing</p><h2>An open mind.<br />A rigorous method.</h2><p className="method-intro">A clear argument should show its workings. These are the habits behind every investigation.</p>
+        <div className="method-steps">{home.method.steps.map((step,i)=><div className={`method-step ${active===i?'is-active':''}`} key={step.n}>
+          <h3><button type="button" aria-expanded={active===i} aria-controls={`method-panel-${i}`} onClick={()=>setActive(active===i?-1:i)}><span className="method-number">{step.n}</span><span>{step.title}</span><span className="method-expand" aria-hidden="true">{active===i?'−':'+'}</span></button></h3>
+          <div id={`method-panel-${i}`} hidden={active!==i}><p>{step.text}</p></div>
+        </div>)}</div>
       </div>
-    </section>
-  );
-}
-
-function SectionHead({ number, label, title, intro }) {
-  return (
-    <Reveal className="intellect-section-head">
-      <span className="chapter-label">Chapter {number} · {label}</span>
-      <h2>{title}</h2>
-      {intro && <p>{intro}</p>}
-    </Reveal>
-  );
-}
-
-function Epigraph({ text, emphasis }) {
-  const at = emphasis ? text.indexOf(emphasis) : -1;
-  if (at < 0) return <>“{text}”</>;
-  return (
-    <>
-      “{text.slice(0, at)}<em>{emphasis}</em>{text.slice(at + emphasis.length)}”
-    </>
-  );
+    </div>
+  </section>;
 }
 
 function About() {
-  const { about } = home;
-  return (
-    <section id="about" className="intellect-about">
-      <div className="container">
-        <SectionHead
-          number="III"
-          label={about.label}
-          title={about.title}
-          intro="Biography, method and the unfinished education behind the work."
-        />
-
-        <div className="intellect-about__opening">
-          <Reveal as="blockquote" className="intellect-about__epigraph" variant="fade">
-            <Epigraph text={about.statement} emphasis={about.statementEmphasis} />
-          </Reveal>
-
-          <Reveal as="figure" className="intellect-about__portrait" variant="fade">
-            <div className="intellect-about__portrait-frame">
-              <img src={profile.photo} alt="Lovepreet Singh" />
-            </div>
-            <figcaption>{about.photoCaption}</figcaption>
-          </Reveal>
-
-          <div className="intellect-about__bio">
-            {about.paragraphs.map((paragraph, index) => (
-              <Reveal as="p" key={paragraph} delay={Math.min(index, 4) * 45}>{paragraph}</Reveal>
-            ))}
-          </div>
-        </div>
-
-        <dl className="intellect-facts">
-          {about.facts.map((fact, index) => (
-            <Reveal as="div" key={fact.label} delay={index * 40}>
-              <dt>{fact.label}</dt>
-              <dd>{fact.value}</dd>
-            </Reveal>
-          ))}
-        </dl>
+  return <section id="about" className="about-observatory"><div className="obs-wrap">
+    <div className="about-opening" data-reveal><p className="section-note">The person behind the questions</p><h2>Curiosity became<br />a way of life.</h2></div>
+    <div className="about-layout">
+      <figure className="author-portrait"><img src={profile.photo} alt="Lovepreet Singh" loading="lazy" width="640" height="800"/><figcaption>Lovepreet Singh <span>Punjab, India</span></figcaption></figure>
+      <div className="author-copy"><p className="author-intro">Researcher. Writer.<br />A student of how things work.</p><p>{home.about.paragraphs[0]}</p><p>{home.about.paragraphs[1]}</p>
+        <details className="author-story"><summary>More about my thinking</summary>{home.about.paragraphs.slice(2).map(p=><p key={p.slice(0,35)}>{p}</p>)}</details>
+        <blockquote>“{home.about.statement}”</blockquote>
       </div>
-    </section>
-  );
+    </div>
+    <div id="education" className="education-observatory"><h3>An unfinished education.</h3><div>{home.education.items.map(item=><details key={item.title}><summary><span>{item.period}</span><strong>{item.title}</strong><span className="education-plus" aria-hidden="true">+</span></summary><p className="education-place">{item.place}</p><p>{item.text}</p></details>)}</div></div>
+  </div></section>;
 }
 
 function Practice() {
-  const { practice } = home;
-  return (
-    <section id="practice" className="intellect-practice">
-      <div className="container">
-        <SectionHead number="IV" label={practice.label} title={practice.title} intro={practice.intro} />
-
-        <div className="lens-grid">
-          {practice.fields.map((field, index) => (
-            <Reveal as="article" className="lens-card" key={field.title} delay={index * 55}>
-              <div className="lens-card__head">
-                <span>{field.n}</span>
-                <span>Practice</span>
-              </div>
-              <h3>{field.title}</h3>
-              <p>{field.text}</p>
-              <ul>
-                {field.points.map((point) => <li key={point}>{point}</li>)}
-              </ul>
-              {field.href && (
-                <SmartLink
-                  to={field.href}
-                  route={field.route}
-                  className="book-link"
-                  target={field.route ? undefined : '_blank'}
-                  rel={field.route ? undefined : 'noopener noreferrer'}
-                >
-                  {field.link}<span aria-hidden="true">→</span>
-                </SmartLink>
-              )}
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Method() {
-  const { method } = home;
-  return (
-    <section id="method" className="intellect-method">
-      <div className="container intellect-method__grid">
-        <Reveal className="intellect-method__intro">
-          <span className="chapter-label">Chapter II · {method.label}</span>
-          <h2>{method.title}</h2>
-          <p className="intellect-method__note">Four habits that govern the work.</p>
-        </Reveal>
-
-        <ol className="protocol-list">
-          {method.steps.map((step, index) => (
-            <Reveal as="li" key={step.title} delay={index * 45}>
-              <span className="protocol-list__number">{step.n}</span>
-              <div>
-                <h3>{step.title}</h3>
-                <p>{step.text}</p>
-              </div>
-            </Reveal>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
-/* The homepage shows the newest work and stops. Every piece is one line in the
-   manifest, so without a limit the front page grows without end and the button
-   below it — which is what the full library is for — stops meaning anything.
-   The totals above still count everything published. */
-const HOME_PIECES = 7;
-
-function WritingLibrary() {
-  const { writing } = home;
-  const [featured, ...rest] = pieces.slice(0, HOME_PIECES);
-
-  return (
-    <section id="research" className="intellect-writing">
-      <div className="container">
-        <div className="intellect-writing__head">
-          <SectionHead number="I" label={writing.label} title={writing.title} intro={writing.intro} />
-
-          <Reveal as="dl" className="intellect-writing__totals" variant="fade">
-            <div><dt>Investigations</dt><dd>{writingTotals.pieces}</dd></div>
-            <div><dt>Published parts</dt><dd>{writingTotals.parts}</dd></div>
-            <div><dt>Published words</dt><dd>{writingTotals.words.toLocaleString('en-IN')}</dd></div>
-          </Reveal>
-        </div>
-
-        <Reveal as="article" className="featured-research" variant="fade">
-          <Link to={`/writing/${featured.slug}`} className="featured-research__link">
-            <div className="featured-research__visual">
-              <CoverPlate piece={featured} className="featured-research__cover" />
-            </div>
-            <span className="featured-research__body">
-              <span className="chapter-label">Featured work</span>
-              <strong>{featured.title}</strong>
-              <span className="featured-research__subtitle">{featured.subtitle}</span>
-              <span className="featured-research__standfirst">{featured.standfirst}</span>
-              <span className="featured-research__meta">
-                <i>{livePartsOf(featured)} of {featured.parts}</i> parts published
-                <i>{featured.words.toLocaleString('en-IN')}</i> words
-              </span>
-              <span className="book-link">Read the complete work <span aria-hidden="true">→</span></span>
-            </span>
-          </Link>
-        </Reveal>
-
-        <ol className="dossier-list">
-          {rest.map((piece, index) => (
-            <Reveal as="li" key={piece.slug} delay={index * 40}>
-              <Link to={`/writing/${piece.slug}`} className="dossier-row">
-                <span className="dossier-row__number">{String(index + 2).padStart(2, '0')}</span>
-                <span className="dossier-row__title">
-                  <strong>{piece.title}</strong>
-                  <small>{piece.subtitle}</small>
-                </span>
-                <span className="dossier-row__question">{piece.standfirst}</span>
-                <span className="dossier-row__meta">
-                  {isInProgress(piece)
-                    ? `${livePartsOf(piece)} of ${piece.parts} parts`
-                    : `${piece.parts} parts · complete`}
-                </span>
-                <span className="dossier-row__arrow" aria-hidden="true">→</span>
-              </Link>
-            </Reveal>
-          ))}
-        </ol>
-
-        <Reveal className="intellect-writing__all">
-          <Link to="/writing" className="book-button">
-            Browse the complete library <span aria-hidden="true">→</span>
-          </Link>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-function Education() {
-  const { education } = home;
-  return (
-    <section id="education" className="intellect-education">
-      <div className="container">
-        <SectionHead number="V" label={education.label} title={education.title} intro={education.intro} />
-
-        <ol className="learning-ledger">
-          {education.items.map((item, index) => (
-            <Reveal as="li" key={item.title} delay={Math.min(index, 5) * 45}>
-              <span className="learning-ledger__index">{String(index + 1).padStart(2, '0')}</span>
-              <span className="learning-ledger__period">{item.period}</span>
-              <div className="learning-ledger__title">
-                <h3>{item.title}</h3>
-                <p>{item.place}</p>
-              </div>
-              <p className="learning-ledger__text">{item.text}</p>
-            </Reveal>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
-function Lovelace() {
-  const { lovelace } = home;
-  return (
-    <section id="lovelace" className="intellect-lovelace">
-      <div className="container intellect-lovelace__grid">
-        <Reveal className="intellect-lovelace__identity">
-          <span className="chapter-label">Chapter VI · {lovelace.label}</span>
-          <h2>{lovelace.title}</h2>
-          <span className="intellect-lovelace__tag">A studio for considered digital work</span>
-        </Reveal>
-        <Reveal className="intellect-lovelace__body" delay={55}>
-          <p>{lovelace.text}</p>
-          <a href={lovelace.href} target="_blank" rel="noopener noreferrer" className="book-link">
-            Visit lovelace.co.in <span aria-hidden="true">↗</span>
-          </a>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-function Contact() {
-  const { contact } = home;
-  return (
-    <section id="contact" className="intellect-contact">
-      <div className="container intellect-contact__grid">
-        <Reveal className="intellect-contact__head">
-          <span className="chapter-label">Chapter VII · {contact.label}</span>
-          <h2>{contact.title} <em>{contact.titleAccent}</em></h2>
-          <p>{contact.text}</p>
-        </Reveal>
-
-        <Reveal className="intellect-contact__body" delay={55}>
-          <span className="intellect-contact__prompt">Correspondence</span>
-          <a className="intellect-contact__email" href={`mailto:${profile.email}`}>
-            {profile.email}<span aria-hidden="true">↗</span>
-          </a>
-          <a className="book-button" href={`mailto:${profile.email}`}>
-            {contact.cta} <span aria-hidden="true">→</span>
-          </a>
-          <dl className="intellect-contact__meta">
-            <div><dt>Based in</dt><dd>{profile.location}</dd></div>
-            <div><dt>Practice</dt><dd>{profile.shortDescriptor}</dd></div>
-          </dl>
-          <div className="intellect-contact__links">
-            {profile.social.map((social) => (
-              <a key={social.label} href={social.href} target="_blank" rel="noopener noreferrer">
-                {social.label}<span aria-hidden="true">↗</span>
-              </a>
-            ))}
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
+  return <section id="practice" className="practice-observatory obs-wrap"><p className="section-note">Beyond the page</p><div className="practice-heading" data-reveal><h2>Three fields.<br />One habit of mind.</h2><p>Understand the system. Find its assumptions.<br />Make the result useful to someone else.</p></div><div className="practice-fields">{home.practice.fields.map(field=><article key={field.title}><h3>{field.title}</h3><p>{field.text}</p>{field.href&&(field.route?<Link to={field.href}>{field.link}</Link>:<a href={field.href} target="_blank" rel="noreferrer">{field.link}</a>)}</article>)}</div></section>;
 }
 
 export default function Home() {
-  return (
-    <div className="intellect-home">
-      <Hero />
-      <PhilosophyPassage />
-      <WritingLibrary />
-      <Method />
-      <About />
-      <Practice />
-      <Education />
-      <Lovelace />
-      <Contact />
-    </div>
-  );
+  const hero = useRef(null);
+  useEffect(() => {
+    const previous = document.title;
+    document.title = "The Observatory · MisterLove";
+    return () => { document.title = previous; };
+  }, []);
+  const [paused,setPaused]=useState(()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const onPreference = event => setPaused(event.matches);
+    mq.addEventListener('change',onPreference);
+    const onScroll = () => {
+      if (!hero.current || paused) return;
+      hero.current.style.setProperty('--travel', `${Math.min(window.scrollY * .16, 150)}px`);
+    };
+    onScroll();
+    if(paused)hero.current?.style.setProperty('--travel','0px');
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {window.removeEventListener('scroll', onScroll);mq.removeEventListener('change',onPreference);};
+  }, [paused]);
+  return <div className={`observatory-home ${paused ? "motion-paused" : ""}`}><ObservatoryMotion paused={paused} />
+    <section className="observatory-hero" ref={hero} aria-labelledby="hero-title">
+      <div className="hero-art" aria-hidden="true"><img src="/observatory.webp" alt="" fetchPriority="high" /></div>
+      <div className="hero-shade" aria-hidden="true" />
+      <div className="hero-content">
+        <p className="hero-author">The living archive of Lovepreet Singh</p>
+        <h1 id="hero-title">A life spent<br />asking better<br />questions.</h1>
+        <p className="hero-description">History. Philosophy. The systems we live by.<br />Independent research for a more considered world.</p>
+        <Link className="atlas-button" to="/writing">Explore the archive</Link>
+      </div>
+      <div className="hero-foot">
+        <a href="#research" className="scroll-invite"><span className="scroll-track" aria-hidden="true" />Scroll to discover</a>
+        <span>Rooted in Punjab. Open to the world.</span>
+        <button type="button" className="motion-toggle" onClick={()=>setPaused(v=>!v)} aria-pressed={paused}><span aria-hidden="true">{paused?'▷':'Ⅱ'}</span>{paused?'Resume motion':'Pause motion'}</button>
+      </div>
+    </section>
+    <GodQuote paused={paused} />
+    <section id="research" className="archive-intro obs-wrap">
+      <p className="section-note">The living archive</p>
+      <div className="archive-intro__row" data-reveal><h2>Follow a question.<br />See where it leads.</h2><p>Long-form investigations into the stories we inherit and the systems we rarely stop to question. Written from the record, in language anyone can follow.</p></div>
+      <div className="archive-facts"><span><strong>{writingTotals.pieces}</strong> investigations</span><span><strong>{writingTotals.parts}</strong> published parts</span><span><strong>{(writingTotals.words/1000000).toFixed(2)}m</strong> words of inquiry</span><Link to="/writing">Enter the complete archive</Link></div>
+    </section>
+    <SelectedResearch />
+    <ResearchMethod paused={paused} />
+    <About />
+    <Practice />
+    <section id="contact" className="correspondence obs-wrap"><p className="section-note">Correspondence</p><div className="correspondence-layout" data-reveal><h2>A serious question is<br />a good place to begin.</h2><div><p>For research conversations, cybersecurity work,<br />or a considered digital project.</p><a className="atlas-button" href={`mailto:${profile.email}`}>Write to Lovepreet</a><a className="contact-address" href={`mailto:${profile.email}`}>{profile.email}</a></div></div></section>
+  </div>;
 }

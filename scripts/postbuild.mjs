@@ -798,6 +798,15 @@ function shell({
 }
 
 let shells = 0;
+shell({
+  path: '/observatory',
+  title: 'The Observatory · MisterLove',
+  description: 'An immersive home for the writing and research of Lovepreet Singh. Explore philosophy, history, belief and the questions we live by.',
+  canonical: SITE + '/',
+  body: '<main style="padding:5rem 8%;max-width:70rem;margin:auto"><h1>The Observatory</h1><p>The living archive of Lovepreet Singh.</p><p>An immersive home for independent research into history, philosophy, belief and public life.</p><p><a href="/writing/">Explore the writing</a> · <a href="/books/">Enter the reading room</a></p></main>',
+  noscript: '<p><a href="/writing/">Read the archive</a> or <a href="/books/">browse the books</a>.</p>',
+});
+shells += 1;
 
 /* ---- /writing — the shelf. Written once, listing every piece. ---- */
 shell({

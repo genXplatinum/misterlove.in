@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Wordmark } from './Logo';
+import EditionSwitch from './EditionSwitch';
 import { profile } from '../data/site';
 import { pieces } from '../data/writing';
 import './Footer.css';
@@ -24,6 +25,7 @@ export default function Footer() {
           </a>
         </div>
 
+        <div className="footer__editions"><span>One archive. Two ways to explore.</span><EditionSwitch /></div>
         <div className="footer__rule" />
 
         <div className="footer__grid">

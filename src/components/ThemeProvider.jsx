@@ -22,7 +22,8 @@ export function applyTheme(theme) {
   root.style.colorScheme = isDark ? 'dark' : 'light';
 
   const themeColor = document.head.querySelector('meta[name="theme-color"]');
-  themeColor?.setAttribute('content', isDark ? '#171512' : '#F3EFE6');
+  const immersive = root.dataset.experience === 'immersive';
+  themeColor?.setAttribute('content', immersive ? (isDark ? '#0c1b24' : '#f3f3ef') : (isDark ? '#171512' : '#F3EFE6'));
 }
 
 export function ThemeProvider({ children, initialTheme = 'light' }) {
