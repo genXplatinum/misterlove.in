@@ -52,7 +52,11 @@ for (let i=0;i<7;i++) {
   for (const entry of volume.sources) {
     assert(part.html.includes(`href="${escaped(entry[3])}"`),`Missing source URL ${entry[3]}`);
     assert(plain(part.html).includes(plain(escaped(entry[2]))),`Missing dated source note ${entry[1]}`);
-    for (let k=5;k<entry.length;k+=2) assert(part.html.includes(`href="${escaped(entry[k])}"`));
+    for (let k=4;k<entry.length;k++) {
+      const supplemental=Array.isArray(entry[k])?entry[k]:[entry[k],entry[++k]];
+      assert(/^https?:\/\//.test(supplemental[1]),'Invalid supplementary source URL');
+      assert(part.html.includes(`href="${escaped(supplemental[1])}"`),`Missing supplementary source ${supplemental[1]}`);
+    }
     sources++;
   }
 }

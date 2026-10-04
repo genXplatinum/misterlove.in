@@ -6,6 +6,8 @@
    Order here is the order shown on /writing — newest first.
    ============================================================ */
 
+import { hindiReportMeta } from './writing/india-before-and-after-2014-hi-meta.js';
+
 export const writingMeta = {
   index: 'Research',
   label: 'Writing',
@@ -34,14 +36,20 @@ export const pieces = [
     published: '2026-10-04',
     displayDate: '4 October 2026',
     parts: 7,
-    words: 57493,
-    minutes: 265,
+    words: 57586,
+    minutes: 266,
     status: 'Complete',
     accent: 'oxblood',
     pdf: 'india-before-and-after-2014-master.pdf',
     pdfSize: '1.7 MB',
     pdfLabel: 'Complete report · 204 pages',
     principles: [],
+    translations: {
+      hi: {
+        ...hindiReportMeta,
+        load: () => import('./writing/india-before-and-after-2014-hi.js'),
+      },
+    },
     load: () => import('./writing/india-before-and-after-2014.js'),
   },
   {

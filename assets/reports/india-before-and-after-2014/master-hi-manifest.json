@@ -1,0 +1,63 @@
+{
+  "file": "india-before-and-after-2014-master-hi.pdf",
+  "language": "hi",
+  "title": "भारत: 2014 से पहले और बाद",
+  "author": "Lovepreet Singh",
+  "editionDate": "2026-10-04",
+  "researchCutoff": "2026-10-02/2026-10-03",
+  "pages": 229,
+  "bytes": 6381607,
+  "sha256": "4a8571c6c2cfc39b89cc8342dffec0ac94f65d06337a502ce13392f1ee1a8655",
+  "frontPages": 9,
+  "volumes": [
+    {
+      "n": 1,
+      "title": "पैसा, काम और अर्थव्यवस्था",
+      "startPage": 10,
+      "pages": 29
+    },
+    {
+      "n": 2,
+      "title": "रोज़मर्रा की ज़िंदगी का बुनियादी ढाँचा",
+      "startPage": 39,
+      "pages": 31
+    },
+    {
+      "n": 3,
+      "title": "स्वास्थ्य, पढ़ाई और जीवन की स्थिति",
+      "startPage": 70,
+      "pages": 35
+    },
+    {
+      "n": 4,
+      "title": "खेती, उद्योग, विज्ञान और उत्पादन",
+      "startPage": 105,
+      "pages": 26
+    },
+    {
+      "n": 5,
+      "title": "सुरक्षा, संस्थाएँ और पर्यावरण",
+      "startPage": 131,
+      "pages": 33
+    },
+    {
+      "n": 6,
+      "title": "राज्य, रैंकिंग और मूल चार्ट",
+      "startPage": 164,
+      "pages": 33
+    },
+    {
+      "n": 7,
+      "title": "किसने बेहतर किया: UPA या NDA?",
+      "startPage": 197,
+      "pages": 33
+    }
+  ],
+  "dataTables": 152,
+  "sourceEntries": 289,
+  "sections": 170,
+  "bookmarks": 189,
+  "internalLinks": 702,
+  "externalLinks": 406,
+  "unicodeNulls": 0
+}
