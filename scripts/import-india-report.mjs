@@ -80,7 +80,15 @@ const parts = source.map((volume, index) => {
     const [org,sourceTitle,note,url,...extra]=entry;
     if (!/^https?:\/\//.test(url)) throw new Error(`Invalid source URL ${url}`);
     html += `<li id="india-${n}-source-${j+1}"><strong>${escape(org)}.</strong> <a href="${escape(url)}" target="_blank" rel="noopener noreferrer">${escape(sourceTitle)}</a>. ${escape(note)}`;
-    for (let k=0;k<extra.length;k+=2) html += ` <a href="${escape(extra[k+1])}" target="_blank" rel="noopener noreferrer">${escape(extra[k])}</a>.`;
+    const extraLinks = [];
+    for (let k=0;k<extra.length;k++) {
+      if (Array.isArray(extra[k])) extraLinks.push(extra[k]);
+      else extraLinks.push([extra[k],extra[++k]]);
+    }
+    for (const [extraTitle,extraURL] of extraLinks) {
+      if (!/^https?:\/\//.test(extraURL)) throw new Error(`Invalid supplemental source URL ${extraURL}`);
+      html += ` <a href="${escape(extraURL)}" target="_blank" rel="noopener noreferrer">${escape(extraTitle)}</a>.`;
+    }
     html += '</li>';
   });
   html += '</ol><p>The source list belongs to this part. Observation dates, report dates, definitions and comparability limits are explained beside the figures. The Matrix posts supplied the starting questions; their claims are checked against the cited evidence.</p></div>';
