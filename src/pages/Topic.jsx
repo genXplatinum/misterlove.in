@@ -295,7 +295,7 @@ export default function Topic() {
             </div>
           </Reveal>
 
-          <Reveal className="feature__method" delay={80}>
+          {piece.principles?.length > 0 && <Reveal className="feature__method" delay={80}>
             <span className="mono feature__method-title">{piece.principlesTitle}</span>
             <ol className="feature__promises">
               {piece.principles.map((promise) => (
@@ -306,7 +306,7 @@ export default function Topic() {
                 </li>
               ))}
             </ol>
-          </Reveal>
+          </Reveal>}
         </div>
 
         {piece.room && (

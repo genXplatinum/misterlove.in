@@ -443,8 +443,9 @@ export default function Article() {
   // On small screens the rail is hidden, so the same jump also closes the
   // mobile contents disclosure to hand the screen back to the reader.
   const goSectionMobile = (event, id) => {
-    goSection(event, id);
     if (mobileNavRef.current) mobileNavRef.current.open = false;
+    // Closing the disclosure changes the heading's position in the page.
+    goSection(event, id);
   };
 
   return (

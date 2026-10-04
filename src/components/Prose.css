@@ -331,6 +331,17 @@
 
 .prose .w-table tbody tr:last-child td { border-bottom: 0; }
 
+/* These report tables use genuine row headers, including long definitions. */
+.prose .w-table--india th { white-space: normal; }
+.prose .w-table--india tbody th {
+  background: transparent;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+  font-weight: 600;
+}
+.prose .w-table--india tbody tr:last-child th { border-bottom: 0; }
+
 .prose .w-table tbody tr:nth-child(even) {
   background: color-mix(in oklab, var(--oxblood) 5%, transparent);
 }

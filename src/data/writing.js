@@ -16,6 +16,35 @@ export const writingMeta = {
 
 export const pieces = [
   {
+    slug: 'india-before-and-after-2014',
+    kicker: 'A seven-part report card',
+    title: 'India, Before and After 2014',
+    subtitle: 'The Numbers, the Changes and the Final Comparison',
+    standfirst:
+      'What changed in India before and after 2014? Seven parts explain the numbers in plain English, check the original claims and compare the Congress-led UPA and BJP-led NDA records, including COVID and the other major shocks.',
+    summary:
+      'I began with the before-and-after charts shared by The Matrix India, then followed their claims back to the published evidence. The six evidence volumes cover the economy; infrastructure; health, learning and living conditions; farming and production; safety, institutions and the environment; and state differences, rankings and the original charts. The seventh part gives my final comparison. My overall judgment gives the BJP-led NDA a qualified advantage when infrastructure execution, basic-service reach and financial inclusion receive the greatest weight. Congress-led UPA has the stronger observed full-decade growth record in the common historical series, and a stronger case on the independent freedom assessments examined. That choice of priorities is stated openly; it is not proof that one government did better in every area or caused every change. For the comparison, UPA means 2004–2014 and NDA means 2014 onward. India before 2014 was not governed by Congress alone. All seven parts are readable here, with the tables, explanations and linked sources. The 204-page master PDF collects the original 201 pages with a new cover, author’s note and clickable contents. Evidence was checked on 2–3 October 2026. Each figure keeps its own date, and complete calendar-year 2026 results are not assumed.',
+    topic: 'India · Economy · Public Policy · UPA and NDA',
+    keywords: [
+      'India before and after 2014', 'India report card', 'UPA versus NDA',
+      'Congress and BJP comparison', 'India economy', 'India infrastructure',
+      'India health education poverty', 'The Matrix India fact check',
+      'India rankings', 'COVID economic comparison', 'India 2026 data',
+    ],
+    published: '2026-10-04',
+    displayDate: '4 October 2026',
+    parts: 7,
+    words: 57493,
+    minutes: 265,
+    status: 'Complete',
+    accent: 'oxblood',
+    pdf: 'india-before-and-after-2014-master.pdf',
+    pdfSize: '1.7 MB',
+    pdfLabel: 'Complete report · 204 pages',
+    principles: [],
+    load: () => import('./writing/india-before-and-after-2014.js'),
+  },
+  {
     slug: 'confessions',
     kicker: 'A nine-part reading',
     title: 'The Confessions, Explained',
