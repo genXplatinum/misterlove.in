@@ -70,7 +70,9 @@ assert.equal(provenance.tables, tables);
 assert.equal(provenance.tableCells, cells);
 assert.equal(provenance.sourceFiles.length, 16);
 assert.equal(provenance.hindiPdf.renderedPages, provenance.hindiPdf.pages);
-assert.equal(hash(read('src/data/writing/rules-about-women.js')), provenance.englishDataSha256);
+// Git checks this text out with CRLF on Windows and LF on the Pages server.
+// Only line endings are normalized; every source character remains checked.
+assert.equal(hash(read('src/data/writing/rules-about-women.js').toString('utf8').replace(/\r\n/g, '\n')), provenance.englishDataSha256);
 assert.equal(hash(read('public/rules-about-women.pdf')), provenance.englishPdfSha256);
 assert.equal(provenance.englishPdfSha256, 'db51fb80df09da77b3bc5122e3de93053803b43d88acbf0a98967c576202234e');
 const pdf = read('public/' + provenance.hindiPdf.file);

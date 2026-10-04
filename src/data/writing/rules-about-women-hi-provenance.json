@@ -82,7 +82,8 @@
       "sha256": "564460c72f3a1c48af188d886b525560eecd12f5300a9eec7ee15ca56b008bef"
     }
   ],
-  "englishDataSha256": "393c47c537d0f9a35d37f3a0d093f1d6edc1f91b44a5bf3ab91542e494a8a593",
+  "englishDataSha256": "4c064ba57136f6bd9eba454fc1b7806dd8ce69f445192dd429dde93b2e14bd97",
+  "englishDataHashScope": "UTF-8 source with LF line endings, matching the unchanged Git source blob",
   "englishPdfSha256": "db51fb80df09da77b3bc5122e3de93053803b43d88acbf0a98967c576202234e",
   "hindiPdf": {
     "file": "rules-about-women-hi.pdf",
