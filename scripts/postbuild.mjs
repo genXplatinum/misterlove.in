@@ -366,7 +366,9 @@ const staticCopy = (piece) => (piece.language === 'hi' ? {
   contents: 'विषय सूची',
   minutes: 'मिनट',
   preparing: 'तैयार हो रहा है',
-  download: (pdf) => `मूल अंग्रेज़ी PDF डाउनलोड करें · ${pdf.size}`,
+  download: (pdf) => piece.pdfLanguage === 'hi'
+    ? `${pdf.label} डाउनलोड करें · ${pdf.size}`
+    : `मूल अंग्रेज़ी PDF डाउनलोड करें · ${pdf.size}`,
   by: 'लेखक',
   readFull: 'पूरा भाग पढ़ें',
   inThisPart: 'इस भाग में',
@@ -395,12 +397,24 @@ const staticCopy = (piece) => (piece.language === 'hi' ? {
   partsAria: 'Article parts',
 });
 
+function writingLanguageSwitch(piece, part) {
+  if (!piece.translations?.hi) return '';
+  const suffix = part ? `/part-${part.n}/` : '/';
+  const hi = piece.language === 'hi';
+  return `<nav class="language-switch" aria-label="${hi ? 'पढ़ने की भाषा' : 'Reading language'}">`
+    + `<a href="/writing/${piece.slug}${suffix}" lang="en"${hi ? '' : ' class="is-active" aria-current="page"'}>English</a>`
+    + `<a href="/hi/writing/${piece.slug}${suffix}" lang="hi"${hi ? ' class="is-active" aria-current="page"' : ''}>हिन्दी</a></nav>`;
+}
+
 function articleBody(piece, part, live) {
   const base = writingPathOf(piece);
   const copy = staticCopy(piece);
   const pdf = pdfForPart(piece, part);
   const download = pdf
     ? `<p><a class="btn btn--ghost" href="/${pdf.file}" download>${esc(copy.download(pdf))}</a></p>`
+    : '';
+  const toc = piece.translations?.hi && part.toc?.length
+    ? `<nav aria-label="${copy.inThisPart}"><h2>${copy.inThisPart}</h2><ol>${part.toc.map((chapter) => `<li><a href="#${esc(chapter.id)}">${esc(chapter.text)}</a></li>`).join('')}</ol></nav>`
     : '';
   return `<main id="main"><article class="article${piece.language === 'hi' ? ' article--hi' : ''}" lang="${piece.language}">
   <header class="article__head"><div class="container">
@@ -409,6 +423,7 @@ function articleBody(piece, part, live) {
       { name: piece.title, href: `${base}/` },
       { name: `${copy.part} ${part.n}` },
     ], piece.language === 'hi' ? 'पृष्ठ क्रम' : 'Breadcrumb')}
+    ${writingLanguageSwitch(piece, part)}
     <div class="article__head-grid"><div class="article__head-main">
       <span class="article__partno mono">${copy.part} ${String(part.n).padStart(2, '0')} <span class="dim">${copy.of} ${piece.parts}</span><span class="article__partlabel">${esc(part.label)}</span></span>
       <h1 class="article__title">${esc(part.title)}</h1>
@@ -416,6 +431,7 @@ function articleBody(piece, part, live) {
     </div></div>
   </div></header>
   <div class="container"><div class="article__body"><div class="article__col">
+    ${toc}
     ${part.prologue ? `<section class="article__prologue">${part.prologueTitle ? `<h2 class="article__prologue-head">${esc(part.prologueTitle)}</h2>` : ''}<div class="prose">${part.prologue}</div></section>` : ''}
     <div class="prose">${part.html}</div>
     ${part.sources ? `<section class="article__sources" open><p class="mono">${copy.sources} — ${copy.part} ${part.n}</p><div class="prose prose--sources">${part.sources}</div></section>` : ''}
@@ -449,6 +465,7 @@ function topicBody(piece, parts) {
     [{ name: copy.writing, href: '/writing/' }, { name: piece.title }],
     piece.language === 'hi' ? 'पृष्ठ क्रम' : 'Breadcrumb'
   )}
+  ${writingLanguageSwitch(piece)}
   <h1 class="topic__title">${esc(piece.title)} — ${esc(piece.subtitle)}</h1>
   <p class="topicpage__stand">${esc(piece.standfirst)}</p>
   <p class="topicpage__summary">${esc(piece.summary)}</p>

@@ -1,0 +1,96 @@
+{
+  "edition": "The Rules About Women — Hindi",
+  "originalEdition": "August 2026",
+  "hindiEdition": "2026-10-05",
+  "parts": 16,
+  "originalChapterEntries": 166,
+  "hindiChapterEntries": 167,
+  "tables": 53,
+  "tableCells": 1808,
+  "completeText": true,
+  "includesPrologues": true,
+  "includesTimelinesAndGlossaries": true,
+  "appendix": {
+    "title": "The Short Version",
+    "placement": "End of Part 16",
+    "sourceFile": "The_Rules_About_Women_The_Short_Version.pdf",
+    "sourceSha256": "9bc49b471faa866e77910d61adad57cd673b417544ef524a34abd903eeb87a99"
+  },
+  "sourceFiles": [
+    {
+      "file": "part-1-the-question-underneath-the-question.html",
+      "sha256": "7e1283a39a121e6b540d9bbe4faf7220761c3d5bd1c633642cef1c0a144c4e43"
+    },
+    {
+      "file": "part-2-where-the-rules-came-from.html",
+      "sha256": "f602efe4e6cde16344b35fa5dc0f898bd36f868cd3e0b5a99c5624ca65403c9f"
+    },
+    {
+      "file": "part-3-the-indian-machine.html",
+      "sha256": "81228a2f556ecd2fd3be8f7fb2b91dbf8c997804c3631edff0757f7041e5e316"
+    },
+    {
+      "file": "part-4-the-bodies-themselves.html",
+      "sha256": "9473c1eb5f35c7bdc8b4b4c787489acffded9d8f8131cd4429db4219729f9eb8"
+    },
+    {
+      "file": "part-5-the-paradox-of-the-free-countries.html",
+      "sha256": "d0591d3bcbdf22c5c9e995f245003d9e0d0029ada96084250ea62c9e4ed13224"
+    },
+    {
+      "file": "part-6-the-case-for-the-old-rules.html",
+      "sha256": "df766522e8d58f7a3c66baba8935306fc1ed91da56a4b13f6203f6fe29328637"
+    },
+    {
+      "file": "part-7-what-feminism-actually-claims.html",
+      "sha256": "fa124f8b60f6f60329e0ffab34f25af50f872c005a69b6c7643a303641366777"
+    },
+    {
+      "file": "part-8-the-ledger-of-the-equality-project.html",
+      "sha256": "a1d3864db1884a31ee2e4bfdf5b003c649c16ecc2094b219094521f7733a8af8"
+    },
+    {
+      "file": "part-9-the-arithmetic-of-descendants.html",
+      "sha256": "2353c8c5031230ace30bc0f49810c2e5c06a28080101c5af03864c66ece88089"
+    },
+    {
+      "file": "part-10-what-the-evidence-says-happens-to-a-woman.html",
+      "sha256": "38729811589cbdd323b6a2024c53011da59bbdbd66645ea1f75be2d3ff987db4"
+    },
+    {
+      "file": "part-11-the-half-nobody-studied.html",
+      "sha256": "92715539542b93b933a11f61b61e443879a6be79b4e0b1b0d51dceef51234c86"
+    },
+    {
+      "file": "part-12-the-community-with-no-edges.html",
+      "sha256": "3ee4f2cb025f5e5de1b769818dda02920f8bec3357c8814a6064caaacd18c204"
+    },
+    {
+      "file": "part-13-when-history-ran-the-experiment.html",
+      "sha256": "a61d846b1e9720759233b5204056d448497f2659d1926551a411bc754b81a083"
+    },
+    {
+      "file": "part-14-what-would-actually-work.html",
+      "sha256": "c8df7ac126d4939ee734d8f0da6a4a2a68700ef2b0e2041ce560ed9523a79652"
+    },
+    {
+      "file": "part-15-the-case-against-this-series.html",
+      "sha256": "7564af2087b95fe9830f85e727415deca9cd65a6a296db73daea421b05ae63d0"
+    },
+    {
+      "file": "part-16-what-survived.html",
+      "sha256": "564460c72f3a1c48af188d886b525560eecd12f5300a9eec7ee15ca56b008bef"
+    }
+  ],
+  "englishDataSha256": "393c47c537d0f9a35d37f3a0d093f1d6edc1f91b44a5bf3ab91542e494a8a593",
+  "englishPdfSha256": "db51fb80df09da77b3bc5122e3de93053803b43d88acbf0a98967c576202234e",
+  "hindiPdf": {
+    "file": "rules-about-women-hi.pdf",
+    "pages": 885,
+    "bytes": 22975430,
+    "sha256": "05c8f6673ba8a5f663ad0ce43f5ade6641ff6fe76f0706cffcfc1b0317c6cb11",
+    "renderedPages": 885,
+    "searchableUnicode": true
+  },
+  "informationCutoff": "Claims and figures retain the August 2026 English edition; translation is not a later factual refresh."
+}
