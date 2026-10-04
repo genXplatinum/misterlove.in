@@ -7,6 +7,7 @@
    ============================================================ */
 
 import { hindiReportMeta } from './writing/india-before-and-after-2014-hi-meta.js';
+import { hindiWomenMeta } from './writing/rules-about-women-hi-meta.js';
 
 export const writingMeta = {
   index: 'Research',
@@ -397,6 +398,9 @@ export const pieces = [
       { n: 15, label: 'The Rebuttal', title: 'The Case Against This Series', blurb: 'Fourteen parts audited everybody else. This one puts the series in the dock — the strongest argument that the questions were wrong, the evidence was not neutral, and the even-handedness cost more than it bought.' },
       { n: 16, label: 'The Verdict', title: 'What Survived', blurb: 'The last part. What fifteen parts actually established rather than argued, which claims on each side survived contact with evidence, and what the author actually thinks — declared as the least evidenced thing in the book.' },
     ],
+    translations: {
+      hi: { ...hindiWomenMeta, load: () => import('./writing/rules-about-women-hi.js') },
+    },
     load: () => import('./writing/rules-about-women.js'),
   },
   {

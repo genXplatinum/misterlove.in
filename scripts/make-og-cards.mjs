@@ -18,6 +18,7 @@ import { Resvg } from '@resvg/resvg-js';
 import { writeFileSync, mkdirSync, existsSync, readdirSync, unlinkSync } from 'node:fs';
 import { basename, dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { shapeHindiOg } from './shape-hindi-og.mjs';
 import {
   pieces,
   writingMeta,
@@ -172,7 +173,7 @@ const frame = (p) => `
 `;
 
 /** One route card. */
-function card({ kicker, title, sub, standfirst, badge, byline, accent, language = 'en' }) {
+function card({ kicker, title, sub, standfirst, badge, byline, accent, language = 'en', shapeHindi = false }) {
   const p = PALETTES[accent] ?? PALETTES.harvest;
   const LEFT = 62;
   const MAXW = W - LEFT - 80;
@@ -197,9 +198,9 @@ function card({ kicker, title, sub, standfirst, badge, byline, accent, language 
   const leading = t.size * (language === 'hi' ? 1.28 : 1.03);
   const standCount = standfirst ? (t.lines.length >= 3 ? 1 : 2) : 0;
 
-  const gapKickerTitle = t.size * 0.92;
+  const gapKickerTitle = t.size * (shapeHindi ? 1.23 : 0.92);
   const titleBlock = (t.lines.length - 1) * leading;
-  const gapTitleSub = sub ? 40 : 0;
+  const gapTitleSub = sub ? (shapeHindi ? 62 : 40) : 0;
   const gapSubRule = sub ? 26 : 24;
   const gapRuleStand = standCount ? 36 : 0;
   const standBlock = standCount ? (standCount - 1) * 34 : 0;
@@ -225,7 +226,7 @@ function card({ kicker, title, sub, standfirst, badge, byline, accent, language 
 
   const badgeW = labelWidth(badge, 17, 1.2) + 34;
 
-  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">
+  const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">
   <title>${esc(title)} — ${esc(sub || '')}</title>
 ${frame(p)}
   <text class="${labelClass}" x="${LEFT}" y="${kickerY.toFixed(0)}" fill="${p.accent}" font-size="18" font-weight="600" letter-spacing="${language === 'hi' ? '0' : '3.2'}">${esc(kicker.toUpperCase())}</text>
@@ -240,6 +241,7 @@ ${frame(p)}
     <text class="${labelClass}" x="${(badgeW + 24).toFixed(0)}" y="22" fill="${p.foot}" font-size="17" font-weight="500" letter-spacing="${language === 'hi' ? '0' : '0.4'}">${esc(byline)}</text>
   </g>
 </svg>`;
+  return shapeHindi ? shapeHindiOg(svg) : svg;
 }
 
 /**
@@ -541,6 +543,7 @@ for (const piece of pieces) {
         byline: 'Lovepreet Singh की शोध और लेखनी',
         accent: edition.accent,
         language,
+        shapeHindi: edition.ogTextShaping === 'harfbuzz',
       }),
       translatedSeriesFile
     );
@@ -559,6 +562,7 @@ for (const piece of pieces) {
           byline: 'Lovepreet Singh · misterlove.in',
           accent: edition.accent,
           language,
+          shapeHindi: edition.ogTextShaping === 'harfbuzz',
         }),
         file
       );
