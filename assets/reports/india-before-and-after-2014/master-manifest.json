@@ -1,0 +1,75 @@
+{
+  "file": "india-before-and-after-2014-master.pdf",
+  "pages": 204,
+  "front_pages": 3,
+  "volumes": [
+    {
+      "label": "Part 1",
+      "title": "Money, Work and the Economy",
+      "file": "india-before-and-after-2014-part-1.pdf",
+      "pages": 28,
+      "start": 4,
+      "end": 31,
+      "sha256": "38edf311070658d254818fdca1d5df7ab4b94b88b6c22977b61e1ac99d2997c5"
+    },
+    {
+      "label": "Part 2",
+      "title": "The Networks of Everyday Life",
+      "file": "india-before-and-after-2014-part-2.pdf",
+      "pages": 28,
+      "start": 32,
+      "end": 59,
+      "sha256": "9220ded5783f43187b31d519aa8eaeb946531d42b917a8e37a25267c269c87e1"
+    },
+    {
+      "label": "Part 3",
+      "title": "Health, Learning and Living Conditions",
+      "file": "india-before-and-after-2014-part-3.pdf",
+      "pages": 32,
+      "start": 60,
+      "end": 91,
+      "sha256": "4e0405e0faf103ba01bf1a16e73e818872c3d843ed4529e88dfc167a97f914c3"
+    },
+    {
+      "label": "Part 4",
+      "title": "Making, Growing and Building",
+      "file": "india-before-and-after-2014-part-4.pdf",
+      "pages": 24,
+      "start": 92,
+      "end": 115,
+      "sha256": "9b16650ae145498116113cba71b82f4b719e15ea392cfc5027c9e3872e9b94ce"
+    },
+    {
+      "label": "Part 5",
+      "title": "Safety, Institutions and the Environment",
+      "file": "india-before-and-after-2014-part-5.pdf",
+      "pages": 28,
+      "start": 116,
+      "end": 143,
+      "sha256": "c0e0f7c0050e992808d1a188e465c3c519d84084c0a72b7e5c28da00520ff37b"
+    },
+    {
+      "label": "Part 6",
+      "title": "States, Rankings and the Original Charts",
+      "file": "india-before-and-after-2014-part-6.pdf",
+      "pages": 28,
+      "start": 144,
+      "end": 171,
+      "sha256": "ab584702aed3362edf569cd2a1477c511f130785599227a73bb732a1fd264501"
+    },
+    {
+      "label": "Final comparison",
+      "title": "Who Did Better: UPA or NDA?",
+      "file": "india-before-and-after-2014-final-verdict.pdf",
+      "pages": 33,
+      "start": 172,
+      "end": 204,
+      "sha256": "7dcd86ee8ad6de161af64474e27363cf78be011cf56333f3e01f450b9f220da8"
+    }
+  ],
+  "bytes": 1705222,
+  "sha256": "2f15afbd065f876e4a81276cd70f89b91ec79a3960f587ad8a75e26433118a01",
+  "author": "Lovepreet Singh",
+  "assembled": "2026-10-04",
+  "evidence_checked": "2026-10-02 to 2026-10-03"
+}
