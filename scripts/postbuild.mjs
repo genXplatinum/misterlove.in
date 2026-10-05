@@ -5,6 +5,7 @@
 //   - sitemap.xml is generated from the writing manifest, so adding a piece or a
 //     part can't leave the sitemap silently stale
 import { copyFileSync, writeFileSync, mkdirSync, readFileSync, readdirSync, existsSync } from 'node:fs';
+import { pageSurfaceForPath } from '../src/pageSurface.js';
 import {
   pieces,
   writingMeta,
@@ -499,10 +500,8 @@ function shelfBody(loaded) {
    not flash the library's cream on the way in. */
 const BOOKS_GROUND = { light: '#E8E6DE', dark: '#15191A' };
 
-/* The same, for the rooms a single piece brings with it. Keyed the way
-   `room:` is keyed in src/data/writing.js. This duplicates ROOM_GROUND in
-   src/components/PieceRoom.js — the two are unlinked and have to be kept in
-   step by hand, exactly as BOOKS_GROUND and BooksRoom.js already are. */
+/* Initial chrome colours for the static shells. Once the app mounts, it reads
+   the actual CSS canvas, including room, theme and edition preferences. */
 const PIECE_GROUND = {
   origin: { light: '#FBF6EA', dark: '#171310' },
 };
@@ -708,6 +707,7 @@ function shell({
   rootClass,
   themeColor,
 }) {
+  const canvasClasses = [rootClass, pageSurfaceForPath(path)].filter(Boolean).join(' ');
   let html = template
     .replace(
       /<html lang="[^"]*"/,
@@ -715,7 +715,7 @@ function shell({
          `html { background: var(--canvas) }` resolves on the root, so a
          body-level class leaves the library's cream in the overscroll band and
          the scrollbar track. Same reason it can set its own color-scheme. */
-      `<html lang="${language}"${rootClass ? ` class="${rootClass}"` : ''}`
+      `<html lang="${language}"${canvasClasses ? ` class="${canvasClasses}"` : ''}`
     )
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
     // Share card: the piece's own artwork rather than the site banner, so a
@@ -766,11 +766,11 @@ function shell({
   head.push('  <link rel="alternate" type="application/rss+xml" title="Writing — Lovepreet Singh" href="https://misterlove.in/feed.xml" />');
   for (const c of [].concat(css ?? [])) if (c) head.push(c);
 
-  // Set the reading theme before first paint so the article does not flash
-  // from the site's dark default to paper. Matches useReaderTheme's key.
+  // Use the same preference as ThemeProvider before the first paint. The old
+  // reader-only key could briefly switch a saved dark theme back to light.
   if (theme) {
     head.push(
-      '  <script>try{var t=localStorage.getItem("lws:reader-theme");'
+      '  <script>try{var t=localStorage.getItem("misterlove:theme");'
       + `document.documentElement.dataset.theme=t==="dark"?"dark":"${theme}"}`
       + `catch(e){document.documentElement.dataset.theme="${theme}"}</script>`
     );
@@ -1069,7 +1069,7 @@ shell({
   },
   body: booksShelfBody(shelved),
   css: [ROUTE_CSS.writing, ROUTE_CSS.books],
-  bodyClass: 'books-room',
+  rootClass: 'books-room',
   themeColor: BOOKS_GROUND,
   noscript:
     '      <p><strong>Books, taken apart — Lovepreet Singh</strong></p>\n'
@@ -1097,7 +1097,7 @@ for (const { book, studies } of shelved) {
     imageAlt: `${book.title} by ${book.author}, taken apart sentence by sentence. Close readings by Lovepreet Singh.`,
     body: bookBody(book, studies),
     css: [ROUTE_CSS.writing, ROUTE_CSS.books],
-    bodyClass: 'books-room',
+    rootClass: 'books-room',
     themeColor: BOOKS_GROUND,
     jsonLd: [{
       '@context': 'https://schema.org',
@@ -1155,7 +1155,7 @@ for (const { book, studies } of shelved) {
         studyEditions.some((e) => e.book.slug === book.slug && e.study.slug === study.slug)
       ),
       css: [ROUTE_CSS.article, ROUTE_CSS.writing, ROUTE_CSS.books],
-      bodyClass: 'books-room',
+      rootClass: 'books-room',
       themeColor: BOOKS_GROUND,
       theme: 'light',
       extraMeta: {
@@ -1233,7 +1233,7 @@ for (const { book, studies } of shelved) {
       imageAlt: `${study.title} — ${study.subtitle}। ${book.author} की ${book.title} के एक वाक्य का अध्ययन, लवप्रीत सिंह द्वारा।`,
       body: studyBody(book, study, siblings, language, true),
       css: [ROUTE_CSS.article, ROUTE_CSS.writing, ROUTE_CSS.books],
-      bodyClass: 'books-room',
+      rootClass: 'books-room',
       themeColor: BOOKS_GROUND,
       theme: 'light',
       alternates: [

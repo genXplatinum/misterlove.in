@@ -10,10 +10,12 @@
       var savedEdition = 'classic';
       try { savedEdition = localStorage.getItem('misterlove:experience') === 'immersive' ? 'immersive' : 'classic'; } catch (_) {}
       document.documentElement.dataset.experience = location.pathname.replace(/\/$/, '') === '/observatory' ? 'immersive' : savedEdition;
+      if (location.pathname.replace(/\/$/, '') === '/observatory' || (location.pathname === '/' && savedEdition === 'immersive')) {
+        document.documentElement.classList.add('page-observatory');
+      }
       try {
         if (localStorage.getItem('misterlove:theme') === 'dark') {
           document.documentElement.dataset.theme = 'dark';
-          document.documentElement.style.colorScheme = 'dark';
           document.querySelector('meta[name="theme-color"]').setAttribute('content', '#171512');
         }
       } catch (_) {

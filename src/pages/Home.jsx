@@ -16,10 +16,10 @@ function SelectedResearch() {
       <Link className="featured-investigation__cover" to={`/writing/${featured.slug}`} tabIndex={-1} aria-hidden="true"><CoverPlate piece={featured} /></Link>
       <div className="featured-investigation__copy" data-reveal>
         <p className="section-note">A place to begin</p>
-        <p className="research-subject">Augustine, memory & the self</p>
+        <p className="research-subject">{featured.topic}</p>
         <h3><Link to={`/writing/${featured.slug}`}>{featured.title}</Link></h3>
-        <p className="feature-description">A slow reading of all thirteen books. What Augustine is actually doing, why it matters, and where the difficult questions remain.</p>
-        <div className="research-details"><span>{featured.parts} parts</span><span>Complete reading</span><span>{featured.words.toLocaleString('en-IN')} words</span></div>
+        <p className="feature-description">{featured.standfirst}</p>
+        <div className="research-details"><span>{featured.parts} parts</span><span>{featured.status}</span><span>{featured.words.toLocaleString('en-IN')} words</span></div>
         <Link to={`/writing/${featured.slug}`} className="atlas-button atlas-button--ghost">Read the investigation</Link>
       </div>
     </article>

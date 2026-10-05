@@ -14,13 +14,13 @@
        steelman   #2F4A4E   the argument rebuilt at its strongest
        evidence   #6B6A2E   what the record actually says
 
-   Everything below is scoped to `body.books-room`, which is set while a
+   Everything below is scoped to `:root.books-room`, which is set while a
    /books route is mounted. The nav, footer and buttons are entirely
    token-driven, so re-declaring the tokens here moves the whole room without
    touching a line of the shared furniture.
    ============================================================ */
 
-.books-room {
+html:root.books-room {
   --linen: #e8e6de;
   --linen-2: #f4f3ee;
   --linen-3: #dcdbcf;
@@ -78,10 +78,10 @@
 
   --radius: 0;
 
-  background: var(--canvas);
+  background-color: var(--canvas);
 }
 
-:root[data-theme="dark"] .books-room {
+html:root.books-room[data-theme="dark"] {
   --linen: #15191a;
   --linen-2: #1d2223;
   --linen-3: #272d2d;
@@ -113,17 +113,15 @@
    on the index pages only; the reader gets a clean sheet. */
 .books-room .surface-noise { display: none; }
 
-.books-room .bookspage,
-.books-room .bookpage {
-  background-image:
+:root.books-room:not(.page-reader) {
+  --page-image:
     linear-gradient(to right, rgba(27, 31, 30, 0.035) 1px, transparent 1px),
     linear-gradient(rgba(27, 31, 30, 0.035) 1px, transparent 1px);
-  background-size: 1.75rem 1.75rem;
+  --page-image-size: 1.75rem 1.75rem;
 }
 
-:root[data-theme="dark"] .books-room .bookspage,
-:root[data-theme="dark"] .books-room .bookpage {
-  background-image:
+:root.books-room[data-theme="dark"]:not(.page-reader) {
+  --page-image:
     linear-gradient(to right, rgba(232, 231, 221, 0.045) 1px, transparent 1px),
     linear-gradient(rgba(232, 231, 221, 0.045) 1px, transparent 1px);
 }

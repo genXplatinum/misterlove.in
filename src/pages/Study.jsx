@@ -332,7 +332,7 @@ function Contents({ toc, active, onJump }) {
 /** One study: a single sentence from a shelved book, taken apart. */
 export default function Study() {
   const { book: bookSlug, study: studySlug } = useParams();
-  const { pathname } = useLocation();
+  const { pathname, hash: sectionHash } = useLocation();
   const language = pathname.startsWith('/hi/') ? 'hi' : 'en';
   const book = getBook(bookSlug);
   const copy = COPY[language];
@@ -371,6 +371,21 @@ export default function Study() {
   const progress = useReadingProgress(bodyRef);
   const active = useActiveSection(watched, [watched]);
   useStudyMeta(book, study, language, translated);
+
+  // Loading the study updates its metadata and resets the page. Restore a
+  // bookmarked section afterwards, with the heading below the fixed nav.
+  useEffect(() => {
+    if (!study || !sectionHash) return undefined;
+    let sectionId;
+    try { sectionId = decodeURIComponent(sectionHash.slice(1)); }
+    catch { return undefined; }
+    const target = document.getElementById(sectionId);
+    if (!target) return undefined;
+    const frame = requestAnimationFrame(() => {
+      window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 100, behavior: 'instant' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [study, sectionHash]);
 
   if (!book) return <Navigate to="/books" replace />;
   /* A study nobody has set in this language sends the reader to the edition
