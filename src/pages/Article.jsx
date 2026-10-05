@@ -376,7 +376,7 @@ function useActiveSection(toc, deps) {
 
 export default function Article() {
   const { slug, part: partParam } = useParams();
-  const { pathname } = useLocation();
+  const { pathname, hash: sectionHash } = useLocation();
   const language = pathname.startsWith('/hi/') ? 'hi' : 'en';
   const original = getPiece(slug);
   const piece = useMemo(() => getPieceForLanguage(slug, language), [slug, language]);
@@ -419,6 +419,21 @@ export default function Article() {
   useArticleMeta(piece, part, original);
 
   useEffect(() => { scrollToTop(); }, [n, slug, language]);
+
+  // A deep link's target only exists after the part data has loaded. Restore
+  // that position after the initial loading surface and route scroll reset.
+  useEffect(() => {
+    if (!part || !sectionHash) return undefined;
+    let sectionId;
+    try { sectionId = decodeURIComponent(sectionHash.slice(1)); }
+    catch { return undefined; }
+    const target = document.getElementById(sectionId);
+    if (!target) return undefined;
+    const frame = requestAnimationFrame(() => {
+      window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 100, behavior: 'instant' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [part, sectionHash]);
 
   if (!original) return <Navigate to="/writing" replace />;
   if (!piece) return <Navigate to={`/writing/${slug}/part-${n || 1}`} replace />;
