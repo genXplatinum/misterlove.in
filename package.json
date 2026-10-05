@@ -11,6 +11,7 @@
     "postbuild": "node scripts/postbuild.mjs",
     "og": "node scripts/make-og-cards.mjs",
     "og:hindi": "node scripts/make-og-cards.mjs --hindi-only",
+    "social:india": "node scripts/make-india-instagram-carousel.mjs",
     "validate:hindi": "node scripts/validate-hindi-writing.mjs",
     "validate:forgotten-gods-hindi": "node scripts/validate-forgotten-gods-hindi.mjs",
     "validate:women-hindi": "node scripts/validate-rules-about-women-hindi.mjs",
