@@ -411,6 +411,7 @@ export default function Article() {
   }, [piece]);
 
   const part = parts && valid ? parts[n - 1] : null;
+  const partDisplayDate = part?.displayDate ?? piece?.displayDate;
   const articlePdf = part ? pdfForPart(piece, part) : null;
   const toc = useMemo(() => part?.toc ?? [], [part]);
   const progress = useReadingProgress(bodyRef);
@@ -527,7 +528,7 @@ export default function Article() {
               <dl className="article__facts">
                 <div><dt className="mono">{copy.series}</dt><dd>{piece.title} — {piece.subtitle}</dd></div>
                 <div><dt className="mono">{copy.author}</dt><dd>{profile.name}</dd></div>
-                <div><dt className="mono">{copy.published}</dt><dd>{piece.displayDate}</dd></div>
+                <div><dt className="mono">{copy.published}</dt><dd>{partDisplayDate}</dd></div>
                 {part && (
                   <div>
                     <dt className="mono">{copy.thisPart}</dt>
@@ -711,7 +712,7 @@ export default function Article() {
                   {copy.researchedBy} {profile.name}
                 </p>
                 <p className="mono article__colophon-meta">
-                  {copy.edition} · {piece.displayDate} · {part.words.toLocaleString('en-IN')} {copy.words}
+                  {copy.edition} · {partDisplayDate} · {part.words.toLocaleString('en-IN')} {copy.words}
                 </p>
               </div>
             )}
