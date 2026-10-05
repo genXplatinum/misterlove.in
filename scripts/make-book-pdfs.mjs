@@ -32,6 +32,9 @@ const BOOKS = [
   },
   {
     slug: 'debunked-sikhism',
+    // This edition has new front matter, corrections, bookmarks and newly
+    // authored parts. A generic concatenation must not replace that master.
+    completeMaster: 'public/debunked-sikhism.pdf',
     dir: 'C:/Users/rajpa/Documents/Debunk',
     data: '../src/data/writing/debunked-sikhism.js',
     file: (n) => `Sikh_Part_${String(n).padStart(2, '0')}.pdf`,
@@ -149,6 +152,13 @@ const human = (bytes) => (bytes >= 1024 * 1024
   : `${Math.round(bytes / 1024)} KB`);
 
 for (const book of wanted) {
+  if (book.completeMaster) {
+    if (!existsSync(book.completeMaster)) throw new Error(`${book.slug}: missing complete master ${book.completeMaster}`);
+    const master = await PDFDocument.load(await readFile(book.completeMaster));
+    if (master.getPageCount() !== 268) throw new Error(`${book.slug}: expected the complete 268-page edition`);
+    console.log(`✓ ${book.completeMaster} — complete edition retained; use the dedicated master builder to revise it`);
+    continue;
+  }
   const parts = book.parts
     ? book.parts.map((file, i) => ({ n: i + 1, file }))
     : (await import(book.data)).default;
