@@ -15,7 +15,7 @@
  * machine-local files or system fonts are required.
  */
 import { Resvg } from '@resvg/resvg-js';
-import { writeFileSync, mkdirSync, existsSync, readdirSync, unlinkSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, unlinkSync } from 'node:fs';
 import { basename, dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { shapeHindiOg } from './shape-hindi-og.mjs';
@@ -39,6 +39,7 @@ const W = 1200;
 const H = 630;
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = resolve(ROOT, 'public', 'og');
+const INDIA_COMPARISON_ART = resolve(ROOT, 'assets', 'og', 'india-before-and-after-2014-art.png');
 
 const FONTS = [
   resolve(ROOT, 'assets/fonts/og/Newsreader-Variable.ttf'),
@@ -48,6 +49,7 @@ const FONTS = [
 ];
 
 const missing = FONTS.filter((f) => !existsSync(f));
+if (!existsSync(INDIA_COMPARISON_ART)) missing.push(INDIA_COMPARISON_ART);
 if (missing.length) {
   console.error(`\nMissing OG-card dependencies:\n  ${missing.join('\n  ')}\n\nRun npm install, then try again.\n`);
   process.exit(1);
@@ -171,6 +173,65 @@ const frame = (p) => `
   </g>
   <text class="s" x="${W - 62}" y="78" text-anchor="end" fill="${p.foot}" font-size="16" font-weight="500" letter-spacing="1.8">ESSAYS · RESEARCH · MISTERLOVE.IN</text>
 `;
+
+/**
+ * The India report has a dedicated cover rather than the archive's standard
+ * type-only card. The illustration stays free of generated lettering; this
+ * SVG adds the exact article title and alliance labels deterministically.
+ */
+function indiaComparisonCard() {
+  const art = readFileSync(INDIA_COMPARISON_ART).toString('base64');
+
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>India Before 2014 vs After 2014 — UPA and NDA report card</title>
+  <defs>
+    <linearGradient id="india-copy-wash" x1="0" y1="0" x2="790" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f8f1e5" stop-opacity="1"/>
+      <stop offset="0.60" stop-color="#f8f1e5" stop-opacity="0.98"/>
+      <stop offset="0.72" stop-color="#f8f1e5" stop-opacity="0.52"/>
+      <stop offset="0.88" stop-color="#f8f1e5" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#f8f1e5" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="india-footer-wash" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f8f1e5" stop-opacity="0"/>
+      <stop offset="1" stop-color="#f8f1e5" stop-opacity="0.94"/>
+    </linearGradient>
+    <style>
+      .r{font-family:'Newsreader',Georgia,serif}
+      .s{font-family:'Inter','Segoe UI',sans-serif}
+    </style>
+  </defs>
+
+  <image href="data:image/png;base64,${art}" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/>
+  <rect width="790" height="630" fill="url(#india-copy-wash)"/>
+  <rect y="500" width="1200" height="130" fill="url(#india-footer-wash)"/>
+  <rect x="28" y="28" width="1144" height="574" fill="none" stroke="#ad9d87" stroke-width="1.2"/>
+  <rect x="35" y="35" width="1130" height="560" fill="none" stroke="#d2c5b3" stroke-width="0.8"/>
+
+  <text class="s" x="68" y="76" fill="#303236" font-size="18" font-weight="650" letter-spacing="1.6">LOVEPREET SINGH</text>
+  <text class="s" x="1132" y="76" text-anchor="end" fill="#5f5a52" font-size="15" font-weight="550" letter-spacing="1.5">MISTERLOVE.IN · RESEARCH</text>
+  <line x1="68" y1="103" x2="1132" y2="103" stroke="#c8b9a6" stroke-width="1"/>
+
+  <text class="s" x="68" y="145" fill="#8b4a35" font-size="17" font-weight="700" letter-spacing="2.6">THE SEVEN-PART INDIA REPORT CARD</text>
+  <text class="s" x="68" y="205" fill="#1e2b31" font-size="35" font-weight="700" letter-spacing="5.5">INDIA</text>
+  <text class="r" x="68" y="285" fill="#171a1c" font-size="70" font-weight="650" letter-spacing="-1.6">BEFORE 2014</text>
+  <text class="r" x="68" y="355" fill="#171a1c" font-size="70" font-weight="650" letter-spacing="-1.6">VS AFTER 2014</text>
+  <rect x="68" y="389" width="94" height="4" rx="2" fill="#8b4a35"/>
+
+  <g transform="translate(68, 430)">
+    <rect x="0" y="0" width="5" height="57" fill="#486d7a"/>
+    <text class="s" x="20" y="20" fill="#2e4f5b" font-size="16" font-weight="750" letter-spacing="1.1">CONGRESS-LED UPA</text>
+    <text class="r" x="20" y="49" fill="#373634" font-size="24" font-weight="550">2004–2014</text>
+  </g>
+  <g transform="translate(344, 430)">
+    <rect x="0" y="0" width="5" height="57" fill="#b65b2e"/>
+    <text class="s" x="20" y="20" fill="#8c401f" font-size="16" font-weight="750" letter-spacing="1.1">BJP-LED NDA</text>
+    <text class="r" x="20" y="49" fill="#373634" font-size="24" font-weight="550">2014–PRESENT</text>
+  </g>
+
+  <text class="s" x="68" y="568" fill="#5f5a52" font-size="15" font-weight="600" letter-spacing="1.2">DATA · CONTEXT · SOURCES · COVID AND OTHER SHOCKS INCLUDED</text>
+</svg>`;
+}
 
 /** One route card. */
 function card({ kicker, title, sub, standfirst, badge, byline, accent, language = 'en', shapeHindi = false }) {
@@ -487,18 +548,18 @@ for (const piece of pieces) {
 
     // Series card — used by /writing and as the piece-level fallback.
     const seriesFile = `${OUT}/${piece.slug}.png`;
-    r = render(
-      card({
-        kicker: piece.kicker,
-        title: piece.title,
-        sub: piece.subtitle,
-        standfirst: piece.standfirst,
-        badge: isInProgress(piece) ? `${parts.length} OF ${piece.parts} PARTS LIVE` : `${piece.parts} PARTS`,
-        byline: 'Research and writing by Lovepreet Singh',
-        accent: piece.accent,
-      }),
-      seriesFile
-    );
+    const seriesCard = piece.slug === 'india-before-and-after-2014'
+      ? indiaComparisonCard()
+      : card({
+          kicker: piece.kicker,
+          title: piece.title,
+          sub: piece.subtitle,
+          standfirst: piece.standfirst,
+          badge: isInProgress(piece) ? `${parts.length} OF ${piece.parts} PARTS LIVE` : `${piece.parts} PARTS`,
+          byline: 'Research and writing by Lovepreet Singh',
+          accent: piece.accent,
+        });
+    r = render(seriesCard, seriesFile);
     console.log(`${relative(ROOT, seriesFile).padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
     total += r.kb;
 
