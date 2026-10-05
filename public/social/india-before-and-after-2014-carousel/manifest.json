@@ -1,0 +1,76 @@
+{
+  "generatedBy": "npm run social:india",
+  "evidenceCheckedThrough": "2026-10-03",
+  "slides": [
+    {
+      "file": "01-cover.png",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 1422862,
+      "sha256": "f6d668acd9f3ada72cb11421e2f93c788ce7e938f7799bc79de43ed72d16d7d8"
+    },
+    {
+      "file": "02-how-to-read.png",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 203641,
+      "sha256": "afd19205111a4f855f44cfbb9df4b6d66e8bffc049087c258fe7aebb62692f01"
+    },
+    {
+      "file": "03-growth.png",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 200993,
+      "sha256": "f3ec7ee3cb884a8d207765390d1e0274bc6e6b36372668512a510e8a3324a395"
+    },
+    {
+      "file": "04-infrastructure.png",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 220205,
+      "sha256": "2d83197fcdb3cdae8a118e1946162712572b7e65993058411840ad2d0ab89dc1"
+    },
+    {
+      "file": "05-basic-services.png",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 235058,
+      "sha256": "311cdff80ecb891d7b3f69f264361f73866d758e5feceac4de604c5df00d7e04"
+    },
+    {
+      "file": "06-banking-digital.png",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 217375,
+      "sha256": "c91452346a430288823ca89cc5d0485bd42b621c1a5e46445133c12c3a7b7e56"
+    },
+    {
+      "file": "07-poverty.png",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 219363,
+      "sha256": "a99798705fbc5ca1a85aa7831bec31a53e1670d1cec450453dc83527568ead2e"
+    },
+    {
+      "file": "08-banks-public-money.png",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 201531,
+      "sha256": "0d46985c75c892d94a648c614f97486982f2f793a3c21de75bacab24455973dd"
+    },
+    {
+      "file": "09-rights.png",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 221931,
+      "sha256": "542340b5f9a19d5d6e7cffae34224bdebcc2d4d2dcc96dc818e06316cb6b2d3a"
+    },
+    {
+      "file": "10-verdict.png",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 206491,
+      "sha256": "6c1fd36c1a4584badf5426fa310e889f5e107c7d55af3d7e34b06370dd25de8b"
+    }
+  ]
+}
