@@ -710,7 +710,7 @@
 
 /* ---------- Contact / correspondence ---------- */
 
-:root[data-experience="classic"] .intellect-contact { padding: var(--section-pad) 0; background: var(--paper); }
+:root[data-experience="classic"] .intellect-contact { padding: var(--section-pad) 0; background: transparent; }
 :root[data-experience="classic"] .intellect-contact__grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(20rem, 0.9fr); gap: clamp(4rem, 9vw, 10rem); }
 :root[data-experience="classic"] .intellect-contact__head h2 { max-width: 11ch; margin-top: clamp(2rem, 5vw, 4rem); font: 600 clamp(4rem, 7.5vw, 8.5rem)/0.86 var(--font-display); letter-spacing: -0.055em; }
 :root[data-experience="classic"] .intellect-contact__head h2 em { display: block; font-weight: 400; color: var(--oxblood); }

@@ -135,7 +135,9 @@
 }
 
 html {
-  background: var(--canvas);
+  background-color: var(--canvas);
+  background-image: var(--page-image, none);
+  background-size: var(--page-image-size, auto);
   scroll-behavior: smooth;
   scroll-padding-top: calc(5.2rem + env(safe-area-inset-top));
   -webkit-text-size-adjust: 100%;
@@ -148,7 +150,7 @@ body {
   font-size: var(--t-body);
   line-height: 1.6;
   color: var(--ink);
-  background: var(--canvas);
+  background: transparent;
   font-variant-numeric: proportional-nums;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -185,11 +187,29 @@ p { text-wrap: pretty; }
 
 ::selection { background: var(--oxblood-wash); color: var(--ink); }
 
-#root,
-main { min-height: 1px; }
+#root {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+main { min-width: 0; flex: 1 0 auto; }
 #main:focus { outline: none; }
 .main--home { position: relative; }
-.main--reading { position: relative; z-index: 2; background: var(--canvas); }
+.main--reading { position: relative; z-index: 2; }
+
+/* The paper belongs to the document, including the footer and empty space.
+   Painting it inside the article made the pattern stop at the last paragraph. */
+:root.page-reader {
+  --page-image: linear-gradient(90deg, transparent calc(50% - 1px), color-mix(in srgb, var(--ink-soft) 3%, transparent) 50%, transparent calc(50% + 1px));
+}
+
+:root.page-reader .surface-noise { display: block; }
+
+@media print {
+  html { background: #fff !important; }
+  #root { display: block; min-height: 0; }
+}
 
 .container {
   width: 100%;

@@ -43,7 +43,7 @@
    reading: a two-and-a-half hour book is not the place to experiment.
    ============================================================ */
 
-:root.room-origin {
+html:root.room-origin {
   --sheet: #fbf6ea;
   --sheet-2: #fffcf4;
   --sheet-3: #efe4cd;
@@ -106,14 +106,14 @@
   --font-mono: var(--font-ui);
 
   color-scheme: light;
-  background: var(--canvas);
+  background-color: var(--canvas);
 }
 
 /* The dark edition is the sheet under a lamp: the ground goes to walnut and the
    ink turns to paper, but the three threads are the same threads, lifted so
    they sit on a dark ground rather than sinking into it. Only the seeds are
    re-declared — the mapping above still resolves against them. */
-:root.room-origin[data-theme="dark"] {
+html:root.room-origin[data-theme="dark"] {
   --sheet: #171310;
   --sheet-2: #1f1a15;
   --sheet-3: #2a231b;
@@ -153,8 +153,8 @@
    is laid. */
 .room-origin .surface-noise { display: none; }
 
-.room-origin .topicpage {
-  background-image:
+:root.room-origin:not(.page-reader) {
+  --page-image:
     repeating-linear-gradient(
       to bottom,
       rgba(52, 41, 31, 0.028) 0 1px,
@@ -167,8 +167,8 @@
     );
 }
 
-:root.room-origin[data-theme="dark"] .topicpage {
-  background-image:
+:root.room-origin[data-theme="dark"]:not(.page-reader) {
+  --page-image:
     repeating-linear-gradient(
       to bottom,
       rgba(240, 230, 211, 0.03) 0 1px,

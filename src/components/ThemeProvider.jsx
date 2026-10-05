@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { syncThemeColor } from '../pageSurface';
 
 const STORAGE_KEY = 'misterlove:theme';
 const ThemeContext = createContext(null);
@@ -19,11 +20,7 @@ export function applyTheme(theme) {
   const isDark = theme === 'dark';
   const root = document.documentElement;
   root.dataset.theme = isDark ? 'dark' : 'light';
-  root.style.colorScheme = isDark ? 'dark' : 'light';
-
-  const themeColor = document.head.querySelector('meta[name="theme-color"]');
-  const immersive = root.dataset.experience === 'immersive';
-  themeColor?.setAttribute('content', immersive ? (isDark ? '#0c1b24' : '#f3f3ef') : (isDark ? '#171512' : '#F3EFE6'));
+  syncThemeColor();
 }
 
 export function ThemeProvider({ children, initialTheme = 'light' }) {
