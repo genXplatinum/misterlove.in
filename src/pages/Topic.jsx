@@ -75,7 +75,11 @@ function useTopicMeta(piece, original) {
     const path = writingPathOf(piece);
     const url = `https://misterlove.in${path}/`;
     const imageSlug = piece.ogSlug ?? piece.slug;
-    const image = `https://misterlove.in/og/${imageSlug}.png`;
+    const imageFile = language === 'en' && piece.ogImage
+      ? piece.ogImage
+      : `${imageSlug}.png`;
+    const image = `https://misterlove.in/og/${imageFile}`;
+    const imageType = imageFile.endsWith('.jpg') ? 'image/jpeg' : 'image/png';
     const imageAlt = language === 'hi'
       ? `${piece.title} — ${piece.subtitle}। ${profile.name} की ${piece.parts} भागों वाली शोध श्रृंखला।`
       : `${piece.title} — ${piece.subtitle}. ${piece.parts}-part research series by ${profile.name}.`;
@@ -116,6 +120,7 @@ function useTopicMeta(piece, original) {
       set('meta[property="og:locale"]', 'meta', { property: 'og:locale', content: piece.locale ?? 'en_IN' }),
       set('meta[property="og:image"]', 'meta', { property: 'og:image', content: image }),
       set('meta[property="og:image:secure_url"]', 'meta', { property: 'og:image:secure_url', content: image }),
+      set('meta[property="og:image:type"]', 'meta', { property: 'og:image:type', content: imageType }),
       set('meta[property="og:image:alt"]', 'meta', { property: 'og:image:alt', content: imageAlt }),
       set('meta[property="og:image:width"]', 'meta', { property: 'og:image:width', content: '1200' }),
       set('meta[property="og:image:height"]', 'meta', { property: 'og:image:height', content: '630' }),

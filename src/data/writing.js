@@ -20,6 +20,7 @@ export const writingMeta = {
 export const pieces = [
   {
     slug: 'india-before-and-after-2014',
+    ogImage: 'india-before-and-after-2014.jpg',
     kicker: 'A seven-part report card',
     title: 'India, Before and After 2014',
     subtitle: 'The Numbers, the Changes and the Final Comparison',

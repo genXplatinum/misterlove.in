@@ -15,6 +15,7 @@
  * machine-local files or system fonts are required.
  */
 import { Resvg } from '@resvg/resvg-js';
+import jpeg from 'jpeg-js';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, unlinkSync } from 'node:fs';
 import { basename, dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -481,18 +482,21 @@ function render(svg, file) {
     font: { fontFiles: FONTS, loadSystemFonts: false, defaultFontFamily: 'Newsreader' },
   });
   const img = resvg.render();
-  const png = img.asPng();
+  const isJpeg = /\.jpe?g$/i.test(file);
+  const data = isJpeg
+    ? jpeg.encode({ data: Buffer.from(img.pixels), width: img.width, height: img.height }, 86).data
+    : img.asPng();
 
   if (img.width !== W || img.height !== H) {
     throw new Error(`${name} rendered at ${img.width}×${img.height}; expected ${W}×${H}`);
   }
-  if (png.length < 20_000) {
-    throw new Error(`${name} is unexpectedly small (${png.length} bytes); text or fonts may be missing`);
+  if (data.length < 20_000) {
+    throw new Error(`${name} is unexpectedly small (${data.length} bytes); text or fonts may be missing`);
   }
 
   expectedFiles.add(name);
-  renderedCards.push({ file, png });
-  return { w: img.width, h: img.height, kb: png.length / 1024 };
+  renderedCards.push({ file, data });
+  return { w: img.width, h: img.height, kb: data.length / 1024 };
 }
 
 mkdirSync(OUT, { recursive: true });
@@ -547,7 +551,7 @@ for (const piece of pieces) {
     }
 
     // Series card — used by /writing and as the piece-level fallback.
-    const seriesFile = `${OUT}/${piece.slug}.png`;
+    const seriesFile = `${OUT}/${piece.ogImage ?? `${piece.slug}.png`}`;
     const seriesCard = piece.slug === 'india-before-and-after-2014'
       ? indiaComparisonCard()
       : card({
@@ -727,12 +731,12 @@ if (!hindiOnly) {
   }
 }
 
-for (const { file, png } of renderedCards) writeFileSync(file, png);
+for (const { file, data } of renderedCards) writeFileSync(file, data);
 
 let removed = 0;
 if (!hindiOnly) {
   for (const name of readdirSync(OUT)) {
-    if (name.endsWith('.png') && !expectedFiles.has(name)) {
+    if (/\.(?:png|jpe?g)$/i.test(name) && !expectedFiles.has(name)) {
       unlinkSync(resolve(OUT, name));
       removed += 1;
     }
