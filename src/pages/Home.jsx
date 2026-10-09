@@ -8,7 +8,7 @@ import CoverPlate from '../components/CoverPlate';
 import InquiryInstrument from '../components/InquiryInstrument';
 import PressTeaser from '../components/PressTeaser';
 import PressLogoStrip from '../components/PressLogoStrip';
-import HeroArmillary from '../components/HeroArmillary';
+import HeroNataraja from '../components/HeroNataraja';
 import './Home.css';
 
 function SelectedResearch() {
@@ -85,7 +85,7 @@ export default function Home() {
   }, []);
   return <div className={`observatory-home ${paused ? "motion-paused" : ""}`}><ObservatoryMotion paused={paused} />
     <section className="observatory-hero" aria-labelledby="hero-title">
-      <HeroArmillary paused={paused} />
+      <HeroNataraja paused={paused} />
       <div className="hero-shade" aria-hidden="true" />
       <div className="hero-content">
         <p className="hero-author">The living archive of Lovepreet Singh</p>
