@@ -12,12 +12,15 @@ export default function HeroNataraja({ paused }) {
     const element = host.current;
     const layout = () => {
       const { width, height } = element.getBoundingClientRect();
+      const mobile = window.matchMedia('(max-width: 650px)').matches;
       const imageWidth = Math.max(width, height * 1660 / 948);
       const imageHeight = imageWidth * 948 / 1660;
       element.style.setProperty('--plate-width', `${imageWidth}px`);
       element.style.setProperty('--plate-height', `${imageHeight}px`);
-      element.style.setProperty('--plate-left', `${(width - imageWidth) * (width <= 650 ? .94 : .58)}px`);
-      element.style.setProperty('--plate-top', `${(height - imageHeight) * (width <= 650 ? .6 : .5)}px`);
+      // Account for the scene's 1.04 scale around its 94% origin on phones.
+      // Keeping the halo centred prevents its right edge being cropped.
+      element.style.setProperty('--plate-left', `${mobile ? width / 2 - imageWidth * .80896 : (width - imageWidth) * .58}px`);
+      element.style.setProperty('--plate-top', `${(height - imageHeight) * (mobile ? .6 : .5)}px`);
     };
     const observer = new ResizeObserver(layout);
     observer.observe(element); layout();
@@ -171,7 +174,10 @@ export default function HeroNataraja({ paused }) {
 
   return <div ref={host} className="hero-art" aria-hidden="true">
     <div className="hero-art__scene">
-      <img className="hero-art__plate" src="/observatory-empty-arch.webp" alt="" fetchPriority="high" />
+      <picture>
+        <source media="(max-width: 650px)" srcSet="/nataraja-continuous-backdrop.webp" />
+        <img className="hero-art__plate" src="/observatory-empty-arch.webp" alt="" fetchPriority="high" />
+      </picture>
       <div className={`hero-nataraja ${rendered ? 'has-webgl' : ''}`}>
         <div className="hero-nataraja__glow" />
         <div className="hero-nataraja__fallback"><div className="hero-nataraja__halo" /><img src="/nataraja-apasmara.webp" alt="" /></div>
