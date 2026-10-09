@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { home, profile } from '../data/site';
 import { pieces, writingTotals } from '../data/writing';
@@ -8,6 +8,7 @@ import CoverPlate from '../components/CoverPlate';
 import InquiryInstrument from '../components/InquiryInstrument';
 import PressTeaser from '../components/PressTeaser';
 import PressLogoStrip from '../components/PressLogoStrip';
+import HeroArmillary from '../components/HeroArmillary';
 import './Home.css';
 
 function SelectedResearch() {
@@ -70,7 +71,6 @@ function Practice() {
 }
 
 export default function Home() {
-  const hero = useRef(null);
   useEffect(() => {
     const previous = document.title;
     document.title = "The Observatory · MisterLove";
@@ -81,18 +81,11 @@ export default function Home() {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
     const onPreference = event => setPaused(event.matches);
     mq.addEventListener('change',onPreference);
-    const onScroll = () => {
-      if (!hero.current || paused) return;
-      hero.current.style.setProperty('--travel', `${Math.min(window.scrollY * .16, 150)}px`);
-    };
-    onScroll();
-    if(paused)hero.current?.style.setProperty('--travel','0px');
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => {window.removeEventListener('scroll', onScroll);mq.removeEventListener('change',onPreference);};
-  }, [paused]);
+    return () => mq.removeEventListener('change',onPreference);
+  }, []);
   return <div className={`observatory-home ${paused ? "motion-paused" : ""}`}><ObservatoryMotion paused={paused} />
-    <section className="observatory-hero" ref={hero} aria-labelledby="hero-title">
-      <div className="hero-art" aria-hidden="true"><div className="hero-art__drift"><img src="/observatory.webp" alt="" fetchPriority="high" /></div></div>
+    <section className="observatory-hero" aria-labelledby="hero-title">
+      <HeroArmillary paused={paused} />
       <div className="hero-shade" aria-hidden="true" />
       <div className="hero-content">
         <p className="hero-author">The living archive of Lovepreet Singh</p>
