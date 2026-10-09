@@ -7,6 +7,8 @@
 import { copyFileSync, writeFileSync, mkdirSync, readFileSync, readdirSync, existsSync } from 'node:fs';
 import jpeg from 'jpeg-js';
 import { pageSurfaceForPath } from '../src/pageSurface.js';
+import { features, featurePath, featureCard, pressIntro } from '../src/data/press.js';
+import { pressIndexBody, pressFeatureBody, pressStructuredData } from './press-static.mjs';
 import {
   pieces,
   writingMeta,
@@ -94,6 +96,8 @@ for (const book of books) {
    deployment if generation was skipped, a filename drifted, or a card has the
    wrong dimensions. PNG stores width and height in the IHDR header. */
 const expectedOgCards = new Set(['writing.png', 'books.png']);
+expectedOgCards.add('press.jpg');
+for (const feature of features) expectedOgCards.add(`press-${feature.slug}.jpg`);
 for (const { piece, parts } of editions) {
   const imageSlug = piece.ogSlug ?? piece.slug;
   expectedOgCards.add(seriesImageFile(piece));
@@ -288,6 +292,11 @@ for (const { piece, parts } of editions) {
   }
 }
 
+urls.push(url({ loc: `${SITE}/press/`, lastmod: today, changefreq: 'monthly', priority: '0.8' }));
+for (const feature of features) {
+  urls.push(url({ loc: SITE + featurePath(feature), lastmod: today, changefreq: 'yearly', priority: '0.6', image: { loc: SITE + featureCard(feature), title: feature.cardTitle.replace(/&/g, '&amp;') } }));
+}
+
 writeFileSync(
   'dist/sitemap.xml',
   `<?xml version="1.0" encoding="UTF-8"?>
@@ -328,6 +337,7 @@ const ROUTE_CSS = {
   article: cssFor('Article'),
   writing: cssFor('Writing'),
   books: cssFor('Books'),
+  press: cssFor('Press'),
   /* Rooms.css is imported by both the article and the topic page, so Vite
      splits it into a chunk of its own rather than folding it into either. The
      shells have to link it themselves, or a piece with a room renders in the
@@ -719,6 +729,7 @@ function shell({
   css,
   language = 'en',
   locale = 'en_US',
+  ogType = 'article',
   alternates = [],
   bodyClass,
   rootClass,
@@ -765,7 +776,7 @@ function shell({
     .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${esc(title)}$2`)
     .replace(/(<meta\s+property="og:description"\s+content=")[\s\S]*?(")/, `$1${esc(description)}$2`)
     .replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${canonical}$2`)
-    .replace(/(<meta property="og:type" content=")[^"]*(")/, `$1article$2`)
+    .replace(/(<meta property="og:type" content=")[^"]*(")/, `$1${ogType}$2`)
     .replace(/(<meta property="og:locale" content=")[^"]*(")/, `$1${locale}$2`)
     .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${esc(title)}$2`)
     .replace(/(<meta\s+name="twitter:description"\s+content=")[\s\S]*?(")/, `$1${esc(description)}$2`);
@@ -836,6 +847,26 @@ function shell({
 }
 
 let shells = 0;
+shell({
+  path: '/press', title: 'Press & Features | Lovepreet Singh', description: pressIntro,
+  canonical: `${SITE}/press/`, image: `${SITE}/og/press.jpg`, imageAlt: 'Press & features — Lovepreet Singh',
+  keywords: 'Lovepreet Singh press, Five Rivers Inc, Lovelace, articles, profiles, clippings',
+  body: pressIndexBody(), jsonLd: pressStructuredData(), css: ROUTE_CSS.press, ogType: 'website',
+  noscript: '<p>Explore the press collection and the original sources linked above.</p>',
+});
+shells += 1;
+for (const feature of features) {
+  shell({
+    path: featurePath(feature).replace(/\/$/, ''), title: `${feature.title} | Lovepreet Singh — Press`,
+    description: feature.excerpt, canonical: SITE + featurePath(feature),
+    image: SITE + featureCard(feature), imageAlt: `${feature.publisher} — ${feature.cardTitle} — Lovepreet Singh`,
+    keywords: `Lovepreet Singh, ${feature.publisher}, ${feature.kind}, Five Rivers Inc, Lovelace`,
+    body: pressFeatureBody(feature), jsonLd: pressStructuredData(feature), css: ROUTE_CSS.press, ogType: 'website',
+    noscript: '<p>The original clipping, source credit and downloadable share artwork are available above.</p>',
+  });
+  shells += 1;
+}
+
 shell({
   path: '/observatory',
   title: 'The Observatory · MisterLove',

@@ -14,6 +14,8 @@ const Article = lazy(() => import('./pages/Article'));
 const Books = lazy(() => import('./pages/Books'));
 const Book = lazy(() => import('./pages/Book'));
 const Study = lazy(() => import('./pages/Study'));
+const Press = lazy(() => import('./pages/Press'));
+const PressFeature = lazy(() => import('./pages/Press').then(module => ({ default: module.PressFeature })));
 
 function NotFound() {
   useEffect(() => {
@@ -62,6 +64,8 @@ function AppFrame({ isHome, resetKey }) {
             <Routes>
               <Route path="/" element={<ClassicHome />} />
               <Route path="/observatory" element={<Home />} />
+              <Route path="/press" element={<Press />} />
+              <Route path="/press/:slug" element={<PressFeature />} />
               <Route path="/writing" element={<Writing />} />
               <Route path="/writing/:slug" element={<Topic />} />
               <Route path="/hi/writing/:slug" element={<Topic />} />

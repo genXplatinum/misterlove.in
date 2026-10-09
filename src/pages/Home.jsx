@@ -6,6 +6,7 @@ import GodQuote from '../components/GodQuote';
 import ObservatoryMotion from '../components/ObservatoryMotion';
 import CoverPlate from '../components/CoverPlate';
 import InquiryInstrument from '../components/InquiryInstrument';
+import PressTeaser from '../components/PressTeaser';
 import './Home.css';
 
 function SelectedResearch() {
@@ -114,6 +115,7 @@ export default function Home() {
     <ResearchMethod paused={paused} />
     <About />
     <Practice />
+    <PressTeaser />
     <section id="contact" className="correspondence obs-wrap"><p className="section-note">Correspondence</p><div className="correspondence-layout" data-reveal><h2>A serious question is<br />a good place to begin.</h2><div><p>For research conversations, cybersecurity work,<br />or a considered digital project.</p><a className="atlas-button" href={`mailto:${profile.email}`}>Write to Lovepreet</a><a className="contact-address" href={`mailto:${profile.email}`}>{profile.email}</a></div></div></section>
   </div>;
 }

@@ -162,7 +162,7 @@ export default function Nav() {
 
   const activeFor = (item) => (
     item.route
-      ? pathname.startsWith(item.to) || (item.to === '/writing' && pathname.startsWith('/hi/writing'))
+      ? pathname.replace(/\/$/, '').startsWith(item.to.replace(/\/$/, '')) || (item.to === '/writing' && pathname.startsWith('/hi/writing'))
       : active === item.to
   );
 
