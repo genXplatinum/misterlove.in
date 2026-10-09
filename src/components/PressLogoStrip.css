@@ -73,9 +73,10 @@
 .press-ribbon__logo--leader, .press-ribbon__logo--ein { filter: brightness(0) invert(1) drop-shadow(0 1px 7px #ffffff10); }
 .press-ribbon__group a:hover .press-ribbon__logo { opacity: 1; transform: translateY(-3px); }
 .press-ribbon__note { margin-top: 21px; text-align: right; font-size: 12px; }
-.press-ribbon--paused .press-ribbon__track,
-.press-ribbon__glass:hover .press-ribbon__track,
-.press-ribbon__glass:focus-within .press-ribbon__track { animation-play-state: paused; }
+.press-ribbon--paused .press-ribbon__track { animation-play-state: paused; }
+@media (hover: hover) and (pointer: fine) {
+  .press-ribbon__glass:hover .press-ribbon__track { animation-play-state: paused; }
+}
 .press-ribbon :is(a, button):focus-visible { outline: 2px solid var(--ribbon-gold); outline-offset: -5px; border-radius: 6px; }
 /* Keyboard focus resets the rail so every publisher remains reachable. */
 .press-ribbon__glass:has(a:focus-visible) { overflow-x: auto; }
@@ -87,12 +88,10 @@
   .press-ribbon__inner { width: calc(100% - 40px); }
   .press-ribbon__heading { align-items: start; flex-direction: column; gap: 17px; margin-bottom: 23px; }
   .press-ribbon__actions { justify-items: start; }
-  .press-ribbon__actions button { display: none; }
-  .press-ribbon__glass { overflow-x: auto; scrollbar-width: thin; scrollbar-color: #d8b57a80 transparent; scroll-snap-type: x proximity; }
+  .press-ribbon__actions button { padding-left: 0; min-height: 44px; }
   .press-ribbon__glass::after { display: none; }
-  .press-ribbon__track { animation: none; }
-  .press-ribbon__echo { display: none; }
-  .press-ribbon__group li { flex-basis: 170px; width: 170px; scroll-snap-align: start; }
+  .press-ribbon__track { animation-duration: 40s; }
+  .press-ribbon__group li, .press-ribbon__duplicate { flex-basis: 170px; width: 170px; }
   .press-ribbon__group a { height: 134px; padding: 20px 22px 32px; }
   .press-ribbon__logo { height: 52px; }
   .press-ribbon__logo--ap { height: 64px; }
