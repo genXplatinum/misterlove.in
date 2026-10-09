@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import jpeg from 'jpeg-js';
-import { features, featurePath, featureCard, featureStory, pressSite, carousels } from '../src/data/press.js';
+import { features, featurePath, featureCard, featureStory, pressSite, carousels, pressCollectionCard } from '../src/data/press.js';
 
 const get = path => readFileSync(`dist${path}`, 'utf8');
 const esc = text => String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -14,7 +14,7 @@ const sitemap = get('/sitemap.xml');
 const cards = new Set();
 for (const feature of [null, ...features]) {
   const path = feature ? featurePath(feature) : '/press/';
-  const card = feature ? featureCard(feature) : '/og/press.jpg';
+  const card = feature ? featureCard(feature) : pressCollectionCard;
   const html = get(`${path}index.html`);
   const canonical = pressSite + path;
   assert.equal((html.match(/<h1[\s>]/g) ?? []).length, 1, `${path}: one primary heading`);

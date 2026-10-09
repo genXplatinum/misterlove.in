@@ -1,12 +1,15 @@
-.press-home { padding: clamp(4rem,7vw,7rem) 0; border-block: 1px solid var(--rule-dark); background: var(--paper-deep); }
-.press-home__spread { display: grid; grid-template-columns: .9fr 1.1fr; gap: 7%; align-items: center; }
-.press-home__copy > p:first-child { font-size: .8rem; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-soft); }
-.press-home__copy h2 { font: 400 clamp(3rem,5.7vw,6rem)/.98 'EB Garamond',Georgia,serif; letter-spacing: -.04em; margin: 1rem 0 1.6rem; }
-.press-home__copy em { color: var(--oxblood); }
-.press-home__copy > p:not(:first-child) { color: var(--ink-soft); max-width: 30rem; font-size: 1.1rem; line-height: 1.6; }
-.press-home__copy > a { display: inline-flex; gap: 2rem; min-height: 3rem; align-items: center; margin-top: 1rem; font-size: .95rem; text-underline-offset: .3em; }
-.press-home__clippings { position: relative; display: block; padding: 0 0 4.8rem 1.5rem; text-decoration: none; }
-.press-home__medium { display: block; width: 90%; height: auto; border: 6px solid var(--paper); transform: rotate(3deg); box-shadow: var(--shadow-sheet); }
-.press-home__ein { display: block; position: relative; width: 85%; height: auto; margin-top: -13%; margin-left: 15%; transform: rotate(-4deg); border: 6px solid var(--paper); box-shadow: var(--shadow-sheet); }
-.press-home__clippings > span { position: absolute; bottom: 0; left: 0; right: 0; font-size: .8rem; color: var(--ink-soft); line-height: 1.5; text-align: center; }
-@media (max-width: 700px) { .press-home__spread { grid-template-columns: 1fr; gap: 3rem; } .press-home__clippings { max-width: 35rem; } }
+.press-home { position: relative; overflow: hidden; padding: clamp(4.5rem, 8vw, 8rem) 0; border-block: 1px solid #c5a36a66; background: radial-gradient(ellipse at 90% 20%, #49648655, transparent 65%), linear-gradient(125deg, #080f20, #172a47); color: #f0f3fa; }
+.press-home::before { content: ''; position: absolute; pointer-events: none; inset: 0; background: linear-gradient(120deg, transparent 35%, #f1f5ff07 35.1%, transparent 60%); }
+.press-home__spread { position: relative; display: grid; grid-template-columns: .95fr 1.05fr; gap: 7%; align-items: center; }
+.press-home__copy > p:first-child { font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: #e1bf88; }
+.press-home__copy h2 { font: 400 clamp(3.6rem, 6.4vw, 6.7rem)/.94 'EB Garamond', Georgia, serif; letter-spacing: -.045em; margin: 1.4rem 0 1.8rem; }
+.press-home__copy > p:not(:first-child) { color: #b7c1d4; max-width: 29rem; font-size: 1.1rem; line-height: 1.7; }
+.press-home__copy > a { display: inline-flex; gap: 2.5rem; min-height: 3.2rem; padding: .75rem 1.4rem; border-radius: 4px; align-items: center; margin-top: 1.8rem; font-size: .95rem; font-weight: 600; color: #142039; background: linear-gradient(120deg, #f0d7aa, #d8b57a 60%, #eed3a7); border: 1px solid #e2c596; box-shadow: inset 0 1px 0 #fff9, 0 5px 20px #01060e44; text-decoration: none; }
+.press-home__copy > a:hover { box-shadow: inset 0 1px 0 #fff, 0 8px 28px #d8b57a33; }
+.press-home__clippings { position: relative; display: block; padding: 1.8rem 1.2rem 5rem; text-decoration: none; border: 1px solid #c6a76b70; border-radius: 12px; background: linear-gradient(135deg, #4b648959, #12203b 70%, #2c41605c); box-shadow: inset 0 1px 0 #e2ecff40, 0 30px 60px #02071166; }
+.press-home__clippings::after { content: ''; position: absolute; pointer-events: none; inset: 0; border-radius: inherit; background: linear-gradient(125deg, transparent 10%, #dcecff15 10.2%, transparent 50%); }
+.press-home__medium { display: block; width: 91%; height: auto; border: 5px solid #e5cfaa; border-radius: 3px; transform: rotate(3deg); box-shadow: 0 12px 25px #01061066; }
+.press-home__ein { display: block; position: relative; width: 87%; height: auto; margin-top: -10%; margin-left: 13%; transform: rotate(-4deg); border: 5px solid #e5cfaa; border-radius: 3px; box-shadow: 0 14px 30px #01061077; }
+.press-home__clippings > span { position: absolute; bottom: 1.2rem; left: 1.4rem; right: 1.4rem; font-size: .76rem; color: #b7c1d4; line-height: 1.6; text-align: center; }
+.press-home :focus-visible { outline: 2px solid #e1bf88; outline-offset: 6px; }
+@media (max-width: 760px) { .press-home__spread { grid-template-columns: 1fr; gap: 3rem; } .press-home__clippings { max-width: 35rem; } .press-home__copy h2 { font-size: clamp(3.4rem, 11.5vw, 5.4rem); } }
