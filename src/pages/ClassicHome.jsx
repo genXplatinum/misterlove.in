@@ -7,6 +7,7 @@ import { indianThought } from '../data/indianThought';
 import { pieces, writingTotals, livePartsOf, isInProgress } from '../data/writing';
 import './ClassicHome.css';
 import PressTeaser from '../components/PressTeaser';
+import PressLogoStrip from '../components/PressLogoStrip';
 
 function SmartLink({ to, route = false, children, className = '', ...rest }) {
   if (route) return <Link to={to} className={className} {...rest}>{children}</Link>;
@@ -429,6 +430,7 @@ export default function Home() {
   return (
     <div className="intellect-home">
       <Hero />
+    <PressLogoStrip />
       <PhilosophyPassage />
       <WritingLibrary />
       <Method />
