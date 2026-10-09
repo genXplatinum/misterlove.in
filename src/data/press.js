@@ -1,7 +1,8 @@
 // Public sources and the original clippings supplied by Lovepreet Singh.
 // A captured page is archival evidence, not a newly verified endorsement.
 export const pressSite = 'https://misterlove.in';
-export const pressIntro = 'Published stories, company profiles and preserved clippings from the entrepreneurial journey of Lovepreet Singh, Five Rivers Inc. and Lovelace.';
+export const pressIntro = 'Big ideas. Bigger ambition. Explore the stories, profiles and preserved clippings surrounding Lovepreet Singh, Five Rivers Inc. and Lovelace.';
+export const pressCollectionCard = '/og/press-spotlight.jpg';
 export const carousels = [
   { id: 'one', title: 'The first collection', count: 10, url: 'https://www.instagram.com/p/Cjd-c1gPh9-/' },
   { id: 'two', title: 'The second collection', count: 9, url: 'https://www.instagram.com/p/Cjd-zqXvYLj/' },
@@ -160,8 +161,8 @@ export const features = [
 ];
 
 export const featurePath = feature => `/press/${feature.slug}/`;
-export const featureCard = feature => `/og/press-${feature.slug}.jpg`;
-export const featureStory = feature => `/press/social/${feature.slug}-story.jpg`;
+export const featureCard = feature => `/og/press-spotlight-${feature.slug}.jpg`;
+export const featureStory = feature => `/press/social/${feature.slug}-spotlight-story.jpg`;
 export const pressFilters = ['All', 'Articles', 'Profiles', 'Case studies', 'Archived mentions'];
 export function matchesPressFilter(feature, filter) {
   if (filter === 'Articles') return ['Article', 'Press release'].includes(feature.kind);

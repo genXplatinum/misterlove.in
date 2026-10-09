@@ -3,7 +3,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Resvg } from '@resvg/resvg-js';
 import jpeg from 'jpeg-js';
-import { features } from '../src/data/press.js';
+import { features, featureCard, featureStory, pressCollectionCard } from '../src/data/press.js';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const fonts = ['Newsreader-Variable.ttf', 'Inter-Variable.ttf'].map(name => resolve(root, 'assets/fonts/og', name));
@@ -22,75 +22,92 @@ function wrap(text, size, max) {
   }
   return lines;
 }
-function lines(text, x, y, size, max, gap = 1.08, family = 'Newsreader', color = '#1d1a16') {
+function fit(text, size, max, count) {
+  while (wrap(text, size, max).length > count) size -= 2;
+  return size;
+}
+function lines(text, x, y, size, max, gap = 1.06, family = 'Newsreader', color = '#F0F3FA') {
   return wrap(text, size, max).map((line, i) => `<text x="${x}" y="${y + i * size * gap}" font-family="${family}" font-size="${size}" fill="${color}">${esc(line)}</text>`).join('');
 }
-function label(text, x, y, size = 17, color = '#5e574d') {
-  return `<text x="${x}" y="${y}" font-family="Inter" font-size="${size}" font-weight="500" fill="${color}">${esc(text)}</text>`;
+function label(text, x, y, size = 17, color = '#B7C1D4', tracking = 0) {
+  return `<text x="${x}" y="${y}" font-family="Inter" font-size="${size}" font-weight="500" letter-spacing="${tracking}" fill="${color}">${esc(text)}</text>`;
 }
-function render(svg, file) {
+function render(svg, path) {
+  const file = resolve(root, 'public', path.replace(/^\//, ''));
   const image = new Resvg(svg, { font: { fontFiles: fonts, loadSystemFonts: false, defaultFontFamily: 'Inter' } }).render();
   mkdirSync(dirname(file), { recursive: true });
-  writeFileSync(file, jpeg.encode({ data: image.pixels, width: image.width, height: image.height }, 91).data);
+  writeFileSync(file, jpeg.encode({ data: image.pixels, width: image.width, height: image.height }, 93).data);
 }
-const svg = (w, h, content) => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><rect width="${w}" height="${h}" fill="#f3efe6"/>${content}</svg>`;
+const svg = (w, h, content) => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+  <defs>
+    <linearGradient id="midnight" x2="1" y2="1"><stop stop-color="#080F20"/><stop offset=".56" stop-color="#142641"/><stop offset="1" stop-color="#091223"/></linearGradient>
+    <linearGradient id="foil" x2="1" y2="1"><stop stop-color="#F3DEB7"/><stop offset=".3" stop-color="#A37C40"/><stop offset=".6" stop-color="#EBD1A1"/><stop offset="1" stop-color="#9E7C46"/></linearGradient>
+    <linearGradient id="glass" x2="1" y2="1"><stop stop-color="#5A7396"/><stop offset=".38" stop-color="#203552"/><stop offset="1" stop-color="#10213D"/></linearGradient>
+    <linearGradient id="shine" x2="1" y2="1"><stop stop-color="#FFFFFF" stop-opacity=".18"/><stop offset=".62" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <radialGradient id="bloom"><stop stop-color="#88AAD9" stop-opacity=".16"/><stop offset="1" stop-color="#88AAD9" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="${w}" height="${h}" fill="url(#midnight)"/>
+  <ellipse cx="${w * .82}" cy="${h * .18}" rx="${w * .65}" ry="${h * .6}" fill="url(#bloom)"/>
+  <path d="M${w * .52} 0H${w * .82}L${w * .32} ${h}H${w * .12}Z" fill="url(#shine)" opacity=".25"/>
+  <rect x="22" y="22" width="${w - 44}" height="${h - 44}" rx="10" fill="none" stroke="url(#foil)" stroke-opacity=".48"/>
+  ${content}</svg>`;
+function frame(source, x, y, w, h) {
+  return `<rect x="${x + 5}" y="${y + 14}" width="${w}" height="${h}" rx="12" fill="#010611" opacity=".4"/>
+    <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="url(#glass)" stroke="url(#foil)" stroke-width="2"/>
+    <rect x="${x + 12}" y="${y + 12}" width="${w - 24}" height="${h - 24}" rx="5" fill="#F5F5F3"/>
+    <image href="${source}" x="${x + 24}" y="${y + 25}" width="${w - 48}" height="${h - 50}" preserveAspectRatio="xMidYMid meet"/>
+    <path d="M${x} ${y + h * .15}L${x + w * .54} ${y}H${x + w * .85}L${x} ${y + h * .62}Z" fill="url(#shine)" opacity=".5"/>
+    <path d="M${x + 12} ${y + 1}H${x + w - 12}" stroke="#FFFFFF" stroke-opacity=".5"/>`;
+}
 
 for (const feature of features) {
-  const accent = feature.accent === 'forest' ? '#3f5448' : '#7c3032';
-  const publisher = feature.publisher;
   const kind = `${feature.kind}${feature.archived ? ' · archived clipping' : ''}`;
   const credit = feature.archived ? 'Original clipping preserved from Instagram'
     : feature.kind === 'Press release' ? 'News provided by Lovelace IT Solutions'
     : feature.slug === 'dwi-media-youthful-visionary' ? 'By DWI Media News Network on Medium'
     : `${feature.publisher} company directory`;
   const source = sourceImage(feature);
-  const og = svg(1200, 630, `
-    <rect x="0" width="12" height="630" fill="${accent}"/>
-    ${label('LOVEPREET SINGH', 58, 61, 21)}
-    ${label('PRESS & FEATURES', 58, 94, 13, accent)}
-    <path d="M58 122H677" stroke="#cfc5b6"/>
-    ${lines(feature.cardTitle, 58, 210, 65, 600)}
-    ${lines(publisher, 60, 427, 25, 590, 1.3, 'Inter', accent)}
-    ${label(kind, 60, 490, 17)}
-    ${label(credit, 60, 522, 14)}
-    <path d="M58 552H1142" stroke="#cfc5b6"/>
-    ${label('Five Rivers Inc. · Lovelace', 60, 591, 18)}
-    ${label('misterlove.in/press', 908, 591, 17)}
-    <rect x="721" y="44" width="423" height="487" fill="${accent}"/>
-    <rect x="736" y="59" width="393" height="457" fill="#fcfaf5"/>
-    <image href="${source}" x="747" y="74" width="371" height="427" preserveAspectRatio="xMidYMid meet"/>
-  `);
-  render(og, resolve(root, `public/og/press-${feature.slug}.jpg`));
-  const story = svg(1080, 1920, `
-    <rect x="0" width="14" height="1920" fill="${accent}"/>
-    ${label('PRESS & FEATURES', 80, 105, 25, accent)}
-    ${label('LOVEPREET SINGH', 80, 164, 31)}
-    <path d="M80 205H1000" stroke="#cfc5b6"/>
-    ${lines(feature.cardTitle, 80, 322, 87, 920)}
-    ${lines(publisher, 82, 600, 36, 910, 1.25, 'Inter', accent)}
-    ${label(kind, 82, 680, 25)}
-    <rect x="80" y="740" width="920" height="780" fill="${accent}"/>
-    <rect x="96" y="756" width="888" height="748" fill="#fcfaf5"/>
-    <image href="${source}" x="114" y="774" width="852" height="712" preserveAspectRatio="xMidYMid meet"/>
-    ${lines(credit, 82, 1576, 24, 900, 1.35, 'Inter', '#5e574d')}
-    <path d="M80 1660H1000" stroke="#cfc5b6"/>
-    ${lines('Five Rivers Inc. & Lovelace', 80, 1753, 53, 930)}
-    ${label('Explore the original story at misterlove.in/press', 82, 1835, 25)}
-  `);
-  render(story, resolve(root, `public/press/social/${feature.slug}-story.jpg`));
+  const ogSize = fit(feature.cardTitle, 72, 610, 3);
+  render(svg(1200, 630, `
+    ${label('LOVEPREET SINGH', 58, 73, 25, '#E1BF88', 1)}
+    ${label('P R E S S   &   F E A T U R E S', 60, 108, 12, '#B7C1D4')}
+    <path d="M58 136H680" stroke="#70819B" stroke-opacity=".5"/>
+    ${lines(feature.cardTitle, 58, 223, ogSize, 610)}
+    ${lines(feature.publisher, 60, 452, 25, 610, 1.25, 'Inter', '#E1BF88')}
+    ${label(kind, 60, 515, 16)}
+    ${label(credit, 60, 542, 13)}
+    ${frame(source, 732, 58, 410, 479)}
+    <path d="M58 566H1142" stroke="url(#foil)" stroke-opacity=".6"/>
+    ${label('Five Rivers Inc. · Lovelace', 60, 602, 17, '#DDE5F3')}
+    ${label('misterlove.in/press', 921, 602, 16, '#E1BF88')}
+  `), featureCard(feature));
+  const storySize = fit(feature.cardTitle, 98, 910, 3);
+  render(svg(1080, 1920, `
+    ${label('P R E S S   &   F E A T U R E S', 80, 114, 23, '#E1BF88')}
+    ${label('LOVEPREET SINGH', 80, 177, 34, '#F0F3FA', 1)}
+    <path d="M80 215H1000" stroke="#70819B" stroke-opacity=".6"/>
+    ${lines(feature.cardTitle, 80, 337, storySize, 910)}
+    ${lines(feature.publisher, 82, 622, 36, 910, 1.25, 'Inter', '#E1BF88')}
+    ${label(kind, 82, 705, 24)}
+    ${frame(source, 80, 760, 920, 790)}
+    ${lines(credit, 82, 1612, 24, 900, 1.35, 'Inter', '#B7C1D4')}
+    <path d="M80 1690H1000" stroke="url(#foil)" stroke-opacity=".75"/>
+    ${lines('Five Rivers Inc. & Lovelace', 80, 1788, 54, 930)}
+    ${label('Explore the story at misterlove.in/press', 82, 1860, 26, '#E1BF88')}
+  `), featureStory(feature));
 }
 
 render(svg(1200, 630, `
-  <rect width="12" height="630" fill="#7c3032"/>
-  ${label('LOVEPREET SINGH', 58, 65, 22)}
-  ${lines('Stories, beyond this site.', 58, 207, 84, 650, 1.02)}
-  ${label('Press & features', 60, 433, 28, '#7c3032')}
-  ${label('Original stories. Preserved clippings.', 60, 480, 20)}
-  <rect x="782" y="40" width="360" height="490" fill="#3f5448"/>
-  <image href="${raster('/founder.jpg')}" x="797" y="55" width="330" height="460" preserveAspectRatio="xMidYMid slice"/>
-  <path d="M58 552H1142" stroke="#cfc5b6"/>
-  ${label('Five Rivers Inc. · Lovelace', 60, 591, 18)}
-  ${label('misterlove.in/press', 908, 591, 17)}
-`), resolve(root, 'public/og/press.jpg'));
-
-console.log(`Press artwork: ${features.length + 1} social cards (1200×630), ${features.length} Stories (1080×1920).`);
+  ${label('P R E S S   &   F E A T U R E S', 60, 76, 13, '#B7C1D4')}
+  ${label('LOVEPREET SINGH', 58, 128, 28, '#E1BF88', 1)}
+  ${lines('Built to make a mark.', 58, 257, 109, 690, 1.02)}
+  ${label('The vision. The ventures. The stories.', 60, 470, 24, '#F0F3FA')}
+  ${label('Original features & preserved clippings', 60, 512, 19)}
+  <rect x="800" y="48" width="342" height="489" rx="12" fill="url(#glass)" stroke="url(#foil)" stroke-width="2"/>
+  <image href="${raster('/founder.jpg')}" x="812" y="60" width="318" height="465" preserveAspectRatio="xMidYMid slice"/>
+  <path d="M800 170L1000 48H1110L800 320Z" fill="url(#shine)" opacity=".45"/>
+  <path d="M58 566H1142" stroke="url(#foil)" stroke-opacity=".6"/>
+  ${label('Five Rivers Inc. · Lovelace', 60, 602, 17, '#DDE5F3')}
+  ${label('misterlove.in/press', 921, 602, 16, '#E1BF88')}
+`), pressCollectionCard);
+console.log(`Spotlight artwork: ${features.length + 1} social cards (1200×630), ${features.length} Stories (1080×1920).`);

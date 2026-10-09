@@ -7,7 +7,7 @@
 import { copyFileSync, writeFileSync, mkdirSync, readFileSync, readdirSync, existsSync } from 'node:fs';
 import jpeg from 'jpeg-js';
 import { pageSurfaceForPath } from '../src/pageSurface.js';
-import { features, featurePath, featureCard, pressIntro } from '../src/data/press.js';
+import { features, featurePath, featureCard, pressIntro, pressCollectionCard } from '../src/data/press.js';
 import { pressIndexBody, pressFeatureBody, pressStructuredData } from './press-static.mjs';
 import {
   pieces,
@@ -96,8 +96,8 @@ for (const book of books) {
    deployment if generation was skipped, a filename drifted, or a card has the
    wrong dimensions. PNG stores width and height in the IHDR header. */
 const expectedOgCards = new Set(['writing.png', 'books.png']);
-expectedOgCards.add('press.jpg');
-for (const feature of features) expectedOgCards.add(`press-${feature.slug}.jpg`);
+expectedOgCards.add(pressCollectionCard.split('/').at(-1));
+for (const feature of features) expectedOgCards.add(featureCard(feature).split('/').at(-1));
 for (const { piece, parts } of editions) {
   const imageSlug = piece.ogSlug ?? piece.slug;
   expectedOgCards.add(seriesImageFile(piece));
@@ -849,7 +849,7 @@ function shell({
 let shells = 0;
 shell({
   path: '/press', title: 'Press & Features | Lovepreet Singh', description: pressIntro,
-  canonical: `${SITE}/press/`, image: `${SITE}/og/press.jpg`, imageAlt: 'Press & features — Lovepreet Singh',
+  canonical: `${SITE}/press/`, image: `${SITE}${pressCollectionCard}`, imageAlt: 'Press & features — Lovepreet Singh',
   keywords: 'Lovepreet Singh press, Five Rivers Inc, Lovelace, articles, profiles, clippings',
   body: pressIndexBody(), jsonLd: pressStructuredData(), css: ROUTE_CSS.press, ogType: 'website',
   noscript: '<p>Explore the press collection and the original sources linked above.</p>',

@@ -93,7 +93,7 @@ export default function App() {
 
   useLayoutEffect(() => {
     const root = document.documentElement;
-    root.classList.remove('page-reader', 'page-observatory');
+    root.classList.remove('page-reader', 'page-observatory', 'page-press');
     if (surface) root.classList.add(surface);
     // Theme, edition and room changes all paint the browser chrome from the
     // actual page colour, rather than competing lists of hard-coded colours.

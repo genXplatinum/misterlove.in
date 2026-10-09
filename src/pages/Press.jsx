@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { carousels, features, featurePath, featureCard, featureStory, pressSite, pressIntro, pressFilters, matchesPressFilter } from '../data/press';
+import { carousels, features, featurePath, featureCard, featureStory, pressCollectionCard, pressSite, pressIntro, pressFilters, matchesPressFilter } from '../data/press';
 import './Press.css';
 
 function usePressMeta(feature) {
@@ -8,7 +8,7 @@ function usePressMeta(feature) {
     const title = feature ? `${feature.title} | Lovepreet Singh — Press` : 'Press & Features | Lovepreet Singh';
     const description = feature?.excerpt ?? pressIntro;
     const url = pressSite + (feature ? featurePath(feature) : '/press/');
-    const image = pressSite + (feature ? featureCard(feature) : '/og/press.jpg');
+    const image = pressSite + (feature ? featureCard(feature) : pressCollectionCard);
     const previousTitle = document.title;
     document.title = title;
     const values = {
@@ -69,7 +69,7 @@ function ShareTools({ feature, compact = false }) {
       <button type="button" onClick={share}>Share this {feature ? 'feature' : 'collection'} <span aria-hidden="true">↗</span></button>
       <button type="button" onClick={copy}>Copy link <span aria-hidden="true">⧉</span></button>
       {!compact && <>
-        <a href={feature ? featureCard(feature) : '/og/press.jpg'} download>Download social card <span aria-hidden="true">↓</span></a>
+        <a href={feature ? featureCard(feature) : pressCollectionCard} download>Download social card <span aria-hidden="true">↓</span></a>
         {feature && <a href={featureStory(feature)} download>Download Story <span aria-hidden="true">↓</span></a>}
       </>}
     </div>
@@ -117,17 +117,18 @@ export default function Press() {
   usePressMeta();
   const latest = features[0];
   const results = features.filter(feature => matchesPressFilter(feature, filter));
-  return <div className="press-page container">
-    <header className="press-opening">
-      <div className="press-opening__copy"><p className="press-kicker">Lovepreet Singh · Press & features</p><h1>Stories,<br />beyond<br /><em>this site.</em></h1><p className="press-opening__intro">{pressIntro}</p><a href="#collection" className="press-button">Explore the collection <span aria-hidden="true">↓</span></a></div>
+  return <div className="press-page press-index">
+    <header className="press-hero"><div className="press-opening container">
+      <div className="press-opening__copy"><p className="press-kicker">Press & features</p><p className="press-opening__name">Lovepreet Singh</p><h1>Built to<br />make a mark.</h1><p className="press-opening__intro">{pressIntro}</p><a href="#collection" className="press-button">Explore the features <span aria-hidden="true">↓</span></a><p className="press-opening__signature">Five Rivers Inc. <span aria-hidden="true">/</span> Lovelace</p></div>
       <div className="press-lead">
         <div className="press-lead__art"><img className="press-lead__portrait" src="/press/release-portrait.webp" alt="Lovepreet Singh, in the portrait accompanying the EIN Presswire release" fetchPriority="high" width="1000" height="667" /><Link to={featurePath(latest)} className="press-lead__clipping" aria-label="View the EIN Presswire release"><img src={latest.images[0].src} alt="EIN Presswire release headline" width="1255" height="569" /></Link></div>
-        <div className="press-lead__caption"><p className="press-kicker">Latest release · 9 October 2026</p><h2><Link to={featurePath(latest)}>Five Rivers Inc.<br />& Lovelace.</Link></h2><p>Technology, design and the work of making ideas useful.</p><Link to={featurePath(latest)} className="press-text-link">Read the feature <span aria-hidden="true">↗</span></Link><small>{latest.credit}</small></div>
+        <div className="press-lead__caption"><p className="press-kicker">Latest release · 9 October 2026</p><h2><Link to={featurePath(latest)}>One founder.<br />A bigger vision.</Link></h2><p>Five Rivers Inc. & Lovelace — where technical ambition meets considered design.</p><Link to={featurePath(latest)} className="press-text-link">Read the latest release <span aria-hidden="true">↗</span></Link><small>{latest.credit}</small></div>
       </div>
-    </header>
+    </div><div className="press-publisher-band"><div className="container"><p>Published stories & preserved clippings</p><div><span className="press-publisher-band__ein">EIN Presswire</span><span className="press-publisher-band__dwi">DWI Media Wire <small>on Medium</small></span><span>GrowthBusiness</span><span className="press-publisher-band__yourstory">YourStory</span></div></div></div></header>
 
+    <div className="container press-content">
     <section id="collection" className="press-collection" aria-labelledby="collection-title">
-      <div className="press-collection__head"><div><p className="press-kicker">The collection</p><h2 id="collection-title">In print. Online. On record.</h2></div><span>{features.length} entries<br />Originals & preserved clippings</span></div>
+      <div className="press-collection__head"><div><p className="press-kicker">The spotlight collection</p><h2 id="collection-title">A journey.<br />Seen from every angle.</h2></div><span>{features.length} stories, profiles & mentions<br />Every source. Every original.</span></div>
       <div className="press-filters" aria-label="Filter the press collection">{pressFilters.map(value => <button type="button" key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value}</button>)}</div>
       <p className="press-results" role="status">{results.length} {results.length === 1 ? 'entry' : 'entries'}{filter !== 'All' ? ` · ${filter}` : ''}</p>
       <div className="press-grid">{results.map(feature => <FeatureCard key={feature.slug} feature={feature} />)}</div>
@@ -135,7 +136,8 @@ export default function Press() {
     </section>
 
     <OriginalCollections />
-    <section className="press-thanks"><p className="press-kicker">With appreciation</p><h2>Every story has<br /><em>more than one voice.</em></h2><p>Thank you to the writers, editors and platforms that have made space for these stories — and to everyone who has followed the work along the way.</p><ShareTools /><Link to="/writing/" className="press-text-link">Discover the work behind the stories <span aria-hidden="true">→</span></Link></section>
+    <section className="press-thanks"><p className="press-kicker">The story keeps growing</p><h2>For every voice.<br />For every new horizon.</h2><p>To the writers, editors, platforms and people who have followed the journey: thank you for being part of the story. The next chapter is still being written.</p><ShareTools /><Link to="/writing/" className="press-text-link">Discover the work behind the stories <span aria-hidden="true">→</span></Link></section>
+    </div>
   </div>;
 }
 
