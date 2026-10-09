@@ -7,6 +7,7 @@ import ObservatoryMotion from '../components/ObservatoryMotion';
 import CoverPlate from '../components/CoverPlate';
 import InquiryInstrument from '../components/InquiryInstrument';
 import PressTeaser from '../components/PressTeaser';
+import PressLogoStrip from '../components/PressLogoStrip';
 import './Home.css';
 
 function SelectedResearch() {
@@ -105,6 +106,7 @@ export default function Home() {
         <button type="button" className="motion-toggle" onClick={()=>setPaused(v=>!v)} aria-pressed={paused}><span aria-hidden="true">{paused?'▷':'Ⅱ'}</span>{paused?'Resume motion':'Pause motion'}</button>
       </div>
     </section>
+    <PressLogoStrip paused={paused} />
     <GodQuote paused={paused} />
     <section id="research" className="archive-intro obs-wrap">
       <p className="section-note">The living archive</p>
