@@ -92,7 +92,7 @@ export default function Home() {
   }, [paused]);
   return <div className={`observatory-home ${paused ? "motion-paused" : ""}`}><ObservatoryMotion paused={paused} />
     <section className="observatory-hero" ref={hero} aria-labelledby="hero-title">
-      <div className="hero-art" aria-hidden="true"><img src="/observatory.webp" alt="" fetchPriority="high" /></div>
+      <div className="hero-art" aria-hidden="true"><div className="hero-art__drift"><img src="/observatory.webp" alt="" fetchPriority="high" /></div></div>
       <div className="hero-shade" aria-hidden="true" />
       <div className="hero-content">
         <p className="hero-author">The living archive of Lovepreet Singh</p>
