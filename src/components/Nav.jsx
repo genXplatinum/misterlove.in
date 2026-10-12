@@ -48,7 +48,7 @@ export default function Nav() {
     }
 
     const sections = nav
-      .filter((item) => !item.route)
+      .filter((item) => item.to.startsWith('#'))
       .map((item) => document.querySelector(item.to))
       .filter(Boolean);
 
@@ -161,7 +161,7 @@ export default function Nav() {
   };
 
   const activeFor = (item) => (
-    item.route
+    (item.route || item.fullPage)
       ? pathname.replace(/\/$/, '').startsWith(item.to.replace(/\/$/, '')) || (item.to === '/writing' && pathname.startsWith('/hi/writing'))
       : active === item.to
   );
@@ -171,7 +171,15 @@ export default function Nav() {
     const className = mobile
       ? `navmenu__link ${current ? 'is-active' : ''}`
       : `nav__link ${current ? 'is-active' : ''}`;
-    const ariaCurrent = current ? (item.route ? 'page' : 'location') : undefined;
+    const ariaCurrent = current ? (item.route || item.fullPage ? 'page' : 'location') : undefined;
+
+    if (item.fullPage) {
+      return (
+        <a href={item.to} className={className} onClick={() => setOpen(false)} aria-current={ariaCurrent}>
+          {item.label}
+        </a>
+      );
+    }
 
     if (item.route) {
       return (
