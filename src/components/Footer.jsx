@@ -61,7 +61,6 @@ export default function Footer() {
                 </Link>
               ))}
               <Link to="/writing">All research<span aria-hidden="true">→</span></Link>
-              <a href="/upsc/">UPSC study desk<span aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
