@@ -6,6 +6,7 @@
    Order here is the order shown on /writing — newest first.
    ============================================================ */
 
+import { hindiBeliefMeta } from './writing/why-i-dont-believe-hi-meta.js';
 import { hindiReportMeta } from './writing/india-before-and-after-2014-hi-meta.js';
 import { hindiWomenMeta } from './writing/rules-about-women-hi-meta.js';
 
@@ -18,6 +19,224 @@ export const writingMeta = {
 };
 
 export const pieces = [
+  // BEGIN WHY-I-DONT-BELIEVE SERIES
+  {
+    "slug": "why-i-dont-believe",
+    "kicker": "A 28-part investigation",
+    "title": "Why I Don't Believe",
+    "subtitle": "God, Religion, and the Evidence",
+    "standfirst": "Why I reject religious claims, how scientific evidence can be checked, and how to explain the arguments in plain English. A first-person investigation of gods, holy books, evolution, history, and the universe.",
+    "summary": "I am an atheist, and I want my reasons to be understandable. I can leave room for an unknown creator while asking what supports the specific gods, stories, books, and rules people offer me. This series examines those claims directly, follows the evidence, and answers the strongest objections in ordinary language. The opening part explains belief, knowledge, the responsibility to support a claim, and what would make me change my mind. Later parts examine evolution, cosmic origins, religious history, miracles, morality, consciousness, and the questions that come up in real debates. Each completed part is readable here and available as its own PDF, with sources and an author's note.",
+    "topic": "Religion · Philosophy · Science",
+    "keywords": [
+      "atheism",
+      "atheist",
+      "agnosticism",
+      "evidence for God",
+      "religion and science",
+      "Allah",
+      "Bhagwan",
+      "holy books",
+      "evolution",
+      "Big Bang",
+      "atheist debates"
+    ],
+    "published": "2026-10-15",
+    "displayDate": "15 October 2026",
+    "parts": 28,
+    "live": 1,
+    "words": 6053,
+    "minutes": 28,
+    "status": "In progress",
+    "accent": "oxblood",
+    "pdf": "why-i-dont-believe-part-1.pdf",
+    "pdfSize": "296 KB",
+    "pdfLabel": "Part 1 PDF",
+    "pdfs": [
+      {
+        "n": 1,
+        "file": "why-i-dont-believe-part-1.pdf",
+        "size": "296 KB",
+        "label": "Part 1 PDF"
+      }
+    ],
+    "principles": [],
+    "outline": [
+      {
+        "n": 1,
+        "label": "Part 1",
+        "title": "I Don't Believe You Yet",
+        "blurb": "What I mean by atheist, why I ask for evidence, and what could change my mind."
+      },
+      {
+        "n": 2,
+        "label": "Part 2",
+        "title": "How Do We Know Anything?",
+        "blurb": "How observations, experiments, and independent checking help us know what is true."
+      },
+      {
+        "n": 3,
+        "label": "Part 3",
+        "title": "Why God Feels So Real",
+        "blurb": "Why religious belief can feel certain, and how I separate conviction from evidence."
+      },
+      {
+        "n": 4,
+        "label": "Part 4",
+        "title": "Who Wrote the Holy Books?",
+        "blurb": "How holy books reached us through authors, oral traditions, manuscripts, and translations."
+      },
+      {
+        "n": 5,
+        "label": "Part 5",
+        "title": "The Strongest Arguments for God",
+        "blurb": "The strongest philosophical cases for God, explained before I examine their weaknesses."
+      },
+      {
+        "n": 6,
+        "label": "Part 6",
+        "title": "How Old Is All This?",
+        "blurb": "How we establish the ages of the universe, Earth, life, and human civilizations."
+      },
+      {
+        "n": 7,
+        "label": "Part 7",
+        "title": "What Evolution Actually Says",
+        "blurb": "Evolution from zero: inherited differences, selection, and branching family trees."
+      },
+      {
+        "n": 8,
+        "label": "Part 8",
+        "title": "The Evidence Is in Our Bodies",
+        "blurb": "What DNA, chromosomes, and anatomy reveal about our ancestry."
+      },
+      {
+        "n": 9,
+        "label": "Part 9",
+        "title": "The Evidence Is in the Ground and the Lab",
+        "blurb": "The fossil record, observed evolution, and evidence from experiments and living populations."
+      },
+      {
+        "n": 10,
+        "label": "Part 10",
+        "title": "Then Why Are There Still Monkeys?",
+        "blurb": "Clear answers to the major objections about monkeys, missing links, complex organs, and randomness."
+      },
+      {
+        "n": 11,
+        "label": "Part 11",
+        "title": "Were We Really Born From Two People?",
+        "blurb": "Adam and Eve, genetic diversity, ancient humans, and what a first couple would mean."
+      },
+      {
+        "n": 12,
+        "label": "Part 12",
+        "title": "How Did Life Begin?",
+        "blurb": "What origin-of-life experiments show, and which steps remain unanswered."
+      },
+      {
+        "n": 13,
+        "label": "Part 13",
+        "title": "How We Know About the Big Bang",
+        "blurb": "Expansion, background radiation, and the observations supporting a hot early universe."
+      },
+      {
+        "n": 14,
+        "label": "Part 14",
+        "title": "Who Made the Universe?",
+        "blurb": "Causation, nothingness, beginnings, time, and the argument that a creator is necessary."
+      },
+      {
+        "n": 15,
+        "label": "Part 15",
+        "title": "Was Everything Designed for Us?",
+        "blurb": "Fine tuning, probability, biological complexity, and the claim that order proves design."
+      },
+      {
+        "n": 16,
+        "label": "Part 16",
+        "title": "The Bible Meets History",
+        "blurb": "Biblical claims compared with history, archaeology, geology, and biology."
+      },
+      {
+        "n": 17,
+        "label": "Part 17",
+        "title": "The Qur'an Meets History",
+        "blurb": "Qur'anic claims, their serious interpretations, and the historical and scientific evidence."
+      },
+      {
+        "n": 18,
+        "label": "Part 18",
+        "title": "Hindu Stories Meet History",
+        "blurb": "Hindu creation accounts, cosmic cycles, epics, and the evidence for particular historical claims."
+      },
+      {
+        "n": 19,
+        "label": "Part 19",
+        "title": "Did Ancient Books Predict Modern Science?",
+        "blurb": "Ancient passages and modern discoveries: genuine predictions or interpretations added afterward?"
+      },
+      {
+        "n": 20,
+        "label": "Part 20",
+        "title": "Miracles, Prayer, and Personal Experiences",
+        "blurb": "How I investigate healings, answered prayers, visions, coincidences, and testimony."
+      },
+      {
+        "n": 21,
+        "label": "Part 21",
+        "title": "Can Prophecy Prove a Religion?",
+        "blurb": "What a convincing prophecy would require, and how fulfilment claims can be checked."
+      },
+      {
+        "n": 22,
+        "label": "Part 22",
+        "title": "Why Would a Good God Allow This?",
+        "blurb": "Suffering, disasters, animal pain, and the strongest replies offered for a good god."
+      },
+      {
+        "n": 23,
+        "label": "Part 23",
+        "title": "Can I Be Good Without God?",
+        "blurb": "Empathy, moral reasoning, divine commands, and goodness without belief in God."
+      },
+      {
+        "n": 24,
+        "label": "Part 24",
+        "title": "The Brain, the Mind, and the Soul",
+        "blurb": "Consciousness, memory, personality, the brain, and claims about a separate soul."
+      },
+      {
+        "n": 25,
+        "label": "Part 25",
+        "title": "Death, Rebirth, Heaven, and Hell",
+        "blurb": "Near-death experiences, rebirth claims, afterlife beliefs, and the fear of being wrong."
+      },
+      {
+        "n": 26,
+        "label": "Part 26",
+        "title": "Religion, Power, and the Human Need for Meaning",
+        "blurb": "Religion's place in community, authority, politics, charity, and the search for meaning."
+      },
+      {
+        "n": 27,
+        "label": "Part 27",
+        "title": "Answers for a Real Debate",
+        "blurb": "Short replies, fuller explanations, evidence, and follow-ups for the questions heard in debates."
+      },
+      {
+        "n": 28,
+        "label": "Part 28",
+        "title": "What Would Make Me Change My Mind?",
+        "blurb": "My conclusions, remaining uncertainties, and the evidence that could change them."
+      }
+    ],
+    "translations": {
+      "hi": hindiBeliefMeta
+    },
+    load: () => import('./writing/why-i-dont-believe.js'),
+  },
+  // END WHY-I-DONT-BELIEVE SERIES
   {
     slug: 'india-before-and-after-2014',
     ogImage: 'india-before-and-after-2014.jpg',
