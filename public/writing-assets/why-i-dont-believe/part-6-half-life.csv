@@ -1,0 +1,7 @@
+half_lives,elapsed_years,remaining_fraction,remaining_percent,half_life_years,kind,assumptions
+0,0,1,100,5730,calculated ideal decay model; not measured data or radiocarbon calibration,known original quantity; constant decay rate; no subsequent input or loss except decay
+1,5730,0.5,50.0,5730,calculated ideal decay model; not measured data or radiocarbon calibration,known original quantity; constant decay rate; no subsequent input or loss except decay
+2,11460,0.25,25.0,5730,calculated ideal decay model; not measured data or radiocarbon calibration,known original quantity; constant decay rate; no subsequent input or loss except decay
+3,17190,0.125,12.5,5730,calculated ideal decay model; not measured data or radiocarbon calibration,known original quantity; constant decay rate; no subsequent input or loss except decay
+4,22920,0.0625,6.25,5730,calculated ideal decay model; not measured data or radiocarbon calibration,known original quantity; constant decay rate; no subsequent input or loss except decay
+5,28650,0.03125,3.125,5730,calculated ideal decay model; not measured data or radiocarbon calibration,known original quantity; constant decay rate; no subsequent input or loss except decay
