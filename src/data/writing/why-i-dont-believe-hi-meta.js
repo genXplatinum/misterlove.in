@@ -24,9 +24,9 @@ export const hindiBeliefMeta = {
   "published": "2026-10-15",
   "displayDate": "15 अक्टूबर 2026",
   "parts": 28,
-  "live": 2,
-  "words": 14665,
-  "minutes": 74,
+  "live": 3,
+  "words": 21806,
+  "minutes": 110,
   "status": "प्रगति में",
   "pdf": "why-i-dont-believe-part-1-hi.pdf",
   "pdfLanguage": "hi",
@@ -44,6 +44,12 @@ export const hindiBeliefMeta = {
       "file": "why-i-dont-believe-part-2-hi.pdf",
       "size": "522 KB",
       "label": "भाग 2 की हिंदी PDF"
+    },
+    {
+      "n": 3,
+      "file": "why-i-dont-believe-part-3-hi.pdf",
+      "size": "486 KB",
+      "label": "भाग 3 की हिंदी PDF"
     }
   ],
   "principles": [],
@@ -63,7 +69,7 @@ export const hindiBeliefMeta = {
     {
       "n": 3,
       "label": "भाग 3",
-      "title": "आस्था इतनी पक्की क्यों लगती है?",
+      "title": "ईश्वर का एहसास इतना सच्चा क्यों लगता है?",
       "blurb": "धार्मिक विश्वास की गहराई और पक्का महसूस होने तथा सबूत होने का फर्क।"
     },
     {
