@@ -81,6 +81,13 @@
 .article--hi .article__title {
   max-width: 22ch;
   line-height: 1.18;
+  overflow-wrap: normal;
+}
+
+.article__title-word {
+  display: inline-block;
+  white-space: nowrap;
+  hyphens: none;
 }
 
 .article--hi .article__standfirst { line-height: 1.65; }

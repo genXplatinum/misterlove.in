@@ -535,7 +535,15 @@ export default function Article() {
                 {copy.part} {String(n).padStart(2, '0')} <span className="dim">{copy.of} {piece.parts}</span>
                 <span className="article__partlabel">{part?.label}</span>
               </span>
-              <h1 className="article__title">{part ? part.title : piece.title}</h1>
+              <h1 className="article__title">
+                {language === 'hi'
+                  ? (part ? part.title : piece.title).split(/(\s+)/).map((token, index) => (
+                    token.trim()
+                      ? <span className="article__title-word" key={index}>{token}</span>
+                      : token
+                  ))
+                  : (part ? part.title : piece.title)}
+              </h1>
               {part?.lead && <p className="article__standfirst">{part.lead}</p>}
             </div>
 
