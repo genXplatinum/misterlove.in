@@ -1,0 +1,4 @@
+model,rule_en,rule_hi,winning_each,losing_each,success,formula_en,formula_hi,result,labels,winning_labels,winning_count,evidence_kind,cosmic_distribution_inferred
+A,Every label equally likely,हर संख्या का मौका बराबर,1/1000,1/1000,1/100,"10 x 1/1,000","10 x 1/1,000",1%,1000,1 through 10,10,original stipulated probability example; not measured cosmic probabilities,False
+B,Winning group chosen half the time,सफल समूह आधे मौकों पर चुना,1/20,1/1980,1/2,Winning group = 1/2,सफल समूह = 1/2,50%,1000,1 through 10,10,original stipulated probability example; not measured cosmic probabilities,False
+C,Output fixed at seven,हर बार सात आता है,fixed output 7,0,1,7 is a winning label,7 सफल समूह में है,100%,1000,1 through 10,10,original stipulated probability example; not measured cosmic probabilities,False
