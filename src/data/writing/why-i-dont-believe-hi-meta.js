@@ -24,9 +24,9 @@ export const hindiBeliefMeta = {
   "published": "2026-10-15",
   "displayDate": "15 अक्टूबर 2026",
   "parts": 28,
-  "live": 15,
-  "words": 125744,
-  "minutes": 635,
+  "live": 16,
+  "words": 134197,
+  "minutes": 678,
   "status": "प्रगति में",
   "pdf": "why-i-dont-believe-part-1-hi.pdf",
   "pdfLanguage": "hi",
@@ -122,6 +122,12 @@ export const hindiBeliefMeta = {
       "file": "why-i-dont-believe-part-15-hi.pdf",
       "size": "602 KB",
       "label": "भाग 15 की हिंदी PDF"
+    },
+    {
+      "n": 16,
+      "file": "why-i-dont-believe-part-16-hi.pdf",
+      "size": "605 KB",
+      "label": "भाग 16 की हिंदी PDF"
     }
   ],
   "principles": [],
