@@ -44,9 +44,9 @@ export const pieces = [
     "published": "2026-10-15",
     "displayDate": "15 October 2026",
     "parts": 28,
-    "live": 15,
-    "words": 117549,
-    "minutes": 542,
+    "live": 16,
+    "words": 125386,
+    "minutes": 578,
     "status": "In progress",
     "accent": "oxblood",
     "pdf": "why-i-dont-believe-part-1.pdf",
@@ -142,6 +142,12 @@ export const pieces = [
         "file": "why-i-dont-believe-part-15.pdf",
         "size": "358 KB",
         "label": "Part 15 PDF"
+      },
+      {
+        "n": 16,
+        "file": "why-i-dont-believe-part-16.pdf",
+        "size": "387 KB",
+        "label": "Part 16 PDF"
       }
     ],
     "principles": [],
