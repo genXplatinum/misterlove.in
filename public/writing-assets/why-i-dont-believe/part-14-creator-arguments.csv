@@ -1,0 +1,20 @@
+route,source_ids,question_en,premises_en,conclusion_en,question_hi,premises_hi,conclusion_hi,source_urls,evidence_kind,conclusion_scope
+kalam,1,A beginning?,"Beginnings need causes.
+The universe begins.","Cause of its
+beginning.",शुरुआत?,"शुरुआत के लिए कारण चाहिए।
+ब्रह्मांड की शुरुआत हुई।","शुरुआत का
+कारण।",https://www.reasonablefaith.org/writings/popular-articles/the-evidence-for-god/the-kalam-cosmological-argument/,original schematic teaching summary; not measurements or a full formal proof,conditional on defended premises; further divine attributes and revelation require additional arguments
+contingency,6;8,"Why contingent
+reality?","Contingent reality needs explanation.
+An all-contingent account is insufficient.","Necessary
+ground.","होने की
+व्याख्या?","आकस्मिक वास्तविकता की व्याख्या चाहिए।
+सिर्फ आकस्मिक बातें पर्याप्त नहीं।","अनिवार्य
+आधार।",https://www.earlymoderntexts.com/assets/pdfs/leibniz1714a.pdf;https://doi.org/10.1002/9781444308334.ch2,original schematic teaching summary; not measurements or a full formal proof,conditional on defended premises; further divine attributes and revelation require additional arguments
+sustaining,4,"Dependence
+now?","Change involves actualisation.
+An all-derivative chain is insufficient.","Primary
+sustaining cause.","अभी की
+निर्भरता?","क्षमता वास्तविक अवस्था बनती है।
+सिर्फ उधार की क्षमता पर्याप्त नहीं।","मूल सहारा
+देने वाला कारण।",https://www.newadvent.org/summa/1002.htm,original schematic teaching summary; not measurements or a full formal proof,conditional on defended premises; further divine attributes and revelation require additional arguments
