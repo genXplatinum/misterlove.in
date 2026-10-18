@@ -26,7 +26,7 @@ export const pieces = [
     "title": "Why I Don't Believe",
     "subtitle": "God, Religion, and the Evidence",
     "standfirst": "Why I reject religious claims, how scientific evidence can be checked, and how to explain the arguments in plain English. A first-person investigation of gods, holy books, evolution, history, and the universe.",
-    "summary": "I am an atheist, and I want my reasons to be understandable. I can leave room for an unknown creator while asking what supports the specific gods, stories, books, and rules people offer me. This series examines those claims directly, follows the evidence, and answers the strongest objections in ordinary language. The opening part explains belief, knowledge, the responsibility to support a claim, and what would make me change my mind. Later parts examine evolution, cosmic origins, religious history, miracles, morality, consciousness, and the questions that come up in real debates. Each completed part is readable here and available as its own PDF, with sources and an author's note.",
+    "summary": "I am an atheist, and I want my reasons to be understandable. I can leave room for an unknown creator while asking what supports the specific gods, stories, books, and rules people offer me. This series examines those claims directly, follows the evidence, and answers the strongest objections in ordinary language. The opening part explains belief, knowledge, the responsibility to support a claim, and what would make me change my mind. Later parts examine evolution, cosmic origins, religious history, miracles, morality, consciousness, and the questions that come up in real debates. All 28 parts are now readable here, with sources and an author's note in each. Download The Sacred Mirage, the complete collection, as one master PDF in English or Hindi.",
     "topic": "Religion · Philosophy · Science",
     "keywords": [
       "atheism",
@@ -44,116 +44,20 @@ export const pieces = [
     "published": "2026-10-15",
     "displayDate": "15 October 2026",
     "parts": 28,
-    "live": 17,
-    "words": 133627,
-    "minutes": 616,
-    "status": "In progress",
+    "live": 28,
+    "words": 242990,
+    "minutes": 1118,
+    "status": "Complete",
     "accent": "oxblood",
-    "pdf": "why-i-dont-believe-part-1.pdf",
-    "pdfSize": "296 KB",
-    "pdfLabel": "Part 1 PDF",
+    "pdf": "the-sacred-mirage-complete.pdf",
+    "pdfSize": "10.7 MB",
+    "pdfLabel": "Master PDF · all 28 parts",
     "pdfs": [
       {
-        "n": 1,
-        "file": "why-i-dont-believe-part-1.pdf",
-        "size": "296 KB",
-        "label": "Part 1 PDF"
-      },
-      {
-        "n": 2,
-        "file": "why-i-dont-believe-part-2.pdf",
-        "size": "303 KB",
-        "label": "Part 2 PDF"
-      },
-      {
-        "n": 3,
-        "file": "why-i-dont-believe-part-3.pdf",
-        "size": "288 KB",
-        "label": "Part 3 PDF"
-      },
-      {
-        "n": 4,
-        "file": "why-i-dont-believe-part-4.pdf",
-        "size": "295 KB",
-        "label": "Part 4 PDF"
-      },
-      {
-        "n": 5,
-        "file": "why-i-dont-believe-part-5.pdf",
-        "size": "288 KB",
-        "label": "Part 5 PDF"
-      },
-      {
-        "n": 6,
-        "file": "why-i-dont-believe-part-6.pdf",
-        "size": "314 KB",
-        "label": "Part 6 PDF"
-      },
-      {
-        "n": 7,
-        "file": "why-i-dont-believe-part-7.pdf",
-        "size": "316 KB",
-        "label": "Part 7 PDF"
-      },
-      {
-        "n": 8,
-        "file": "why-i-dont-believe-part-8.pdf",
-        "size": "325 KB",
-        "label": "Part 8 PDF"
-      },
-      {
-        "n": 9,
-        "file": "why-i-dont-believe-part-9.pdf",
-        "size": "343 KB",
-        "label": "Part 9 PDF"
-      },
-      {
-        "n": 10,
-        "file": "why-i-dont-believe-part-10.pdf",
-        "size": "340 KB",
-        "label": "Part 10 PDF"
-      },
-      {
-        "n": 11,
-        "file": "why-i-dont-believe-part-11.pdf",
-        "size": "382 KB",
-        "label": "Part 11 PDF"
-      },
-      {
-        "n": 12,
-        "file": "why-i-dont-believe-part-12.pdf",
-        "size": "398 KB",
-        "label": "Part 12 PDF"
-      },
-      {
-        "n": 13,
-        "file": "why-i-dont-believe-part-13.pdf",
-        "size": "412 KB",
-        "label": "Part 13 PDF"
-      },
-      {
-        "n": 14,
-        "file": "why-i-dont-believe-part-14.pdf",
-        "size": "424 KB",
-        "label": "Part 14 PDF"
-      },
-      {
-        "n": 15,
-        "file": "why-i-dont-believe-part-15.pdf",
-        "size": "358 KB",
-        "label": "Part 15 PDF"
-      },
-      {
-        "n": 16,
-        "file": "why-i-dont-believe-part-16.pdf",
-        "size": "387 KB",
-        "label": "Part 16 PDF"
-      },
-      {
-        "n": 17,
-        "file": "why-i-dont-believe-part-17.pdf",
-        "size": "368 KB",
-        "label": "Part 17 PDF"
+        "n": null,
+        "file": "the-sacred-mirage-complete.pdf",
+        "size": "10.7 MB",
+        "label": "Master PDF · all 28 parts"
       }
     ],
     "principles": [],
@@ -330,6 +234,7 @@ export const pieces = [
     "translations": {
       "hi": hindiBeliefMeta
     },
+    "ogImage": "why-i-dont-believe-sacred-mirage.png",
     load: () => import('./writing/why-i-dont-believe.js'),
   },
   // END WHY-I-DONT-BELIEVE SERIES
@@ -1217,7 +1122,8 @@ export const getPieceForLanguage = (slug, language = 'en') => {
   if (language === 'en') return { ...piece, language: 'en', locale: 'en_IN' };
 
   const translation = piece.translations?.[language];
-  return translation ? { ...piece, ...translation } : undefined;
+  // A translated share card must not inherit the English edition's artwork URL.
+  return translation ? { ...piece, ...translation, ogImage: translation.ogImage } : undefined;
 };
 
 /** Canonical client-side path for either a topic or one numbered part. */

@@ -41,6 +41,7 @@ const H = 630;
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = resolve(ROOT, 'public', 'og');
 const INDIA_COMPARISON_ART = resolve(ROOT, 'assets', 'og', 'india-before-and-after-2014-art.png');
+const SACRED_MIRAGE_ART = resolve(ROOT, 'assets', 'og', 'why-i-dont-believe-sacred-mirage-art.png');
 
 const FONTS = [
   resolve(ROOT, 'assets/fonts/og/Newsreader-Variable.ttf'),
@@ -51,6 +52,7 @@ const FONTS = [
 
 const missing = FONTS.filter((f) => !existsSync(f));
 if (!existsSync(INDIA_COMPARISON_ART)) missing.push(INDIA_COMPARISON_ART);
+if (!existsSync(SACRED_MIRAGE_ART)) missing.push(SACRED_MIRAGE_ART);
 if (missing.length) {
   console.error(`\nMissing OG-card dependencies:\n  ${missing.join('\n  ')}\n\nRun npm install, then try again.\n`);
   process.exit(1);
@@ -232,6 +234,50 @@ function indiaComparisonCard() {
 
   <text class="s" x="68" y="568" fill="#5f5a52" font-size="15" font-weight="600" letter-spacing="1.2">DATA · CONTEXT · SOURCES · COVID AND OTHER SHOCKS INCLUDED</text>
 </svg>`;
+}
+
+/** Dark Sacred Mirage cover art for the completed series front door.
+ * The image is symbolic artwork; exact copy is added here, with Hindi shaping.
+ */
+function sacredMirageCard(language = 'en') {
+  const art = readFileSync(SACRED_MIRAGE_ART).toString('base64');
+  const hindi = language === 'hi';
+  const title = hindi
+    ? `<text class="h" x="68" y="248" fill="#f4f0e5" font-size="72" font-weight="650">मैं क्यों</text>
+       <text class="h" x="68" y="345" fill="#f4f0e5" font-size="72" font-weight="650">नहीं मानता</text>
+       <text class="r" x="68" y="403" fill="#e7c385" font-size="31" font-weight="550">THE SACRED MIRAGE</text>`
+    : `<text class="r" x="68" y="245" fill="#f0c77e" font-size="70" font-weight="650" letter-spacing="-1.5">THE SACRED</text>
+       <text class="r" x="68" y="339" fill="#f4f0e5" font-size="100" font-weight="650" letter-spacing="-2">MIRAGE</text>
+       <text class="r" x="68" y="403" fill="#e7c385" font-size="37" font-weight="550">Why I Don't Believe</text>`;
+  const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>${hindi ? 'मैं क्यों नहीं मानता — द सेक्रेड मिराज' : 'The Sacred Mirage — Why I Don’t Believe'}</title>
+  <defs>
+    <linearGradient id="mirage-copy" x1="0" y1="0" x2="790" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#04090b"/><stop offset="0.61" stop-color="#04090b" stop-opacity="0.98"/>
+      <stop offset="0.76" stop-color="#04090b" stop-opacity="0.76"/><stop offset="1" stop-color="#04090b" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="mirage-footer" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#04090b" stop-opacity="0"/><stop offset="1" stop-color="#04090b" stop-opacity="0.97"/>
+    </linearGradient>
+    <style>.r{font-family:'Newsreader',Georgia,serif}.s{font-family:'Inter','Segoe UI',sans-serif}
+      .h{font-family:'Noto Serif Devanagari',serif}.hs{font-family:'Noto Sans Devanagari',sans-serif}</style>
+  </defs>
+  <image href="data:image/png;base64,${art}" width="1200" height="630" preserveAspectRatio="xMidYMid slice"/>
+  <rect width="790" height="630" fill="url(#mirage-copy)"/>
+  <rect y="514" width="1200" height="116" fill="url(#mirage-footer)"/>
+  <rect x="28" y="28" width="1144" height="574" fill="none" stroke="#9a8052" stroke-width="1.2"/>
+
+  <text class="s" x="68" y="76" fill="#eae5da" font-size="18" font-weight="650" letter-spacing="1.6">LOVEPREET SINGH</text>
+  <text class="s" x="1132" y="568" text-anchor="end" fill="#ead8b5" font-size="15" font-weight="550" letter-spacing="1.5">MISTERLOVE.IN</text>
+  <line x1="68" y1="103" x2="1132" y2="103" stroke="#6f6248" stroke-width="1"/>
+  <text class="${hindi ? 'hs' : 's'}" x="68" y="150" fill="#d2aa66" font-size="${hindi ? '18' : '15'}" font-weight="700" letter-spacing="${hindi ? '0' : '1.7'}">${hindi ? 'पूरी पड़ताल · सभी 28 भाग' : 'THE COMPLETE 28-PART INVESTIGATION'}</text>
+  ${title}
+  <rect x="68" y="431" width="94" height="4" rx="2" fill="#d2aa66"/>
+  <text class="${hindi ? 'hs' : 's'}" x="68" y="478" fill="#dedbd2" font-size="${hindi ? '24' : '21'}" font-weight="500">${hindi ? 'ईश्वर, धर्म और सबूत की जाँच' : 'Questioning God, religion'}</text>
+  ${hindi ? '' : '<text class="s" x="68" y="510" fill="#dedbd2" font-size="21" font-weight="500">and the evidence.</text>'}
+  <text class="${hindi ? 'hs' : 's'}" x="68" y="568" fill="#c4b79d" font-size="${hindi ? '17' : '13'}" font-weight="600" letter-spacing="${hindi ? '0' : '1.1'}">${hindi ? 'सरल हिंदी और अंग्रेज़ी · पूरी शृंखला एक PDF में' : 'PLAIN ENGLISH &amp; HINDI · THE COMPLETE MASTER PDF'}</text>
+  </svg>`;
+  return hindi ? shapeHindiOg(svg) : svg;
 }
 
 /** One route card. */
@@ -554,6 +600,8 @@ for (const piece of pieces) {
     const seriesFile = `${OUT}/${piece.ogImage ?? `${piece.slug}.png`}`;
     const seriesCard = piece.slug === 'india-before-and-after-2014'
       ? indiaComparisonCard()
+      : piece.slug === 'why-i-dont-believe'
+        ? sacredMirageCard()
       : card({
           kicker: piece.kicker,
           title: piece.title,
@@ -594,10 +642,10 @@ for (const piece of pieces) {
       throw new Error(`${edition.title} (${language}) loads more parts than its planned total`);
     }
     const translatedSlug = edition.ogSlug ?? `${piece.slug}-${language}`;
-    const translatedSeriesFile = `${OUT}/${translatedSlug}.png`;
+    const translatedSeriesFile = `${OUT}/${edition.ogImage ?? `${translatedSlug}.png`}`;
 
     r = render(
-      card({
+      piece.slug === 'why-i-dont-believe' ? sacredMirageCard(language) : card({
         kicker: edition.kicker,
         title: edition.title,
         sub: edition.subtitle,

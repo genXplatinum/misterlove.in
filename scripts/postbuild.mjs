@@ -36,7 +36,7 @@ const today = new Date().toISOString().slice(0, 10);
 
 const seriesImageFile = (piece) => {
   const imageSlug = piece.ogSlug ?? piece.slug;
-  return piece.language === 'en' && piece.ogImage
+  return piece.ogImage
     ? piece.ogImage
     : `${imageSlug}.png`;
 };

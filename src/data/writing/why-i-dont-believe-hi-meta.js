@@ -8,7 +8,7 @@ export const hindiBeliefMeta = {
   "title": "मैं क्यों नहीं मानता",
   "subtitle": "ईश्वर, धर्म और सबूत",
   "standfirst": "मैं धार्मिक दावे क्यों नहीं मानता? विज्ञान के सबूत कैसे जाँचे जा सकते हैं? देवताओं, धर्मग्रंथों, विकास, इतिहास और ब्रह्मांड पर मेरी पड़ताल, आसान हिंदी में।",
-  "summary": "मैं नास्तिक हूँ और अपनी वजहें साफ समझाना चाहता हूँ। किसी अनजान रचयिता की संभावना खुली रह सकती है, फिर भी धर्मों के खास देवताओं, कहानियों और नियमों को मानने के लिए सबूत चाहिए। यह शृंखला इन दावों को सीधे जाँचती है और आम बहसों की मज़बूत आपत्तियों का सरल भाषा में जवाब देती है। पहला भाग विश्वास, ज्ञान, दावे के समर्थन की ज़िम्मेदारी और राय बदलने की वजहें समझाता है। आगे विकास, ब्रह्मांड, धार्मिक इतिहास, चमत्कार, नैतिकता और चेतना की अलग-अलग जाँच होगी। हर तैयार भाग यहाँ पढ़ सकते हैं और हिंदी या अंग्रेज़ी PDF ले सकते हैं। स्रोत और लेखक की बात साथ हैं। हिंदी संस्करण मूल अर्थ बचाकर सहज हिंदी में लिखा गया है।",
+  "summary": "मैं नास्तिक हूँ और अपनी वजहें साफ समझाना चाहता हूँ। किसी अनजान रचयिता की संभावना खुली रह सकती है, फिर भी धर्मों के खास देवताओं, कहानियों और नियमों को मानने के लिए सबूत चाहिए। यह शृंखला इन दावों को सीधे जाँचती है और आम बहसों की मज़बूत आपत्तियों का सरल भाषा में जवाब देती है। विश्वास और ज्ञान से शुरू होकर इसकी पड़ताल विकास, ब्रह्मांड, धार्मिक इतिहास, चमत्कार, नैतिकता और चेतना तक जाती है। सभी 28 भाग यहाँ पढ़ सकते हैं। पूरी शृंखला का संकलन The Sacred Mirage एक PDF में डाउनलोड कर सकते हैं, हिंदी या अंग्रेज़ी में। हर भाग के स्रोत और लेखक की बात साथ हैं। हिंदी संस्करण मूल अर्थ बचाकर सहज हिंदी में लिखा गया है।",
   "topic": "धर्म · दर्शन · विज्ञान",
   "keywords": [
     "नास्तिकता",
@@ -24,116 +24,20 @@ export const hindiBeliefMeta = {
   "published": "2026-10-15",
   "displayDate": "15 अक्टूबर 2026",
   "parts": 28,
-  "live": 17,
-  "words": 142922,
-  "minutes": 722,
-  "status": "प्रगति में",
-  "pdf": "why-i-dont-believe-part-1-hi.pdf",
+  "live": 28,
+  "words": 257006,
+  "minutes": 1297,
+  "status": "पूर्ण",
+  "pdf": "the-sacred-mirage-complete-hi.pdf",
   "pdfLanguage": "hi",
-  "pdfSize": "470 KB",
-  "pdfLabel": "भाग 1 की हिंदी PDF",
+  "pdfSize": "17.4 MB",
+  "pdfLabel": "सभी 28 भागों की PDF",
   "pdfs": [
     {
-      "n": 1,
-      "file": "why-i-dont-believe-part-1-hi.pdf",
-      "size": "470 KB",
-      "label": "भाग 1 की हिंदी PDF"
-    },
-    {
-      "n": 2,
-      "file": "why-i-dont-believe-part-2-hi.pdf",
-      "size": "522 KB",
-      "label": "भाग 2 की हिंदी PDF"
-    },
-    {
-      "n": 3,
-      "file": "why-i-dont-believe-part-3-hi.pdf",
-      "size": "486 KB",
-      "label": "भाग 3 की हिंदी PDF"
-    },
-    {
-      "n": 4,
-      "file": "why-i-dont-believe-part-4-hi.pdf",
-      "size": "519 KB",
-      "label": "भाग 4 की हिंदी PDF"
-    },
-    {
-      "n": 5,
-      "file": "why-i-dont-believe-part-5-hi.pdf",
-      "size": "524 KB",
-      "label": "भाग 5 की हिंदी PDF"
-    },
-    {
-      "n": 6,
-      "file": "why-i-dont-believe-part-6-hi.pdf",
-      "size": "556 KB",
-      "label": "भाग 6 की हिंदी PDF"
-    },
-    {
-      "n": 7,
-      "file": "why-i-dont-believe-part-7-hi.pdf",
-      "size": "537 KB",
-      "label": "भाग 7 की हिंदी PDF"
-    },
-    {
-      "n": 8,
-      "file": "why-i-dont-believe-part-8-hi.pdf",
-      "size": "553 KB",
-      "label": "भाग 8 की हिंदी PDF"
-    },
-    {
-      "n": 9,
-      "file": "why-i-dont-believe-part-9-hi.pdf",
-      "size": "567 KB",
-      "label": "भाग 9 की हिंदी PDF"
-    },
-    {
-      "n": 10,
-      "file": "why-i-dont-believe-part-10-hi.pdf",
-      "size": "576 KB",
-      "label": "भाग 10 की हिंदी PDF"
-    },
-    {
-      "n": 11,
-      "file": "why-i-dont-believe-part-11-hi.pdf",
-      "size": "623 KB",
-      "label": "भाग 11 की हिंदी PDF"
-    },
-    {
-      "n": 12,
-      "file": "why-i-dont-believe-part-12-hi.pdf",
-      "size": "654 KB",
-      "label": "भाग 12 की हिंदी PDF"
-    },
-    {
-      "n": 13,
-      "file": "why-i-dont-believe-part-13-hi.pdf",
-      "size": "664 KB",
-      "label": "भाग 13 की हिंदी PDF"
-    },
-    {
-      "n": 14,
-      "file": "why-i-dont-believe-part-14-hi.pdf",
-      "size": "668 KB",
-      "label": "भाग 14 की हिंदी PDF"
-    },
-    {
-      "n": 15,
-      "file": "why-i-dont-believe-part-15-hi.pdf",
-      "size": "602 KB",
-      "label": "भाग 15 की हिंदी PDF"
-    },
-    {
-      "n": 16,
-      "file": "why-i-dont-believe-part-16-hi.pdf",
-      "size": "605 KB",
-      "label": "भाग 16 की हिंदी PDF"
-    },
-    {
-      "n": 17,
-      "file": "why-i-dont-believe-part-17-hi.pdf",
-      "size": "584 KB",
-      "label": "भाग 17 की हिंदी PDF"
+      "n": null,
+      "file": "the-sacred-mirage-complete-hi.pdf",
+      "size": "17.4 MB",
+      "label": "सभी 28 भागों की PDF"
     }
   ],
   "principles": [],
@@ -307,5 +211,6 @@ export const hindiBeliefMeta = {
       "blurb": "मेरे निष्कर्ष, बची अनिश्चितताएँ और वह जानकारी जिससे मेरी राय बदल सकती है।"
     }
   ],
+  "ogImage": "why-i-dont-believe-hi-sacred-mirage.png",
   load: () => import('./why-i-dont-believe-hi.js'),
 };
