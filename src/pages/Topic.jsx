@@ -75,7 +75,7 @@ function useTopicMeta(piece, original) {
     const path = writingPathOf(piece);
     const url = `https://misterlove.in${path}/`;
     const imageSlug = piece.ogSlug ?? piece.slug;
-    const imageFile = language === 'en' && piece.ogImage
+    const imageFile = piece.ogImage
       ? piece.ogImage
       : `${imageSlug}.png`;
     const image = `https://misterlove.in/og/${imageFile}`;
