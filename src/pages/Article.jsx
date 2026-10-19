@@ -15,6 +15,7 @@ import {
   writingPathOf,
 } from '../data/writing';
 import { profile } from '../data/site';
+import { unitNameOf, withVolumeCopy } from '../data/writingUnits.js';
 import './Article.css';
 import './Rooms.css';
 
@@ -183,8 +184,8 @@ function useArticleMeta(piece, part, original) {
     const path = writingPathOf(piece, part.n);
     const url = `https://misterlove.in${path}/`;
     const title = language === 'hi'
-      ? `${part.title} — ${piece.title}: भाग ${part.n}/${piece.parts} | ${profile.name}`
-      : `${part.title} — ${piece.title}: Part ${part.n} of ${piece.parts} | ${profile.name}`;
+      ? `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n}/${piece.parts} | ${profile.name}`
+      : `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n} of ${piece.parts} | ${profile.name}`;
     document.title = title;
     document.documentElement.lang = language;
 
@@ -211,8 +212,8 @@ function useArticleMeta(piece, part, original) {
     const imageSlug = piece.ogSlug ?? piece.slug;
     const image = `https://misterlove.in/og/${imageSlug}-part-${part.n}.png`;
     const imageAlt = language === 'hi'
-      ? `${piece.title}, ${piece.parts} में से भाग ${part.n} — ${part.title}। लेखक: ${profile.name}।`
-      : `${piece.title}, Part ${part.n} of ${piece.parts} — ${part.title}. By ${profile.name}.`;
+      ? `${piece.title}, ${piece.parts} में से ${unitNameOf(piece)} ${part.n} — ${part.title}। लेखक: ${profile.name}।`
+      : `${piece.title}, ${unitNameOf(piece)} ${part.n} of ${piece.parts} — ${part.title}. By ${profile.name}.`;
 
     document.head
       .querySelectorAll('link[rel="alternate"][hreflang]')
@@ -266,10 +267,10 @@ function useArticleMeta(piece, part, original) {
     ld.type = 'application/ld+json';
     ld.textContent = JSON.stringify({
       '@context': 'https://schema.org',
-      '@type': 'Article',
+      '@type': piece.unit === 'volume' ? 'Book' : 'Article',
       headline: language === 'hi'
-        ? `${part.title} — ${piece.title}: भाग ${part.n}`
-        : `${part.title} — ${piece.title}: Part ${part.n}`,
+        ? `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n}`
+        : `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n}`,
       description: part.lead || piece.standfirst,
       url,
       mainEntityOfPage: { '@type': 'WebPage', '@id': url },
@@ -288,13 +289,13 @@ function useArticleMeta(piece, part, original) {
       about: piece.topic.split(' · ').map((topic) => ({ '@type': 'Thing', name: topic })),
       ...(language === 'hi' ? {
         translationOfWork: {
-          '@type': 'Article',
+          '@type': piece.unit === 'volume' ? 'Book' : 'Article',
           inLanguage: 'en',
           url: `https://misterlove.in/writing/${piece.slug}/part-${part.n}/`,
         },
       } : original?.translations?.hi ? {
         workTranslation: {
-          '@type': 'Article',
+          '@type': piece.unit === 'volume' ? 'Book' : 'Article',
           inLanguage: 'hi',
           url: `https://misterlove.in/hi/writing/${piece.slug}/part-${part.n}/`,
         },
@@ -380,7 +381,7 @@ export default function Article() {
   const language = pathname.startsWith('/hi/') ? 'hi' : 'en';
   const original = getPiece(slug);
   const piece = useMemo(() => getPieceForLanguage(slug, language), [slug, language]);
-  const copy = COPY[language];
+  const copy = withVolumeCopy(piece, COPY[language]);
 
   const [parts, setParts] = useState(null);
   const [loadError, setLoadError] = useState(false);
@@ -715,7 +716,7 @@ export default function Article() {
             {part && <Prose html={part.html} />}
 
             {part?.sources && (
-              <details className="article__sources">
+              <details className="article__sources" open={piece.unit === 'volume' ? true : undefined}>
                 <summary>
                   <span className="mono">{copy.sources(n)}</span>
                   <span className="article__sources-icon" aria-hidden="true" />

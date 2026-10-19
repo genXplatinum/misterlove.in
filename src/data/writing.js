@@ -1,3 +1,4 @@
+import { atheistBelieverMeta } from './writing/atheist-vs-believer-meta.js';
 /* ============================================================
    WRITING — curated long-form research.
    Manifest only. The prose itself lives in src/data/writing/<slug>.js
@@ -19,6 +20,7 @@ export const writingMeta = {
 };
 
 export const pieces = [
+  atheistBelieverMeta,
   // BEGIN WHY-I-DONT-BELIEVE SERIES
   {
     "slug": "why-i-dont-believe",

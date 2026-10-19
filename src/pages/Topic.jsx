@@ -16,6 +16,7 @@ import {
   writingPathOf,
 } from '../data/writing';
 import { profile } from '../data/site';
+import { withVolumeCopy } from '../data/writingUnits.js';
 import './Writing.css';
 import './Rooms.css';
 
@@ -81,8 +82,8 @@ function useTopicMeta(piece, original) {
     const image = `https://misterlove.in/og/${imageFile}`;
     const imageType = imageFile.endsWith('.jpg') ? 'image/jpeg' : 'image/png';
     const imageAlt = language === 'hi'
-      ? `${piece.title} — ${piece.subtitle}। ${profile.name} की ${piece.parts} भागों वाली शोध श्रृंखला।`
-      : `${piece.title} — ${piece.subtitle}. ${piece.parts}-part research series by ${profile.name}.`;
+      ? `${piece.title} — ${piece.subtitle}। ${profile.name} की ${piece.parts} ${piece.unit === 'volume' ? 'पुस्तकों' : 'भागों'} वाली शोध श्रृंखला।`
+      : `${piece.title} — ${piece.subtitle}. ${piece.parts}-${piece.unit === 'volume' ? 'volume' : 'part'} research series by ${profile.name}.`;
     document.title = `${piece.title} — ${piece.subtitle} | ${profile.name}`;
     document.documentElement.lang = language;
 
@@ -172,7 +173,7 @@ export default function Topic() {
   const language = pathname.startsWith('/hi/') ? 'hi' : 'en';
   const original = getPiece(slug);
   const piece = useMemo(() => getPieceForLanguage(slug, language), [slug, language]);
-  const copy = COPY[language];
+  const copy = withVolumeCopy(piece, COPY[language]);
 
   const [parts, setParts] = useState(null);
   const [failed, setFailed] = useState(false);

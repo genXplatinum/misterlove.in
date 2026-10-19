@@ -35,7 +35,7 @@ function TopicCard({ piece, i }) {
 
           <span className="topic__meta">
             <span>
-              <b>{isInProgress(piece) ? `${livePartsOf(piece)} of ${piece.parts}` : piece.parts}</b> parts
+              <b>{isInProgress(piece) ? `${livePartsOf(piece)} of ${piece.parts}` : piece.parts}</b> {piece.unit === 'volume' ? 'volumes' : 'parts'}
             </span>
             <span><b>{piece.words.toLocaleString('en-IN')}</b> words</span>
             <span><b>~{Math.round((piece.minutes / 60) * 10) / 10}</b> hrs</span>
