@@ -21,6 +21,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, unlink
 import { basename, dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { shapeHindiOg } from './shape-hindi-og.mjs';
+import { punjabiMirageCard } from './punjabi-mirage-art.mjs';
 import {
   pieces,
   writingMeta,
@@ -647,7 +648,7 @@ for (const piece of pieces) {
     const translatedSeriesFile = `${OUT}/${edition.ogImage ?? `${translatedSlug}.png`}`;
 
     r = render(
-      piece.slug === 'atheist-vs-believer' ? atheistBelieverCard(language) : piece.slug === 'why-i-dont-believe' ? sacredMirageCard(language) : card({
+      language === 'pa' && piece.slug === 'why-i-dont-believe' ? punjabiMirageCard(edition) : piece.slug === 'atheist-vs-believer' ? atheistBelieverCard(language) : piece.slug === 'why-i-dont-believe' ? sacredMirageCard(language) : card({
         kicker: edition.kicker,
         title: edition.title,
         sub: edition.subtitle,
@@ -668,7 +669,7 @@ for (const piece of pieces) {
     for (const translatedPart of translatedParts) {
       const file = `${OUT}/${translatedSlug}-part-${translatedPart.n}.png`;
       r = render(
-        piece.slug === 'atheist-vs-believer' ? atheistBelieverCard(language, translatedPart.n) : card({
+        language === 'pa' && piece.slug === 'why-i-dont-believe' ? punjabiMirageCard(edition, translatedPart) : piece.slug === 'atheist-vs-believer' ? atheistBelieverCard(language, translatedPart.n) : card({
           kicker: `भाग ${String(translatedPart.n).padStart(2, '0')} / ${edition.parts} · ${translatedPart.label}`,
           title: translatedPart.title,
           sub: `${edition.title} — ${edition.subtitle}`,

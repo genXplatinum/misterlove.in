@@ -4,7 +4,7 @@ export function pageSurfaceForPath(path) {
   const pathname = path.replace(/\/$/, '');
   if (pathname === '/observatory') return 'page-observatory';
   if (pathname === '/press' || pathname.startsWith('/press/')) return 'page-press';
-  if (/^\/(?:hi\/)?(?:writing|books)\/[^/]+\/[^/]+$/.test(pathname)) return 'page-reader';
+  if (/^\/(?:(?:hi|pa)\/)?(?:writing|books)\/[^/]+\/[^/]+$/.test(pathname)) return 'page-reader';
   return '';
 }
 

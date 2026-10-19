@@ -8,6 +8,7 @@ import { atheistBelieverMeta } from './writing/atheist-vs-believer-meta.js';
    ============================================================ */
 
 import { hindiBeliefMeta } from './writing/why-i-dont-believe-hi-meta.js';
+import { punjabiBeliefMeta } from './writing/why-i-dont-believe-pa-meta.js';
 import { hindiReportMeta } from './writing/india-before-and-after-2014-hi-meta.js';
 import { hindiWomenMeta } from './writing/rules-about-women-hi-meta.js';
 
@@ -234,7 +235,8 @@ export const pieces = [
       }
     ],
     "translations": {
-      "hi": hindiBeliefMeta
+      "hi": hindiBeliefMeta,
+      "pa": punjabiBeliefMeta
     },
     "ogImage": "why-i-dont-believe-sacred-mirage.png",
     load: () => import('./writing/why-i-dont-believe.js'),
@@ -1130,7 +1132,7 @@ export const getPieceForLanguage = (slug, language = 'en') => {
 
 /** Canonical client-side path for either a topic or one numbered part. */
 export const writingPathOf = (piece, part) => {
-  const prefix = piece?.language === 'hi' ? '/hi' : '';
+  const prefix = piece?.language && piece.language !== 'en' ? `/${piece.language}` : '';
   const base = `${prefix}/writing/${piece.slug}`;
   return part ? `${base}/part-${part}` : base;
 };
@@ -1142,6 +1144,30 @@ export const writingPathOf = (piece, part) => {
  * cards — counts these, never the planned total.
  */
 export const livePartsOf = (p) => p.live ?? p.parts;
+
+/** Offer a part only in languages in which that part is actually published. */
+export const writingEditionsOf = (piece, part) => {
+  const original = getPiece(piece?.slug);
+  if (!original) return [];
+  return ['en', ...Object.keys(original.translations ?? {})]
+    .map((language) => getPieceForLanguage(original.slug, language))
+    .filter((edition) => livePartsOf(edition) > 0 && (!part || part <= livePartsOf(edition)));
+};
+
+export const writingLanguageFromPath = (path) => path.match(/^\/(hi|pa)\//)?.[1] ?? 'en';
+export const writingLanguageName = (language) => ({ en: 'English', hi: 'हिन्दी', pa: 'ਪੰਜਾਬੀ' }[language] ?? language);
+
+/** The same translation relationships are used by React and the static pages. */
+export const writingTranslationMeta = (piece, part, type = 'Article') => {
+  const original = getPieceForLanguage(piece.slug, 'en');
+  if (piece.language !== 'en') return {
+    translationOfWork: { '@type': type, inLanguage: 'en', url: `https://misterlove.in${writingPathOf(original, part)}/` },
+  };
+  const translations = writingEditionsOf(piece, part).filter((edition) => edition.language !== 'en');
+  return translations.length ? { workTranslation: translations.map((edition) => ({
+    '@type': type, inLanguage: edition.language, url: `https://misterlove.in${writingPathOf(edition, part)}/`,
+  })) } : {};
+};
 
 /** Whether a piece is still being written. */
 export const isInProgress = (p) => livePartsOf(p) < p.parts;

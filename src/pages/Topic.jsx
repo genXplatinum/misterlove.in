@@ -6,6 +6,8 @@ import Magnetic from '../components/Magnetic';
 import CoverPlate from '../components/CoverPlate';
 import useRoom from '../components/PieceRoom';
 import ChapterRun from '../components/ChapterRun';
+import WritingLanguageSwitch from '../components/WritingLanguageSwitch';
+import { clearWritingSchema } from '../components/writingSchema';
 import {
   getPiece,
   getPieceForLanguage,
@@ -14,6 +16,9 @@ import {
   isInProgress,
   pdfsOf,
   writingPathOf,
+  writingEditionsOf,
+  writingLanguageFromPath,
+  writingTranslationMeta,
 } from '../data/writing';
 import { profile } from '../data/site';
 import { withVolumeCopy } from '../data/writingUnits.js';
@@ -42,6 +47,17 @@ const COPY = {
     switchLabel: 'Reading language',
     english: 'English',
     hindi: 'हिन्दी',
+  },
+  pa: {
+    writing: 'ਲਿਖਤਾਂ', breadcrumb: 'ਸਫ਼ੇ ਦਾ ਰਸਤਾ',
+    startAria: (title) => `${title} ਪੜ੍ਹਨਾ ਸ਼ੁਰੂ ਕਰੋ`,
+    parts: 'ਭਾਗ', words: 'ਸ਼ਬਦ', read: 'ਪੜ੍ਹਨ ਦਾ ਸਮਾਂ', published: 'ਪ੍ਰਕਾਸ਼ਿਤ', hours: 'ਘੰਟੇ',
+    start: 'ਪੜ੍ਹਨਾ ਸ਼ੁਰੂ ਕਰੋ / ਭਾਗ 01', pdf: (label, size) => `${label ?? 'PDF'} · ${size}`,
+    contents: 'ਵਿਸ਼ਾ ਸੂਚੀ', contentsSummary: (piece, live, inProgress) => (
+      inProgress ? `${piece.parts} ਭਾਗਾਂ ਵਿੱਚੋਂ ${live} ਪੰਜਾਬੀ ਵਿੱਚ ਉਪਲਬਧ` : `${piece.parts} ਭਾਗ, ਲੜੀਵਾਰ`
+    ),
+    loadFail: 'ਵਿਸ਼ਾ ਸੂਚੀ ਨਹੀਂ ਖੁੱਲ੍ਹ ਸਕੀ। ਸਫ਼ਾ ਦੁਬਾਰਾ ਖੋਲ੍ਹੋ।', minutes: 'ਮਿੰਟ',
+    preparing: 'ਅਜੇ ਤਿਆਰ ਨਹੀਂ', switchLabel: 'ਪੜ੍ਹਨ ਦੀ ਭਾਸ਼ਾ',
   },
   hi: {
     writing: 'लेखन',
@@ -81,7 +97,9 @@ function useTopicMeta(piece, original) {
       : `${imageSlug}.png`;
     const image = `https://misterlove.in/og/${imageFile}`;
     const imageType = imageFile.endsWith('.jpg') ? 'image/jpeg' : 'image/png';
-    const imageAlt = language === 'hi'
+    const imageAlt = language === 'pa'
+      ? `${piece.title}: ${piece.subtitle}। ਲਵਪ੍ਰੀਤ ਸਿੰਘ ਦੀ ਪੜਤਾਲ ਦਾ ਪੰਜਾਬੀ ਸੰਸਕਰਣ।`
+      : language === 'hi'
       ? `${piece.title} — ${piece.subtitle}। ${profile.name} की ${piece.parts} ${piece.unit === 'volume' ? 'पुस्तकों' : 'भागों'} वाली शोध श्रृंखला।`
       : `${piece.title} — ${piece.subtitle}. ${piece.parts}-${piece.unit === 'volume' ? 'volume' : 'part'} research series by ${profile.name}.`;
     document.title = `${piece.title} — ${piece.subtitle} | ${profile.name}`;
@@ -110,7 +128,7 @@ function useTopicMeta(piece, original) {
     document.head
       .querySelectorAll('link[rel="alternate"][hreflang]')
       .forEach((link) => link.remove());
-    document.head.querySelector('meta[property="og:locale:alternate"]')?.remove();
+    document.head.querySelectorAll('meta[property="og:locale:alternate"]').forEach((meta) => meta.remove());
 
     const restores = [
       set('link[rel="canonical"]', 'link', { rel: 'canonical', href: url }),
@@ -131,47 +149,58 @@ function useTopicMeta(piece, original) {
       set('meta[name="twitter:image:alt"]', 'meta', { name: 'twitter:image:alt', content: imageAlt }),
     ];
 
-    if (original?.translations?.hi) {
-      restores.push(
-        set('meta[property="og:locale:alternate"]', 'meta', {
-          property: 'og:locale:alternate',
-          content: language === 'hi' ? 'en_IN' : 'hi_IN',
-        }),
-        set('link[rel="alternate"][hreflang="en"]', 'link', {
-          rel: 'alternate',
-          hreflang: 'en',
-          href: `https://misterlove.in/writing/${piece.slug}/`,
-        }),
-        set('link[rel="alternate"][hreflang="hi"]', 'link', {
-          rel: 'alternate',
-          hreflang: 'hi',
-          href: `https://misterlove.in/hi/writing/${piece.slug}/`,
-        }),
-        set('link[rel="alternate"][hreflang="x-default"]', 'link', {
-          rel: 'alternate',
-          hreflang: 'x-default',
-          href: `https://misterlove.in/writing/${piece.slug}/`,
-        })
-      );
+    const editions = writingEditionsOf(original);
+    if (editions.length > 1) {
+      for (const edition of editions) {
+        restores.push(set(`link[rel="alternate"][hreflang="${edition.language}"]`, 'link', {
+          rel: 'alternate', hreflang: edition.language, href: `https://misterlove.in${writingPathOf(edition)}/`,
+        }));
+        if (edition.language !== language) restores.push(set(`meta[property="og:locale:alternate"][content="${edition.locale}"]`, 'meta', {
+          property: 'og:locale:alternate', content: edition.locale,
+        }));
+      }
+      restores.push(set('link[rel="alternate"][hreflang="x-default"]', 'link', {
+        rel: 'alternate', hreflang: 'x-default', href: `https://misterlove.in/writing/${piece.slug}/`,
+      }));
     }
 
+    clearWritingSchema();
+    const ld = document.createElement('script');
+    ld.type = 'application/ld+json';
+    ld.textContent = JSON.stringify([{
+      '@context': 'https://schema.org', '@type': 'CreativeWorkSeries',
+      name: `${piece.title} — ${piece.subtitle}`, url,
+      description: piece.standfirst, abstract: piece.summary,
+      datePublished: piece.published, inLanguage: language,
+      numberOfItems: piece.parts,
+      author: { '@type': 'Person', '@id': 'https://misterlove.in/#lovepreet-singh', name: profile.name },
+      ...writingTranslationMeta(piece, undefined, 'CreativeWorkSeries'),
+    }, {
+      '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: COPY[language].writing, item: 'https://misterlove.in/writing/' },
+        { '@type': 'ListItem', position: 2, name: piece.title, item: url },
+      ],
+    }]);
+    document.head.appendChild(ld);
     window.scrollTo(0, 0);
 
     return () => {
       document.title = prevTitle;
       document.documentElement.lang = prevLang;
       restores.forEach((restore) => restore());
+      ld.remove();
     };
   }, [piece, original]);
 }
 
-/** One research topic, including its complete English or Hindi contents. */
+/** A research topic and the parts available in the selected language. */
 export default function Topic() {
   const { immersive, white } = useExperience();
   const showOpening = immersive || white;
   const { slug } = useParams();
   const { pathname } = useLocation();
-  const language = pathname.startsWith('/hi/') ? 'hi' : 'en';
+  const language = writingLanguageFromPath(pathname);
   const original = getPiece(slug);
   const piece = useMemo(() => getPieceForLanguage(slug, language), [slug, language]);
   const copy = withVolumeCopy(piece, COPY[language]);
@@ -205,12 +234,11 @@ export default function Topic() {
   // Whether any part can actually be opened in the reader yet.
   const readable = livePartsOf(piece) > 0;
   const contents = contentsOf(piece, parts);
-  const hasHindi = Boolean(original.translations?.hi);
   const pdfs = pdfsOf(piece);
 
   return (
     <div
-      className={`topicpage ${language === 'hi' ? 'topicpage--hi' : ''}`}
+      className={`topicpage ${language !== 'en' ? `topicpage--${language}` : ''}`}
       lang={language}
     >
       <div className="container">
@@ -221,24 +249,7 @@ export default function Topic() {
             <span className="article__crumb is-current">{piece.title}</span>
           </nav>
 
-          {hasHindi && (
-            <nav className="language-switch" aria-label={copy.switchLabel}>
-              <Link
-                to={`/writing/${piece.slug}`}
-                className={language === 'en' ? 'is-active' : ''}
-                aria-current={language === 'en' ? 'page' : undefined}
-              >
-                {copy.english}
-              </Link>
-              <Link
-                to={`/hi/writing/${piece.slug}`}
-                className={language === 'hi' ? 'is-active' : ''}
-                aria-current={language === 'hi' ? 'page' : undefined}
-              >
-                {copy.hindi}
-              </Link>
-            </nav>
-          )}
+          <WritingLanguageSwitch piece={piece} label={copy.switchLabel} />
         </div>
 
         {/* A series can be announced before any part is readable on the web —
@@ -268,7 +279,7 @@ export default function Topic() {
 
         <div className="topicpage__body">
           <Reveal className="topicpage__intro">
-            {showOpening ? <h2 className="work-about-title">{language === 'hi' ? 'इस अध्ययन के बारे में' : 'Inside the investigation'}</h2> : <><span className="mono topicpage__topic">{piece.topic}</span><p className="topicpage__stand">{piece.standfirst}</p></>}
+            {showOpening ? <h2 className="work-about-title">{language === 'pa' ? 'ਇਸ ਪੜਤਾਲ ਬਾਰੇ' : language === 'hi' ? 'इस अध्ययन के बारे में' : 'Inside the investigation'}</h2> : <><span className="mono topicpage__topic">{piece.topic}</span><p className="topicpage__stand">{piece.standfirst}</p></>}
             <p className="topicpage__summary">{piece.summary}</p>
 
             <dl className="feature__stats">
