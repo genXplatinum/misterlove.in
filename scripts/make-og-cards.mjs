@@ -784,9 +784,20 @@ if (!hindiOnly) {
 for (const { file, data } of renderedCards) writeFileSync(file, data);
 
 let removed = 0;
+// Older published URLs remain valid even when current routes use newer artwork.
+const legacyPublicCards = new Set([
+  'why-i-dont-believe.png', 'why-i-dont-believe-hi.png', 'press.jpg',
+  'press-bellabeat-page-captures.jpg', 'press-biographical-page-capture.jpg',
+  'press-company-directory-captures.jpg', 'press-crunchbase-founder-profile.jpg',
+  'press-dwi-media-youthful-visionary.jpg', 'press-early-founder-profile-excerpt.jpg',
+  'press-economic-times-cybersecurity-commentary.jpg', 'press-ein-presswire-five-rivers-lovelace.jpg',
+  'press-growth-business-founder-profile.jpg', 'press-kaggle-thomas-bertotto-case-study.jpg',
+  'press-researchgate-profile-capture.jpg', 'press-wellness-technology-case-study.jpg',
+  'press-yourstory-five-river-company-profile.jpg', 'press-zumutor-funding-article-clipping.jpg',
+]);
 if (!hindiOnly) {
   for (const name of readdirSync(OUT)) {
-    if (/\.(?:png|jpe?g)$/i.test(name) && !expectedFiles.has(name)) {
+    if (/\.(?:png|jpe?g)$/i.test(name) && !expectedFiles.has(name) && !legacyPublicCards.has(name)) {
       unlinkSync(resolve(OUT, name));
       removed += 1;
     }
