@@ -26,7 +26,7 @@ export default function Footer() {
           </a>
         </div>
 
-        <div className="footer__editions"><span>One archive. Two ways to explore.</span><EditionSwitch /></div>
+        <div className="footer__editions"><span>One archive. Three ways to explore.</span><EditionSwitch /><a className="footer__white-link" href={`${import.meta.env.BASE_URL}white/`}>Explore the white edition <span aria-hidden="true">↗</span></a></div>
         <div className="footer__rule" />
 
         <div className="footer__grid">

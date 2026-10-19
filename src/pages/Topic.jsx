@@ -167,7 +167,8 @@ function useTopicMeta(piece, original) {
 
 /** One research topic, including its complete English or Hindi contents. */
 export default function Topic() {
-  const { immersive } = useExperience();
+  const { immersive, white } = useExperience();
+  const showOpening = immersive || white;
   const { slug } = useParams();
   const { pathname } = useLocation();
   const language = pathname.startsWith('/hi/') ? 'hi' : 'en';
@@ -243,7 +244,7 @@ export default function Topic() {
         {/* A series can be announced before any part is readable on the web —
             the book exists, the PDF is here, the reader is not. Then the cover
             is not a link, because there is nothing yet to link it to. */}
-        <header className={immersive ? "work-opening" : undefined}>
+        <header className={showOpening ? "work-opening" : undefined}>
         <div className="topicpage__cover">
           {readable ? (
             <Link to={read} className="topicpage__coverlink" aria-label={copy.startAria(piece.title)}>
@@ -253,7 +254,7 @@ export default function Topic() {
             <CoverPlate piece={piece} className="cover--full" />
           )}
         </div>
-        {immersive && <div className="work-opening__copy">
+        {showOpening && <div className="work-opening__copy">
           <p className="work-opening__subject">{piece.topic}</p>
           <h1>{piece.title}</h1>
           <p className="work-opening__subtitle">{piece.subtitle}</p>
@@ -267,7 +268,7 @@ export default function Topic() {
 
         <div className="topicpage__body">
           <Reveal className="topicpage__intro">
-            {immersive ? <h2 className="work-about-title">{language === 'hi' ? 'इस अध्ययन के बारे में' : 'Inside the investigation'}</h2> : <><span className="mono topicpage__topic">{piece.topic}</span><p className="topicpage__stand">{piece.standfirst}</p></>}
+            {showOpening ? <h2 className="work-about-title">{language === 'hi' ? 'इस अध्ययन के बारे में' : 'Inside the investigation'}</h2> : <><span className="mono topicpage__topic">{piece.topic}</span><p className="topicpage__stand">{piece.standfirst}</p></>}
             <p className="topicpage__summary">{piece.summary}</p>
 
             <dl className="feature__stats">
