@@ -9,6 +9,9 @@
 }
 
 .footer__inner { position: relative; }
+.footer__white-link { display: inline-flex; align-items: center; gap: .65rem; min-height: 44px; padding: .65rem 1rem; border: 1px solid var(--rule-dark); border-radius: 4px; color: var(--ink); font: 600 .85rem/1.3 var(--font-ui); }
+.footer__white-link:hover { background: var(--paper); }
+.footer__white-link:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
 .footer__top { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: clamp(1.5rem, 4vw, 4rem); }
 .footer__brand { display: inline-flex; }
 .footer__top > p { max-width: 46ch; justify-self: center; font: italic 400 1.05rem/1.55 var(--font-reading); color: var(--ink-soft); text-align: center; }

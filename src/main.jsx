@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import './index.css';
@@ -17,9 +17,15 @@ import { applyTheme, readStoredTheme, ThemeProvider } from './components/ThemePr
 // Router gets e.g. "/lovepreet-singh" (or undefined → root) as its basename, which
 // keeps routing correct when served from a GitHub Pages subfolder.
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || undefined;
+const whitePath = `${basename || ''}/white`;
+const isWhite = window.location.pathname === whitePath || window.location.pathname.startsWith(`${whitePath}/`);
+const WhiteApp = lazy(() => import('./white/WhiteApp.jsx'));
 const initialTheme = readStoredTheme();
 const initialExperience = readExperience();
-applyExperience(initialExperience);
+if (isWhite) {
+  document.documentElement.classList.add('white-edition');
+  document.documentElement.dataset.experience = 'classic';
+} else applyExperience(initialExperience);
 applyTheme(initialTheme);
 // Honor a returning visitor's preferred homepage once, before the router starts.
 // Later Back/Forward navigation remains faithful to the actual home URLs.
@@ -30,7 +36,7 @@ if (window.location.pathname.replace(/\/$/, '') === (basename || '') && initialE
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider initialTheme={initialTheme}>
-      <BrowserRouter basename={basename}>
+      <BrowserRouter basename={isWhite ? whitePath : basename}>
         <ErrorBoundary
           fallback={
             <div style={{ padding: '3rem', fontFamily: 'Source Sans 3, sans-serif', color: 'var(--ink)', background: 'var(--canvas)', minHeight: '100vh' }}>
@@ -38,7 +44,9 @@ createRoot(document.getElementById('root')).render(
             </div>
           }
         >
-          <ExperienceProvider initialExperience={initialExperience}><App /></ExperienceProvider>
+          {isWhite
+            ? <Suspense fallback={<div style={{ minHeight: '100vh', background: '#fff', color: '#121212', padding: '3rem', fontFamily: 'sans-serif' }} role="status">Opening the archive…</div>}><WhiteApp /></Suspense>
+            : <ExperienceProvider initialExperience={initialExperience}><App /></ExperienceProvider>}
         </ErrorBoundary>
       </BrowserRouter>
     </ThemeProvider>

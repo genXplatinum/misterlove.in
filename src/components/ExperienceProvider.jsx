@@ -40,3 +40,12 @@ export function useExperience() {
   if (!context) throw new Error('useExperience requires ExperienceProvider');
   return context;
 }
+
+// The separate White router shares the readers, but never writes the visitor's
+// Classic/Immersive preference. Entering it leaves the other editions intact.
+const readingExperience = {
+  experience: 'white', immersive: false, white: true, homePath: '/', chooseExperience: () => {},
+};
+export function PlainReadingProvider({ children }) {
+  return <ExperienceContext.Provider value={readingExperience}>{children}</ExperienceContext.Provider>;
+}
