@@ -1,6 +1,6 @@
 /** Completed book volumes use the existing reader without calling them serial parts. */
 export const unitNameOf = (piece, language = piece?.language ?? 'en') => (
-  piece?.unit === 'volume' ? (language === 'hi' ? 'पुस्तक' : 'Volume') : (language === 'hi' ? 'भाग' : 'Part')
+  piece?.unit === 'volume' ? (language === 'hi' ? 'पुस्तक' : 'Volume') : ({ hi: 'भाग', pa: 'ਭਾਗ' }[language] ?? 'Part')
 );
 
 export function withVolumeCopy(piece, copy) {

@@ -69,7 +69,7 @@ try {
   function walk(dir) {
     return readdirSync(dir, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? walk(join(dir, entry.name)) : entry.name === 'index.html' ? [join(dir, entry.name)] : []);
   }
-  const originals = ['writing', 'books', 'press', 'hi'].flatMap(dir => existsSync(`dist/${dir}`) ? walk(`dist/${dir}`) : []);
+  const originals = ['writing', 'books', 'press', 'hi', 'pa'].flatMap(dir => existsSync(`dist/${dir}`) ? walk(`dist/${dir}`) : []);
   const manuscripts = [];
   for (const file of originals) {
     const path = '/' + file.replaceAll('\\', '/').replace(/^dist\//, '').replace(/index\.html$/, '');
@@ -86,7 +86,7 @@ try {
       generated.push({ path: `/white${path}`, redirect: whiteTarget });
       continue;
     }
-    const whiteMain = originalMain.replace(/href="\/(?!\/)((?:hi\/)?(?:writing|books|press)(?:\/|"))/g, 'href="/white/$1');
+    const whiteMain = originalMain.replace(/href="\/(?!\/)((?:(?:hi|pa)\/)?(?:writing|books|press)(?:\/|"))/g, 'href="/white/$1');
     shell(html, path, frameBefore + whiteMain + frameAfter);
     manuscripts.push({ path, original_main_sha256: hash(originalMain), white_main_sha256_after_normalizing_links: hash(whiteMain.replaceAll('href="/white/', 'href="/')) });
   }

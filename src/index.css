@@ -3,7 +3,16 @@
    Warm paper, printer's ink and restrained book-cloth colour.
    ============================================================ */
 
+@font-face {
+  font-family: 'Noto Serif Gurmukhi';
+  src: url('/fonts/NotoSerifGurmukhi-Variable.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
 :root {
+  --font-pa: 'Noto Serif Gurmukhi', 'Nirmala UI', serif;
   color-scheme: light;
 
   --canvas: #f3efe6;
@@ -335,6 +344,51 @@ main { min-width: 0; flex: 1 0 auto; }
 .language-switch a { min-height: 2.75rem; display: inline-flex; align-items: center; padding: 0.62rem 0.88rem; color: var(--ink-soft); }
 .language-switch a:hover { color: var(--oxblood); }
 .language-switch a.is-active { color: var(--accent-ink); background: var(--oxblood); }
+.language-switch a[lang="pa"] { font-family: var(--font-pa); letter-spacing: 0; }
+.language-switch a[lang="hi"] { font-family: var(--font-hi-sans); letter-spacing: 0; }
+
+.article--pa,
+.topicpage--pa {
+  --font-display: var(--font-pa);
+  --font-body: var(--font-pa);
+  --font-mono: var(--font-pa);
+  --font-read: var(--font-pa);
+  --font-reading: var(--font-pa);
+}
+
+.article--pa .mono,
+.topicpage--pa .mono,
+.article--pa .article__crumbs,
+.topicpage--pa .article__crumbs {
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.6;
+}
+
+.article--pa .article__title,
+.article--pa .prose .w-h2,
+.article--pa .prose .w-h3,
+.article--pa .prose .w-pullquote,
+.topicpage--pa .cover__title,
+.topicpage--pa .cover__subtitle,
+.topicpage--pa .cover__sub,
+.topicpage--pa .topicpage__stand,
+.topicpage--pa .partrow__title {
+  letter-spacing: 0;
+  line-height: 1.45;
+}
+.article--pa .article__title { max-width: 22ch; overflow-wrap: normal; }
+.article--pa .article__standfirst,
+.topicpage--pa .topicpage__summary,
+.topicpage--pa .partrow__lead { line-height: 1.8; letter-spacing: 0; }
+.article--pa .prose { line-height: 1.9; }
+.article--pa .article__standfirst,
+.article--pa .prose *,
+.topicpage--pa .topicpage__summary,
+.topicpage--pa .partrow__lead {
+  hyphens: none;
+  word-break: normal;
+}
 
 .surface-noise {
   position: fixed;

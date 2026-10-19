@@ -21,6 +21,9 @@ import {
   pdfsOf,
   publishedOf,
   writingPathOf,
+  writingEditionsOf,
+  writingLanguageName,
+  writingTranslationMeta,
 } from '../src/data/writing.js';
 import {
   books,
@@ -149,12 +152,11 @@ if (ogErrors.length) {
 }
 
 const alternatesFor = (piece, part) => {
-  if (!piece.translations?.hi) return [];
-  const suffix = part ? `/part-${part}/` : '/';
+  const available = writingEditionsOf(piece, part);
+  if (available.length < 2) return [];
   return [
-    { language: 'en', href: `${SITE}/writing/${piece.slug}${suffix}` },
-    { language: 'hi', href: `${SITE}/hi/writing/${piece.slug}${suffix}` },
-    { language: 'x-default', href: `${SITE}/writing/${piece.slug}${suffix}` },
+    ...available.map((edition) => ({ language: edition.language, href: `${SITE}${writingPathOf(edition, part)}/` })),
+    { language: 'x-default', href: `${SITE}/writing/${piece.slug}${part ? `/part-${part}` : ''}/` },
   ];
 };
 
@@ -382,7 +384,13 @@ const crumbs = (trail, label = 'Breadcrumb') =>
     )
     .join('')}</nav>`;
 
-const staticCopy = (piece) => withVolumeCopy(piece, (piece.language === 'hi' ? {
+const staticCopy = (piece) => withVolumeCopy(piece, (piece.language === 'pa' ? {
+  writing: 'ਲਿਖਤਾਂ', part: 'ਭਾਗ', of: '/', sources: 'ਸਰੋਤ ਅਤੇ ਅੱਗੇ ਦੀ ਪੜ੍ਹਾਈ',
+  allParts: 'ਸਾਰੇ ਭਾਗ', back: 'ਸਾਰੀਆਂ ਲਿਖਤਾਂ ਵੱਲ ਵਾਪਸ ਜਾਓ →', parts: 'ਭਾਗ',
+  published: 'ਪ੍ਰਕਾਸ਼ਿਤ', words: 'ਸ਼ਬਦ', contents: 'ਵਿਸ਼ਾ ਸੂਚੀ', minutes: 'ਮਿੰਟ',
+  preparing: 'ਅਜੇ ਤਿਆਰ ਨਹੀਂ', download: (pdf) => `${pdf.label} ਡਾਊਨਲੋਡ ਕਰੋ · ${pdf.size}`,
+  by: 'ਲੇਖਕ', readFull: 'ਪੂਰਾ ਭਾਗ ਪੜ੍ਹੋ', inThisPart: 'ਇਸ ਭਾਗ ਵਿੱਚ', partsAria: 'ਲੜੀ ਦੇ ਭਾਗ',
+} : piece.language === 'hi' ? {
   writing: 'लेखन',
   part: 'भाग',
   of: '/',
@@ -427,12 +435,12 @@ const staticCopy = (piece) => withVolumeCopy(piece, (piece.language === 'hi' ? {
 }));
 
 function writingLanguageSwitch(piece, part) {
-  if (!piece.translations?.hi) return '';
-  const suffix = part ? `/part-${part.n}/` : '/';
-  const hi = piece.language === 'hi';
-  return `<nav class="language-switch" aria-label="${hi ? 'पढ़ने की भाषा' : 'Reading language'}">`
-    + `<a href="/writing/${piece.slug}${suffix}" lang="en"${hi ? '' : ' class="is-active" aria-current="page"'}>English</a>`
-    + `<a href="/hi/writing/${piece.slug}${suffix}" lang="hi"${hi ? ' class="is-active" aria-current="page"' : ''}>हिन्दी</a></nav>`;
+  const available = writingEditionsOf(piece, part?.n);
+  if (available.length < 2) return '';
+  const label = { en: 'Reading language', hi: 'पढ़ने की भाषा', pa: 'ਪੜ੍ਹਨ ਦੀ ਭਾਸ਼ਾ' }[piece.language];
+  return `<nav class="language-switch" aria-label="${label}">`
+    + available.map((edition) => `<a href="${writingPathOf(edition, part?.n)}/" lang="${edition.language}" hreflang="${edition.language}"${piece.language === edition.language ? ' class="is-active" aria-current="page"' : ''}>${writingLanguageName(edition.language)}</a>`).join('')
+    + '</nav>';
 }
 
 function articleBody(piece, part, live) {
@@ -442,16 +450,16 @@ function articleBody(piece, part, live) {
   const download = pdf
     ? `<p><a class="btn btn--ghost" href="/${pdf.file}" download>${esc(copy.download(pdf))}</a></p>`
     : '';
-  const toc = piece.translations?.hi && part.toc?.length
+  const toc = writingEditionsOf(piece).length > 1 && part.toc?.length
     ? `<nav aria-label="${copy.inThisPart}"><h2>${copy.inThisPart}</h2><ol>${part.toc.map((chapter) => `<li><a href="#${esc(chapter.id)}">${esc(chapter.text)}</a></li>`).join('')}</ol></nav>`
     : '';
-  return `<main id="main"><article class="article${piece.language === 'hi' ? ' article--hi' : ''}" lang="${piece.language}">
+  return `<main id="main"><article class="article${piece.language !== 'en' ? ` article--${piece.language}` : ''}" lang="${piece.language}">
   <header class="article__head"><div class="container">
     ${crumbs([
       { name: copy.writing, href: '/writing/' },
       { name: piece.title, href: `${base}/` },
       { name: `${copy.part} ${part.n}` },
-    ], piece.language === 'hi' ? 'पृष्ठ क्रम' : 'Breadcrumb')}
+    ], piece.language === 'pa' ? 'ਸਫ਼ੇ ਦਾ ਰਸਤਾ' : piece.language === 'hi' ? 'पृष्ठ क्रम' : 'Breadcrumb')}
     ${writingLanguageSwitch(piece, part)}
     <div class="article__head-grid"><div class="article__head-main">
       <span class="article__partno mono">${copy.part} ${String(part.n).padStart(2, '0')} <span class="dim">${copy.of} ${piece.parts}</span><span class="article__partlabel">${esc(part.label)}</span></span>
@@ -489,10 +497,10 @@ function topicBody(piece, parts) {
 
   const row = (p) => `<span class="partrow__n mono">${String(p.n).padStart(2, '0')}</span><span class="partrow__body"><span class="partrow__label mono">${esc(p.label)}</span><span class="partrow__title">${esc(p.title)}</span><span class="partrow__lead">${esc(p.lead)}</span></span><span class="partrow__meta mono">${p.live ? `${p.minutes} ${copy.minutes}` : copy.preparing}</span>`;
 
-  return `<main id="main"><div class="topicpage${piece.language === 'hi' ? ' topicpage--hi' : ''}" lang="${piece.language}"><div class="container">
+  return `<main id="main"><div class="topicpage${piece.language !== 'en' ? ` topicpage--${piece.language}` : ''}" lang="${piece.language}"><div class="container">
   ${crumbs(
     [{ name: copy.writing, href: '/writing/' }, { name: piece.title }],
-    piece.language === 'hi' ? 'पृष्ठ क्रम' : 'Breadcrumb'
+    piece.language === 'pa' ? 'ਸਫ਼ੇ ਦਾ ਰਸਤਾ' : piece.language === 'hi' ? 'पृष्ठ क्रम' : 'Breadcrumb'
   )}
   ${writingLanguageSwitch(piece)}
   <h1 class="topic__title">${esc(piece.title)} — ${esc(piece.subtitle)}</h1>
@@ -793,8 +801,9 @@ function shell({
   for (const alternate of alternates) {
     head.push(`  <link rel="alternate" hreflang="${alternate.language}" href="${alternate.href}" />`);
   }
-  if (alternates.length) {
-    head.push(`  <meta property="og:locale:alternate" content="${locale === 'hi_IN' ? 'en_IN' : 'hi_IN'}" />`);
+  for (const alternate of alternates.filter((entry) => entry.language !== 'x-default')) {
+    const alternateLocale = `${alternate.language}_IN`;
+    if (alternateLocale !== locale) head.push(`  <meta property="og:locale:alternate" content="${alternateLocale}" />`);
   }
   head.push('  <link rel="alternate" type="application/rss+xml" title="Writing — Lovepreet Singh" href="https://misterlove.in/feed.xml" />');
   for (const c of [].concat(css ?? [])) if (c) head.push(c);
@@ -936,7 +945,9 @@ for (const { piece, parts } of editions) {
     canonical: topicUrl,
     keywords: [piece.title, ...piece.keywords, 'Lovepreet Singh'].join(', '),
     image: `${SITE}/og/${seriesImageFile(piece)}`,
-    imageAlt: piece.language === 'hi'
+    imageAlt: piece.language === 'pa'
+      ? `${piece.title}: ${piece.subtitle}। ਲਵਪ੍ਰੀਤ ਸਿੰਘ ਦੀ ਪੜਤਾਲ ਦਾ ਪੰਜਾਬੀ ਸੰਸਕਰਣ।`
+      : piece.language === 'hi'
       ? `${piece.title} — ${piece.subtitle}। Lovepreet Singh की ${piece.parts} ${piece.unit === 'volume' ? 'पुस्तकों' : 'भागों'} वाली शोध श्रृंखला।`
       : `${piece.title} — ${piece.subtitle}. ${piece.parts}-${piece.unit === 'volume' ? 'volume' : 'part'} research series by Lovepreet Singh.`,
     body: topicBody(piece, parts),
@@ -970,19 +981,7 @@ for (const { piece, parts } of editions) {
         wordCount: x.words,
         position: x.n,
       })),
-      ...(piece.language === 'hi' ? {
-        translationOfWork: {
-          '@type': 'CreativeWorkSeries',
-          inLanguage: 'en',
-          url: `${SITE}/writing/${piece.slug}/`,
-        },
-      } : piece.translations?.hi ? {
-        workTranslation: {
-          '@type': 'CreativeWorkSeries',
-          inLanguage: 'hi',
-          url: `${SITE}/hi/writing/${piece.slug}/`,
-        },
-      } : {}),
+      ...writingTranslationMeta(piece, undefined, 'CreativeWorkSeries'),
     }],
     noscript:
       `      <p><strong>${esc(piece.title)} — ${esc(piece.subtitle)}</strong></p>\n` +
@@ -1005,7 +1004,7 @@ for (const { piece, parts } of editions) {
       rootClass: roomClass(piece),
       themeColor: PIECE_GROUND[piece.room],
       path: `${topicPath}/part-${part.n}`,
-      title: piece.language === 'hi'
+      title: piece.language !== 'en'
         ? `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n}/${piece.parts} | Lovepreet Singh`
         : `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n} of ${piece.parts} | Lovepreet Singh`,
       description: part.lead || piece.standfirst,
@@ -1015,7 +1014,9 @@ for (const { piece, parts } of editions) {
         ...piece.keywords, 'Lovepreet Singh',
       ].join(', '),
       image: `${SITE}/og/${imageSlug}-part-${part.n}.png`,
-      imageAlt: piece.language === 'hi'
+      imageAlt: piece.language === 'pa'
+        ? `${piece.title}, ${piece.parts} ਵਿੱਚੋਂ ਭਾਗ ${part.n}: ${part.title}। ਲੇਖਕ: Lovepreet Singh।`
+        : piece.language === 'hi'
         ? `${piece.title}, ${piece.parts} में से ${unitNameOf(piece)} ${part.n} — ${part.title}। लेखक: Lovepreet Singh।`
         : `${piece.title}, ${unitNameOf(piece)} ${part.n} of ${piece.parts} — ${part.title}. By Lovepreet Singh.`,
       body: articleBody(piece, part, parts.length),
@@ -1063,19 +1064,7 @@ for (const { piece, parts } of editions) {
         publisher: { '@id': `${SITE}/#lovepreet-singh` },
         about: piece.topic.split(' · ').map((t) => ({ '@type': 'Thing', name: t })),
         isAccessibleForFree: true,
-        ...(piece.language === 'hi' ? {
-          translationOfWork: {
-            '@type': 'Article',
-            inLanguage: 'en',
-            url: `${SITE}/writing/${piece.slug}/part-${part.n}/`,
-          },
-        } : piece.translations?.hi ? {
-          workTranslation: {
-            '@type': 'Article',
-            inLanguage: 'hi',
-            url: `${SITE}/hi/writing/${piece.slug}/part-${part.n}/`,
-          },
-        } : {}),
+        ...writingTranslationMeta(piece, part.n, piece.unit === 'volume' ? 'Book' : 'Article'),
       }],
       noscript:
         `      <p><strong>${esc(part.title)}</strong></p>\n` +
@@ -1377,6 +1366,16 @@ for (const [from, to] of Object.entries(RETIRED)) {
 const rssDate = (d) => new Date(`${d}T00:00:00+05:30`).toUTCString();
 
 const items = [
+  ...editions.filter(({ piece }) => piece.language === 'pa').flatMap(({ piece, parts }) =>
+    parts.map((part) => `    <item xml:lang="pa">
+      <title>${esc(`${piece.title} / ਪੰਜਾਬੀ ਭਾਗ ${part.n}: ${part.title}`)}</title>
+      <link>${SITE}${writingPathOf(piece, part.n)}/</link>
+      <guid isPermaLink="true">${SITE}${writingPathOf(piece, part.n)}/</guid>
+      <pubDate>${rssDate(publishedOf(piece, part))}</pubDate>
+      <category>ਪੰਜਾਬੀ</category>
+      <description>${esc(part.lead || piece.standfirst)}</description>
+    </item>`)
+  ),
   ...loaded.flatMap(({ piece, parts }) =>
     parts.map((part) => `    <item>
       <title>${esc(`${piece.title} — ${unitNameOf(piece)} ${part.n}: ${part.title}`)}</title>

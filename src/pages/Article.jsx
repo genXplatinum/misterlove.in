@@ -5,6 +5,8 @@ import ThemeToggle from '../components/ThemeToggle';
 import WordLookup from '../components/WordLookup';
 import useRoom from '../components/PieceRoom';
 import ChapterRun from '../components/ChapterRun';
+import WritingLanguageSwitch from '../components/WritingLanguageSwitch';
+import { clearWritingSchema } from '../components/writingSchema';
 import {
   getPiece,
   getPieceForLanguage,
@@ -13,6 +15,9 @@ import {
   pdfForPart,
   publishedOf,
   writingPathOf,
+  writingEditionsOf,
+  writingLanguageFromPath,
+  writingTranslationMeta,
 } from '../data/writing';
 import { profile } from '../data/site';
 import { unitNameOf, withVolumeCopy } from '../data/writingUnits.js';
@@ -146,6 +151,23 @@ const COPY = {
     researchedBy: 'शोध और लेखन',
     edition: 'पहला संस्करण',
   },
+  pa: {
+    writing: 'ਲਿਖਤਾਂ', breadcrumb: 'ਸਫ਼ੇ ਦਾ ਰਸਤਾ', part: 'ਭਾਗ', of: '/', series: 'ਲੜੀ',
+    author: 'ਲੇਖਕ', published: 'ਪ੍ਰਕਾਸ਼ਿਤ', thisPart: 'ਇਹ ਭਾਗ', minute: 'ਮਿੰਟ', words: 'ਸ਼ਬਦ',
+    themeLabel: 'ਗੂੜ੍ਹਾ ਰੰਗ', themeAria: 'ਪੜ੍ਹਨ ਲਈ ਗੂੜ੍ਹਾ ਰੰਗ',
+    themeDarkAction: 'ਗੂੜ੍ਹੇ ਰੰਗ ਵਿੱਚ ਪੜ੍ਹੋ', themeLightAction: 'ਹਲਕੇ ਰੰਗ ਵਿੱਚ ਪੜ੍ਹੋ',
+    showContents: 'ਵਿਸ਼ਾ ਸੂਚੀ ਦਿਖਾਓ', hideContents: 'ਵਿਸ਼ਾ ਸੂਚੀ ਲੁਕਾਓ',
+    contents: 'ਵਿਸ਼ਾ ਸੂਚੀ', inThisPart: 'ਇਸ ਭਾਗ ਵਿੱਚ', allParts: (count) => `ਸਾਰੇ ${count} ਭਾਗ`,
+    loading: (n) => `ਭਾਗ ${n} ਖੁੱਲ੍ਹ ਰਿਹਾ ਹੈ…`, loadFail: 'ਇਹ ਭਾਗ ਨਹੀਂ ਖੁੱਲ੍ਹ ਸਕਿਆ।', retry: 'ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
+    begins: (n) => `ਭਾਗ ${String(n).padStart(2, '0')} ਸ਼ੁਰੂ ਹੁੰਦਾ ਹੈ`,
+    sources: (n) => `ਸਰੋਤ ਅਤੇ ਅੱਗੇ ਦੀ ਪੜ੍ਹਾਈ / ਭਾਗ ${n}`, partsAria: 'ਲੜੀ ਦੇ ਭਾਗ',
+    finished: 'ਤੁਸੀਂ ਪੂਰਾ ਪੜ੍ਹ ਲਿਆ →', backWriting: 'ਸਾਰੀਆਂ ਲਿਖਤਾਂ ਵੱਲ ਵਾਪਸ ਜਾਓ',
+    allPartsHead: 'ਸਾਰੇ ਭਾਗ', preparing: 'ਅਜੇ ਤਿਆਰ ਨਹੀਂ', allSoFar: 'ਅਜੇ ਤੱਕ ਇੰਨਾ ਹੀ →',
+    beingWritten: (n) => `ਭਾਗ ${n} ਦਾ ਪੰਜਾਬੀ ਸੰਸਕਰਣ ਅਜੇ ਤਿਆਰ ਨਹੀਂ`,
+    download: (_piece, pdf) => `${pdf.label ?? 'ਪੰਜਾਬੀ PDF'} ਡਾਊਨਲੋਡ ਕਰੋ (${pdf.size})`,
+    switchLabel: 'ਪੜ੍ਹਨ ਦੀ ਭਾਸ਼ਾ', endOfPart: (n) => `ਭਾਗ ${n} ਸਮਾਪਤ`,
+    researchedBy: 'ਖੋਜ ਅਤੇ ਲਿਖਤ', edition: 'ਪਹਿਲਾ ਸੰਸਕਰਣ',
+  },
 };
 
 function scrollToTop() {
@@ -174,7 +196,7 @@ function useRail() {
   return [open, setOpen];
 }
 
-/** Per-part metadata, including reciprocal English/Hindi alternate URLs. */
+/** Per-part metadata names only language editions that contain this part. */
 function useArticleMeta(piece, part, original) {
   useEffect(() => {
     if (!piece || !part) return undefined;
@@ -183,7 +205,7 @@ function useArticleMeta(piece, part, original) {
     const prevLang = document.documentElement.lang;
     const path = writingPathOf(piece, part.n);
     const url = `https://misterlove.in${path}/`;
-    const title = language === 'hi'
+    const title = language !== 'en'
       ? `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n}/${piece.parts} | ${profile.name}`
       : `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n} of ${piece.parts} | ${profile.name}`;
     document.title = title;
@@ -211,14 +233,16 @@ function useArticleMeta(piece, part, original) {
 
     const imageSlug = piece.ogSlug ?? piece.slug;
     const image = `https://misterlove.in/og/${imageSlug}-part-${part.n}.png`;
-    const imageAlt = language === 'hi'
+    const imageAlt = language === 'pa'
+      ? `${piece.title}, ${piece.parts} ਵਿੱਚੋਂ ਭਾਗ ${part.n}: ${part.title}। ਲੇਖਕ: ${profile.name}।`
+      : language === 'hi'
       ? `${piece.title}, ${piece.parts} में से ${unitNameOf(piece)} ${part.n} — ${part.title}। लेखक: ${profile.name}।`
       : `${piece.title}, ${unitNameOf(piece)} ${part.n} of ${piece.parts} — ${part.title}. By ${profile.name}.`;
 
     document.head
       .querySelectorAll('link[rel="alternate"][hreflang]')
       .forEach((link) => link.remove());
-    document.head.querySelector('meta[property="og:locale:alternate"]')?.remove();
+    document.head.querySelectorAll('meta[property="og:locale:alternate"]').forEach((meta) => meta.remove());
 
     const restores = [
       set('link[rel="canonical"]', 'link', { rel: 'canonical', href: url }),
@@ -239,33 +263,26 @@ function useArticleMeta(piece, part, original) {
       set('meta[name="twitter:image:alt"]', 'meta', { name: 'twitter:image:alt', content: imageAlt }),
     ];
 
-    if (original?.translations?.hi) {
-      restores.push(
-        set('meta[property="og:locale:alternate"]', 'meta', {
-          property: 'og:locale:alternate',
-          content: language === 'hi' ? 'en_IN' : 'hi_IN',
-        }),
-        set('link[rel="alternate"][hreflang="en"]', 'link', {
-          rel: 'alternate',
-          hreflang: 'en',
-          href: `https://misterlove.in/writing/${piece.slug}/part-${part.n}/`,
-        }),
-        set('link[rel="alternate"][hreflang="hi"]', 'link', {
-          rel: 'alternate',
-          hreflang: 'hi',
-          href: `https://misterlove.in/hi/writing/${piece.slug}/part-${part.n}/`,
-        }),
-        set('link[rel="alternate"][hreflang="x-default"]', 'link', {
-          rel: 'alternate',
-          hreflang: 'x-default',
-          href: `https://misterlove.in/writing/${piece.slug}/part-${part.n}/`,
-        })
-      );
+    const editions = writingEditionsOf(original, part.n);
+    if (editions.length > 1) {
+      for (const edition of editions) {
+        restores.push(set(`link[rel="alternate"][hreflang="${edition.language}"]`, 'link', {
+          rel: 'alternate', hreflang: edition.language,
+          href: `https://misterlove.in${writingPathOf(edition, part.n)}/`,
+        }));
+        if (edition.language !== language) restores.push(set(`meta[property="og:locale:alternate"][content="${edition.locale}"]`, 'meta', {
+          property: 'og:locale:alternate', content: edition.locale,
+        }));
+      }
+      restores.push(set('link[rel="alternate"][hreflang="x-default"]', 'link', {
+        rel: 'alternate', hreflang: 'x-default', href: `https://misterlove.in/writing/${piece.slug}/part-${part.n}/`,
+      }));
     }
 
+    clearWritingSchema();
     const ld = document.createElement('script');
     ld.type = 'application/ld+json';
-    ld.textContent = JSON.stringify({
+    ld.textContent = JSON.stringify([{
       '@context': 'https://schema.org',
       '@type': piece.unit === 'volume' ? 'Book' : 'Article',
       headline: language === 'hi'
@@ -287,20 +304,15 @@ function useArticleMeta(piece, part, original) {
       author: { '@type': 'Person', '@id': 'https://misterlove.in/#lovepreet-singh', name: profile.name },
       publisher: { '@id': 'https://misterlove.in/#lovepreet-singh' },
       about: piece.topic.split(' · ').map((topic) => ({ '@type': 'Thing', name: topic })),
-      ...(language === 'hi' ? {
-        translationOfWork: {
-          '@type': piece.unit === 'volume' ? 'Book' : 'Article',
-          inLanguage: 'en',
-          url: `https://misterlove.in/writing/${piece.slug}/part-${part.n}/`,
-        },
-      } : original?.translations?.hi ? {
-        workTranslation: {
-          '@type': piece.unit === 'volume' ? 'Book' : 'Article',
-          inLanguage: 'hi',
-          url: `https://misterlove.in/hi/writing/${piece.slug}/part-${part.n}/`,
-        },
-      } : {}),
-    });
+      ...writingTranslationMeta(piece, part.n, piece.unit === 'volume' ? 'Book' : 'Article'),
+    }, {
+      '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: COPY[language].writing, item: 'https://misterlove.in/writing/' },
+        { '@type': 'ListItem', position: 2, name: piece.title, item: `https://misterlove.in${writingPathOf(piece)}/` },
+        { '@type': 'ListItem', position: 3, name: part.title, item: url },
+      ],
+    }]);
     document.head.appendChild(ld);
 
     return () => {
@@ -378,7 +390,7 @@ function useActiveSection(toc, deps) {
 export default function Article() {
   const { slug, part: partParam } = useParams();
   const { pathname, hash: sectionHash } = useLocation();
-  const language = pathname.startsWith('/hi/') ? 'hi' : 'en';
+  const language = writingLanguageFromPath(pathname);
   const original = getPiece(slug);
   const piece = useMemo(() => getPieceForLanguage(slug, language), [slug, language]);
   const copy = withVolumeCopy(piece, COPY[language]);
@@ -446,7 +458,6 @@ export default function Article() {
   const prev = n > 1 ? n - 1 : null;
   const next = parts && n < parts.length ? n + 1 : null;
   const contents = contentsOf(piece, parts);
-  const hasHindi = Boolean(original.translations?.hi);
 
   const goSection = (event, id) => {
     event.preventDefault();
@@ -467,7 +478,7 @@ export default function Article() {
 
   return (
     <article
-      className={`article ${language === 'hi' ? 'article--hi' : ''}`}
+      className={`article ${language !== 'en' ? `article--${language}` : ''}`}
       lang={language}
     >
       <div className="article__meter" aria-hidden="true">
@@ -501,25 +512,8 @@ export default function Article() {
               <Link to={base} className="article__crumb">{piece.title}</Link>
             </nav>
 
-            <div className="article__reading-tools" role="group" aria-label="Reading preferences">
-              {hasHindi && (
-                <nav className="language-switch" aria-label={copy.switchLabel}>
-                  <Link
-                    to={`/writing/${piece.slug}/part-${n}`}
-                    className={language === 'en' ? 'is-active' : ''}
-                    aria-current={language === 'en' ? 'page' : undefined}
-                  >
-                    {copy.english}
-                  </Link>
-                  <Link
-                    to={`/hi/writing/${piece.slug}/part-${n}`}
-                    className={language === 'hi' ? 'is-active' : ''}
-                    aria-current={language === 'hi' ? 'page' : undefined}
-                  >
-                    {copy.hindi}
-                  </Link>
-                </nav>
-              )}
+            <div className="article__reading-tools" role="group" aria-label={language === 'pa' ? 'ਪੜ੍ਹਨ ਦੀਆਂ ਸਹੂਲਤਾਂ' : 'Reading preferences'}>
+              <WritingLanguageSwitch piece={piece} part={n} label={copy.switchLabel} />
               <ThemeToggle
                 className="article__theme-toggle"
                 label={copy.themeLabel}
@@ -537,7 +531,7 @@ export default function Article() {
                 <span className="article__partlabel">{part?.label}</span>
               </span>
               <h1 className="article__title">
-                {language === 'hi'
+                {language !== 'en'
                   ? (part ? part.title : piece.title).split(/(\s+)/).map((token, index) => (
                     token.trim()
                       ? <span className="article__title-word" key={index}>{token}</span>
