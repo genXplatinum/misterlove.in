@@ -6,6 +6,7 @@
 //     part can't leave the sitemap silently stale
 import { copyFileSync, writeFileSync, mkdirSync, readFileSync, readdirSync, existsSync } from 'node:fs';
 import jpeg from 'jpeg-js';
+import { unitNameOf, withVolumeCopy } from '../src/data/writingUnits.js';
 import { pageSurfaceForPath } from '../src/pageSurface.js';
 import { features, featurePath, featureCard, pressIntro, pressCollectionCard } from '../src/data/press.js';
 import { pressIndexBody, pressFeatureBody, pressStructuredData } from './press-static.mjs';
@@ -381,7 +382,7 @@ const crumbs = (trail, label = 'Breadcrumb') =>
     )
     .join('')}</nav>`;
 
-const staticCopy = (piece) => (piece.language === 'hi' ? {
+const staticCopy = (piece) => withVolumeCopy(piece, (piece.language === 'hi' ? {
   writing: 'लेखन',
   part: 'भाग',
   of: '/',
@@ -423,7 +424,7 @@ const staticCopy = (piece) => (piece.language === 'hi' ? {
   readFull: 'Read the full part',
   inThisPart: 'In this part',
   partsAria: 'Article parts',
-});
+}));
 
 function writingLanguageSwitch(piece, part) {
   if (!piece.translations?.hi) return '';
@@ -514,8 +515,8 @@ function shelfBody(loaded) {
   <p class="writingpage__lead">${esc(writingMeta.lead)}</p>
   <p class="mono">${writingTotals.pieces} research pieces · ${writingTotals.parts} parts · ${writingTotals.words.toLocaleString('en-IN')} words</p>
   <ul class="topics">${loaded
-    .map(({ piece: p, parts }) => `<li class="topic"><a class="topic__link" href="/writing/${p.slug}/"><span class="topic__body"><span class="mono topic__topic">${esc(p.topic)}</span><span class="topic__title">${esc(p.title)} — ${esc(p.subtitle)}</span><span class="topic__stand">${esc(p.standfirst)}</span><span class="topic__meta mono">${isInProgress(p) ? `${parts.length} of ${p.parts} parts` : `${p.parts} parts`} · ${p.words.toLocaleString('en-IN')} words · ${esc(p.displayDate)}</span></span></a><ol>${parts
-      .map((x) => `<li><a href="/writing/${p.slug}/part-${x.n}/">Part ${x.n} — ${esc(x.title)}</a></li>`)
+    .map(({ piece: p, parts }) => `<li class="topic"><a class="topic__link" href="/writing/${p.slug}/"><span class="topic__body"><span class="mono topic__topic">${esc(p.topic)}</span><span class="topic__title">${esc(p.title)} — ${esc(p.subtitle)}</span><span class="topic__stand">${esc(p.standfirst)}</span><span class="topic__meta mono">${isInProgress(p) ? `${parts.length} of ${p.parts} parts` : `${p.parts} ${p.unit === 'volume' ? 'volumes' : 'parts'}`} · ${p.words.toLocaleString('en-IN')} words · ${esc(p.displayDate)}</span></span></a><ol>${parts
+      .map((x) => `<li><a href="/writing/${p.slug}/part-${x.n}/">${unitNameOf(p, 'en')} ${x.n} — ${esc(x.title)}</a></li>`)
       .join('')}</ol></li>`)
     .join('')}</ul>
 </div></div></main>`;
@@ -912,7 +913,7 @@ shell({
         `      <h2><a href="/writing/${p.slug}/">${esc(p.title)} — ${esc(p.subtitle)}</a></h2>\n` +
         `      <p>${esc(p.standfirst)}</p>\n` +
         `      <ul>\n${parts
-          .map((x) => `        <li><a href="/writing/${p.slug}/part-${x.n}/">Part ${x.n}: ${esc(x.title)}</a></li>`)
+          .map((x) => `        <li><a href="/writing/${p.slug}/part-${x.n}/">${unitNameOf(p, 'en')} ${x.n}: ${esc(x.title)}</a></li>`)
           .join('\n')}\n      </ul>`
       )
       .join('\n'),
@@ -936,8 +937,8 @@ for (const { piece, parts } of editions) {
     keywords: [piece.title, ...piece.keywords, 'Lovepreet Singh'].join(', '),
     image: `${SITE}/og/${seriesImageFile(piece)}`,
     imageAlt: piece.language === 'hi'
-      ? `${piece.title} — ${piece.subtitle}। Lovepreet Singh की ${piece.parts} भागों वाली शोध श्रृंखला।`
-      : `${piece.title} — ${piece.subtitle}. ${piece.parts}-part research series by Lovepreet Singh.`,
+      ? `${piece.title} — ${piece.subtitle}। Lovepreet Singh की ${piece.parts} ${piece.unit === 'volume' ? 'पुस्तकों' : 'भागों'} वाली शोध श्रृंखला।`
+      : `${piece.title} — ${piece.subtitle}. ${piece.parts}-${piece.unit === 'volume' ? 'volume' : 'part'} research series by Lovepreet Singh.`,
     body: topicBody(piece, parts),
     css: [ROUTE_CSS.writing, ROUTE_CSS.rooms],
     language: piece.language,
@@ -963,7 +964,7 @@ for (const { piece, parts } of editions) {
       author: { '@type': 'Person', '@id': `${SITE}/#lovepreet-singh`, name: 'Lovepreet Singh' },
       about: piece.topic.split(' · ').map((t) => ({ '@type': 'Thing', name: t })),
       hasPart: parts.map((x) => ({
-        '@type': 'Article',
+        '@type': piece.unit === 'volume' ? 'Book' : 'Article',
         headline: x.title,
         url: `${SITE}${topicPath}/part-${x.n}/`,
         wordCount: x.words,
@@ -1005,8 +1006,8 @@ for (const { piece, parts } of editions) {
       themeColor: PIECE_GROUND[piece.room],
       path: `${topicPath}/part-${part.n}`,
       title: piece.language === 'hi'
-        ? `${part.title} — ${piece.title}: भाग ${part.n}/${piece.parts} | Lovepreet Singh`
-        : `${part.title} — ${piece.title}: Part ${part.n} of ${piece.parts} | Lovepreet Singh`,
+        ? `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n}/${piece.parts} | Lovepreet Singh`
+        : `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n} of ${piece.parts} | Lovepreet Singh`,
       description: part.lead || piece.standfirst,
       canonical,
       keywords: [
@@ -1015,8 +1016,8 @@ for (const { piece, parts } of editions) {
       ].join(', '),
       image: `${SITE}/og/${imageSlug}-part-${part.n}.png`,
       imageAlt: piece.language === 'hi'
-        ? `${piece.title}, ${piece.parts} में से भाग ${part.n} — ${part.title}। लेखक: Lovepreet Singh।`
-        : `${piece.title}, Part ${part.n} of ${piece.parts} — ${part.title}. By Lovepreet Singh.`,
+        ? `${piece.title}, ${piece.parts} में से ${unitNameOf(piece)} ${part.n} — ${part.title}। लेखक: Lovepreet Singh।`
+        : `${piece.title}, ${unitNameOf(piece)} ${part.n} of ${piece.parts} — ${part.title}. By Lovepreet Singh.`,
       body: articleBody(piece, part, parts.length),
       css: [ROUTE_CSS.article, ROUTE_CSS.writing, ROUTE_CSS.rooms],
       language: piece.language,
@@ -1041,10 +1042,10 @@ for (const { piece, parts } of editions) {
         ],
       }, {
         '@context': 'https://schema.org',
-        '@type': 'Article',
+        '@type': piece.unit === 'volume' ? 'Book' : 'Article',
         headline: piece.language === 'hi'
-          ? `${part.title} — ${piece.title}: भाग ${part.n}`
-          : `${part.title} — ${piece.title}: Part ${part.n}`,
+          ? `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n}`
+          : `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n}`,
         description: part.lead || piece.standfirst,
         url: canonical,
         mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
@@ -1378,7 +1379,7 @@ const rssDate = (d) => new Date(`${d}T00:00:00+05:30`).toUTCString();
 const items = [
   ...loaded.flatMap(({ piece, parts }) =>
     parts.map((part) => `    <item>
-      <title>${esc(`${piece.title} — Part ${part.n}: ${part.title}`)}</title>
+      <title>${esc(`${piece.title} — ${unitNameOf(piece)} ${part.n}: ${part.title}`)}</title>
       <link>${SITE}/writing/${piece.slug}/part-${part.n}/</link>
       <guid isPermaLink="true">${SITE}/writing/${piece.slug}/part-${part.n}/</guid>
       <pubDate>${rssDate(publishedOf(piece, part))}</pubDate>

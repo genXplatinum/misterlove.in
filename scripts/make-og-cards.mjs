@@ -16,6 +16,7 @@
  */
 import { Resvg } from '@resvg/resvg-js';
 import jpeg from 'jpeg-js';
+import { atheistBelieverCard, makeAtheistBelieverFigures } from './atheist-believer-art.mjs';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, unlinkSync } from 'node:fs';
 import { basename, dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -587,6 +588,7 @@ if (!hindiOnly) {
   console.log(`${relative(ROOT, file).padEnd(46)} ${r.w}x${r.h}  ${r.kb.toFixed(0)} KB`);
   total += r.kb;
 }
+if (pieces.some((piece) => piece.slug === 'atheist-vs-believer')) makeAtheistBelieverFigures();
 for (const piece of pieces) {
   let r;
   if (!hindiOnly) {
@@ -598,7 +600,7 @@ for (const piece of pieces) {
 
     // Series card — used by /writing and as the piece-level fallback.
     const seriesFile = `${OUT}/${piece.ogImage ?? `${piece.slug}.png`}`;
-    const seriesCard = piece.slug === 'india-before-and-after-2014'
+    const seriesCard = piece.slug === 'atheist-vs-believer' ? atheistBelieverCard() : piece.slug === 'india-before-and-after-2014'
       ? indiaComparisonCard()
       : piece.slug === 'why-i-dont-believe'
         ? sacredMirageCard()
@@ -618,7 +620,7 @@ for (const piece of pieces) {
     for (const part of parts) {
       const file = `${OUT}/${piece.slug}-part-${part.n}.png`;
       r = render(
-        card({
+        piece.slug === 'atheist-vs-believer' ? atheistBelieverCard('en', part.n) : card({
           kicker: `Part ${String(part.n).padStart(2, '0')} of ${piece.parts} · ${part.label}`,
           title: part.title,
           sub: `${piece.title} — ${piece.subtitle}`,
@@ -645,7 +647,7 @@ for (const piece of pieces) {
     const translatedSeriesFile = `${OUT}/${edition.ogImage ?? `${translatedSlug}.png`}`;
 
     r = render(
-      piece.slug === 'why-i-dont-believe' ? sacredMirageCard(language) : card({
+      piece.slug === 'atheist-vs-believer' ? atheistBelieverCard(language) : piece.slug === 'why-i-dont-believe' ? sacredMirageCard(language) : card({
         kicker: edition.kicker,
         title: edition.title,
         sub: edition.subtitle,
@@ -666,7 +668,7 @@ for (const piece of pieces) {
     for (const translatedPart of translatedParts) {
       const file = `${OUT}/${translatedSlug}-part-${translatedPart.n}.png`;
       r = render(
-        card({
+        piece.slug === 'atheist-vs-believer' ? atheistBelieverCard(language, translatedPart.n) : card({
           kicker: `भाग ${String(translatedPart.n).padStart(2, '0')} / ${edition.parts} · ${translatedPart.label}`,
           title: translatedPart.title,
           sub: `${edition.title} — ${edition.subtitle}`,
