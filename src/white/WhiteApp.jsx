@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef } from 'rea
 import { Link, NavLink, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import { PlainReadingProvider } from '../components/ExperienceProvider';
 import EditionSwitch from '../components/EditionSwitch';
+import { Wordmark } from '../components/Logo';
 import { home, profile } from '../data/site';
 import { pieces, livePartsOf, isInProgress } from '../data/writing';
 import { books, booksMeta, liveStudiesOf } from '../data/books';
@@ -60,7 +61,7 @@ function WhiteNav() {
   const menu = useRef(null);
   useEffect(() => { if (menu.current) menu.current.open = false; }, [pathname]);
   return <header className="white-header">
-    <Link className="white-wordmark" to="/" aria-label="MisterLove home">misterlove.</Link>
+    <Link className="white-wordmark" to="/" aria-label="MisterLove home"><Wordmark /></Link>
     <nav className="white-desktop-nav" aria-label="Primary navigation">
       {primary.map(item => <NavLink key={item.to} to={item.to}>{item.label}</NavLink>)}
     </nav>
@@ -81,7 +82,7 @@ function WhiteFooter() {
       <a className="white-contact-email" href={`mailto:${profile.email}`}>{profile.email}<Arrow diagonal /></a>
     </div>
     <div className="white-footer-grid">
-      <div><Link to="/" className="white-wordmark">misterlove.</Link><p>Independent research and writing.<br />Lovepreet Singh, Punjab, India.</p></div>
+      <div><Link to="/" className="white-wordmark" aria-label="MisterLove home"><Wordmark /></Link><p>Independent research and writing.<br />Lovepreet Singh, Punjab, India.</p></div>
       <nav aria-label="Footer navigation">{primary.map(item => <Link key={item.to} to={item.to}>{item.label}</Link>)}<a href={`${base}feed.xml`}>RSS feed</a></nav>
       <div className="white-footer-social">{profile.social.map(item => <a key={item.label} href={item.href} target="_blank" rel="noreferrer">{item.label}<Arrow diagonal /></a>)}</div>
     </div>
