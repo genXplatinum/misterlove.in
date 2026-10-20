@@ -1,18 +1,11 @@
-export function Mark({ className = '' }) {
-  return (
-    <span className={`folio-mark ${className}`} aria-hidden="true">
-      <i />
-      <i />
-      <i />
-    </span>
-  );
-}
+import './Logo.css';
 
 export function Wordmark({ className = '' }) {
+  const base = import.meta.env.BASE_URL;
   return (
-    <span className={`wordmark ${className}`}>
-      <Mark />
-      <span className="wordmark__text">Lovepreet Singh</span>
+    <span className={`official-wordmark ${className}`} role="img" aria-label="misterlove.">
+      <img className="official-wordmark__ink" src={`${base}brand/wordmark-ink.svg`} width="141" height="24" alt="" />
+      <img className="official-wordmark__white" src={`${base}brand/wordmark-white.svg`} width="141" height="24" alt="" />
     </span>
   );
 }

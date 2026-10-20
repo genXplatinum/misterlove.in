@@ -4,7 +4,7 @@ import { Wordmark } from './Logo';
 import ThemeToggle from './ThemeToggle';
 import EditionSwitch from './EditionSwitch';
 import { useExperience } from './ExperienceProvider';
-import { nav, profile } from '../data/site';
+import { nav } from '../data/site';
 import './Nav.css';
 
 function scrollToTarget(target, immediate = false) {
@@ -201,7 +201,7 @@ export default function Nav() {
   return (
     <>
       <header className={`nav ${scrolled ? 'is-scrolled' : ''} ${open ? 'is-menu-open' : ''}`}>
-        <a href={homePath} className="nav__brand" onClick={brand} aria-label={`${profile.name}, home`}>
+        <a href={homePath} className="nav__brand" onClick={brand} aria-label="MisterLove home">
           <Wordmark />
         </a>
 

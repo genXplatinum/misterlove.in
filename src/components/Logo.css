@@ -1,0 +1,7 @@
+/* Exact outlined brand-kit artwork, sized to the approved White wordmark. */
+.official-wordmark { display: inline-block; width: 140.56px; flex-shrink: 0; line-height: 0; vertical-align: middle; }
+.official-wordmark img { display: block; width: 100%; height: auto; }
+.official-wordmark .official-wordmark__white { display: none; }
+:root[data-theme="dark"]:not(.white-edition) .official-wordmark .official-wordmark__ink { display: none; }
+:root[data-theme="dark"]:not(.white-edition) .official-wordmark .official-wordmark__white { display: block; }
+@media (max-width: 700px) { .official-wordmark { width: 131.19px; } }

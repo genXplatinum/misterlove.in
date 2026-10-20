@@ -95,11 +95,11 @@ function allowedChange(path) {
     || path.startsWith('brand/misterlove/')
     || [
       'scripts/postbuild-white.mjs', 'scripts/postbuild.mjs', 'scripts/verify-white-premium.mjs',
-      'scripts/test-brand-intro.mjs', 'public/og/white-edition.png', 'index.html',
+      'scripts/test-brand-intro.mjs', 'public/og/white-edition.png', 'public/favicon.svg', 'public/favicon.ico', 'index.html',
       'package.json', 'package-lock.json', 'src/App.jsx', 'src/main.jsx', 'src/pageSurface.js',
       'src/components/EditionSwitch.jsx', 'src/components/EditionSwitch.css',
       'src/components/ExperienceProvider.jsx', 'src/components/Nav.jsx', 'src/components/Nav.css',
-      'src/components/Footer.jsx', 'src/components/Logo.jsx', 'src/pages/Writing.jsx', 'src/pages/Topic.jsx',
+      'src/components/Footer.jsx', 'src/components/Logo.jsx', 'src/components/Logo.css', 'src/pages/Writing.jsx', 'src/pages/Topic.jsx',
       ...retiredSources, ...retiredAssets.map(asset => `public/${asset}`),
     ].includes(path);
 }

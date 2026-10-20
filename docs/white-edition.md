@@ -14,7 +14,7 @@ The Reading Room uses Manrope, a white canvas, an interactive research object, c
 
 The publication cover system provides 330 collection/article/study covers across 22 visual identities, including translated editions. All published manuscript text, citations and existing PDFs retain their original bytes after normalizing only White navigation prefixes and validated cover decoration in generated HTML.
 
-The White readers retain Original canonical URLs and `noindex, follow`; the redesign does not duplicate the sitemap or RSS feed. Brand artwork is in `brand/misterlove/`, including the eight-page guide, outlined SVGs, PNGs, avatars, licensed fonts, tokens and reproducible scripts. New logo assets are used for the opening screen; Original retains its established page design.
+The White readers retain Original canonical URLs and `noindex, follow`; the redesign does not duplicate the sitemap or RSS feed. Brand artwork is in `brand/misterlove/`, including the eight-page guide, outlined SVGs, PNGs, avatars, licensed fonts, tokens and reproducible scripts. Both editions use the official outlined `misterlove.` wordmark in their header and footer, and the square `m.` favicon. Original uses the white wordmark in dark mode. The opening screen uses the same artwork; Original retains its established page design.
 
 ## Verification and preview
 
