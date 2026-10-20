@@ -5,7 +5,7 @@
 ## What changed
 
 - Readers now request one article or study plus a small contents index. Collection pages request the index alone. The Vite plugin derives these files from the unchanged checked manuscripts at build time.
-- Original homepage code loads only on its own route. White no longer downloads it. The existing static page stays visible while the selected edition loads.
+- Original homepage code loads only on its own route, and its hero is ready before the page frame mounts. White no longer downloads it. The existing static page stays visible while the selected edition loads. Separate import statements prevent the build tool from combining both editions' preload lists.
 - Each direct-entry page announces its own edition, page code and selected reader through module preloads. Sibling articles are not preloaded.
 - The existing Google Fonts faces are served locally with the same font files, weights, styles and unicode ranges. White receives only its relevant Devanagari font declarations alongside its existing Manrope font. Font files include source URLs, SHA-256 hashes and the eight OFL licenses.
 - Original's below-the-fold author photo loads near the viewport instead of competing with the opening text.

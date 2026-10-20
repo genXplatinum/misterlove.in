@@ -19,9 +19,13 @@ const whitePath = `${basename || ''}/white`;
 const isWhite = window.location.pathname === whitePath || window.location.pathname.startsWith(`${whitePath}/`);
 // Keep the already-rendered page visible while its edition's code arrives.
 // Original homepage code is no longer downloaded by White or article pages.
-const { default: EditionApp } = await (isWhite
-  ? import('./white/WhiteApp.jsx')
-  : import('./App.jsx'));
+// Separate statements keep Vite from merging both branches' preload lists.
+let EditionApp;
+if (isWhite) {
+  ({ default: EditionApp } = await import('./white/WhiteApp.jsx'));
+} else {
+  ({ default: EditionApp } = await import('./App.jsx'));
+}
 const initialTheme = readStoredTheme();
 const initialExperience = readExperience();
 if (isWhite) {
