@@ -189,7 +189,6 @@
 @media (max-width: 700px) {
   .white-site .white-header { height: 72px; }
   .white-site .white-wordmark { font-size: 28px; }
-  .white-mobile-menu nav { top: 71px; }
   .white-site .room-hero { padding-top: 26px; }
   .room-hero-top { font-size: 12px; }
   .room-hero-top > span { display: none; }
@@ -292,14 +291,6 @@
   .white-site .room-object-stage:hover .room-object { transform: rotateX(8deg) rotateY(-20deg) rotateZ(7deg); }
 }
 
-/* Both editions remain directly accessible from the top of every page. */
+/* Keep the menu switch legible regardless of the Original theme preference. */
 .white-header .edition-switch { --ink: #151714; --canvas: #fff; --ink-soft: #5a605a; --rule-dark: #d5d8d0; --paper-deep: #eff1ea; }
 @media (max-width: 1100px) { .white-header-contact { display: none; } }
-@media (max-width: 700px) {
-  .white-site .white-header { display: grid; grid-template-columns: 1fr auto; height: auto; min-height: 112px; gap: 10px 16px; padding-block: 16px 10px; }
-  .white-header .white-wordmark { grid-column: 1; grid-row: 1; }
-  .white-header .white-mobile-menu { grid-column: 2; grid-row: 1; }
-  .white-header .white-mobile-menu nav { top: 100%; }
-  .white-header .edition-switch { grid-column: 1 / -1; grid-row: 2; justify-self: start; }
-  html.white-edition { scroll-padding-top: 128px; }
-}

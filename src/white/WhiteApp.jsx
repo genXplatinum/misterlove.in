@@ -66,10 +66,12 @@ function WhiteNav() {
       {primary.map(item => <NavLink key={item.to} to={item.to}>{item.label}</NavLink>)}
     </nav>
     <a className="white-header-contact" href={`mailto:${profile.email}`}>Get in touch <Arrow diagonal /></a>
-    <EditionSwitch />
     <details ref={menu} className="white-mobile-menu">
       <summary>Menu <span aria-hidden="true">+</span></summary>
-      <nav aria-label="Mobile navigation">{primary.map(item => <NavLink key={item.to} to={item.to}>{item.label}</NavLink>)}<a href={`mailto:${profile.email}`}>Get in touch</a></nav>
+      <div className="white-menu-panel">
+        <nav className="white-menu-links" aria-label="Mobile navigation">{primary.map(item => <NavLink key={item.to} to={item.to}>{item.label}</NavLink>)}<a href={`mailto:${profile.email}`}>Get in touch</a></nav>
+        <div className="white-menu-edition"><span>Your edition</span><EditionSwitch onChange={() => { if (menu.current) menu.current.open = false; }} /></div>
+      </div>
     </details>
   </header>;
 }

@@ -199,11 +199,16 @@ for (const entry of edition.routes) {
     verifyIntro(html, route);
     const header = html.match(/<header\b[^>]*class="white-header"[^>]*>[\s\S]*?<\/header>/)?.[0];
     assert.ok(header, `${route}: missing White header`);
-    const editionNav = header.match(/<nav\b[^>]*aria-label="Site edition"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
-    assert.ok(editionNav, `${route}: the two-edition switch must be in the top header`);
+    const menu = header.match(/<details\b[^>]*class="white-mobile-menu"[^>]*>[\s\S]*?<\/details>/)?.[0];
+    assert.ok(menu && !/\bopen(?:\s|=|>)/.test(menu.slice(0, menu.indexOf('>') + 1)),
+      `${route}: navigation menu must start closed`);
+    assert.ok(!header.replace(menu, '').includes('class="edition-switch"'),
+      `${route}: edition switch must not occupy the closed header`);
+    const editionNav = menu.match(/<nav\b[^>]*aria-label="Site edition"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
+    assert.ok(editionNav, `${route}: the edition switch must be inside the menu`);
     const editionLinks = [...editionNav.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)];
     assert.deepEqual(editionLinks.map(([, , label]) => plainText(label)), ['Original', 'White'],
-      `${route}: top switch must offer exactly Original and White`);
+      `${route}: menu switch must offer exactly Original and White`);
     const originalPath = route === '/white/about/' ? '/#about' : route.slice('/white'.length);
     assert.equal(decodeEntities(attribute(editionLinks[0][1], 'href') ?? ''), originalPath,
       `${route}: Original switch must preserve the current reading route`);
@@ -211,6 +216,8 @@ for (const entry of edition.routes) {
       `${route}: White switch must preserve the current reading route`);
     assert.equal(attribute(editionLinks[1][1], 'aria-current'), 'true',
       `${route}: current edition must be announced`);
+    assert.match(html, /<footer\b[^>]*class="white-footer"[\s\S]*?class="edition-switch"/,
+      `${route}: footer edition switch must remain available`);
   }
 }
 for (const route of [...customRoutes, '/white/press/']) {
@@ -353,7 +360,7 @@ assert.ok(pdfs.size > 0, 'White readers must retain their existing PDF downloads
 console.log(`White verified against ${baseCommit.slice(0, 8)}:`);
 console.log(`  ${changed.length} authorized tracked changes; original content and static reader rendering preserved.`);
 console.log(`  Copy audit against ${copyAudit.base.slice(0, 8)}: ${copyAudit.manuscriptFiles} source files and ${copyAudit.pdfs} PDFs unchanged.`);
-console.log('  Observatory retired with a legacy redirect; top edition switch and decorative intro verified.');
+console.log('  Observatory retired; edition switches confined to closed menus and footers; decorative intro verified.');
 console.log(`  ${routes.size} direct-entry routes; ${mirroredPages} original pages mirrored.`);
 console.log(`  ${records.size} manuscripts independently hash-checked; original canonicals retained.`);
 console.log(`  ${covers.size} publication covers verified; only balanced cover decorations excluded from manuscript hashes.`);

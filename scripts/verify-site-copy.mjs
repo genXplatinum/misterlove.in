@@ -10,6 +10,12 @@ import { runInNewContext } from 'node:vm';
 import { parseAst } from 'rolldown/parseAst';
 
 export const COPY_BASE = '5bbdbc8af2f726da19830617a2833e8421a53542';
+// The subsequent menu-only change is compared with the released copy audit.
+const NAVIGATION_BASE = 'd3b5d9bc166ba271efa466636cda21861ddb903d';
+const NAVIGATION_PATHS = new Set([
+  'src/components/Nav.jsx', 'src/components/Nav.css', 'src/components/EditionSwitch.css',
+  'src/white/WhiteApp.jsx', 'src/white/White.css', 'src/white/WhitePremium.css',
+]);
 export const COPY_EDIT_PATHS = new Set([
   'src/data/site.js', 'src/data/writing.js', 'src/data/books.js', 'src/data/press.js',
   'src/pages/ClassicHome.jsx', 'src/pages/Books.jsx', 'src/pages/Book.jsx', 'src/pages/Press.jsx',
@@ -222,11 +228,11 @@ export function verifySiteCopy({ quiet = false } = {}) {
       `public/press/social/${feature.slug}-spotlight-story.jpg`,
     ]),
   ]);
-  const allowed = path => COPY_EDIT_PATHS.has(path) || imagePaths.has(path);
+  const allowed = path => COPY_EDIT_PATHS.has(path) || NAVIGATION_PATHS.has(path) || imagePaths.has(path);
   const changed = git('diff', '--name-only', '--no-renames', '-z', base, '--').split('\0').filter(Boolean);
   const untracked = git('ls-files', '--others', '--exclude-standard', '-z').split('\0').filter(Boolean);
   assert.deepEqual([...new Set([...changed, ...untracked])].filter(path => !allowed(path)), [],
-    'Copy audit changed a file outside the approved interface, metadata, share-card or verification scope');
+    'Changes exceed the approved copy audit and subsequent edition-menu scope');
 
   const manuscripts = [...tree.keys()].filter(path => contentRoots.some(prefix => path.startsWith(prefix))).sort();
   assert.deepEqual(contentRoots.flatMap(walk).sort(), manuscripts,
@@ -286,7 +292,17 @@ export function verifySiteCopy({ quiet = false } = {}) {
   const sourceFiles = [...COPY_EDIT_PATHS].filter(path => /\.(?:mjs|jsx|js)$/.test(path)
     && !path.startsWith('scripts/verify-') && tree.has(path));
   for (const path of sourceFiles) {
-    const difference = firstDifference(copyShape(parse(read(path), path)), copyShape(parse(old(path), path)));
+    const before = old(path);
+    let current = read(path);
+    if (path === 'src/white/WhiteApp.jsx') {
+      const released = normalize(git('show', `${NAVIGATION_BASE}:${path}`));
+      const withoutNav = source => source.replace(declarationSource(source, parse(source, path), 'WhiteNav'), '');
+      assert.equal(withoutNav(current), withoutNav(released),
+        'The menu relocation must not change White content, footer, readers or routing');
+      current = current.replace(declarationSource(current, parse(current, path), 'WhiteNav'),
+        declarationSource(before, parse(before, path), 'WhiteNav'));
+    }
+    const difference = firstDifference(copyShape(parse(current, path)), copyShape(parse(before, path)));
     assert.ok(!difference, `${path}: change affects code, links, attributes, layout or data structure rather than website copy.\n${difference}`);
   }
   assert.deepEqual(markupShape(read('index.html'), true), markupShape(old('index.html'), true),
@@ -303,7 +319,7 @@ export function verifySiteCopy({ quiet = false } = {}) {
     console.log(`  ${result.pdfs} PDFs byte-identical; no added or removed manuscript/PDF files.`);
     console.log(`  ${result.pressEntries} press evidence records and filter membership preserved.`);
     console.log(`  ${result.protectedRenderers} static reader declarations unchanged.`);
-    console.log(`  ${result.copySourceFiles} source files checked for copy-only AST changes; layout, links and numeric values retained.`);
+    console.log(`  ${result.copySourceFiles} source files checked for copy-only AST changes outside the separately authorized White menu.`);
     console.log(`  ${result.generatedShareCards} regenerated website share cards within the explicit allowlist.`);
     console.log('Human review still covers prose meaning and rendered layout; this guard does not certify those.');
   }

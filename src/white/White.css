@@ -280,8 +280,11 @@
   .white-mobile-menu summary::-webkit-details-marker { display: none; }
   .white-mobile-menu summary span { font-size: 24px; font-weight: 400; transition: transform .2s; }
   .white-mobile-menu[open] summary span { transform: rotate(45deg); }
-  .white-mobile-menu nav { position: absolute; top: 73px; left: 0; right: 0; background: #fff; padding: 22px var(--white-gutter) 30px; border-bottom: 1px solid #dedede; display: grid; gap: 3px; }
-  .white-mobile-menu nav a { font-size: 22px; font-weight: 600; min-height: 48px; padding-block: 8px; }
+  .white-menu-panel { position: absolute; top: 100%; left: 0; right: 0; max-height: calc(100dvh - 72px); overflow-y: auto; overscroll-behavior: contain; background: #fff; padding: 22px var(--white-gutter) 30px; border-bottom: 1px solid #dedede; }
+  .white-menu-links { display: grid; gap: 3px; }
+  .white-menu-links > a { font-size: 22px; font-weight: 600; min-height: 48px; padding-block: 8px; }
+  .white-menu-edition { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 18px; padding-top: 18px; border-top: 1px solid #dedede; }
+  .white-menu-edition > span { font-size: 13px; color: #5a605a; }
   .white-hero { padding-top: 38px; padding-bottom: 44px; }
   .white-hero-byline { font-size: 11px; margin-bottom: 36px !important; }
   .white-hero-grid { grid-template-columns: 1fr; gap: 28px; }
