@@ -47,7 +47,7 @@ try {
     let html = source.replace(/<html([^>]*)>/, (_, attrs) => `<html${attrs.includes('class="') ? attrs.replace(/class="([^"]*)"/, 'class="$1 white-edition"') : `${attrs} class="white-edition"`}>`);
     const extra = `<meta name="robots" content="noindex, follow"/><link rel="stylesheet" href="/assets/${stylesheet}"/><link rel="preload" href="/white-assets/manrope-latin.woff2" as="font" type="font/woff2" crossorigin="anonymous"/><script>document.documentElement.dataset.experience="classic";</script><style>html.white-edition,html.white-edition body{background:#fff;color:#121212}</style>`;
     html = html.replace(/<meta name="robots"[^>]*>/g, '').replace('</head>', `${extra}</head>`);
-    html = html.replace(/href="https:\/\/fonts.googleapis.com\/css2\?[^"]+"/, 'href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&amp;display=swap"');
+    html = html.replace('href="/fonts/site-fonts.css"', 'href="/fonts/white-fonts.css"');
     html = html.replace(/(<meta name="theme-color" content=")[^"]*(")/, '$1#ffffff$2');
     if (meta) {
       html = html.replace(/<title>[\s\S]*?<\/title>/, `<title>${escape(meta.title)}</title>`);

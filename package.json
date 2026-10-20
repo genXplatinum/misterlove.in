@@ -8,7 +8,7 @@
     "dev": "vite",
     "prebuild": "npm run validate:punjabi && npm run validate:hindi && npm run validate:forgotten-gods-hindi && npm run validate:women-hindi && npm run validate:sikhism && npm run og",
     "build": "vite build",
-    "postbuild": "node scripts/postbuild.mjs && node scripts/validate-press.mjs && node scripts/postbuild-white.mjs",
+    "postbuild": "node scripts/postbuild.mjs && node scripts/validate-press.mjs && node scripts/postbuild-white.mjs && node scripts/postbuild-performance.mjs",
     "og": "node scripts/make-og-cards.mjs && node scripts/make-press-cards.mjs",
     "og:hindi": "node scripts/make-og-cards.mjs --hindi-only",
     "social:india": "node scripts/make-india-instagram-carousel.mjs",

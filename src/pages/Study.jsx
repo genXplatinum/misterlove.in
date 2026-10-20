@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { loadBookStudy } from '../data/readerData';
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import Prose from '../components/Prose';
 import ThemeToggle from '../components/ThemeToggle';
@@ -356,13 +357,14 @@ export default function Study() {
     let alive = true;
     setStudies(null);
     setLoadError(false);
-    load()
+    loadBookStudy(book, language, studySlug)
       .then((module) => { if (alive) setStudies(module.default); })
       .catch(() => { if (alive) setLoadError(true); });
     return () => { alive = false; };
-  }, [book, language]);
+  }, [book, language, studySlug]);
 
-  const study = studies ? getStudy(studies, studySlug) : null;
+  const candidate = studies ? getStudy(studies, studySlug) : null;
+  const study = candidate?.html !== undefined ? candidate : null;
   const toc = useMemo(() => study?.toc ?? [], [study]);
   const watched = useMemo(
     () => toc.flatMap((entry) => [entry.id, ...entry.kids.map((kid) => kid.id)]),
@@ -393,7 +395,7 @@ export default function Study() {
   if (language !== 'en' && !translated) {
     return <Navigate to={`/books/${book.slug}/${studySlug}`} replace />;
   }
-  if (studies && !study) return <Navigate to={`/books/${book.slug}`} replace />;
+  if (studies && !candidate) return <Navigate to={`/books/${book.slug}`} replace />;
 
   /* The shelf around a study — its siblings and the pager — is only built in
      English, because that is the only language every study exists in. */

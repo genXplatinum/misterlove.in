@@ -134,7 +134,8 @@ assert.deepEqual(untracked.filter(path => !allowedChange(path)), [], 'Untracked 
 const basePackage = JSON.parse(git('show', `${baseCommit}:package.json`));
 const currentPackage = JSON.parse(text(join(root, 'package.json')));
 delete basePackage.dependencies.three;
-assert.deepEqual(currentPackage, basePackage, 'Only the unused Three.js dependency may change in package.json');
+basePackage.scripts.postbuild += ' && node scripts/postbuild-performance.mjs';
+assert.deepEqual(currentPackage, basePackage, 'Only Three.js retirement and the performance postbuild hook may change package.json');
 const lock = JSON.parse(text(join(root, 'package-lock.json')));
 assert.ok(!lock.packages?.['node_modules/three'], 'Retired Three.js dependency remains in the lockfile');
 for (const file of retiredSources) assert.ok(!existsSync(join(root, file)), `Retired source remains: ${file}`);

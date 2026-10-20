@@ -18,6 +18,33 @@ const NAVIGATION_PATHS = new Set([
 ]);
 const MOBILE_BASE = '751b43d3358ea196074330b5a27a7ce43359f4b8';
 const MOBILE_PATHS = new Set(['src/pages/Study.jsx', 'docs/mobile-layout-audit.md']);
+const PERFORMANCE_BASE = '119ba1408aa130f93035db0f5144fbcc119e7b83';
+const PERFORMANCE_PATHS = new Set([
+  'vite.config.js', 'package.json', 'src/main.jsx', 'src/App.jsx',
+  'src/pages/Article.jsx', 'src/pages/Topic.jsx', 'src/pages/Book.jsx', 'src/pages/Study.jsx',
+  'src/data/readerData.js', 'scripts/reader-chunks.mjs', 'scripts/postbuild-performance.mjs',
+  'scripts/vendor-site-fonts.mjs', 'scripts/verify-performance.mjs', 'docs/performance-audit.md',
+  'public/fonts/site-fonts.css', 'public/fonts/white-fonts.css',
+]);
+
+// The performance pass may replace delivery calls, not reader markup or text.
+function beforeReaderDelivery(source) {
+  return source.replace(/^import .* from '\.\.\/data\/readerData';\n/m, '')
+    .replace('<img src={profile.photo} alt="Lovepreet Singh" loading="lazy" decoding="async" />',
+      '<img src={profile.photo} alt="Lovepreet Singh" />')
+    .replace('loadWritingContents(piece)', 'piece.load()')
+    .replace('loadWritingPart(piece, n)', 'piece.load()')
+    .replace('loadBookContents(book)', 'book.load()')
+    .replace('loadBookStudy(book, language, studySlug)', 'load()')
+    .replace('if (!piece || !valid) return undefined;', 'if (!piece) return undefined;')
+    .replace('}, [piece, n, valid]);', '}, [piece]);')
+    .replace('parts && valid && parts[n - 1]?.html !== undefined ? parts[n - 1] : null',
+      'parts && valid ? parts[n - 1] : null')
+    .replace('}, [book, language, studySlug]);', '}, [book, language]);')
+    .replace('const candidate = studies ? getStudy(studies, studySlug) : null;\n  const study = candidate?.html !== undefined ? candidate : null;',
+      'const study = studies ? getStudy(studies, studySlug) : null;')
+    .replace('if (studies && !candidate)', 'if (studies && !study)');
+}
 export const COPY_EDIT_PATHS = new Set([
   'src/data/site.js', 'src/data/writing.js', 'src/data/books.js', 'src/data/press.js',
   'src/pages/ClassicHome.jsx', 'src/pages/Books.jsx', 'src/pages/Book.jsx', 'src/pages/Press.jsx',
@@ -230,11 +257,19 @@ export function verifySiteCopy({ quiet = false } = {}) {
       `public/press/social/${feature.slug}-spotlight-story.jpg`,
     ]),
   ]);
-  const allowed = path => COPY_EDIT_PATHS.has(path) || NAVIGATION_PATHS.has(path) || MOBILE_PATHS.has(path) || imagePaths.has(path);
+  const allowed = path => COPY_EDIT_PATHS.has(path) || NAVIGATION_PATHS.has(path) || MOBILE_PATHS.has(path)
+    || PERFORMANCE_PATHS.has(path) || path.startsWith('public/fonts/web/') || imagePaths.has(path);
   const changed = git('diff', '--name-only', '--no-renames', '-z', base, '--').split('\0').filter(Boolean);
   const untracked = git('ls-files', '--others', '--exclude-standard', '-z').split('\0').filter(Boolean);
   assert.deepEqual([...new Set([...changed, ...untracked])].filter(path => !allowed(path)), [],
-    'Changes exceed the approved copy, edition-menu and mobile-layout scopes');
+    'Changes exceed the approved copy, edition-menu, mobile-layout and performance scopes');
+
+  for (const path of ['src/pages/Article.jsx', 'src/pages/Topic.jsx', 'src/pages/Book.jsx', 'src/pages/Study.jsx']) {
+    assert.equal(beforeReaderDelivery(read(path)), normalize(git('show', `${PERFORMANCE_BASE}:${path}`)),
+      `${path}: performance work changed more than reader delivery`);
+  }
+  assert.equal(git('diff', '--name-only', PERFORMANCE_BASE, '--', 'src/**/*.css').trim(), '',
+    'Performance work must not change the visual styles');
 
   const studyPath = 'src/pages/Study.jsx';
   const releasedStudy = normalize(git('show', `${MOBILE_BASE}:${studyPath}`));
@@ -243,7 +278,7 @@ export function verifySiteCopy({ quiet = false } = {}) {
     assert.match(source, pattern, 'Study mobile contents handler is missing');
     return source.replace(pattern, '');
   };
-  assert.equal(omitMobileJump(read(studyPath)), omitMobileJump(releasedStudy),
+  assert.equal(omitMobileJump(beforeReaderDelivery(read(studyPath))), omitMobileJump(releasedStudy),
     'The mobile contents fix must preserve the rest of the study reader');
 
   const manuscripts = [...tree.keys()].filter(path => contentRoots.some(prefix => path.startsWith(prefix))).sort();
@@ -305,7 +340,12 @@ export function verifySiteCopy({ quiet = false } = {}) {
     && !path.startsWith('scripts/verify-') && tree.has(path));
   for (const path of sourceFiles) {
     const before = old(path);
-    let current = read(path);
+    let current = beforeReaderDelivery(read(path));
+    if (path === 'scripts/postbuild-white.mjs') {
+      const fontLine = before.split('\n').find(line => line.includes('html = html.replace(/href="https:'));
+      assert.ok(fontLine, 'Released font replacement is missing');
+      current = current.replace(/^    html = html\.replace\('href="\/fonts\/site-fonts\.css"', 'href="\/fonts\/white-fonts\.css"'\);$/m, () => fontLine);
+    }
     if (path === 'src/white/WhiteApp.jsx') {
       const released = normalize(git('show', `${NAVIGATION_BASE}:${path}`));
       const withoutNav = source => source.replace(declarationSource(source, parse(source, path), 'WhiteNav'), '');
@@ -317,7 +357,10 @@ export function verifySiteCopy({ quiet = false } = {}) {
     const difference = firstDifference(copyShape(parse(current, path)), copyShape(parse(before, path)));
     assert.ok(!difference, `${path}: change affects code, links, attributes, layout or data structure rather than website copy.\n${difference}`);
   }
-  assert.deepEqual(markupShape(read('index.html'), true), markupShape(old('index.html'), true),
+  const originalFontLinks = old('index.html').match(/    <link rel="preconnect" href="https:\/\/fonts\.googleapis\.com"[\s\S]*?rel="stylesheet"\s*\/>/)?.[0];
+  assert.ok(originalFontLinks, 'Released font stylesheet is missing');
+  const comparableIndex = read('index.html').replace('    <link rel="stylesheet" href="/fonts/site-fonts.css" />', originalFontLinks);
+  assert.deepEqual(markupShape(comparableIndex, true), markupShape(old('index.html'), true),
     'index.html: change affects shared structure, links or style rather than descriptive metadata');
   for (const path of changed) assert.ok(existsSync(join(root, path)), `Copy audit must not remove files: ${path}`);
 
