@@ -194,7 +194,11 @@
 
 .nav-open { overflow: hidden; }
 
-@media (max-width: 1120px) { .nav__links { display: none; } .nav__burger { display: grid; } }
+@media (max-width: 1120px) {
+  .nav { grid-template-columns: 1fr auto; }
+  .nav__links { display: none; }
+  .nav__burger { display: grid; }
+}
 
 @media (max-width: 1280px) {
   .nav__theme {
@@ -207,6 +211,10 @@
 
 @media (max-width: 760px) {
   .nav { gap: 1rem; }
+}
+
+@media (max-width: 700px) {
+  .nav__cta { display: none; }
 }
 
 @media (max-width: 560px) {

@@ -210,7 +210,6 @@ export default function Nav() {
         </nav>
 
         <div className="nav__right">
-          <EditionSwitch />
           <ThemeToggle className="nav__theme" label="Light / Dark" />
           <a href="#contact" className="nav__cta" onClick={(event) => go(event, '#contact')}>
             Write to me
