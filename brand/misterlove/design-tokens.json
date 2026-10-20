@@ -1,0 +1,104 @@
+{
+  "brand": "MisterLove",
+  "approvedForms": {
+    "wordmark": "misterlove.",
+    "symbol": "m."
+  },
+  "colors": {
+    "ink": "#151714",
+    "white": "#FFFFFF",
+    "moss": "#526345",
+    "gallery": "#EFF1EA",
+    "muted": "#5A605A",
+    "rule": "#E8EAE5"
+  },
+  "typography": {
+    "family": "Manrope",
+    "wordmark": {
+      "weight": 800,
+      "trackingEm": -0.075,
+      "lineHeight": 0.95,
+      "desktopPx": 30,
+      "mobilePx": 28
+    },
+    "symbol": {
+      "weight": 800,
+      "trackingEm": -0.08,
+      "lineHeight": 0.9
+    },
+    "display": {
+      "weight": 650,
+      "trackingEm": -0.055
+    },
+    "body": {
+      "weight": 450,
+      "lineHeight": 1.8
+    }
+  },
+  "geometry": {
+    "wordmark": {
+      "text": "misterlove.",
+      "weight": 800,
+      "trackingEm": -0.075,
+      "viewBox": [
+        0,
+        0,
+        9370.48,
+        1588.48
+      ],
+      "glyphBoundsFontUnits": {
+        "xMin": 138,
+        "yMin": -30,
+        "xMax": 9420,
+        "yMax": 1470
+      },
+      "inkWidth": 9282,
+      "inkHeight": 1500,
+      "canvasSafetyPaddingFontUnits": 44.24,
+      "clearSpaceXFontUnits": 1106,
+      "recommendedClearSpaceFontUnits": 553,
+      "glyphCount": 11
+    },
+    "mark": {
+      "text": "m.",
+      "weight": 800,
+      "trackingEm": -0.08,
+      "viewBox": [
+        0,
+        0,
+        2078.48,
+        1194.48
+      ],
+      "glyphBoundsFontUnits": {
+        "xMin": 138,
+        "yMin": 0,
+        "xMax": 2128,
+        "yMax": 1106
+      },
+      "inkWidth": 1990,
+      "inkHeight": 1106,
+      "canvasSafetyPaddingFontUnits": 44.24,
+      "clearSpaceXFontUnits": 1106,
+      "recommendedClearSpaceFontUnits": 553,
+      "glyphCount": 2
+    }
+  },
+  "spacing": {
+    "unit": "x = visible height of the lowercase m in the symbol",
+    "minimumClearSpace": "0.5x on every side; outside the artwork bounds",
+    "artworkCanvasPadding": "0.04x safety padding; add external clear space in the layout"
+  },
+  "suggestedMinimums": {
+    "wordmark": {
+      "screenInkWidthPx": 112,
+      "printInkWidthMm": 28
+    },
+    "symbol": {
+      "screenInkWidthPx": 24,
+      "printInkWidthMm": 6
+    },
+    "note": "Optically check actual output. Favicon is a separately supplied small-use asset."
+  },
+  "fontLicense": "SIL Open Font License 1.1; see fonts/Manrope-OFL.txt",
+  "scope": "Reusable brand assets. This generator does not alter any site source or favicon."
+}

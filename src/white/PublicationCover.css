@@ -1,0 +1,114 @@
+/* The cover system is shared only within the separate White edition. */
+.white-site .pc-cover {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: .76;
+  container-type: inline-size;
+  background: var(--pc-ground, #dfe3df);
+  color: var(--pc-ink, #293c35);
+  font-family: 'Manrope', 'Noto Sans Devanagari', 'Nirmala UI', sans-serif;
+  border-radius: 1px 3px 3px 1px;
+  box-shadow: inset 4px 0 7px #0000000c, 2px 2px 0 #ffffff80;
+  isolation: isolate;
+}
+.white-site .pc-front {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 8.5% 8% 7.5% 10%;
+  border-left: 1px solid #ffffff24;
+}
+.white-site .pc-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-left: 6px solid #00000012;
+  pointer-events: none;
+}
+.white-site .pc-top {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 8%;
+  padding-bottom: 7%;
+  border-bottom: 1px solid currentColor;
+  font-size: clamp(.6rem, 2.65cqw, .78rem);
+  font-weight: 500;
+  line-height: 1.5;
+}
+.white-site .pc-imprint { flex-shrink: 0; }
+.white-site .pc-copy { padding-top: 10%; }
+.white-site .pc-title {
+  display: block;
+  font-size: clamp(.85rem, calc(10.7cqw * var(--pc-title-scale, 1)), 3.4rem);
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: -.052em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.white-site .pc-subtitle {
+  display: block;
+  font-size: clamp(.65rem, 3cqw, .95rem);
+  font-weight: 450;
+  line-height: 1.6;
+  margin-top: 7%;
+  max-width: 30ch;
+}
+.white-site .pc-mark {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 0;
+  margin-block: 4%;
+  color: inherit;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: .75;
+}
+.white-site .pc-bottom {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 7%;
+  margin-top: auto;
+  border-top: 1px solid currentColor;
+  padding-top: 5%;
+  font-size: clamp(.57rem, 2.55cqw, .77rem);
+  line-height: 1.5;
+}
+.white-site .pc-bottom strong { display: block; font-size: 1.12em; font-weight: 550; }
+.white-site .pc-colophon { font-weight: 800; font-size: 2em; line-height: .9; letter-spacing: -.08em; }
+.white-site .pc-cover--compact .pc-title {
+  font-size: clamp(.7rem, calc(9.7cqw * var(--pc-title-scale, 1)), 2rem);
+}
+.white-site .pc-cover--compact .pc-top { font-size: clamp(.48rem, 2.7cqw, .65rem); }
+.white-site .pc-cover--compact .pc-bottom { font-size: clamp(.48rem, 2.6cqw, .65rem); }
+.white-site .pc-cover--compact .pc-imprint { display: none; }
+.white-site .pc-cover--compact .pc-bottom > span:first-child { font-size: 0; }
+.white-site .pc-cover--compact .pc-bottom strong { font-size: clamp(.48rem, 2.8cqw, .69rem); }
+.white-site .pc-cover--long .pc-copy { padding-top: 8%; }
+.white-site .pc-cover--long .pc-subtitle { font-size: clamp(.6rem, 2.7cqw, .85rem); margin-top: 5%; }
+.white-site [lang="hi"] .pc-title, .white-site [lang="pa"] .pc-title { line-height: 1.45; letter-spacing: 0; }
+/* Small covers accompany a full readable heading; scale the illustration as a
+   whole instead of letting minimum type sizes push its colophon outside. */
+@container (max-width: 190px) {
+  .white-site .pc-top { font-size: 4.3cqw; }
+  .white-site .pc-imprint, .white-site .pc-subtitle { display: none; }
+  .white-site .pc-title, .white-site .pc-cover--compact .pc-title {
+    font-size: calc(10cqw * var(--pc-title-scale, 1));
+  }
+  .white-site .pc-bottom { font-size: 4cqw; }
+  .white-site .pc-bottom > span:first-child { font-size: 0; }
+  .white-site .pc-bottom strong, .white-site .pc-cover--compact .pc-bottom strong { font-size: 4.3cqw; }
+}
+@supports not (container-type: inline-size) {
+  .white-site .pc-title { font-size: calc(clamp(1.4rem, 3vw, 3rem) * var(--pc-title-scale, 1)); }
+  .white-site .pc-cover--compact .pc-title { font-size: calc(clamp(.85rem, 2vw, 1.6rem) * var(--pc-title-scale, 1)); }
+}
+@media (forced-colors: active) {
+  .white-site .pc-cover { border: 1px solid CanvasText; }
+  .white-site .pc-mark { opacity: 1; }
+}

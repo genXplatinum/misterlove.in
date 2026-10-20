@@ -1,0 +1,52 @@
+{
+  "status": "local implementation; publication requires user review",
+  "base": "47ca094f34f81cfe184f7c4fe42e4bcf00ec4ed1",
+  "direction": "The Reading Room",
+  "alternatives": [
+    {"name": "Evidence Atlas", "assessment": "A spatial map can reveal connections, but would compete with reading and create a heavier mobile experience."},
+    {"name": "Literary Index", "assessment": "A disciplined typographic index is useful, but alone would repeat the current edition's uniform rows."}
+  ],
+  "palette": {
+    "white": "#FFFFFF",
+    "ink": "#151714",
+    "slate": "#5A605A",
+    "line": "#E8EAE5",
+    "gallery": "#EFF1EA",
+    "moss": "#526345"
+  },
+  "typography": {
+    "family": "Self-hosted Manrope variable; existing Noto Sans Devanagari for Hindi",
+    "display": "Weight 650-750, tight but readable tracking, fluid 52-108px",
+    "body": "16-18px, generous leading, short measures",
+    "support": "13-14px minimum for ordinary interface copy"
+  },
+  "homepage_sequence": [
+    "Quiet wordmark and navigation",
+    "Leave no question unasked: split typographic opening and tactile research object",
+    "Three real questions change the featured collection, synopsis and reading link",
+    "Curated selection across belief, economics, science and society",
+    "A short close reading as an approachable entry",
+    "Author portrait and statement on checking arguments",
+    "Research method and substantial contact footer"
+  ],
+  "principles": [
+    "Make actual research the subject of the design.",
+    "Use one memorable book interaction; keep navigation immediate and native scrolling.",
+    "Vary scale and composition instead of repeating rounded cards.",
+    "Keep readable content visible with reduced motion and without hover.",
+    "Use real metadata for counts, languages, links and sources."
+  ],
+  "implementation": [
+    "Isolated worktree and White-only changes",
+    "React components and scoped CSS with native browser interactions",
+    "URL-backed archive filters; curated subject controls",
+    "Preserve shared reader manuscripts and download bytes",
+    "Full build, lint, preservation checks, browser interaction and responsive review",
+    "Local preview for the user's decision; no push or deployment"
+  ],
+  "critical_review": {
+    "risk": "A large headline with generic cards could resemble a template.",
+    "response": "Use a typographic research object, true cross-disciplinary questions, an asymmetric selection and a compact reading desk. Avoid decorative video, scrolling capture and fake claims.",
+    "boundary": "The existing footer-only /white/ entry and Original/Observatory code remain untouched."
+  }
+}

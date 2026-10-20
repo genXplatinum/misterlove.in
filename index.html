@@ -6,13 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#F3EFE6" />
     <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="/brand/intro.css" />
+    <link rel="preload" href="/brand/mark-ink.svg" as="image" type="image/svg+xml" />
     <script>
-      var savedEdition = 'classic';
-      try { savedEdition = localStorage.getItem('misterlove:experience') === 'immersive' ? 'immersive' : 'classic'; } catch (_) {}
-      document.documentElement.dataset.experience = location.pathname.replace(/\/$/, '') === '/observatory' ? 'immersive' : savedEdition;
-      if (location.pathname.replace(/\/$/, '') === '/observatory' || (location.pathname === '/' && savedEdition === 'immersive')) {
-        document.documentElement.classList.add('page-observatory');
-      }
+      document.documentElement.dataset.experience = 'classic';
       try {
         if (localStorage.getItem('misterlove:theme') === 'dark') {
           document.documentElement.dataset.theme = 'dark';
@@ -145,6 +142,11 @@
     </script>
   </head>
   <body>
+    <div id="brand-intro" aria-hidden="true">
+      <img class="brand-intro-mark" src="/brand/mark-ink.svg" width="150" height="86" alt="" />
+      <img class="brand-intro-wordmark" src="/brand/wordmark-ink.svg" width="156" height="26" alt="" />
+    </div>
+    <script src="/brand/intro.js"></script>
     <div id="root"></div>
     <noscript>
       <h1>Lovepreet Singh</h1>

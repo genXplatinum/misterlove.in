@@ -877,15 +877,22 @@ for (const feature of features) {
   shells += 1;
 }
 
-shell({
-  path: '/observatory',
-  title: 'The Observatory · MisterLove',
-  description: 'An immersive home for the writing and research of Lovepreet Singh. Explore philosophy, history, belief and the questions we live by.',
-  canonical: SITE + '/',
-  body: '<main style="padding:5rem 8%;max-width:70rem;margin:auto"><h1>The Observatory</h1><p>The living archive of Lovepreet Singh.</p><p>An immersive home for independent research into history, philosophy, belief and public life.</p><p><a href="/writing/">Explore the writing</a> · <a href="/books/">Enter the reading room</a></p></main>',
-  noscript: '<p><a href="/writing/">Read the archive</a> or <a href="/books/">browse the books</a>.</p>',
-});
+// retired-edition:start
+// Keep old bookmarks useful without retaining the retired edition or its bundle.
+// GitHub Pages has no per-route HTTP redirects, so provide a static fallback too.
+mkdirSync('dist/observatory', { recursive: true });
+writeFileSync('dist/observatory/index.html', `<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="${SITE}/">
+<meta http-equiv="refresh" content="0; url=/">
+<title>Continue to MisterLove</title>
+<script>try{localStorage.setItem("misterlove:experience","classic")}catch(e){}location.replace("/"+location.search+location.hash)</script>
+</head><body><p>This edition has closed. <a href="/">Continue to MisterLove Original</a>.</p></body></html>`);
 shells += 1;
+// retired-edition:end
 
 /* ---- /writing — the shelf. Written once, listing every piece. ---- */
 shell({

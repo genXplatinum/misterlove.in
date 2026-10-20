@@ -1,38 +1,27 @@
-import { createContext, useContext, useLayoutEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { createContext, useContext, useLayoutEffect } from 'react';
 import { syncThemeColor } from '../pageSurface';
 
 const ExperienceContext = createContext(null);
 const STORAGE_KEY = 'misterlove:experience';
 
 export function readExperience() {
-  if (typeof window === 'undefined') return 'classic';
-  if (window.location.pathname.replace(/\/$/, '') === '/observatory') return 'immersive';
-  try { return localStorage.getItem(STORAGE_KEY) === 'immersive' ? 'immersive' : 'classic'; }
-  catch { return 'classic'; }
+  return 'classic';
 }
 
-export function applyExperience(experience) {
-  document.documentElement.dataset.experience = experience;
+export function applyExperience() {
+  document.documentElement.dataset.experience = 'classic';
   syncThemeColor();
-  try { localStorage.setItem(STORAGE_KEY, experience); } catch { /* Works without storage. */ }
+  // Replace obsolete edition preferences so bookmarked Original pages stay Original.
+  try { localStorage.setItem(STORAGE_KEY, 'classic'); } catch { /* Works without storage. */ }
 }
 
-export function ExperienceProvider({ children, initialExperience }) {
-  const [experience, setExperience] = useState(initialExperience);
-  const { pathname } = useLocation();
-  useLayoutEffect(() => {
-    if (pathname.replace(/\/$/, '') === '/observatory') setExperience('immersive');
-    if (pathname === '/') setExperience('classic');
-  }, [pathname]);
-  useLayoutEffect(() => { applyExperience(experience); }, [experience]);
-  const value = useMemo(() => ({
-    experience,
-    immersive: experience === 'immersive',
-    homePath: experience === 'immersive' ? '/observatory' : '/',
-    chooseExperience: (next) => { applyExperience(next); setExperience(next); },
-  }), [experience]);
-  return <ExperienceContext.Provider value={value}>{children}</ExperienceContext.Provider>;
+const originalExperience = {
+  experience: 'classic', white: false, homePath: '/',
+};
+
+export function ExperienceProvider({ children }) {
+  useLayoutEffect(() => { applyExperience(); }, []);
+  return <ExperienceContext.Provider value={originalExperience}>{children}</ExperienceContext.Provider>;
 }
 
 export function useExperience() {
@@ -41,10 +30,9 @@ export function useExperience() {
   return context;
 }
 
-// The separate White router shares the readers, but never writes the visitor's
-// Classic/Immersive preference. Entering it leaves the other editions intact.
+// The separate White router shares readers without changing Original URLs.
 const readingExperience = {
-  experience: 'white', immersive: false, white: true, homePath: '/', chooseExperience: () => {},
+  experience: 'white', white: true, homePath: '/',
 };
 export function PlainReadingProvider({ children }) {
   return <ExperienceContext.Provider value={readingExperience}>{children}</ExperienceContext.Provider>;
