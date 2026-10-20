@@ -8,6 +8,7 @@
 .footer__editions{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:30px;font-size:.88rem}
 @media(min-width:1121px) and (max-width:1450px){.nav .nav__cta{display:none}.nav .nav__links{gap:clamp(12px,1.6vw,23px)}}
 @media(max-width:700px){
+  .edition-switch a{min-height:44px}
   .footer__editions{flex-direction:column;align-items:flex-start}
   .navmenu__edition{gap:8px}
 }

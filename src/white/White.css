@@ -237,6 +237,12 @@
 .white-edition #main .press-hero::before, .white-edition #main .press-card::before { content: none; }
 .white-edition #main .press-opening__name { font: 600 16px/1.5 var(--font-ui); color: #121212; letter-spacing: 0; }
 .white-edition #main .press-opening h1 { text-shadow: none; font-weight: 700; letter-spacing: -.065em; }
+.white-edition #main .press-opening > * { min-width: 0; }
+.white-edition #main .press-opening__signature { color: #585858; flex-wrap: wrap; }
+.white-edition #main .press-opening__signature span { color: #585858; }
+.white-edition #main .press-publisher-band { background: #f6f6f5; border-color: #dedede; }
+.white-edition #main .press-publisher-band p { color: #585858; }
+.white-edition #main .press-publisher-band span { color: #333; }
 .white-edition #main .press-kicker { color: #585858; letter-spacing: 0; text-transform: none; font-size: 12px; }
 .white-edition #main .press-opening__intro { color: #585858; font-size: 17px; line-height: 1.85; }
 .white-edition #main .press-lead { border: 0; border-radius: 0; background: none; box-shadow: none; }
@@ -248,6 +254,7 @@
 .white-edition #main .press-lead__caption :where(p, small), .white-edition #main .press-thanks > p { color: #585858; }
 .white-edition #main .press-button { background: #121212; color: #fff; box-shadow: none; border: 1px solid #121212; border-radius: 40px; }
 .white-edition #main :where(.press-card, .press-originals__posts > a) { border-radius: 0; box-shadow: none; border: 0; border-top: 1px solid #dedede; transform: none; }
+.white-edition #main .press-card h3 { font-size: clamp(26px, 4vw, 38px); line-height: 1.15; overflow-wrap: anywhere; }
 .white-edition #main .press-gallery :where(figure > button, figure > a) { border-radius: 0; box-shadow: none; background: #f6f6f5; border-color: #dedede; }
 
 @media (min-width: 1100px) {
@@ -341,7 +348,8 @@
   .white-contact-email { font-size: 16px; gap: 14px; }
   .white-footer-grid { grid-template-columns: 1fr 1fr; gap: 32px 25px; padding-block: 32px; }
   .white-footer-grid > div:first-child { grid-column: 1 / -1; }
-  .white-footer-base { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 25px 16px; }
+  .white-footer-base { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 20px 16px; }
+  .white-footer-base > .edition-switch { grid-column: 1 / -1; grid-row: 1; justify-self: start; }
   .white-version-links { grid-column: 1 / -1; order: -1; width: fit-content; white-space: nowrap; flex-wrap: nowrap; }
   .white-version-links > * { padding: 7px 12px; }
   .white-footer-base > a { margin-left: auto; }
@@ -350,7 +358,7 @@
   .white-page-heading { margin-bottom: 36px; }
   .white-page-heading > p:last-child { font-size: 15px; line-height: 1.9; }
   .white-search { grid-template-columns: 1fr; gap: 24px; }
-  .white-search input, .white-search select { font-size: 14px; }
+  .white-search input, .white-search select { font-size: 16px; }
   .white-biography { grid-template-columns: 1fr; gap: 34px; padding-bottom: 40px; }
   .white-biography figure { position: static; max-width: 280px; }
   .white-biography p { font-size: 15px; }
@@ -364,6 +372,10 @@
   .white-edition .prose { font-size: 16px; line-height: 1.95; }
   .white-edition .article__title { font-size: clamp(30px, 9vw, 46px); }
   .white-edition .article--hi .article__title { font-size: clamp(27px, 8vw, 40px); }
+  .white-edition #main .press-opening { grid-template-columns: minmax(0, 1fr); padding-top: 40px; gap: 40px; }
+  .white-edition #main .press-opening h1 { font-size: clamp(44px, 12vw, 72px); line-height: 1.03; overflow-wrap: anywhere; }
+  .white-edition #main .press-lead { margin-right: 0; }
+  .white-edition #main .press-page:not(.press-index) { padding-top: 40px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .white-edition { scroll-behavior: auto; }

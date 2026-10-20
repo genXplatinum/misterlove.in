@@ -98,10 +98,10 @@ export default function Nav() {
       document.querySelector('.footer'),
     ].filter(Boolean);
     const focusable = menu?.querySelectorAll('a[href], button:not([disabled])') ?? [];
-    const first = focusable[0];
+    const first = toggleRef.current;
     const last = focusable[focusable.length - 1];
     background.forEach((element) => { element.inert = true; });
-    requestAnimationFrame(() => first?.focus());
+    requestAnimationFrame(() => focusable[0]?.focus());
 
     const onKey = (event) => {
       if (event.key === 'Escape') {

@@ -16,6 +16,8 @@ const NAVIGATION_PATHS = new Set([
   'src/components/Nav.jsx', 'src/components/Nav.css', 'src/components/EditionSwitch.css',
   'src/white/WhiteApp.jsx', 'src/white/White.css', 'src/white/WhitePremium.css',
 ]);
+const MOBILE_BASE = '751b43d3358ea196074330b5a27a7ce43359f4b8';
+const MOBILE_PATHS = new Set(['src/pages/Study.jsx', 'docs/mobile-layout-audit.md']);
 export const COPY_EDIT_PATHS = new Set([
   'src/data/site.js', 'src/data/writing.js', 'src/data/books.js', 'src/data/press.js',
   'src/pages/ClassicHome.jsx', 'src/pages/Books.jsx', 'src/pages/Book.jsx', 'src/pages/Press.jsx',
@@ -228,11 +230,21 @@ export function verifySiteCopy({ quiet = false } = {}) {
       `public/press/social/${feature.slug}-spotlight-story.jpg`,
     ]),
   ]);
-  const allowed = path => COPY_EDIT_PATHS.has(path) || NAVIGATION_PATHS.has(path) || imagePaths.has(path);
+  const allowed = path => COPY_EDIT_PATHS.has(path) || NAVIGATION_PATHS.has(path) || MOBILE_PATHS.has(path) || imagePaths.has(path);
   const changed = git('diff', '--name-only', '--no-renames', '-z', base, '--').split('\0').filter(Boolean);
   const untracked = git('ls-files', '--others', '--exclude-standard', '-z').split('\0').filter(Boolean);
   assert.deepEqual([...new Set([...changed, ...untracked])].filter(path => !allowed(path)), [],
-    'Changes exceed the approved copy audit and subsequent edition-menu scope');
+    'Changes exceed the approved copy, edition-menu and mobile-layout scopes');
+
+  const studyPath = 'src/pages/Study.jsx';
+  const releasedStudy = normalize(git('show', `${MOBILE_BASE}:${studyPath}`));
+  const omitMobileJump = source => {
+    const pattern = /^  const goSectionMobile = \(event, id\) => \{[\s\S]*?^  \};/m;
+    assert.match(source, pattern, 'Study mobile contents handler is missing');
+    return source.replace(pattern, '');
+  };
+  assert.equal(omitMobileJump(read(studyPath)), omitMobileJump(releasedStudy),
+    'The mobile contents fix must preserve the rest of the study reader');
 
   const manuscripts = [...tree.keys()].filter(path => contentRoots.some(prefix => path.startsWith(prefix))).sort();
   assert.deepEqual(contentRoots.flatMap(walk).sort(), manuscripts,
