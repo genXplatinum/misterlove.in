@@ -422,8 +422,9 @@ export default function Study() {
   };
 
   const goSectionMobile = (event, id) => {
-    goSection(event, id);
     if (mobileNavRef.current) mobileNavRef.current.open = false;
+    // Closing the contents changes the target's position in the page.
+    goSection(event, id);
   };
 
   return (

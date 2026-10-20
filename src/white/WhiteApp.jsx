@@ -59,18 +59,41 @@ function PageMeta({ title, description }) {
 function WhiteNav() {
   const { pathname } = useLocation();
   const menu = useRef(null);
+  const closeMenu = () => { if (menu.current) menu.current.open = false; };
   useEffect(() => { if (menu.current) menu.current.open = false; }, [pathname]);
+  useEffect(() => {
+    const details = menu.current;
+    const desktop = window.matchMedia('(min-width: 701px)');
+    const dismissOutside = event => {
+      if (!details.contains(event.target)) details.open = false;
+    };
+    const closeOnDesktop = event => { if (event.matches) details.open = false; };
+    document.addEventListener('pointerdown', dismissOutside);
+    desktop.addEventListener('change', closeOnDesktop);
+    return () => {
+      document.removeEventListener('pointerdown', dismissOutside);
+      desktop.removeEventListener('change', closeOnDesktop);
+    };
+  }, []);
   return <header className="white-header">
     <Link className="white-wordmark" to="/" aria-label="MisterLove home"><Wordmark /></Link>
     <nav className="white-desktop-nav" aria-label="Primary navigation">
       {primary.map(item => <NavLink key={item.to} to={item.to}>{item.label}</NavLink>)}
     </nav>
     <a className="white-header-contact" href={`mailto:${profile.email}`}>Get in touch <Arrow diagonal /></a>
-    <details ref={menu} className="white-mobile-menu">
+    <details ref={menu} className="white-mobile-menu"
+      onKeyDown={event => {
+        if (event.key === 'Escape' && menu.current?.open) {
+          event.preventDefault();
+          closeMenu();
+          menu.current.querySelector('summary')?.focus();
+        }
+      }}
+      onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) closeMenu(); }}>
       <summary>Menu <span aria-hidden="true">+</span></summary>
       <div className="white-menu-panel">
-        <nav className="white-menu-links" aria-label="Mobile navigation">{primary.map(item => <NavLink key={item.to} to={item.to}>{item.label}</NavLink>)}<a href={`mailto:${profile.email}`}>Get in touch</a></nav>
-        <div className="white-menu-edition"><span>Your edition</span><EditionSwitch onChange={() => { if (menu.current) menu.current.open = false; }} /></div>
+        <nav className="white-menu-links" aria-label="Mobile navigation">{primary.map(item => <NavLink key={item.to} to={item.to} onClick={closeMenu}>{item.label}</NavLink>)}<a href={`mailto:${profile.email}`} onClick={closeMenu}>Get in touch</a></nav>
+        <div className="white-menu-edition"><span>Your edition</span><EditionSwitch onChange={closeMenu} /></div>
       </div>
     </details>
   </header>;
