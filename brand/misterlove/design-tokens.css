@@ -1,0 +1,26 @@
+/* MisterLove: approved White edition identity. Optional import. */
+:root {
+  --ml-ink: #151714;
+  --ml-white: #ffffff;
+  --ml-moss: #526345;
+  --ml-gallery: #eff1ea;
+  --ml-muted: #5a605a;
+  --ml-rule: #e8eae5;
+  --ml-font-family: 'Manrope', Arial, sans-serif;
+  --ml-wordmark-weight: 800;
+  --ml-wordmark-tracking: -0.075em;
+  --ml-symbol-weight: 800;
+  --ml-symbol-tracking: -0.08em;
+}
+.misterlove-wordmark {
+  font-family: var(--ml-font-family);
+  font-weight: var(--ml-wordmark-weight);
+  letter-spacing: var(--ml-wordmark-tracking);
+  line-height: 0.95;
+}
+.misterlove-symbol {
+  font-family: var(--ml-font-family);
+  font-weight: var(--ml-symbol-weight);
+  letter-spacing: var(--ml-symbol-tracking);
+  line-height: 0.9;
+}

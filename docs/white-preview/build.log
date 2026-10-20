@@ -1,0 +1,545 @@
+
+> lovepreet-singh@1.0.0 prebuild
+> npm run validate:punjabi && npm run validate:hindi && npm run validate:forgotten-gods-hindi && npm run validate:women-hindi && npm run validate:sikhism && npm run og
+
+
+> lovepreet-singh@1.0.0 validate:punjabi
+> node scripts/validate-punjabi-writing.mjs
+
+Punjabi writing validated: 1/28 parts, reciprocal available languages, source anchors and original PDF hash.
+
+> lovepreet-singh@1.0.0 validate:hindi
+> node scripts/validate-hindi-writing.mjs
+
+Part 01   3315 words  18 min  11 sections · 18 boxes · 2 tables · 7 sources
+Part 02   2759 words  15 min  10 sections · 14 boxes · 5 tables · 6 sources
+Part 03   2432 words  14 min  8 sections · 14 boxes · 1 tables · 6 sources
+Part 04   2290 words  13 min  11 sections · 14 boxes · 2 tables · 6 sources
+Part 05   2852 words  16 min  13 sections · 15 boxes · 2 tables · 6 sources
+Part 06   2602 words  14 min  11 sections · 9 boxes · 4 tables · 6 sources
+Part 07   2732 words  15 min  10 sections · 7 boxes · 5 tables · 6 sources
+Part 08   2854 words  16 min  10 sections · 11 boxes · 9 tables · 6 sources
+Part 09   2329 words  13 min  9 sections · 9 boxes · 5 tables · 6 sources
+Part 10   2670 words  15 min  10 sections · 8 boxes · 6 tables · 6 sources
+Part 11   2438 words  14 min  11 sections · 11 boxes · 6 tables · 6 sources
+Part 12   1936 words  11 min  8 sections · 2 boxes · 5 tables · 4 sources
+
+Hindi total: 31,209 words · 174 minutes
+
+Hindi structural validation passed.
+
+> lovepreet-singh@1.0.0 validate:forgotten-gods-hindi
+> node scripts/validate-forgotten-gods-hindi.mjs
+
+Part 01  11976 words  67 min  8 sections · 187 paragraphs · 14 boxes
+Part 02  14553 words  81 min  6 sections · 213 paragraphs · 17 boxes
+Part 03  16685 words  93 min  7 sections · 258 paragraphs · 20 boxes
+Part 04  11828 words  66 min  6 sections · 186 paragraphs · 13 boxes
+
+Hindi total: 55,042 words · 307 minutes
+
+Hindi validation passed.
+
+> lovepreet-singh@1.0.0 validate:women-hindi
+> node scripts/validate-rules-about-women-hindi.mjs
+
+Hindi women book verified: 16 parts, 166 original chapters + short appendix, 53 tables, 1808 cells, 365290 words; 885-page download matches its SHA-256.
+
+> lovepreet-singh@1.0.0 validate:sikhism
+> node scripts/validate-sikhism-completion.mjs
+
+Sikhism complete: 13 parts, 130 claims, 650 steps, 95922 words, 268-page master; original text and archive preserved.
+
+> lovepreet-singh@1.0.0 og
+> node scripts/make-og-cards.mjs && node scripts/make-press-cards.mjs
+
+public\og\writing.png                          1200x630  204 KB
+public\og\atheist-vs-believer.png              1200x630  45 KB
+public\og\atheist-vs-believer-part-1.png       1200x630  41 KB
+public\og\atheist-vs-believer-part-2.png       1200x630  44 KB
+public\og\atheist-vs-believer-part-3.png       1200x630  44 KB
+public\og\atheist-vs-believer-part-4.png       1200x630  45 KB
+public\og\atheist-vs-believer-hi.png           1200x630  37 KB
+public\og\atheist-vs-believer-hi-part-1.png    1200x630  36 KB
+public\og\atheist-vs-believer-hi-part-2.png    1200x630  37 KB
+public\og\atheist-vs-believer-hi-part-3.png    1200x630  37 KB
+public\og\atheist-vs-believer-hi-part-4.png    1200x630  37 KB
+public\og\why-i-dont-believe-sacred-mirage.png 1200x630  1042 KB
+public\og\why-i-dont-believe-part-1.png        1200x630  173 KB
+public\og\why-i-dont-believe-part-2.png        1200x630  190 KB
+public\og\why-i-dont-believe-part-3.png        1200x630  186 KB
+public\og\why-i-dont-believe-part-4.png        1200x630  186 KB
+public\og\why-i-dont-believe-part-5.png        1200x630  191 KB
+public\og\why-i-dont-believe-part-6.png        1200x630  177 KB
+public\og\why-i-dont-believe-part-7.png        1200x630  186 KB
+public\og\why-i-dont-believe-part-8.png        1200x630  188 KB
+public\og\why-i-dont-believe-part-9.png        1200x630  182 KB
+public\og\why-i-dont-believe-part-10.png       1200x630  187 KB
+public\og\why-i-dont-believe-part-11.png       1200x630  192 KB
+public\og\why-i-dont-believe-part-12.png       1200x630  180 KB
+public\og\why-i-dont-believe-part-13.png       1200x630  190 KB
+public\og\why-i-dont-believe-part-14.png       1200x630  185 KB
+public\og\why-i-dont-believe-part-15.png       1200x630  194 KB
+public\og\why-i-dont-believe-part-16.png       1200x630  190 KB
+public\og\why-i-dont-believe-part-17.png       1200x630  192 KB
+public\og\why-i-dont-believe-part-18.png       1200x630  180 KB
+public\og\why-i-dont-believe-part-19.png       1200x630  191 KB
+public\og\why-i-dont-believe-part-20.png       1200x630  194 KB
+public\og\why-i-dont-believe-part-21.png       1200x630  188 KB
+public\og\why-i-dont-believe-part-22.png       1200x630  192 KB
+public\og\why-i-dont-believe-part-23.png       1200x630  183 KB
+public\og\why-i-dont-believe-part-24.png       1200x630  181 KB
+public\og\why-i-dont-believe-part-25.png       1200x630  182 KB
+public\og\why-i-dont-believe-part-26.png       1200x630  192 KB
+public\og\why-i-dont-believe-part-27.png       1200x630  179 KB
+public\og\why-i-dont-believe-part-28.png       1200x630  191 KB
+public\og\why-i-dont-believe-hi-sacred-mirage.png 1200x630  1033 KB
+public\og\why-i-dont-believe-hi-part-1.png     1200x630  169 KB
+public\og\why-i-dont-believe-hi-part-2.png     1200x630  175 KB
+public\og\why-i-dont-believe-hi-part-3.png     1200x630  182 KB
+public\og\why-i-dont-believe-hi-part-4.png     1200x630  171 KB
+public\og\why-i-dont-believe-hi-part-5.png     1200x630  174 KB
+public\og\why-i-dont-believe-hi-part-6.png     1200x630  175 KB
+public\og\why-i-dont-believe-hi-part-7.png     1200x630  173 KB
+public\og\why-i-dont-believe-hi-part-8.png     1200x630  178 KB
+public\og\why-i-dont-believe-hi-part-9.png     1200x630  171 KB
+public\og\why-i-dont-believe-hi-part-10.png    1200x630  165 KB
+public\og\why-i-dont-believe-hi-part-11.png    1200x630  175 KB
+public\og\why-i-dont-believe-hi-part-12.png    1200x630  172 KB
+public\og\why-i-dont-believe-hi-part-13.png    1200x630  174 KB
+public\og\why-i-dont-believe-hi-part-14.png    1200x630  170 KB
+public\og\why-i-dont-believe-hi-part-15.png    1200x630  177 KB
+public\og\why-i-dont-believe-hi-part-16.png    1200x630  174 KB
+public\og\why-i-dont-believe-hi-part-17.png    1200x630  175 KB
+public\og\why-i-dont-believe-hi-part-18.png    1200x630  167 KB
+public\og\why-i-dont-believe-hi-part-19.png    1200x630  178 KB
+public\og\why-i-dont-believe-hi-part-20.png    1200x630  172 KB
+public\og\why-i-dont-believe-hi-part-21.png    1200x630  179 KB
+public\og\why-i-dont-believe-hi-part-22.png    1200x630  171 KB
+public\og\why-i-dont-believe-hi-part-23.png    1200x630  178 KB
+public\og\why-i-dont-believe-hi-part-24.png    1200x630  160 KB
+public\og\why-i-dont-believe-hi-part-25.png    1200x630  166 KB
+public\og\why-i-dont-believe-hi-part-26.png    1200x630  170 KB
+public\og\why-i-dont-believe-hi-part-27.png    1200x630  161 KB
+public\og\why-i-dont-believe-hi-part-28.png    1200x630  167 KB
+public\og\why-i-dont-believe-pa.png            1200x630  1036 KB
+public\og\why-i-dont-believe-pa-part-1.png     1200x630  1039 KB
+public\og\india-before-and-after-2014.jpg      1200x630  203 KB
+public\og\india-before-and-after-2014-part-1.png 1200x630  194 KB
+public\og\india-before-and-after-2014-part-2.png 1200x630  192 KB
+public\og\india-before-and-after-2014-part-3.png 1200x630  196 KB
+public\og\india-before-and-after-2014-part-4.png 1200x630  196 KB
+public\og\india-before-and-after-2014-part-5.png 1200x630  195 KB
+public\og\india-before-and-after-2014-part-6.png 1200x630  198 KB
+public\og\india-before-and-after-2014-part-7.png 1200x630  195 KB
+public\og\india-before-and-after-2014-hi.png   1200x630  181 KB
+public\og\india-before-and-after-2014-hi-part-1.png 1200x630  173 KB
+public\og\india-before-and-after-2014-hi-part-2.png 1200x630  179 KB
+public\og\india-before-and-after-2014-hi-part-3.png 1200x630  176 KB
+public\og\india-before-and-after-2014-hi-part-4.png 1200x630  176 KB
+public\og\india-before-and-after-2014-hi-part-5.png 1200x630  173 KB
+public\og\india-before-and-after-2014-hi-part-6.png 1200x630  172 KB
+public\og\india-before-and-after-2014-hi-part-7.png 1200x630  179 KB
+public\og\confessions.png                      1200x630  188 KB
+public\og\confessions-part-1.png               1200x630  188 KB
+public\og\confessions-part-2.png               1200x630  193 KB
+public\og\confessions-part-3.png               1200x630  203 KB
+public\og\confessions-part-4.png               1200x630  202 KB
+public\og\confessions-part-5.png               1200x630  183 KB
+public\og\confessions-part-6.png               1200x630  198 KB
+public\og\confessions-part-7.png               1200x630  190 KB
+public\og\confessions-part-8.png               1200x630  182 KB
+public\og\confessions-part-9.png               1200x630  188 KB
+public\og\wars-of-punjab.png                   1200x630  190 KB
+public\og\wars-of-punjab-part-1.png            1200x630  190 KB
+public\og\wars-of-punjab-part-2.png            1200x630  197 KB
+public\og\wars-of-punjab-part-3.png            1200x630  194 KB
+public\og\wars-of-punjab-part-4.png            1200x630  194 KB
+public\og\wars-of-punjab-part-5.png            1200x630  201 KB
+public\og\wars-of-punjab-part-6.png            1200x630  200 KB
+public\og\wars-of-punjab-part-7.png            1200x630  198 KB
+public\og\wars-of-punjab-part-8.png            1200x630  199 KB
+public\og\wars-of-punjab-part-9.png            1200x630  196 KB
+public\og\wars-of-punjab-part-10.png           1200x630  199 KB
+public\og\wars-of-punjab-part-11.png           1200x630  202 KB
+public\og\wars-of-punjab-part-12.png           1200x630  187 KB
+public\og\wars-of-punjab-part-13.png           1200x630  189 KB
+public\og\wars-of-punjab-part-14.png           1200x630  194 KB
+public\og\wars-of-punjab-part-15.png           1200x630  193 KB
+public\og\wars-of-punjab-part-16.png           1200x630  185 KB
+public\og\sapiens-reading.png                  1200x630  178 KB
+public\og\sapiens-reading-part-1.png           1200x630  188 KB
+public\og\sapiens-reading-part-2.png           1200x630  177 KB
+public\og\sapiens-reading-part-3.png           1200x630  195 KB
+public\og\sapiens-reading-part-4.png           1200x630  175 KB
+public\og\sapiens-reading-part-5.png           1200x630  199 KB
+public\og\sapiens-reading-part-6.png           1200x630  177 KB
+public\og\sapiens-reading-part-7.png           1200x630  179 KB
+public\og\sapiens-reading-part-8.png           1200x630  186 KB
+public\og\sapiens-reading-part-9.png           1200x630  181 KB
+public\og\sapiens-reading-part-10.png          1200x630  186 KB
+public\og\sapiens-reading-part-11.png          1200x630  179 KB
+public\og\origin-of-species.png                1200x630  175 KB
+public\og\origin-of-species-part-1.png         1200x630  181 KB
+public\og\origin-of-species-part-2.png         1200x630  169 KB
+public\og\origin-of-species-part-3.png         1200x630  162 KB
+public\og\origin-of-species-part-4.png         1200x630  170 KB
+public\og\origin-of-species-part-5.png         1200x630  167 KB
+public\og\origin-of-species-part-6.png         1200x630  162 KB
+public\og\origin-of-species-part-7.png         1200x630  176 KB
+public\og\origin-of-species-part-8.png         1200x630  188 KB
+public\og\architecture-of-money.png            1200x630  186 KB
+public\og\architecture-of-money-part-1.png     1200x630  191 KB
+public\og\architecture-of-money-part-2.png     1200x630  200 KB
+public\og\architecture-of-money-part-3.png     1200x630  186 KB
+public\og\architecture-of-money-part-4.png     1200x630  189 KB
+public\og\architecture-of-money-part-5.png     1200x630  198 KB
+public\og\architecture-of-money-part-6.png     1200x630  190 KB
+public\og\architecture-of-money-part-7.png     1200x630  179 KB
+public\og\architecture-of-money-part-8.png     1200x630  191 KB
+public\og\architecture-of-money-part-9.png     1200x630  183 KB
+public\og\congress-record.png                  1200x630  187 KB
+public\og\congress-record-part-1.png           1200x630  193 KB
+public\og\congress-record-part-2.png           1200x630  194 KB
+public\og\congress-record-part-3.png           1200x630  199 KB
+public\og\congress-record-part-4.png           1200x630  199 KB
+public\og\congress-record-part-5.png           1200x630  194 KB
+public\og\congress-record-part-6.png           1200x630  193 KB
+public\og\congress-record-part-7.png           1200x630  196 KB
+public\og\congress-record-part-8.png           1200x630  195 KB
+public\og\congress-record-part-9.png           1200x630  187 KB
+public\og\congress-record-part-10.png          1200x630  192 KB
+public\og\congress-record-part-11.png          1200x630  190 KB
+public\og\congress-record-part-12.png          1200x630  194 KB
+public\og\congress-record-part-13.png          1200x630  187 KB
+public\og\congress-record-part-14.png          1200x630  199 KB
+public\og\congress-record-part-15.png          1200x630  187 KB
+public\og\congress-record-part-16.png          1200x630  186 KB
+public\og\congress-record-part-17.png          1200x630  188 KB
+public\og\congress-record-part-18.png          1200x630  194 KB
+public\og\congress-record-part-19.png          1200x630  183 KB
+public\og\rules-about-women.png                1200x630  188 KB
+public\og\rules-about-women-part-1.png         1200x630  187 KB
+public\og\rules-about-women-part-2.png         1200x630  186 KB
+public\og\rules-about-women-part-3.png         1200x630  185 KB
+public\og\rules-about-women-part-4.png         1200x630  189 KB
+public\og\rules-about-women-part-5.png         1200x630  195 KB
+public\og\rules-about-women-part-6.png         1200x630  192 KB
+public\og\rules-about-women-part-7.png         1200x630  194 KB
+public\og\rules-about-women-part-8.png         1200x630  197 KB
+public\og\rules-about-women-part-9.png         1200x630  195 KB
+public\og\rules-about-women-part-10.png        1200x630  203 KB
+public\og\rules-about-women-part-11.png        1200x630  193 KB
+public\og\rules-about-women-part-12.png        1200x630  196 KB
+public\og\rules-about-women-part-13.png        1200x630  196 KB
+public\og\rules-about-women-part-14.png        1200x630  194 KB
+public\og\rules-about-women-part-15.png        1200x630  193 KB
+public\og\rules-about-women-part-16.png        1200x630  189 KB
+public\og\rules-about-women-hi.png             1200x630  178 KB
+public\og\rules-about-women-hi-part-1.png      1200x630  171 KB
+public\og\rules-about-women-hi-part-2.png      1200x630  173 KB
+public\og\rules-about-women-hi-part-3.png      1200x630  176 KB
+public\og\rules-about-women-hi-part-4.png      1200x630  179 KB
+public\og\rules-about-women-hi-part-5.png      1200x630  178 KB
+public\og\rules-about-women-hi-part-6.png      1200x630  179 KB
+public\og\rules-about-women-hi-part-7.png      1200x630  172 KB
+public\og\rules-about-women-hi-part-8.png      1200x630  175 KB
+public\og\rules-about-women-hi-part-9.png      1200x630  173 KB
+public\og\rules-about-women-hi-part-10.png     1200x630  182 KB
+public\og\rules-about-women-hi-part-11.png     1200x630  176 KB
+public\og\rules-about-women-hi-part-12.png     1200x630  177 KB
+public\og\rules-about-women-hi-part-13.png     1200x630  175 KB
+public\og\rules-about-women-hi-part-14.png     1200x630  178 KB
+public\og\rules-about-women-hi-part-15.png     1200x630  182 KB
+public\og\rules-about-women-hi-part-16.png     1200x630  174 KB
+public\og\punjab-history.png                   1200x630  192 KB
+public\og\punjab-history-part-1.png            1200x630  187 KB
+public\og\punjab-history-part-2.png            1200x630  186 KB
+public\og\punjab-history-part-3.png            1200x630  204 KB
+public\og\punjab-history-part-4.png            1200x630  198 KB
+public\og\punjab-history-part-5.png            1200x630  206 KB
+public\og\punjab-history-part-6.png            1200x630  193 KB
+public\og\punjab-history-part-7.png            1200x630  196 KB
+public\og\punjab-history-part-8.png            1200x630  203 KB
+public\og\punjab-history-part-9.png            1200x630  199 KB
+public\og\punjab-history-part-10.png           1200x630  195 KB
+public\og\punjab-history-part-11.png           1200x630  191 KB
+public\og\punjab-history-part-12.png           1200x630  195 KB
+public\og\punjab-history-part-13.png           1200x630  195 KB
+public\og\punjab-history-part-14.png           1200x630  201 KB
+public\og\punjab.png                           1200x630  185 KB
+public\og\punjab-part-1.png                    1200x630  166 KB
+public\og\punjab-part-2.png                    1200x630  170 KB
+public\og\punjab-part-3.png                    1200x630  172 KB
+public\og\punjab-part-4.png                    1200x630  171 KB
+public\og\punjab-part-5.png                    1200x630  173 KB
+public\og\punjab-part-6.png                    1200x630  177 KB
+public\og\punjab-part-7.png                    1200x630  167 KB
+public\og\punjab-part-8.png                    1200x630  175 KB
+public\og\punjab-part-9.png                    1200x630  178 KB
+public\og\punjab-part-10.png                   1200x630  174 KB
+public\og\punjab-part-11.png                   1200x630  193 KB
+public\og\punjab-part-12.png                   1200x630  186 KB
+public\og\punjab-part-13.png                   1200x630  182 KB
+public\og\reservation-files.png                1200x630  177 KB
+public\og\reservation-files-part-1.png         1200x630  172 KB
+public\og\reservation-files-part-2.png         1200x630  174 KB
+public\og\reservation-files-part-3.png         1200x630  181 KB
+public\og\reservation-files-part-4.png         1200x630  177 KB
+public\og\reservation-files-part-5.png         1200x630  183 KB
+public\og\reservation-files-part-6.png         1200x630  178 KB
+public\og\reservation-files-part-7.png         1200x630  186 KB
+public\og\reservation-files-part-8.png         1200x630  184 KB
+public\og\reservation-files-part-9.png         1200x630  176 KB
+public\og\reservation-files-part-10.png        1200x630  183 KB
+public\og\reservation-files-part-11.png        1200x630  172 KB
+public\og\reservation-files-part-12.png        1200x630  181 KB
+public\og\reservation-files-part-13.png        1200x630  174 KB
+public\og\reservation-files-part-14.png        1200x630  175 KB
+public\og\patriarchy-feminism.png              1200x630  179 KB
+public\og\patriarchy-feminism-part-1.png       1200x630  168 KB
+public\og\patriarchy-feminism-part-2.png       1200x630  192 KB
+public\og\independence.png                     1200x630  175 KB
+public\og\independence-part-1.png              1200x630  183 KB
+public\og\independence-part-2.png              1200x630  195 KB
+public\og\independence-part-3.png              1200x630  184 KB
+public\og\independence-part-4.png              1200x630  192 KB
+public\og\independence-part-5.png              1200x630  189 KB
+public\og\independence-part-6.png              1200x630  192 KB
+public\og\independence-part-7.png              1200x630  189 KB
+public\og\independence-part-8.png              1200x630  190 KB
+public\og\independence-part-9.png              1200x630  176 KB
+public\og\independence-part-10.png             1200x630  191 KB
+public\og\independence-part-11.png             1200x630  197 KB
+public\og\independence-part-12.png             1200x630  183 KB
+public\og\kissan-andolan.png                   1200x630  172 KB
+public\og\kissan-andolan-part-1.png            1200x630  199 KB
+public\og\kissan-andolan-part-2.png            1200x630  205 KB
+public\og\kissan-andolan-part-3.png            1200x630  203 KB
+public\og\kissan-andolan-part-4.png            1200x630  193 KB
+public\og\kissan-andolan-part-5.png            1200x630  194 KB
+public\og\kissan-andolan-part-6.png            1200x630  197 KB
+public\og\kissan-andolan-part-7.png            1200x630  189 KB
+public\og\kissan-andolan-part-8.png            1200x630  192 KB
+public\og\kissan-andolan-part-9.png            1200x630  189 KB
+public\og\kissan-andolan-part-10.png           1200x630  190 KB
+public\og\kissan-andolan-part-11.png           1200x630  202 KB
+public\og\kissan-andolan-part-12.png           1200x630  206 KB
+public\og\kissan-andolan-hi.png                1200x630  164 KB
+public\og\kissan-andolan-hi-part-1.png         1200x630  183 KB
+public\og\kissan-andolan-hi-part-2.png         1200x630  190 KB
+public\og\kissan-andolan-hi-part-3.png         1200x630  180 KB
+public\og\kissan-andolan-hi-part-4.png         1200x630  189 KB
+public\og\kissan-andolan-hi-part-5.png         1200x630  181 KB
+public\og\kissan-andolan-hi-part-6.png         1200x630  184 KB
+public\og\kissan-andolan-hi-part-7.png         1200x630  185 KB
+public\og\kissan-andolan-hi-part-8.png         1200x630  191 KB
+public\og\kissan-andolan-hi-part-9.png         1200x630  180 KB
+public\og\kissan-andolan-hi-part-10.png        1200x630  185 KB
+public\og\kissan-andolan-hi-part-11.png        1200x630  188 KB
+public\og\kissan-andolan-hi-part-12.png        1200x630  189 KB
+public\og\debunked-sikhism.png                 1200x630  170 KB
+public\og\debunked-sikhism-part-1.png          1200x630  157 KB
+public\og\debunked-sikhism-part-2.png          1200x630  158 KB
+public\og\debunked-sikhism-part-3.png          1200x630  165 KB
+public\og\debunked-sikhism-part-4.png          1200x630  178 KB
+public\og\debunked-sikhism-part-5.png          1200x630  183 KB
+public\og\debunked-sikhism-part-6.png          1200x630  176 KB
+public\og\debunked-sikhism-part-7.png          1200x630  177 KB
+public\og\debunked-sikhism-part-8.png          1200x630  170 KB
+public\og\debunked-sikhism-part-9.png          1200x630  178 KB
+public\og\debunked-sikhism-part-10.png         1200x630  172 KB
+public\og\debunked-sikhism-part-11.png         1200x630  178 KB
+public\og\debunked-sikhism-part-12.png         1200x630  180 KB
+public\og\debunked-sikhism-part-13.png         1200x630  173 KB
+public\og\debunked.png                         1200x630  181 KB
+public\og\debunked-part-1.png                  1200x630  183 KB
+public\og\debunked-part-2.png                  1200x630  195 KB
+public\og\debunked-part-3.png                  1200x630  189 KB
+public\og\debunked-part-4.png                  1200x630  197 KB
+public\og\debunked-part-5.png                  1200x630  193 KB
+public\og\debunked-part-6.png                  1200x630  191 KB
+public\og\debunked-part-7.png                  1200x630  189 KB
+public\og\debunked-part-8.png                  1200x630  176 KB
+public\og\debunked-part-9.png                  1200x630  171 KB
+public\og\debunked-part-10.png                 1200x630  168 KB
+public\og\debunked-part-11.png                 1200x630  172 KB
+public\og\forgotten-gods.png                   1200x630  177 KB
+public\og\forgotten-gods-part-1.png            1200x630  198 KB
+public\og\forgotten-gods-part-2.png            1200x630  187 KB
+public\og\forgotten-gods-part-3.png            1200x630  188 KB
+public\og\forgotten-gods-part-4.png            1200x630  188 KB
+public\og\forgotten-gods-hi.png                1200x630  162 KB
+public\og\forgotten-gods-hi-part-1.png         1200x630  184 KB
+public\og\forgotten-gods-hi-part-2.png         1200x630  172 KB
+public\og\forgotten-gods-hi-part-3.png         1200x630  177 KB
+public\og\forgotten-gods-hi-part-4.png         1200x630  173 KB
+public\og\books.png                            1200x630  185 KB
+public\og\books-the-thing.png                  1200x630  178 KB
+public\og\books-the-thing-before-you-pull-it-down.png 1200x630  200 KB
+public\og\books-epistles.png                   1200x630  166 KB
+public\og\books-epistles-well-begun-is-half-done.png 1200x630  195 KB
+public\og\books-sapiens.png                    1200x630  175 KB
+public\og\books-sapiens-the-wheat-bargain.png  1200x630  204 KB
+public\og\books-sapiens-the-imagined-order.png 1200x630  198 KB
+public\og\books-sapiens-the-happiness-ledger.png 1200x630  197 KB
+public\og\books-sapiens-the-imagined-order-hi.png 1200x630  197 KB
+public\og\books-sapiens-the-happiness-ledger-hi.png 1200x630  188 KB
+
+✓ 332 cards · 61.75 MB · removed 16 stale files
+Spotlight artwork: 15 social cards (1200×630), 14 Stories (1080×1920).
+
+> lovepreet-singh@1.0.0 build
+> vite build
+
+vite v8.1.0 building client environment for production...
+[2K
+transforming...✓ 131 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/assets/source-sans-3-cyrillic-ext-600-normal-6AhwUnSr.woff2       5.52 kB
+dist/assets/source-sans-3-cyrillic-ext-400-normal-BwJdxs7r.woff2       5.57 kB
+dist/assets/source-sans-3-greek-ext-600-normal-DynePNDL.woff2          5.93 kB
+dist/assets/source-sans-3-greek-ext-400-normal-CpIwTHMM.woff2          6.02 kB
+dist/assets/eb-garamond-vietnamese-400-normal-CLvJdMEL.woff2           6.20 kB
+dist/assets/source-sans-3-vietnamese-400-normal-CwtaIDr2.woff2         6.21 kB
+dist/assets/source-sans-3-vietnamese-600-normal-B2sTNYey.woff2         6.22 kB
+dist/assets/source-serif-4-vietnamese-400-normal-BbG3LG1A.woff2        6.23 kB
+dist/assets/eb-garamond-vietnamese-400-italic-DQ8HKnks.woff2           6.26 kB
+dist/assets/eb-garamond-greek-ext-400-normal-K8pwR3tn.woff2            6.46 kB
+dist/assets/eb-garamond-greek-ext-400-italic-CHZOQEtG.woff2            6.60 kB
+dist/assets/source-sans-3-cyrillic-ext-600-normal-uAL1a5gb.woff        6.98 kB
+dist/assets/source-sans-3-cyrillic-ext-400-normal-Cd63HKDh.woff        7.01 kB
+dist/assets/source-serif-4-cyrillic-ext-400-normal-CWV284fw.woff2      7.14 kB
+dist/assets/eb-garamond-vietnamese-400-normal-ifvNSiWx.woff            7.76 kB
+dist/assets/source-sans-3-greek-ext-400-normal-BI1kUwmR.woff           7.89 kB
+dist/assets/eb-garamond-vietnamese-400-italic-ORtyMVfw.woff            7.90 kB
+dist/assets/source-sans-3-greek-ext-600-normal-D7vJ4nVX.woff           7.91 kB
+dist/assets/source-serif-4-greek-400-normal-Cw5-AHNN.woff2             7.92 kB
+dist/assets/source-serif-4-vietnamese-400-normal-DR1UuFon.woff         8.00 kB
+dist/assets/source-sans-3-greek-400-normal-DZReXJla.woff2              8.02 kB
+dist/assets/source-sans-3-greek-600-normal-BSO157bq.woff2              8.02 kB
+dist/assets/source-serif-4-cyrillic-ext-400-normal-DLkyKLvH.woff       8.08 kB
+dist/assets/source-sans-3-vietnamese-600-normal-DpSexF-T.woff          8.16 kB
+dist/assets/source-sans-3-vietnamese-400-normal-dYp9C364.woff          8.18 kB
+dist/assets/eb-garamond-greek-ext-400-normal-BaZl8BIK.woff             8.36 kB
+dist/index.html                                                        8.84 kB │ gzip:   2.59 kB
+dist/assets/eb-garamond-greek-ext-400-italic-BL1XYHtS.woff             8.96 kB
+dist/assets/source-serif-4-greek-400-normal-BccYJ-vZ.woff              9.19 kB
+dist/assets/source-sans-3-cyrillic-400-normal-DjhbW-4D.woff2           9.60 kB
+dist/assets/source-sans-3-cyrillic-600-normal-BnFu5nHC.woff2           9.64 kB
+dist/assets/source-sans-3-greek-600-normal-BNF9LBpG.woff              10.01 kB
+dist/assets/source-sans-3-greek-400-normal-DJm9Ud5h.woff              10.03 kB
+dist/assets/eb-garamond-greek-400-italic-Dqr5KC66.woff2               10.50 kB
+dist/assets/eb-garamond-greek-400-normal-CVAbzS9p.woff2               10.75 kB
+dist/assets/source-sans-3-cyrillic-400-normal-7kQcAFpS.woff           12.00 kB
+dist/assets/source-sans-3-cyrillic-600-normal-y-RO8wOd.woff           12.00 kB
+dist/assets/eb-garamond-greek-400-italic-BamGE6QP.woff                12.41 kB
+dist/assets/eb-garamond-greek-400-normal-d4JlP2QH.woff                12.55 kB
+dist/assets/eb-garamond-cyrillic-400-normal-DDLP67lu.woff2            13.26 kB
+dist/assets/eb-garamond-cyrillic-400-italic-BGIwiowF.woff2            13.57 kB
+dist/assets/source-serif-4-cyrillic-400-normal-C44pakCn.woff2         14.17 kB
+dist/assets/eb-garamond-cyrillic-400-normal-C0kVTdou.woff             15.49 kB
+dist/assets/source-sans-3-latin-600-normal-DeckBYAU.woff2             15.66 kB
+dist/assets/source-sans-3-latin-400-normal-DQi5PRDE.woff2             15.69 kB
+dist/assets/source-serif-4-cyrillic-400-normal-B8Z6Jvzv.woff          15.81 kB
+dist/assets/eb-garamond-cyrillic-400-italic-BZInx2ys.woff             16.13 kB
+dist/assets/eb-garamond-cyrillic-ext-400-normal-o8fRvAFQ.woff2        16.79 kB
+dist/assets/source-serif-4-latin-ext-400-normal-Cp7z-ARB.woff2        17.82 kB
+dist/assets/eb-garamond-cyrillic-ext-400-italic-Bz1w3xqM.woff2        17.95 kB
+dist/assets/source-sans-3-latin-400-normal-AFMiCETP.woff              19.90 kB
+dist/assets/source-sans-3-latin-600-normal-BvDVuF-j.woff              19.90 kB
+dist/assets/source-serif-4-latin-400-normal-DJ5YJwmz.woff2            20.08 kB
+dist/assets/eb-garamond-cyrillic-ext-400-normal-DG8lny6_.woff         20.42 kB
+dist/assets/source-serif-4-latin-ext-400-normal-CEpydyUl.woff         21.87 kB
+dist/assets/eb-garamond-cyrillic-ext-400-italic-CYS3phfl.woff         22.16 kB
+dist/assets/eb-garamond-latin-400-normal-BCNrxLz_.woff2               23.82 kB
+dist/assets/source-serif-4-latin-400-normal-Dn3IlU-Z.woff             24.02 kB
+dist/assets/eb-garamond-latin-400-italic-DSEbMgZu.woff2               25.38 kB
+dist/assets/eb-garamond-latin-400-normal-maQnHeKB.woff                28.60 kB
+dist/assets/eb-garamond-latin-400-italic-CDFyLPXJ.woff                30.86 kB
+dist/assets/source-sans-3-latin-ext-600-normal-AEyhgUpm.woff2         32.70 kB
+dist/assets/source-sans-3-latin-ext-400-normal-UNsKFIBq.woff2         33.02 kB
+dist/assets/source-sans-3-latin-ext-600-normal-Wy7HIzqC.woff          43.40 kB
+dist/assets/source-sans-3-latin-ext-400-normal-BGPHfnm_.woff          43.64 kB
+dist/assets/eb-garamond-latin-ext-400-italic-V7s3nWfX.woff2           45.46 kB
+dist/assets/eb-garamond-latin-ext-400-normal-o4A__6QZ.woff2           56.96 kB
+dist/assets/eb-garamond-latin-ext-400-italic-DUSsnRSD.woff            62.90 kB
+dist/assets/eb-garamond-latin-ext-400-normal-B4EmgUmt.woff            76.61 kB
+dist/assets/BookPlate-D0v2IicY.css                                     0.32 kB │ gzip:   0.23 kB
+dist/assets/Rooms-DxCahPwD.css                                         5.66 kB │ gzip:   1.85 kB
+dist/assets/Books-CE-Dpl7r.css                                        11.45 kB │ gzip:   2.94 kB
+dist/assets/Writing-DGLgXCzx.css                                      14.08 kB │ gzip:   3.29 kB
+dist/assets/Press-HHSPzuQs.css                                        20.16 kB │ gzip:   4.92 kB
+dist/assets/Article-CtCc5gcc.css                                      44.38 kB │ gzip:   8.85 kB
+dist/assets/WhiteApp-BRmBfxBI.css                                     51.36 kB │ gzip:  10.56 kB
+dist/assets/index-CKoVyXLU.css                                        78.89 kB │ gzip:  14.76 kB
+dist/assets/Books-C1EHePBr.js                                          0.28 kB │ gzip:   0.22 kB
+dist/assets/pageSurface-BfBHcU4b.js                                    0.38 kB │ gzip:   0.28 kB
+dist/assets/BookPlate-DqcexZG_.js                                      0.63 kB │ gzip:   0.34 kB
+dist/assets/Magnetic-Dfvij7Pz.js                                       0.80 kB │ gzip:   0.48 kB
+dist/assets/LoadDiagram-DuTzOIAc.js                                    3.75 kB │ gzip:   1.35 kB
+dist/assets/Books-BM2Uq_uW.js                                          4.16 kB │ gzip:   1.44 kB
+dist/assets/Rooms-BCY2OueQ.js                                          5.56 kB │ gzip:   2.36 kB
+dist/assets/Writing-BB28UEWp.js                                        6.39 kB │ gzip:   2.09 kB
+dist/assets/Article-TiJWx3U9.js                                        6.57 kB │ gzip:   2.61 kB
+dist/assets/Book-Dxk5FqFY.js                                           7.29 kB │ gzip:   2.26 kB
+dist/assets/books-Nx_l5TZX.js                                         10.41 kB │ gzip:   4.64 kB
+dist/assets/Topic-BQOX32de.js                                         11.98 kB │ gzip:   4.01 kB
+dist/assets/the-thing-D7pE1p2k.js                                     18.89 kB │ gzip:   6.50 kB
+dist/assets/Study-P7nTO6Td.js                                         21.01 kB │ gzip:   6.12 kB
+dist/assets/Article-B_pskQmn.js                                       23.09 kB │ gzip:   6.78 kB
+dist/assets/Press-Db9iss27.js                                         25.77 kB │ gzip:   7.30 kB
+dist/assets/WhiteApp-Bl9kwa2o.js                                      33.07 kB │ gzip:   9.74 kB
+dist/assets/jsx-runtime-BVORa5l8.js                                   51.01 kB │ gzip:  18.13 kB
+dist/assets/epistles-C7oMBANR.js                                      56.51 kB │ gzip:  19.66 kB
+dist/assets/why-i-dont-believe-pa-C5cEBLOs.js                        106.78 kB │ gzip:  21.07 kB
+dist/assets/kissan-andolan-CBUIgd5R.js                               261.40 kB │ gzip:  74.25 kB
+dist/assets/architecture-of-money-DVmqS1uK.js                        304.72 kB │ gzip: 103.77 kB
+dist/assets/forgotten-gods-DCMbDXg-.js                               325.19 kB │ gzip: 113.30 kB
+dist/assets/origin-of-species-C0OjUmbS.js                            327.25 kB │ gzip: 106.49 kB
+dist/assets/index-pAYynDJF.js                                        360.98 kB │ gzip: 112.58 kB
+dist/assets/sapiens-ChhjzNz4.js                                      380.11 kB │ gzip: 121.80 kB
+dist/assets/sapiens-reading-D7SWwAZ0.js                              416.87 kB │ gzip: 139.43 kB
+dist/assets/sapiens-hi-C0Ph6GRG.js                                   510.28 kB │ gzip: 107.73 kB
+dist/assets/kissan-andolan-hi-tqVVSNIM.js                            511.85 kB │ gzip:  98.67 kB
+dist/assets/patriarchy-feminism-Dai4B9BQ.js                          573.79 kB │ gzip: 200.74 kB
+dist/assets/independence-Ckw5j36z.js                                 583.54 kB │ gzip: 189.64 kB
+dist/assets/india-before-and-after-2014-BQNOeffk.js                  591.15 kB │ gzip: 168.96 kB
+dist/assets/atheist-vs-believer-D1TrfnPk.js                          703.44 kB │ gzip: 220.39 kB
+dist/assets/forgotten-gods-hi-AMADzal3.js                            744.94 kB │ gzip: 146.05 kB
+dist/assets/debunked-CXa93tSy.js                                     773.39 kB │ gzip: 250.20 kB
+dist/assets/debunked-sikhism-DqtXVeZH.js                             852.01 kB │ gzip: 247.08 kB
+dist/assets/punjab-Za4WZRqq.js                                       890.75 kB │ gzip: 287.18 kB
+dist/assets/reservation-files-web-BMvICj_Q.js                        965.16 kB │ gzip: 300.71 kB
+dist/assets/confessions-BIb8Na56.js                                1,070.42 kB │ gzip: 334.56 kB
+dist/assets/india-before-and-after-2014-hi-ArBxWHWp.js             1,130.27 kB │ gzip: 210.70 kB
+dist/assets/atheist-vs-believer-hi-Bc2Yjkdd.js                     1,343.63 kB │ gzip: 253.15 kB
+dist/assets/punjab-history-zcrK0Vpb.js                             1,414.44 kB │ gzip: 450.34 kB
+dist/assets/wars-of-punjab-D9p7d3pQ.js                             1,837.69 kB │ gzip: 563.94 kB
+dist/assets/why-i-dont-believe-BKmZFYMp.js                         2,079.27 kB │ gzip: 650.64 kB
+dist/assets/rules-about-women-B0y34fZl.js                          2,116.06 kB │ gzip: 649.43 kB
+dist/assets/congress-record-DoaaZL6q.js                            2,439.74 kB │ gzip: 738.85 kB
+dist/assets/why-i-dont-believe-hi-DSVJvo6d.js                      3,862.69 kB │ gzip: 781.44 kB
+dist/assets/rules-about-women-hi-fA1QcGpJ.js                       4,957.81 kB │ gzip: 869.33 kB
+
+[PLUGIN_TIMINGS] Your build spent significant time in plugins. Here is a breakdown:
+  - vite:terser (25%)
+  - vite:build-import-analysis (22%)
+  - vite:css-post (19%)
+  - vite:asset (14%)
+  - vite:css (9%)
+See https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.
+
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.85s
+> lovepreet-singh@1.0.0 postbuild
+> node scripts/postbuild.mjs && node scripts/validate-press.mjs && node scripts/postbuild-white.mjs
+
+postbuild ✓  404.html, .nojekyll, sitemap.xml (348 URLs), feed.xml (228 items), 350 pre-rendered routes, 347 route-specific OG cards
+Press verified: 15 static routes, 15 unique OG cards, 14 Stories, all 19 original slides, metadata, links and sitemap.
+white edition ✓ 351 direct-entry routes, 345 preserved static readers/collections, 330 publication covers, self-hosted font, 1200×630 social card

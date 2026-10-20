@@ -1,0 +1,16 @@
+Visual inspection: 20 October 2026
+
+Inspected the 1200px transparent ink wordmark, 512px white-on-ink avatar and
+1600px contact sheet containing all three wordmark colours, all three avatars,
+and both favicon colours at 16, 24, 32, 48 and 64 native pixels.
+
+The visible glyphs read "misterlove." and "m." correctly. Shapes and tracking are
+consistent across variants. No clipping, inverted contours, missing periods,
+font substitution or unwanted backgrounds appeared. Small favicons remain
+recognisable; they use the separate tighter icon composition.
+
+SVGs are outlined paths, not text. Base PNG dimensions, alpha channels and
+unclipped artwork bounds are checked in verification.json.
+
+This is a dated inspection of these generated files. Regenerated or edited
+assets should be inspected again.

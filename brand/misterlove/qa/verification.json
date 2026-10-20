@@ -1,0 +1,303 @@
+{
+  "status": "pass",
+  "checks": [
+    {
+      "path": "svg/wordmark-ink.svg",
+      "outlined": true,
+      "glyphPaths": 11
+    },
+    {
+      "path": "png/wordmark-ink-600.png",
+      "dimensions": [
+        600,
+        102
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "png/wordmark-ink-1200.png",
+      "dimensions": [
+        1200,
+        203
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "png/wordmark-ink-2400.png",
+      "dimensions": [
+        2400,
+        407
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "svg/wordmark-white.svg",
+      "outlined": true,
+      "glyphPaths": 11
+    },
+    {
+      "path": "png/wordmark-white-600.png",
+      "dimensions": [
+        600,
+        102
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "png/wordmark-white-1200.png",
+      "dimensions": [
+        1200,
+        203
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "png/wordmark-white-2400.png",
+      "dimensions": [
+        2400,
+        407
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "svg/wordmark-moss.svg",
+      "outlined": true,
+      "glyphPaths": 11
+    },
+    {
+      "path": "png/wordmark-moss-600.png",
+      "dimensions": [
+        600,
+        102
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "png/wordmark-moss-1200.png",
+      "dimensions": [
+        1200,
+        203
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "png/wordmark-moss-2400.png",
+      "dimensions": [
+        2400,
+        407
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "svg/mark-ink.svg",
+      "outlined": true,
+      "glyphPaths": 2
+    },
+    {
+      "path": "png/mark-ink-256.png",
+      "dimensions": [
+        256,
+        147
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "png/mark-ink-512.png",
+      "dimensions": [
+        512,
+        294
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "png/mark-ink-1024.png",
+      "dimensions": [
+        1024,
+        588
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "svg/mark-white.svg",
+      "outlined": true,
+      "glyphPaths": 2
+    },
+    {
+      "path": "png/mark-white-256.png",
+      "dimensions": [
+        256,
+        147
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "png/mark-white-512.png",
+      "dimensions": [
+        512,
+        294
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "png/mark-white-1024.png",
+      "dimensions": [
+        1024,
+        588
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "svg/mark-moss.svg",
+      "outlined": true,
+      "glyphPaths": 2
+    },
+    {
+      "path": "png/mark-moss-256.png",
+      "dimensions": [
+        256,
+        147
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "png/mark-moss-512.png",
+      "dimensions": [
+        512,
+        294
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "png/mark-moss-1024.png",
+      "dimensions": [
+        1024,
+        588
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "avatars/avatar-ink-on-white.svg",
+      "outlined": true,
+      "glyphPaths": 2
+    },
+    {
+      "path": "avatars/avatar-ink-on-white-512.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "avatars/avatar-ink-on-white-1024.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "favicon/favicon-ink-on-white.svg",
+      "outlined": true,
+      "glyphPaths": 2
+    },
+    {
+      "path": "favicon/favicon-ink-on-white-256.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "avatars/avatar-white-on-ink.svg",
+      "outlined": true,
+      "glyphPaths": 2
+    },
+    {
+      "path": "avatars/avatar-white-on-ink-512.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "avatars/avatar-white-on-ink-1024.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "favicon/favicon-white-on-ink.svg",
+      "outlined": true,
+      "glyphPaths": 2
+    },
+    {
+      "path": "favicon/favicon-white-on-ink-256.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "avatars/avatar-white-on-moss.svg",
+      "outlined": true,
+      "glyphPaths": 2
+    },
+    {
+      "path": "avatars/avatar-white-on-moss-512.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "alphaVerified": true
+    },
+    {
+      "path": "avatars/avatar-white-on-moss-1024.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "alphaVerified": true
+    }
+  ],
+  "generatedAssets": [
+    {
+      "path": "favicon/favicon-ink-on-white.ico",
+      "type": "multi-size-ico",
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ]
+    },
+    {
+      "path": "favicon/favicon-white-on-ink.ico",
+      "type": "multi-size-ico",
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ]
+    },
+    {
+      "path": "qa/contact-sheet.png",
+      "type": "qa-contact-sheet",
+      "width": 1600,
+      "height": 1600
+    }
+  ],
+  "note": "Dimensions, transparency, unclipped alpha bounds, outlined SVG paths and hashes checked. Contact sheet also requires visual inspection."
+}

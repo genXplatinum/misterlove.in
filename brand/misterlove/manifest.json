@@ -1,0 +1,984 @@
+{
+  "brand": "MisterLove",
+  "version": "1.0.0",
+  "date": "2026-10-20",
+  "source": {
+    "font": "public/white-assets/manrope-latin.woff2",
+    "fontSha256": "a30ddcd349703aff7464c34bef3fffdff405ee50c113440d7c8693c02d210972",
+    "wordmarkCss": "src/white/White.css:64 + src/white/WhitePremium.css:12",
+    "symbolCss": "src/white/PublicationCover.css .pc-colophon",
+    "shaping": "HarfBuzz; fontTools variable instance wght=800; native kerning plus CSS tracking; outlined glyph paths"
+  },
+  "geometry": {
+    "wordmark": {
+      "text": "misterlove.",
+      "weight": 800,
+      "trackingEm": -0.075,
+      "viewBox": [
+        0,
+        0,
+        9370.48,
+        1588.48
+      ],
+      "glyphBoundsFontUnits": {
+        "xMin": 138,
+        "yMin": -30,
+        "xMax": 9420,
+        "yMax": 1470
+      },
+      "inkWidth": 9282,
+      "inkHeight": 1500,
+      "canvasSafetyPaddingFontUnits": 44.24,
+      "clearSpaceXFontUnits": 1106,
+      "recommendedClearSpaceFontUnits": 553,
+      "glyphCount": 11
+    },
+    "mark": {
+      "text": "m.",
+      "weight": 800,
+      "trackingEm": -0.08,
+      "viewBox": [
+        0,
+        0,
+        2078.48,
+        1194.48
+      ],
+      "glyphBoundsFontUnits": {
+        "xMin": 138,
+        "yMin": 0,
+        "xMax": 2128,
+        "yMax": 1106
+      },
+      "inkWidth": 1990,
+      "inkHeight": 1106,
+      "canvasSafetyPaddingFontUnits": 44.24,
+      "clearSpaceXFontUnits": 1106,
+      "recommendedClearSpaceFontUnits": 553,
+      "glyphCount": 2
+    }
+  },
+  "assets": [
+    {
+      "path": "svg/wordmark-ink.svg",
+      "type": "outlined-svg",
+      "variant": "wordmark",
+      "color": "#151714",
+      "bytes": 3689,
+      "sha256": "5db592cadb31c1abec7329acd7102022d909aa79c380c17864458db783bf8fea"
+    },
+    {
+      "path": "png/wordmark-ink-600.png",
+      "type": "transparent-png",
+      "variant": "wordmark",
+      "color": "#151714",
+      "width": 600,
+      "height": 102,
+      "bytes": 10333,
+      "sha256": "079e7561e03233183594ce1c7d2bda9997f10b7e9d1d2b3f708c9ffe539073ba"
+    },
+    {
+      "path": "png/wordmark-ink-1200.png",
+      "type": "transparent-png",
+      "variant": "wordmark",
+      "color": "#151714",
+      "width": 1200,
+      "height": 203,
+      "bytes": 21081,
+      "sha256": "970f0d2df07df9d52f39ad83b4ad97d85cf8eb58176480fccfd361fac6554538"
+    },
+    {
+      "path": "png/wordmark-ink-2400.png",
+      "type": "transparent-png",
+      "variant": "wordmark",
+      "color": "#151714",
+      "width": 2400,
+      "height": 407,
+      "bytes": 48999,
+      "sha256": "c87b5a7bb4ad8f86eac9673f04bcb439716a3cac3a685a9b1616d24f40c003b0"
+    },
+    {
+      "path": "svg/wordmark-white.svg",
+      "type": "outlined-svg",
+      "variant": "wordmark",
+      "color": "#FFFFFF",
+      "bytes": 3689,
+      "sha256": "66bd8f4015676190b9297351f46e54bbea74af580377a6744f66bb11b140c6af"
+    },
+    {
+      "path": "png/wordmark-white-600.png",
+      "type": "transparent-png",
+      "variant": "wordmark",
+      "color": "#FFFFFF",
+      "width": 600,
+      "height": 102,
+      "bytes": 11701,
+      "sha256": "add3e170e38ffd84010e9ce6f799dbb6c114da1e1aab5fbed10958d3f65d4c43"
+    },
+    {
+      "path": "png/wordmark-white-1200.png",
+      "type": "transparent-png",
+      "variant": "wordmark",
+      "color": "#FFFFFF",
+      "width": 1200,
+      "height": 203,
+      "bytes": 25685,
+      "sha256": "7cfcc61768a7ee16c3c274a9a9a2cc20cef4305b79e97437b1da5081af67244d"
+    },
+    {
+      "path": "png/wordmark-white-2400.png",
+      "type": "transparent-png",
+      "variant": "wordmark",
+      "color": "#FFFFFF",
+      "width": 2400,
+      "height": 407,
+      "bytes": 57466,
+      "sha256": "36cd815cde0ac714970979fdad92ebfd9b49496c0b49d5772f27fa9ed33d8eaa"
+    },
+    {
+      "path": "svg/wordmark-moss.svg",
+      "type": "outlined-svg",
+      "variant": "wordmark",
+      "color": "#526345",
+      "bytes": 3689,
+      "sha256": "4769ca6d42d0ee4bd90bb9da0deb44ff46c60d5b925afe4278ab32f970d99a59"
+    },
+    {
+      "path": "png/wordmark-moss-600.png",
+      "type": "transparent-png",
+      "variant": "wordmark",
+      "color": "#526345",
+      "width": 600,
+      "height": 102,
+      "bytes": 10066,
+      "sha256": "1954326005887f24cb2120da5f15aac2d3ff62b2baa598ddca4bb473653ece41"
+    },
+    {
+      "path": "png/wordmark-moss-1200.png",
+      "type": "transparent-png",
+      "variant": "wordmark",
+      "color": "#526345",
+      "width": 1200,
+      "height": 203,
+      "bytes": 20856,
+      "sha256": "d3c06b162dd6eb2630b83922d4c45027fe11a02d59b58962621fad9226f590ff"
+    },
+    {
+      "path": "png/wordmark-moss-2400.png",
+      "type": "transparent-png",
+      "variant": "wordmark",
+      "color": "#526345",
+      "width": 2400,
+      "height": 407,
+      "bytes": 48290,
+      "sha256": "ad1fc2633254757469b07eb4d3297b62ffb7a397b8a602ade0835b8fd6d08e31"
+    },
+    {
+      "path": "svg/mark-ink.svg",
+      "type": "outlined-svg",
+      "variant": "mark",
+      "color": "#151714",
+      "bytes": 887,
+      "sha256": "c134d7092486359ffd0604e1b4f196a8c038ae057448d8409b6ef19870d86581"
+    },
+    {
+      "path": "png/mark-ink-256.png",
+      "type": "transparent-png",
+      "variant": "mark",
+      "color": "#151714",
+      "width": 256,
+      "height": 147,
+      "bytes": 2866,
+      "sha256": "d4981abd4df4e9edeb34d984d98daf132a98e23d3589dbc54285edb1b8017ae9"
+    },
+    {
+      "path": "png/mark-ink-512.png",
+      "type": "transparent-png",
+      "variant": "mark",
+      "color": "#151714",
+      "width": 512,
+      "height": 294,
+      "bytes": 6663,
+      "sha256": "1753404e1a71736f047faa03c3bab4aeefe241275f732e5ac2e4bcfd79febf2d"
+    },
+    {
+      "path": "png/mark-ink-1024.png",
+      "type": "transparent-png",
+      "variant": "mark",
+      "color": "#151714",
+      "width": 1024,
+      "height": 588,
+      "bytes": 16611,
+      "sha256": "58f3f20487355b6227883311ac74f386da4c90387f399f66b7413e8a43e9d4fa"
+    },
+    {
+      "path": "svg/mark-white.svg",
+      "type": "outlined-svg",
+      "variant": "mark",
+      "color": "#FFFFFF",
+      "bytes": 887,
+      "sha256": "a204b205c5c54276f3398c021c603bbc98db71938ec4e61d340d616b42dbfb07"
+    },
+    {
+      "path": "png/mark-white-256.png",
+      "type": "transparent-png",
+      "variant": "mark",
+      "color": "#FFFFFF",
+      "width": 256,
+      "height": 147,
+      "bytes": 3104,
+      "sha256": "7f957ffa59d74fe710b154fc5893921e90edb2c111a407b66b46ff84b9ff3308"
+    },
+    {
+      "path": "png/mark-white-512.png",
+      "type": "transparent-png",
+      "variant": "mark",
+      "color": "#FFFFFF",
+      "width": 512,
+      "height": 294,
+      "bytes": 8680,
+      "sha256": "e85994c79270d0f7a6f8bedba19796a6ca1b98e3d8c9504f765302d738b7977b"
+    },
+    {
+      "path": "png/mark-white-1024.png",
+      "type": "transparent-png",
+      "variant": "mark",
+      "color": "#FFFFFF",
+      "width": 1024,
+      "height": 588,
+      "bytes": 22882,
+      "sha256": "662bb7df8859ce6fc16acd3ca4639c98036c9e99e4c0aaf45bffc283fe00cac3"
+    },
+    {
+      "path": "svg/mark-moss.svg",
+      "type": "outlined-svg",
+      "variant": "mark",
+      "color": "#526345",
+      "bytes": 887,
+      "sha256": "c4ca2cdee43d822d29d0de91a4a2379c23cced01378c2314da2bf97c7c5001fa"
+    },
+    {
+      "path": "png/mark-moss-256.png",
+      "type": "transparent-png",
+      "variant": "mark",
+      "color": "#526345",
+      "width": 256,
+      "height": 147,
+      "bytes": 2876,
+      "sha256": "804591fb6b8758e39e76dbfebe24151e523e37e71fb771bcd63afb5a1f948458"
+    },
+    {
+      "path": "png/mark-moss-512.png",
+      "type": "transparent-png",
+      "variant": "mark",
+      "color": "#526345",
+      "width": 512,
+      "height": 294,
+      "bytes": 6702,
+      "sha256": "7fe3ac1e0db7fdf2e26f004dcf396e8122988b92523ad6636cf143040b9ecfe9"
+    },
+    {
+      "path": "png/mark-moss-1024.png",
+      "type": "transparent-png",
+      "variant": "mark",
+      "color": "#526345",
+      "width": 1024,
+      "height": 588,
+      "bytes": 16619,
+      "sha256": "88ef3ebe1012d5fad619a156224bef0e667dba92989e7f1ae811cac09042e94c"
+    },
+    {
+      "path": "avatars/avatar-ink-on-white.svg",
+      "type": "square-avatar-svg",
+      "color": "#151714",
+      "background": "#FFFFFF",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 979,
+      "sha256": "4c7e7c4eba958a2afb51a35a47160581e10ef6c0a75286f7a948e22ad929418e"
+    },
+    {
+      "path": "avatars/avatar-ink-on-white-512.png",
+      "type": "square-avatar-png",
+      "color": "#151714",
+      "background": "#FFFFFF",
+      "width": 512,
+      "height": 512,
+      "bytes": 5507,
+      "sha256": "3381b3b0f7712f9f5fc46fb14bbbef7563f942e8f5061febb1a0989970c1adfa"
+    },
+    {
+      "path": "avatars/avatar-ink-on-white-1024.png",
+      "type": "square-avatar-png",
+      "color": "#151714",
+      "background": "#FFFFFF",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 13863,
+      "sha256": "c00fe54a7a226919d3f58c68fdf9c4d5611269e845fed0357df2b1efe944df3f"
+    },
+    {
+      "path": "favicon/favicon-ink-on-white.svg",
+      "type": "favicon-svg",
+      "color": "#151714",
+      "background": "#FFFFFF",
+      "bytes": 979,
+      "sha256": "33c9b03e492971ccace68c7cca87201759627232202e7ba5a1b786b293cf2b0d"
+    },
+    {
+      "path": "favicon/favicon-ink-on-white-256.png",
+      "type": "favicon-png",
+      "color": "#151714",
+      "background": "#FFFFFF",
+      "width": 256,
+      "height": 256,
+      "bytes": 2721,
+      "sha256": "7ac3b394418c30f834f9bc7e8d4809c8721fbcc6c6402e3458fae5f14fec8f59"
+    },
+    {
+      "path": "avatars/avatar-white-on-ink.svg",
+      "type": "square-avatar-svg",
+      "color": "#FFFFFF",
+      "background": "#151714",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 979,
+      "sha256": "e69af02ff6823e5d2525b6bd3b638c0f280cc7ce063daf5424565cd308d3bf4e"
+    },
+    {
+      "path": "avatars/avatar-white-on-ink-512.png",
+      "type": "square-avatar-png",
+      "color": "#FFFFFF",
+      "background": "#151714",
+      "width": 512,
+      "height": 512,
+      "bytes": 5514,
+      "sha256": "61de054cfb407720325c118f6bd3082163343b3d86a048c776fe8ef5958a9b35"
+    },
+    {
+      "path": "avatars/avatar-white-on-ink-1024.png",
+      "type": "square-avatar-png",
+      "color": "#FFFFFF",
+      "background": "#151714",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 13862,
+      "sha256": "e469494528ae2b18346a00410302a6e30f0c9128eff3c39d58b9d491c7dad97f"
+    },
+    {
+      "path": "favicon/favicon-white-on-ink.svg",
+      "type": "favicon-svg",
+      "color": "#FFFFFF",
+      "background": "#151714",
+      "bytes": 979,
+      "sha256": "890c5cc19243a7ac3114c87b5480928bc8002997ffc5fd315f8d7e965083e795"
+    },
+    {
+      "path": "favicon/favicon-white-on-ink-256.png",
+      "type": "favicon-png",
+      "color": "#FFFFFF",
+      "background": "#151714",
+      "width": 256,
+      "height": 256,
+      "bytes": 2722,
+      "sha256": "93d56027eb11a5e6e72bcc376df5328c744ca4bb7f8570e4cd000d723634f5ae"
+    },
+    {
+      "path": "avatars/avatar-white-on-moss.svg",
+      "type": "square-avatar-svg",
+      "color": "#FFFFFF",
+      "background": "#526345",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 979,
+      "sha256": "7824055f60b4c5629113972963e9183bb14845444e8c116643da96b5f2af921c"
+    },
+    {
+      "path": "avatars/avatar-white-on-moss-512.png",
+      "type": "square-avatar-png",
+      "color": "#FFFFFF",
+      "background": "#526345",
+      "width": 512,
+      "height": 512,
+      "bytes": 5525,
+      "sha256": "8548fbed970993f8884ee3ac8d446fa0e9c61590979a50fc41deec974342fa25"
+    },
+    {
+      "path": "avatars/avatar-white-on-moss-1024.png",
+      "type": "square-avatar-png",
+      "color": "#FFFFFF",
+      "background": "#526345",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 13873,
+      "sha256": "b4efc0bef915fd4a2b092dcfcbedf6253d0f633e4cc9d8ea286f3d8914a8a60f"
+    },
+    {
+      "path": "favicon/favicon-ink-on-white.ico",
+      "type": "multi-size-ico",
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "bytes": 9897,
+      "sha256": "859acb998e6192678629c6b01a507a324a01d4cee6248dad299a07ca2bf3f1f2"
+    },
+    {
+      "path": "favicon/favicon-white-on-ink.ico",
+      "type": "multi-size-ico",
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "bytes": 10256,
+      "sha256": "1c08f349de0a6bf9a9ae6c44c1ae4f51fb3f0e20e3ada694cafe87cbe345a543"
+    },
+    {
+      "path": "qa/contact-sheet.png",
+      "type": "qa-contact-sheet",
+      "width": 1600,
+      "height": 1600,
+      "bytes": 142816,
+      "sha256": "1523502bcd0fdc3120a8bcf5ecc67f996334b73373de477b9c997ab32c2e9490"
+    }
+  ],
+  "qa": {
+    "report": "qa/verification.json",
+    "checks": [
+      {
+        "path": "svg/wordmark-ink.svg",
+        "outlined": true,
+        "glyphPaths": 11
+      },
+      {
+        "path": "png/wordmark-ink-600.png",
+        "dimensions": [
+          600,
+          102
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "png/wordmark-ink-1200.png",
+        "dimensions": [
+          1200,
+          203
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "png/wordmark-ink-2400.png",
+        "dimensions": [
+          2400,
+          407
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "svg/wordmark-white.svg",
+        "outlined": true,
+        "glyphPaths": 11
+      },
+      {
+        "path": "png/wordmark-white-600.png",
+        "dimensions": [
+          600,
+          102
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "png/wordmark-white-1200.png",
+        "dimensions": [
+          1200,
+          203
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "png/wordmark-white-2400.png",
+        "dimensions": [
+          2400,
+          407
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "svg/wordmark-moss.svg",
+        "outlined": true,
+        "glyphPaths": 11
+      },
+      {
+        "path": "png/wordmark-moss-600.png",
+        "dimensions": [
+          600,
+          102
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "png/wordmark-moss-1200.png",
+        "dimensions": [
+          1200,
+          203
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "png/wordmark-moss-2400.png",
+        "dimensions": [
+          2400,
+          407
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "svg/mark-ink.svg",
+        "outlined": true,
+        "glyphPaths": 2
+      },
+      {
+        "path": "png/mark-ink-256.png",
+        "dimensions": [
+          256,
+          147
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "png/mark-ink-512.png",
+        "dimensions": [
+          512,
+          294
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "png/mark-ink-1024.png",
+        "dimensions": [
+          1024,
+          588
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "svg/mark-white.svg",
+        "outlined": true,
+        "glyphPaths": 2
+      },
+      {
+        "path": "png/mark-white-256.png",
+        "dimensions": [
+          256,
+          147
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "png/mark-white-512.png",
+        "dimensions": [
+          512,
+          294
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "png/mark-white-1024.png",
+        "dimensions": [
+          1024,
+          588
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "svg/mark-moss.svg",
+        "outlined": true,
+        "glyphPaths": 2
+      },
+      {
+        "path": "png/mark-moss-256.png",
+        "dimensions": [
+          256,
+          147
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "png/mark-moss-512.png",
+        "dimensions": [
+          512,
+          294
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "png/mark-moss-1024.png",
+        "dimensions": [
+          1024,
+          588
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "avatars/avatar-ink-on-white.svg",
+        "outlined": true,
+        "glyphPaths": 2
+      },
+      {
+        "path": "avatars/avatar-ink-on-white-512.png",
+        "dimensions": [
+          512,
+          512
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "avatars/avatar-ink-on-white-1024.png",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "favicon/favicon-ink-on-white.svg",
+        "outlined": true,
+        "glyphPaths": 2
+      },
+      {
+        "path": "favicon/favicon-ink-on-white-256.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "avatars/avatar-white-on-ink.svg",
+        "outlined": true,
+        "glyphPaths": 2
+      },
+      {
+        "path": "avatars/avatar-white-on-ink-512.png",
+        "dimensions": [
+          512,
+          512
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "avatars/avatar-white-on-ink-1024.png",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "favicon/favicon-white-on-ink.svg",
+        "outlined": true,
+        "glyphPaths": 2
+      },
+      {
+        "path": "favicon/favicon-white-on-ink-256.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "avatars/avatar-white-on-moss.svg",
+        "outlined": true,
+        "glyphPaths": 2
+      },
+      {
+        "path": "avatars/avatar-white-on-moss-512.png",
+        "dimensions": [
+          512,
+          512
+        ],
+        "alphaVerified": true
+      },
+      {
+        "path": "avatars/avatar-white-on-moss-1024.png",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "alphaVerified": true
+      }
+    ]
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3568,
+      "sha256": "a0fc993896a6c49d63f4714fad61252f0a506e380f0c756d5216a4fcd8ac9ae3"
+    },
+    {
+      "path": "avatars/avatar-ink-on-white-1024.png",
+      "bytes": 13863,
+      "sha256": "c00fe54a7a226919d3f58c68fdf9c4d5611269e845fed0357df2b1efe944df3f"
+    },
+    {
+      "path": "avatars/avatar-ink-on-white-512.png",
+      "bytes": 5507,
+      "sha256": "3381b3b0f7712f9f5fc46fb14bbbef7563f942e8f5061febb1a0989970c1adfa"
+    },
+    {
+      "path": "avatars/avatar-ink-on-white.svg",
+      "bytes": 979,
+      "sha256": "4c7e7c4eba958a2afb51a35a47160581e10ef6c0a75286f7a948e22ad929418e"
+    },
+    {
+      "path": "avatars/avatar-white-on-ink-1024.png",
+      "bytes": 13862,
+      "sha256": "e469494528ae2b18346a00410302a6e30f0c9128eff3c39d58b9d491c7dad97f"
+    },
+    {
+      "path": "avatars/avatar-white-on-ink-512.png",
+      "bytes": 5514,
+      "sha256": "61de054cfb407720325c118f6bd3082163343b3d86a048c776fe8ef5958a9b35"
+    },
+    {
+      "path": "avatars/avatar-white-on-ink.svg",
+      "bytes": 979,
+      "sha256": "e69af02ff6823e5d2525b6bd3b638c0f280cc7ce063daf5424565cd308d3bf4e"
+    },
+    {
+      "path": "avatars/avatar-white-on-moss-1024.png",
+      "bytes": 13873,
+      "sha256": "b4efc0bef915fd4a2b092dcfcbedf6253d0f633e4cc9d8ea286f3d8914a8a60f"
+    },
+    {
+      "path": "avatars/avatar-white-on-moss-512.png",
+      "bytes": 5525,
+      "sha256": "8548fbed970993f8884ee3ac8d446fa0e9c61590979a50fc41deec974342fa25"
+    },
+    {
+      "path": "avatars/avatar-white-on-moss.svg",
+      "bytes": 979,
+      "sha256": "7824055f60b4c5629113972963e9183bb14845444e8c116643da96b5f2af921c"
+    },
+    {
+      "path": "design-tokens.css",
+      "bytes": 728,
+      "sha256": "49c42d03bee4c7b33944de98f51aefe973aba7f3a7182983c7570707d3636470"
+    },
+    {
+      "path": "design-tokens.json",
+      "bytes": 2421,
+      "sha256": "261a9c51ace154f6a2e8a120a65055c89d51e8b422adba289dd1d2145f9c895e"
+    },
+    {
+      "path": "favicon/favicon-ink-on-white-256.png",
+      "bytes": 2721,
+      "sha256": "7ac3b394418c30f834f9bc7e8d4809c8721fbcc6c6402e3458fae5f14fec8f59"
+    },
+    {
+      "path": "favicon/favicon-ink-on-white.ico",
+      "bytes": 9897,
+      "sha256": "859acb998e6192678629c6b01a507a324a01d4cee6248dad299a07ca2bf3f1f2"
+    },
+    {
+      "path": "favicon/favicon-ink-on-white.svg",
+      "bytes": 979,
+      "sha256": "33c9b03e492971ccace68c7cca87201759627232202e7ba5a1b786b293cf2b0d"
+    },
+    {
+      "path": "favicon/favicon-white-on-ink-256.png",
+      "bytes": 2722,
+      "sha256": "93d56027eb11a5e6e72bcc376df5328c744ca4bb7f8570e4cd000d723634f5ae"
+    },
+    {
+      "path": "favicon/favicon-white-on-ink.ico",
+      "bytes": 10256,
+      "sha256": "1c08f349de0a6bf9a9ae6c44c1ae4f51fb3f0e20e3ada694cafe87cbe345a543"
+    },
+    {
+      "path": "favicon/favicon-white-on-ink.svg",
+      "bytes": 979,
+      "sha256": "890c5cc19243a7ac3114c87b5480928bc8002997ffc5fd315f8d7e965083e795"
+    },
+    {
+      "path": "fonts/Manrope-ExtraBold.ttf",
+      "bytes": 35768,
+      "sha256": "a4ebf52bb974009a6b7f4f71ac292c1011e5f7188d3cf0fdc6f691c08a463b05"
+    },
+    {
+      "path": "fonts/Manrope-OFL.txt",
+      "bytes": 4479,
+      "sha256": "2e9a4958fb8e5be69eca9abc48544e1ca1898ca71edc54ac3da25cd93101881e"
+    },
+    {
+      "path": "fonts/manrope-latin.woff2",
+      "bytes": 24836,
+      "sha256": "a30ddcd349703aff7464c34bef3fffdff405ee50c113440d7c8693c02d210972"
+    },
+    {
+      "path": "generate.mjs",
+      "bytes": 10556,
+      "sha256": "5b44173fd3d9fea87892e860fc4879636140f78f6217626a4b44b33d26463c77"
+    },
+    {
+      "path": "png/mark-ink-1024.png",
+      "bytes": 16611,
+      "sha256": "58f3f20487355b6227883311ac74f386da4c90387f399f66b7413e8a43e9d4fa"
+    },
+    {
+      "path": "png/mark-ink-256.png",
+      "bytes": 2866,
+      "sha256": "d4981abd4df4e9edeb34d984d98daf132a98e23d3589dbc54285edb1b8017ae9"
+    },
+    {
+      "path": "png/mark-ink-512.png",
+      "bytes": 6663,
+      "sha256": "1753404e1a71736f047faa03c3bab4aeefe241275f732e5ac2e4bcfd79febf2d"
+    },
+    {
+      "path": "png/mark-moss-1024.png",
+      "bytes": 16619,
+      "sha256": "88ef3ebe1012d5fad619a156224bef0e667dba92989e7f1ae811cac09042e94c"
+    },
+    {
+      "path": "png/mark-moss-256.png",
+      "bytes": 2876,
+      "sha256": "804591fb6b8758e39e76dbfebe24151e523e37e71fb771bcd63afb5a1f948458"
+    },
+    {
+      "path": "png/mark-moss-512.png",
+      "bytes": 6702,
+      "sha256": "7fe3ac1e0db7fdf2e26f004dcf396e8122988b92523ad6636cf143040b9ecfe9"
+    },
+    {
+      "path": "png/mark-white-1024.png",
+      "bytes": 22882,
+      "sha256": "662bb7df8859ce6fc16acd3ca4639c98036c9e99e4c0aaf45bffc283fe00cac3"
+    },
+    {
+      "path": "png/mark-white-256.png",
+      "bytes": 3104,
+      "sha256": "7f957ffa59d74fe710b154fc5893921e90edb2c111a407b66b46ff84b9ff3308"
+    },
+    {
+      "path": "png/mark-white-512.png",
+      "bytes": 8680,
+      "sha256": "e85994c79270d0f7a6f8bedba19796a6ca1b98e3d8c9504f765302d738b7977b"
+    },
+    {
+      "path": "png/wordmark-ink-1200.png",
+      "bytes": 21081,
+      "sha256": "970f0d2df07df9d52f39ad83b4ad97d85cf8eb58176480fccfd361fac6554538"
+    },
+    {
+      "path": "png/wordmark-ink-2400.png",
+      "bytes": 48999,
+      "sha256": "c87b5a7bb4ad8f86eac9673f04bcb439716a3cac3a685a9b1616d24f40c003b0"
+    },
+    {
+      "path": "png/wordmark-ink-600.png",
+      "bytes": 10333,
+      "sha256": "079e7561e03233183594ce1c7d2bda9997f10b7e9d1d2b3f708c9ffe539073ba"
+    },
+    {
+      "path": "png/wordmark-moss-1200.png",
+      "bytes": 20856,
+      "sha256": "d3c06b162dd6eb2630b83922d4c45027fe11a02d59b58962621fad9226f590ff"
+    },
+    {
+      "path": "png/wordmark-moss-2400.png",
+      "bytes": 48290,
+      "sha256": "ad1fc2633254757469b07eb4d3297b62ffb7a397b8a602ade0835b8fd6d08e31"
+    },
+    {
+      "path": "png/wordmark-moss-600.png",
+      "bytes": 10066,
+      "sha256": "1954326005887f24cb2120da5f15aac2d3ff62b2baa598ddca4bb473653ece41"
+    },
+    {
+      "path": "png/wordmark-white-1200.png",
+      "bytes": 25685,
+      "sha256": "7cfcc61768a7ee16c3c274a9a9a2cc20cef4305b79e97437b1da5081af67244d"
+    },
+    {
+      "path": "png/wordmark-white-2400.png",
+      "bytes": 57466,
+      "sha256": "36cd815cde0ac714970979fdad92ebfd9b49496c0b49d5772f27fa9ed33d8eaa"
+    },
+    {
+      "path": "png/wordmark-white-600.png",
+      "bytes": 11701,
+      "sha256": "add3e170e38ffd84010e9ce6f799dbb6c114da1e1aab5fbed10958d3f65d4c43"
+    },
+    {
+      "path": "prepare_font.py",
+      "bytes": 707,
+      "sha256": "24a8c0d7a3947a7d30aa70b25a6f283f3891fad0409636f7704992ed20e00b04"
+    },
+    {
+      "path": "qa/contact-sheet.png",
+      "bytes": 142816,
+      "sha256": "1523502bcd0fdc3120a8bcf5ecc67f996334b73373de477b9c997ab32c2e9490"
+    },
+    {
+      "path": "qa/verification.json",
+      "bytes": 5894,
+      "sha256": "3dd3f99033ebc816a738c5b2832bcb40007b694b8f9ee46ccd6b2a60e5ae2b01"
+    },
+    {
+      "path": "qa/visual-review.txt",
+      "bytes": 798,
+      "sha256": "367dc3a90d233b1e8c97f385d7cd5bd6ef0b90ee30f7f989a86f7d210ace7228"
+    },
+    {
+      "path": "svg/mark-ink.svg",
+      "bytes": 887,
+      "sha256": "c134d7092486359ffd0604e1b4f196a8c038ae057448d8409b6ef19870d86581"
+    },
+    {
+      "path": "svg/mark-moss.svg",
+      "bytes": 887,
+      "sha256": "c4ca2cdee43d822d29d0de91a4a2379c23cced01378c2314da2bf97c7c5001fa"
+    },
+    {
+      "path": "svg/mark-white.svg",
+      "bytes": 887,
+      "sha256": "a204b205c5c54276f3398c021c603bbc98db71938ec4e61d340d616b42dbfb07"
+    },
+    {
+      "path": "svg/wordmark-ink.svg",
+      "bytes": 3689,
+      "sha256": "5db592cadb31c1abec7329acd7102022d909aa79c380c17864458db783bf8fea"
+    },
+    {
+      "path": "svg/wordmark-moss.svg",
+      "bytes": 3689,
+      "sha256": "4769ca6d42d0ee4bd90bb9da0deb44ff46c60d5b925afe4278ab32f970d99a59"
+    },
+    {
+      "path": "svg/wordmark-white.svg",
+      "bytes": 3689,
+      "sha256": "66bd8f4015676190b9297351f46e54bbea74af580377a6744f66bb11b140c6af"
+    },
+    {
+      "path": "verify_assets.py",
+      "bytes": 4467,
+      "sha256": "70795239945e18485a1f66c0f4dfa0940ba01681b02013f46b4461185e2e5667"
+    }
+  ],
+  "guidelines": {
+    "sha256": "81dd404b15aaf65ebe8cb344e491918e928ae3120dc3751abf00fa68e4605218",
+    "path": "MisterLove-Brand-Guidelines-Edition-1.pdf",
+    "pages": 8
+  }
+}

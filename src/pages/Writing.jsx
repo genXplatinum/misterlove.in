@@ -5,7 +5,6 @@ import CoverPlate from '../components/CoverPlate';
 import { pieces, writingMeta, writingTotals, livePartsOf, isInProgress } from '../data/writing';
 import { profile } from '../data/site';
 import './Writing.css';
-import { useExperience } from '../components/ExperienceProvider';
 
 /** Topic strings read like "Gender · Society · Evidence" — split into tokens. */
 const topicTokens = (piece) => piece.topic.split('·').map((token) => token.trim()).filter(Boolean);
@@ -52,7 +51,6 @@ function TopicCard({ piece, i }) {
 }
 
 export default function Writing() {
-  const { immersive } = useExperience();
   useEffect(() => {
     const prev = document.title;
     document.title = `Writing — long-form research by ${profile.name}`;
@@ -125,8 +123,8 @@ export default function Writing() {
       <header className="writingpage__head">
         <div className="container">
           <Reveal>
-            <span className="eyebrow">{immersive ? 'Independent research by Lovepreet Singh' : `${writingMeta.index} — ${writingMeta.label}`}</span>
-            <h1 className="writingpage__title">{immersive ? 'The living archive.' : writingMeta.title}</h1>
+            <span className="eyebrow">{`${writingMeta.index} — ${writingMeta.label}`}</span>
+            <h1 className="writingpage__title">{writingMeta.title}</h1>
             <p className="writingpage__lead lead muted">{writingMeta.lead}</p>
 
             <dl className="writingpage__totals">
@@ -158,15 +156,6 @@ export default function Writing() {
             />
           </div>
 
-          {immersive ? (
-          <div className="shelf-filter__facet shelf-filter__subjects">
-            <label className="mono shelf-filter__label" htmlFor="shelf-subject">Subject</label>
-            <select className="shelf-select" id="shelf-subject" value={topic||''} onChange={event=>setTopic(event.target.value||null)}>
-              <option value="">All subjects</option>
-              {topics.map(token=><option key={token} value={token}>{token}</option>)}
-            </select>
-          </div>
-          ) : (
           <div className="shelf-filter__facet" role="group" aria-label="Filter by topic">
             <span className="mono shelf-filter__label">Topic</span>
             <div className="shelf-chips">
@@ -191,7 +180,6 @@ export default function Writing() {
               ))}
             </div>
           </div>
-          )}
 
           <div className="shelf-filter__controls">
             <div className="shelf-filter__facet" role="group" aria-label="Filter by status">
@@ -229,7 +217,7 @@ export default function Writing() {
 
         <div className="section-head">
           <span className="mono">
-            <span className="section-head__id">{immersive ? 'Investigations' : 'ALL WRITING'}</span>&nbsp;&nbsp;/&nbsp;&nbsp;
+            <span className="section-head__id">ALL WRITING</span>&nbsp;&nbsp;/&nbsp;&nbsp;
             <span aria-live="polite">
               {results.length === pieces.length
                 ? `${pieces.length} works`
@@ -242,7 +230,7 @@ export default function Writing() {
                 Clear filters <span aria-hidden="true">✕</span>
               </button>
             )
-            : <span className="mono hide-sm">{immersive ? 'Choose a question to follow' : 'CHOOSE A WORK TO BEGIN'}</span>}
+            : <span className="mono hide-sm">CHOOSE A WORK TO BEGIN</span>}
         </div>
 
         {results.length ? (

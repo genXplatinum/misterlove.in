@@ -1,10 +1,15 @@
-import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Link, NavLink, Route, Routes, useLocation } from 'react-router-dom';
-import { PlainReadingProvider, applyExperience } from '../components/ExperienceProvider';
+import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { Link, NavLink, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
+import { PlainReadingProvider } from '../components/ExperienceProvider';
+import EditionSwitch from '../components/EditionSwitch';
 import { home, profile } from '../data/site';
 import { pieces, livePartsOf, isInProgress } from '../data/writing';
 import { books, booksMeta, liveStudiesOf } from '../data/books';
+import ReadingRoom from './ReadingRoom';
+import PublicationCover from './PublicationCover';
+import ReaderCovers from './ReaderCovers';
 import './White.css';
+import './WhitePremium.css';
 
 const Topic = lazy(() => import('../pages/Topic'));
 const Article = lazy(() => import('../pages/Article'));
@@ -60,6 +65,7 @@ function WhiteNav() {
       {primary.map(item => <NavLink key={item.to} to={item.to}>{item.label}</NavLink>)}
     </nav>
     <a className="white-header-contact" href={`mailto:${profile.email}`}>Get in touch <Arrow diagonal /></a>
+    <EditionSwitch />
     <details ref={menu} className="white-mobile-menu">
       <summary>Menu <span aria-hidden="true">+</span></summary>
       <nav aria-label="Mobile navigation">{primary.map(item => <NavLink key={item.to} to={item.to}>{item.label}</NavLink>)}<a href={`mailto:${profile.email}`}>Get in touch</a></nav>
@@ -80,11 +86,7 @@ function WhiteFooter() {
       <div className="white-footer-social">{profile.social.map(item => <a key={item.label} href={item.href} target="_blank" rel="noreferrer">{item.label}<Arrow diagonal /></a>)}</div>
     </div>
     <div className="white-footer-base"><span>© {new Date().getFullYear()} Lovepreet Singh</span>
-      <nav className="white-version-links" aria-label="Choose a site version">
-        <a href={base} onClick={() => applyExperience('classic')}>Original</a>
-        <a href={`${base}observatory/`}>Observatory</a>
-        <span aria-current="page">White edition</span>
-      </nav>
+      <EditionSwitch />
       <a href="#main" onClick={event => { event.preventDefault(); window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }); document.getElementById('main')?.focus({ preventScroll: true }); }}>Back to top ↑</a>
     </div>
   </footer>;
@@ -92,47 +94,33 @@ function WhiteFooter() {
 
 function WorkRow({ piece }) {
   return <li className="white-work-row"><Link to={`/writing/${piece.slug}`}>
-    <span className="white-work-category">{piece.topic.split('·')[0].trim()}</span>
-    <span className="white-work-copy"><h3>{piece.title}</h3><p>{piece.standfirst}</p></span>
+    <span className="white-archive-cover" aria-hidden="true"><PublicationCover piece={piece} compact /></span>
+    <span className="white-work-copy"><span className="white-work-category">{piece.topic.split('·')[0].trim()}</span><h3>{piece.title}</h3><p>{piece.standfirst}</p></span>
     <span className="white-work-format">{livePartsOf(piece)} {piece.unit === 'volume' ? 'volumes' : 'parts'}<span>{isInProgress(piece) ? 'In progress' : 'Complete'}</span></span>
     <Arrow />
   </Link></li>;
 }
 
 function WhiteHome() {
-  const featured = pieces.find(piece => piece.slug === 'atheist-vs-believer') ?? pieces[0];
-  const selected = pieces.filter(piece => piece.slug !== featured.slug).slice(0, 4);
-  return <>
-    <PageMeta title="MisterLove — questions worth asking" description="Independent research and writing by Lovepreet Singh. Explore long-form investigations, books and clear arguments with their sources." />
-    <section className="white-hero white-shell">
-      <p className="white-hero-byline">The writing & research of Lovepreet Singh</p>
-      <div className="white-hero-grid"><h1>Questions<br />worth asking.</h1><div className="white-hero-aside"><p>I study systems, follow the evidence, and write until difficult ideas become clear.</p><span>Based in Punjab. Curious about the world.</span></div></div>
-      <div className="white-hero-bottom"><Link to="/writing" className="white-button">Explore the writing <Arrow /></Link><p>Religion, society, science, philosophy<br />and the assumptions beneath them.</p><a href="#latest" className="white-scroll-link">Take a look below <span aria-hidden="true">↓</span></a></div>
-    </section>
-    <section className="white-latest white-shell" id="latest" aria-labelledby="white-latest-title">
-      <div className="white-section-aside"><p>Latest in the archive</p><span>Four complete books.<br />English and हिंदी.</span></div>
-      <div className="white-latest-copy"><h2 id="white-latest-title">{featured.title}</h2><p>What do we believe, and why? A direct examination of religious claims, scientific evidence and moral authority.</p><div className="white-volume-strip">{['Islam', 'Christianity', 'Hindu traditions', 'Other traditions'].map((title, i) => <Link key={title} to={`/writing/${featured.slug}/part-${i + 1}`}><span>Volume {i + 1}</span><strong>{title}</strong><Arrow /></Link>)}</div><Link to={`/writing/${featured.slug}`} className="white-text-link">Open the collection <Arrow /></Link></div>
-    </section>
-    <section className="white-selected white-shell" aria-labelledby="white-selected-title">
-      <div className="white-section-head"><h2 id="white-selected-title">Selected writing</h2><Link to="/writing" className="white-text-link">View the archive <Arrow /></Link></div>
-      <ul className="white-work-list">{selected.map(piece => <WorkRow key={piece.slug} piece={piece} />)}</ul>
-    </section>
-    <section className="white-shelf white-shell" aria-labelledby="white-shelf-title"><div className="white-section-head"><div><p>On the reading desk</p><h2 id="white-shelf-title">Books, read closely.</h2></div><Link to="/books" className="white-text-link">Browse the shelf <Arrow /></Link></div><div className="white-book-list">{books.slice(0, 3).map(book => <Link key={book.slug} to={`/books/${book.slug}`}><span className="white-book-author">{book.author}</span><h3>{book.title}</h3><p>{book.subtitle}</p><span className="white-book-open">Open the close reading <Arrow /></span></Link>)}</div></section>
-    <section className="white-about-intro white-shell" aria-labelledby="white-about-title"><figure><img src={profile.photo} alt="Lovepreet Singh" loading="lazy" width="560" height="650" /><figcaption>Lovepreet Singh · Punjab, India</figcaption></figure><div><p>A little about me</p><h2 id="white-about-title">Curiosity became<br />a method.</h2><p>I am a researcher, writer, Certified Ethical Hacker and the founder of Lovelace. My work moves between technology, business, philosophy and public questions.</p><p>I go back to the record, read across disagreement, and explain what survives in plain language.</p><Link className="white-text-link" to="/about">More about me <Arrow /></Link></div></section>
-    <section className="white-method white-shell" aria-labelledby="white-method-title"><div className="white-section-head"><h2 id="white-method-title">How I work</h2><p>A clear argument should<br />show its workings.</p></div><ol>{home.method.steps.map((step, i) => <li key={step.n}><span>{String(i + 1).padStart(2, '0')}</span><h3>{step.title}</h3><p>{step.text}</p></li>)}</ol></section>
-  </>;
+  return <><PageMeta title="MisterLove — leave no question unasked" description="A reading room for independent thought. Explore Lovepreet Singh’s research on belief, science, society and the systems we live inside." /><ReadingRoom /></>;
 }
 
 function WhiteWriting() {
-  const [query, setQuery] = useState('');
-  const [subject, setSubject] = useState('all');
+  const [params, setParams] = useSearchParams();
+  const query = params.get('q') ?? '';
+  const subject = params.get('subject') ?? 'all';
+  const setFilter = (key, value) => setParams(previous => {
+    const next = new URLSearchParams(previous);
+    if (!value || (key === 'subject' && value === 'all')) next.delete(key); else next.set(key, value);
+    return next;
+  }, { replace: true, preventScrollReset: true });
   const topics = useMemo(() => [...new Set(pieces.flatMap(piece => piece.topic.split('·').map(token => token.trim())))].sort(), []);
   const results = useMemo(() => pieces.filter(piece => {
     const matchSubject = subject === 'all' || piece.topic.split('·').map(token => token.trim()).includes(subject);
     const text = `${piece.title} ${piece.subtitle} ${piece.standfirst} ${piece.topic} ${(piece.keywords ?? []).join(' ')}`.toLowerCase();
     return matchSubject && text.includes(query.toLowerCase().trim());
   }), [query, subject]);
-  return <section className="white-archive white-shell"><PageMeta title="Writing — MisterLove" description="Explore the complete MisterLove research archive by Lovepreet Singh. Search investigations and filter by subject." /><header className="white-page-heading"><p>The research archive</p><h1>Follow a question.</h1><p>Long-form investigations with the evidence, competing arguments and sources left in view.</p></header><form className="white-search" role="search" aria-label="Search the writing" onSubmit={event => event.preventDefault()}><div><label htmlFor="white-search">Find something to read</label><input id="white-search" type="search" placeholder="Search titles, questions or subjects" value={query} onChange={event => setQuery(event.target.value)} /></div><div><label htmlFor="white-subject">Subject</label><select id="white-subject" value={subject} onChange={event => setSubject(event.target.value)}><option value="all">All subjects</option>{topics.map(topic => <option key={topic}>{topic}</option>)}</select></div></form><div className="white-result-count" aria-live="polite">{results.length} {results.length === 1 ? 'work' : 'works'}{query || subject !== 'all' ? <button type="button" onClick={() => { setQuery(''); setSubject('all'); }}>Clear filters</button> : <span>Newest first</span>}</div>{results.length ? <ul className="white-work-list">{results.map(piece => <WorkRow key={piece.slug} piece={piece} />)}</ul> : <div className="white-empty"><h2>No matching work.</h2><p>Try a broader subject or clear the filters to see the full archive.</p></div>}</section>;
+  return <section className="white-archive white-shell"><PageMeta title="Writing — MisterLove" description="Explore the complete MisterLove research archive by Lovepreet Singh. Search investigations and filter by subject." /><header className="white-page-heading"><p>The research archive</p><h1>Follow a question.</h1><p>Long-form investigations with the evidence, competing arguments and sources left in view.</p></header><form className="white-search" role="search" aria-label="Search the writing" onSubmit={event => event.preventDefault()}><div><label htmlFor="white-search">Find something to read</label><input id="white-search" type="search" placeholder="Search titles, questions or subjects" value={query} onChange={event => setFilter('q', event.target.value)} /></div><div><label htmlFor="white-subject">Subject</label><select id="white-subject" value={subject} onChange={event => setFilter('subject', event.target.value)}><option value="all">All subjects</option>{topics.map(topic => <option key={topic}>{topic}</option>)}</select></div></form><div className="white-result-count" aria-live="polite">{results.length} {results.length === 1 ? 'work' : 'works'}{query || subject !== 'all' ? <button type="button" onClick={() => { setParams({}, { replace: true }); }}>Clear filters</button> : <span>Newest first</span>}</div>{results.length ? <ul className="white-work-list">{results.map(piece => <WorkRow key={piece.slug} piece={piece} />)}</ul> : <div className="white-empty"><h2>No matching work.</h2><p>Try a broader subject or clear the filters to see the full archive.</p></div>}</section>;
 }
 
 function WhiteAbout() {
@@ -162,7 +150,7 @@ function WhiteFrame() {
     window.scrollTo({ top: 0, behavior: 'instant' });
     document.getElementById('main')?.focus({ preventScroll: true });
   }, [location.pathname, location.hash]);
-  return <div className="white-site"><a className="white-skip" href="#main">Skip to content</a><WhiteNav /><main id="main" tabIndex="-1"><Suspense fallback={<div className="white-shell white-loading" role="status">Opening the writing…</div>}><Routes><Route path="/" element={<WhiteHome />} /><Route path="/about" element={<WhiteAbout />} /><Route path="/writing" element={<WhiteWriting />} /><Route path="/writing/:slug" element={<Topic />} /><Route path="/hi/writing/:slug" element={<Topic />} /><Route path="/pa/writing/:slug" element={<Topic />} /><Route path="/writing/:slug/:part" element={<Article />} /><Route path="/hi/writing/:slug/:part" element={<Article />} /><Route path="/pa/writing/:slug/:part" element={<Article />} /><Route path="/books" element={<WhiteBooks />} /><Route path="/books/:book" element={<Book />} /><Route path="/books/:book/:study" element={<Study />} /><Route path="/hi/books/:book/:study" element={<Study />} /><Route path="/press" element={<Press />} /><Route path="/press/:slug" element={<PressFeature />} /><Route path="*" element={<WhiteNotFound />} /></Routes></Suspense></main><WhiteFooter /></div>;
+  return <div className="white-site"><a className="white-skip" href="#main">Skip to content</a><WhiteNav /><main id="main" tabIndex="-1"><Suspense fallback={<div className="white-shell white-loading" role="status">Opening the writing…</div>}><Routes><Route path="/" element={<WhiteHome />} /><Route path="/about" element={<WhiteAbout />} /><Route path="/writing" element={<WhiteWriting />} /><Route path="/writing/:slug" element={<Topic />} /><Route path="/hi/writing/:slug" element={<Topic />} /><Route path="/pa/writing/:slug" element={<Topic />} /><Route path="/writing/:slug/:part" element={<Article />} /><Route path="/hi/writing/:slug/:part" element={<Article />} /><Route path="/pa/writing/:slug/:part" element={<Article />} /><Route path="/books" element={<WhiteBooks />} /><Route path="/books/:book" element={<Book />} /><Route path="/books/:book/:study" element={<Study />} /><Route path="/hi/books/:book/:study" element={<Study />} /><Route path="/press" element={<Press />} /><Route path="/press/:slug" element={<PressFeature />} /><Route path="*" element={<WhiteNotFound />} /></Routes></Suspense></main><WhiteFooter /><ReaderCovers /></div>;
 }
 
 export default function WhiteApp() {

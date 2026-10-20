@@ -6,8 +6,7 @@
   src: url('/white-assets/manrope-latin.woff2') format('woff2');
 }
 
-/* Every rule belongs to this route-only edition. Original and Observatory
-   retain their own CSS, content, palettes and saved preferences. */
+/* Every rule belongs to White. Original retains its own visual identity. */
 :root.white-edition[data-experience][data-theme] {
   color-scheme: light;
   --canvas: #fff;

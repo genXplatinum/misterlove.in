@@ -9,7 +9,6 @@ import '@fontsource/eb-garamond/400-italic.css';
 import '@fontsource/source-sans-3/400.css';
 import '@fontsource/source-sans-3/600.css';
 import '@fontsource/source-serif-4/400.css';
-import './observatory.css';
 import ErrorBoundary from './components/ErrorBoundary';
 import { applyTheme, readStoredTheme, ThemeProvider } from './components/ThemeProvider';
 
@@ -27,11 +26,6 @@ if (isWhite) {
   document.documentElement.dataset.experience = 'classic';
 } else applyExperience(initialExperience);
 applyTheme(initialTheme);
-// Honor a returning visitor's preferred homepage once, before the router starts.
-// Later Back/Forward navigation remains faithful to the actual home URLs.
-if (window.location.pathname.replace(/\/$/, '') === (basename || '') && initialExperience === 'immersive') {
-  window.history.replaceState(window.history.state, '', `${basename || ''}/observatory${window.location.search}${window.location.hash}`);
-}
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

@@ -1,4 +1,3 @@
-import { useExperience } from './ExperienceProvider';
 export function Mark({ className = '' }) {
   return (
     <span className={`folio-mark ${className}`} aria-hidden="true">
@@ -10,11 +9,10 @@ export function Mark({ className = '' }) {
 }
 
 export function Wordmark({ className = '' }) {
-  const { immersive } = useExperience();
   return (
     <span className={`wordmark ${className}`}>
       <Mark />
-      <span className="wordmark__text">{immersive ? 'misterlove.' : 'Lovepreet Singh'}</span>
+      <span className="wordmark__text">Lovepreet Singh</span>
     </span>
   );
 }

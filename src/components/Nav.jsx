@@ -32,7 +32,7 @@ export default function Nav() {
   const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const { homePath } = useExperience();
-  const isHome = pathname === '/' || pathname.replace(/\/$/, '') === '/observatory';
+  const isHome = pathname === '/';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);

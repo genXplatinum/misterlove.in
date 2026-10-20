@@ -1,0 +1,87 @@
+{
+  "date": "2026-10-20",
+  "branch": "white-premium-local",
+  "base_commit": "47ca094f34f81cfe184f7c4fe42e4bcf00ec4ed1",
+  "publication": "Publication authorized 20 October 2026. Predeployment checks complete; live proof is recorded separately after deployment.",
+  "preview": "http://127.0.0.1:5513/white/",
+  "development_preview": "http://127.0.0.1:5512/white/",
+  "cover_gallery": "http://127.0.0.1:5512/docs/white-cover-catalog.html",
+  "research_board": "http://127.0.0.1:5512/docs/white-premium-research.html",
+  "automated": {
+    "production_build": "passed",
+    "white_verifier": "passed",
+    "lint": "passed with one existing prefer-string-starts-ends-with warning in scripts/import-sapiens-reading.mjs:360",
+    "git_diff_check": "passed",
+    "direct_entry_routes": 351,
+    "original_pages_mirrored": 349,
+    "manuscripts_independently_hash_checked": 345,
+    "publication_covers": 330,
+    "collection_visual_identities": 22,
+    "custom_page_navigation_links": 102,
+    "download_links": 355,
+    "pdf_files_byte_identical": 57,
+    "original_footer": "Updated to Original / White only at the user request.",
+    "shared_original_and_observatory_source": "Original content preserved; Observatory implementation and dedicated assets removed, legacy URL redirects to Original.",
+    "reader_metadata": "original canonical retained; White remains noindex",
+    "cover_preservation_rule": "Only balanced, validated White cover decorations and White navigation prefixes are excluded before comparing original manuscript hashes."
+  },
+  "browser": {
+    "environment": "Chromium in-app browser; production preview and development preview",
+    "layout_widths_checked_px": [
+      320,
+      390,
+      768,
+      1440
+    ],
+    "homepage": [
+      "Belief, Power and Origins change the question, cover, synopsis and destination",
+      "Keyboard activation works",
+      "Reduced-motion preference removes research-object animation"
+    ],
+    "archive": [
+      "Search and subject filters combine",
+      "Back navigation preserves query state",
+      "Empty results and clear filters work",
+      "Literal all query remains editable; all followed by ah produces allah",
+      "All 19 archive covers fit their bounds at 320px"
+    ],
+    "readers": [
+      "Hindi and Punjabi language links remain within White",
+      "Hindi-to-English transition updates cover title to match the heading",
+      "Next-part transition updates the cover exactly once",
+      "Source anchor and Chesterton contents anchor visibly land at the intended section",
+      "Final desktop English reader and 390px Hindi reader visually inspected",
+      "320px article has no horizontal overflow or cover-footer spill"
+    ],
+    "cover_gallery": [
+      "All 330 rendered covers checked for title/footer collisions and footer overflow",
+      "English collection view contains 22 visual identities",
+      "Hindi search and language filtering verified",
+      "Searchable gallery visually inspected"
+    ],
+    "original": "Original design and content preserved; top and footer edition switches updated. Mobile header verified at 320 and 390px.",
+    "downloads": "Representative complete PDF returned HTTP 200 with application/pdf; all 57 local build PDFs independently hash checked",
+    "console": "No warning or error logs in the checked final production reader session"
+  },
+  "limitations": [
+    "Targeted browser checks are not an exhaustive manual review of every page.",
+    "No Lighthouse score or full automated accessibility audit was run.",
+    "Existing large content-chunk build warnings remain.",
+    "Award references were verified from award sources; this does not imply full interaction testing of every reference site.",
+    "Local previews require their local servers to remain running."
+  ],
+  "screenshots": [
+    "white-preview/desktop.jpg",
+    "white-preview/cover-gallery.jpg",
+    "white-preview/article-cover.jpg",
+    "white-preview/hindi-article-mobile.jpg",
+    "white-preview/source-jump.jpg"
+  ],
+  "release_changes": [
+    "Top Original / White switch preserves article and language routes",
+    "Observatory removed, including Three.js; old URL redirects with query and hash",
+    "First tab-session branded intro: 1200ms ready, 1950ms cap, reduced-motion and immediate input dismissal",
+    "11 intro lifecycle tests passed",
+    "Owner-approved eight-page brand guide and 40 visual assets created"
+  ]
+}

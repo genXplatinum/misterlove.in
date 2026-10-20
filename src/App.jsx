@@ -1,10 +1,9 @@
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef } from 'react';
-import { Link, Route, Routes, useLocation } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
 import ScrollProgress from './components/ScrollProgress';
 import ErrorBoundary from './components/ErrorBoundary';
-import Home from './pages/Home';
 import ClassicHome from './pages/ClassicHome';
 import { pageSurfaceForPath, syncThemeColor } from './pageSurface';
 
@@ -16,6 +15,11 @@ const Book = lazy(() => import('./pages/Book'));
 const Study = lazy(() => import('./pages/Study'));
 const Press = lazy(() => import('./pages/Press'));
 const PressFeature = lazy(() => import('./pages/Press').then(module => ({ default: module.PressFeature })));
+
+function LegacyEditionRedirect() {
+  const { search, hash } = useLocation();
+  return <Navigate to={{ pathname: '/', search, hash }} replace />;
+}
 
 function NotFound() {
   useEffect(() => {
@@ -63,7 +67,7 @@ function AppFrame({ isHome, resetKey }) {
           <Suspense fallback={<div className="route-fallback" role="status" aria-live="polite">Opening…</div>}>
             <Routes>
               <Route path="/" element={<ClassicHome />} />
-              <Route path="/observatory" element={<Home />} />
+              <Route path="/observatory" element={<LegacyEditionRedirect />} />
               <Route path="/press" element={<Press />} />
               <Route path="/press/:slug" element={<PressFeature />} />
               <Route path="/writing" element={<Writing />} />
@@ -90,12 +94,24 @@ function AppFrame({ isHome, resetKey }) {
 export default function App() {
   const location = useLocation();
   const previousPath = useRef(location.pathname);
-  const isHome = location.pathname === '/' || location.pathname.replace(/\/$/, '') === '/observatory';
+  const isHome = location.pathname === '/';
   const surface = pageSurfaceForPath(location.pathname);
+
+  // Edition links can arrive at an Original homepage section before React
+  // inserts it. Restore that anchor after the homepage has mounted.
+  useEffect(() => {
+    if (location.pathname !== '/' || !location.hash) return;
+    let id;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { return; }
+    const frame = requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ block: 'start', behavior: 'instant' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [location.pathname, location.hash]);
 
   useLayoutEffect(() => {
     const root = document.documentElement;
-    root.classList.remove('page-reader', 'page-observatory', 'page-press');
+    root.classList.remove('page-reader', 'page-press');
     if (surface) root.classList.add(surface);
     // Theme, edition and room changes all paint the browser chrome from the
     // actual page colour, rather than competing lists of hard-coded colours.

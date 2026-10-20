@@ -1,0 +1,21 @@
+/* Decorative first-visit signature. Hidden without JavaScript. */
+#brand-intro { display: none; }
+.brand-intro-active #brand-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 36px;
+  background: #fff;
+  color: #151714;
+  pointer-events: none;
+  animation: brand-intro-exit 180ms ease 1800ms forwards;
+}
+#brand-intro .brand-intro-mark { width: clamp(90px, 15vw, 150px); height: auto; }
+#brand-intro .brand-intro-wordmark { width: 156px; height: auto; }
+@keyframes brand-intro-exit { to { opacity: 0; visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) {
+  .brand-intro-active #brand-intro { display: none; animation: none; }
+}

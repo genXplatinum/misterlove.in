@@ -196,8 +196,8 @@ function useTopicMeta(piece, original) {
 
 /** A research topic and the parts available in the selected language. */
 export default function Topic() {
-  const { immersive, white } = useExperience();
-  const showOpening = immersive || white;
+  const { white } = useExperience();
+  const showOpening = white;
   const { slug } = useParams();
   const { pathname } = useLocation();
   const language = writingLanguageFromPath(pathname);
