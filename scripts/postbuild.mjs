@@ -610,7 +610,7 @@ function booksShelfBody(shelved) {
   return `<main id="main"><div class="writingpage bookspage"><div class="container">
   <h1 class="writingpage__title">${esc(booksMeta.title)}</h1>
   <p class="writingpage__lead">${esc(booksMeta.lead)}</p>
-  <p class="mono">${booksTotals.books} ${booksTotals.books === 1 ? 'book' : 'books'} · ${booksTotals.studies} ${booksTotals.studies === 1 ? 'study' : 'studies'} · ${booksTotals.axioms} axioms dug out</p>
+  <p class="mono">${booksTotals.books} ${booksTotals.books === 1 ? 'book' : 'books'} · ${booksTotals.studies} ${booksTotals.studies === 1 ? 'study' : 'studies'} · ${booksTotals.axioms} assumptions examined</p>
   <ol class="shelfmethod__steps">${booksMeta.method
     .map((step) => `<li><span class="mono shelfmethod__n">${esc(step.n)}</span><span class="shelfmethod__t">${esc(step.t)}</span><span class="shelfmethod__d">${esc(step.d)}</span></li>`)
     .join('')}</ol>
@@ -898,8 +898,7 @@ shells += 1;
 shell({
   path: '/writing',
   title: 'Writing — long-form research by Lovepreet Singh',
-  description:
-    'Long-form work on subjects I refused to have a lazy opinion about. Researched properly, written plainly, every side given its strongest case.',
+  description: writingMeta.lead,
   canonical: `${SITE}/writing/`,
   keywords: `Lovepreet Singh writing, long-form research, essays, ${pieces.map((p) => p.title).join(', ')}`,
   // The shelf has its own card listing the research — not a borrowed cover
@@ -1095,13 +1094,11 @@ for (const { piece, parts } of editions) {
 shell({
   path: '/books',
   title: 'Books, taken apart — close readings by Lovepreet Singh',
-  description:
-    'Famous books read one sentence at a time. The most quoted line gets pulled out, '
-    + 'its hidden axioms named and graded, the argument steelmanned before it is attacked.',
+  description: booksMeta.lead,
   canonical: `${SITE}/books/`,
   keywords: `close reading, book criticism, hidden axioms, steelman, ${books.map((b) => `${b.title} ${b.author}`).join(', ')}, Lovepreet Singh`,
   image: `${SITE}/og/books.png`,
-  imageAlt: `Books, taken apart — ${booksTotals.books} ${booksTotals.books === 1 ? 'book' : 'books'}, ${booksTotals.studies} single-sentence ${booksTotals.studies === 1 ? 'study' : 'studies'}, ${booksTotals.axioms} axioms dug out.`,
+  imageAlt: `Books, taken apart — ${booksTotals.books} ${booksTotals.books === 1 ? 'book' : 'books'}, ${booksTotals.studies} single-sentence ${booksTotals.studies === 1 ? 'study' : 'studies'}, ${booksTotals.axioms} assumptions examined.`,
   jsonLd: {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',

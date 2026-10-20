@@ -21,32 +21,31 @@ export const booksMeta = {
   label: 'Books',
   title: 'Famous books, taken apart.',
   lead:
-    'One sentence at a time. A book that everybody quotes gets its most quoted line pulled '
-    + 'out, opened up, and read for the assumptions hidden inside it — each one named, tested '
-    + 'and graded. The argument is built at its strongest before it is attacked, and where the '
-    + 'author is right, the scorecard says so.',
+    'I take a well-known passage and ask what its argument depends on. Each reading explains '
+    + 'the assumptions, considers the strongest case for the author, and checks where the '
+    + 'argument holds up. When I think the author is right, I say so.',
   /* The rules the shelf runs on, shown under the lead. Same four commitments
      as the rest of the archive, pointed at somebody else's argument. */
   method: [
     {
       n: '01',
-      t: 'One sentence, not one book',
-      d: 'A review flattens a book into a verdict. This does the opposite: it takes the single line the book is famous for and refuses to leave it until every assumption underneath it has been named. Everything else in the book stays where it is.',
+      t: 'Start with a passage',
+      d: 'I focus on a sentence or passage that people often quote. The reading examines that argument in detail; it is not a review of the whole book.',
     },
     {
       n: '02',
-      t: 'The axioms get dug out and numbered',
-      d: 'An axiom is what an argument has to assume before it can start. A quotable sentence usually rests on eight or ten of them, and a reader swallows all of them at once without noticing. Each one comes out, gets stated in plain words, and gets a verdict of its own.',
+      t: 'Identify the assumptions',
+      d: 'What must be true for the argument to work? I state those assumptions in plain language and examine them separately. Where a study has a scorecard, you can follow each verdict back to the reasoning.',
     },
     {
       n: '03',
-      t: 'Steelmanned before it is touched',
-      d: 'The argument is rebuilt at its strongest — stronger than the author wrote it, with every good objection handed to their side first. Beating the version in the book proves nothing. Only what survives that rebuild is worth attacking.',
+      t: 'Make the strongest case',
+      d: 'Before criticising an argument, I work through the best reasons for accepting it, including replies to the obvious objections. A criticism should address the strongest version of the claim.',
     },
     {
       n: '04',
-      t: 'Why they said it is part of the answer',
-      d: 'Nobody writes a line like that by accident. Where the idea came from, what it is aimed at, and what the author needs it to do explain most of its shape — including its exaggerations. That is diagnosis, not motive-hunting, and it is kept separate from whether the claim is true.',
+      t: 'Read it in context',
+      d: 'I look at where the idea came from and what the author was responding to. That context helps explain the passage, but whether its claim is true still needs a separate answer.',
     },
   ],
 };

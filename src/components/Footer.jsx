@@ -26,7 +26,7 @@ export default function Footer() {
           </a>
         </div>
 
-        <div className="footer__editions"><span>One archive. Two ways to read.</span><EditionSwitch /></div>
+        <div className="footer__editions"><span>Choose your site edition.</span><EditionSwitch /></div>
         <div className="footer__rule" />
 
         <div className="footer__grid">

@@ -24,7 +24,7 @@ const COPY = {
     assumptions: (n) => `${n} assumptions`,
     assumption: (n) => `Assumption ${n}`,
     sentence: (s) => `The sentence: ${s}`,
-    idle: 'Point at a pier to read the assumption it stands for, or open it to jump to the chapter where it is argued.',
+    idle: 'Hover over a numbered column to see the assumption. Select it to read the relevant chapter.',
     legend: { holds: 'Holds', partly: 'Partly, or contested', fails: 'Fails' },
   },
   hi: {
@@ -32,7 +32,7 @@ const COPY = {
     assumptions: (n) => `${n} मान्यताएँ`,
     assumption: (n) => `मान्यता ${n}`,
     sentence: (s) => `वाक्य: ${s}`,
-    idle: 'किसी खंभे पर इशारा कीजिए और वह मान्यता पढ़िए जिस पर वह टिका है, या उसे खोलकर उस अध्याय पर जाइए जहाँ उस पर बहस है।',
+    idle: 'किसी नंबर वाले खंभे पर माउस ले जाकर उसकी मान्यता देखें। उसे चुनकर संबंधित अध्याय पढ़ें।',
     legend: { holds: 'टिकती है', partly: 'आंशिक, या विवादित', fails: 'नाकाम' },
   },
 };

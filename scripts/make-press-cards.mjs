@@ -62,7 +62,7 @@ function frame(source, x, y, w, h) {
 
 for (const feature of features) {
   const kind = `${feature.kind}${feature.archived ? ' · archived clipping' : ''}`;
-  const credit = feature.archived ? 'Original clipping preserved from Instagram'
+  const credit = feature.archived ? 'Archived clipping from Instagram'
     : feature.kind === 'Press release' ? 'News provided by Lovelace IT Solutions'
     : feature.slug === 'dwi-media-youthful-visionary' ? 'By DWI Media News Network on Medium'
     : `${feature.publisher} company directory`;
@@ -93,16 +93,16 @@ for (const feature of features) {
     ${lines(credit, 82, 1612, 24, 900, 1.35, 'Inter', '#B7C1D4')}
     <path d="M80 1690H1000" stroke="url(#foil)" stroke-opacity=".75"/>
     ${lines('Five Rivers Inc. & Lovelace', 80, 1788, 54, 930)}
-    ${label('Explore the story at misterlove.in/press', 82, 1860, 26, '#E1BF88')}
+    ${label('Sources and clippings: misterlove.in/press', 82, 1860, 26, '#E1BF88')}
   `), featureStory(feature));
 }
 
 render(svg(1200, 630, `
   ${label('P R E S S   &   F E A T U R E S', 60, 76, 13, '#B7C1D4')}
   ${label('LOVEPREET SINGH', 58, 128, 28, '#E1BF88', 1)}
-  ${lines('Built to make a mark.', 58, 257, 109, 690, 1.02)}
-  ${label('The vision. The ventures. The stories.', 60, 470, 24, '#F0F3FA')}
-  ${label('Original features & preserved clippings', 60, 512, 19)}
+  ${lines('Articles and mentions.', 58, 257, 109, 690, 1.02)}
+  ${label('Press releases, profiles and archived images', 60, 470, 24, '#F0F3FA')}
+  ${label('Source links and original clippings', 60, 512, 19)}
   <rect x="800" y="48" width="342" height="489" rx="12" fill="url(#glass)" stroke="url(#foil)" stroke-width="2"/>
   <image href="${raster('/founder.jpg')}" x="812" y="60" width="318" height="465" preserveAspectRatio="xMidYMid slice"/>
   <path d="M800 170L1000 48H1110L800 320Z" fill="url(#shine)" opacity=".45"/>

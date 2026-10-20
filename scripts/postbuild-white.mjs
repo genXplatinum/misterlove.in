@@ -70,11 +70,11 @@ try {
     generated.push({ path: `/white${path}`, canonical: html.match(/<link rel="canonical" href="([^"]+)"/)?.[1] });
   }
 
-  const homeMeta = { title: 'MisterLove — leave no question unasked | Lovepreet Singh', description: 'A reading room for independent thought. Explore Lovepreet Singh’s research on belief, science, society and the systems we live inside.', canonical: `${SITE}/white/`, image: `${SITE}/og/white-edition.png` };
+  const homeMeta = { title: 'MisterLove: leave no question unasked | Lovepreet Singh', description: 'Research by Lovepreet Singh on belief, science and society. Read the arguments and check the sources.', canonical: `${SITE}/white/`, image: `${SITE}/og/white-edition.png` };
   shell(template, '/', homepage, homeMeta);
-  shell(readFileSync('dist/writing/index.html', 'utf8'), '/writing/', renderWhite('/writing/'), { title: 'Writing — MisterLove | Lovepreet Singh', description: 'Explore the complete MisterLove research archive. Search investigations and filter by subject.', canonical: `${SITE}/writing/` });
-  shell(readFileSync('dist/books/index.html', 'utf8'), '/books/', renderWhite('/books/'), { title: 'Books, read closely — MisterLove | Lovepreet Singh', description: 'Close readings of Chesterton, Horace and Harari by Lovepreet Singh. Follow the assumptions, strongest arguments and evidence behind influential books.', canonical: `${SITE}/books/` });
-  shell(template, '/about/', renderWhite('/about/'), { title: 'About Lovepreet Singh — MisterLove', description: 'The researcher, writer and founder behind MisterLove. Biography, research method, practice and education.', canonical: `${SITE}/`, image: `${SITE}/og/white-edition.png` });
+  shell(readFileSync('dist/writing/index.html', 'utf8'), '/writing/', renderWhite('/writing/'), { title: 'Writing | MisterLove | Lovepreet Singh', description: 'Search the MisterLove research archive by Lovepreet Singh. Find a collection by title or subject.', canonical: `${SITE}/writing/` });
+  shell(readFileSync('dist/books/index.html', 'utf8'), '/books/', renderWhite('/books/'), { title: 'Books, read closely | MisterLove | Lovepreet Singh', description: 'Close readings of Chesterton, Horace and Harari by Lovepreet Singh, examining what each book claims and how its arguments hold up.', canonical: `${SITE}/books/` });
+  shell(template, '/about/', renderWhite('/about/'), { title: 'About | MisterLove | Lovepreet Singh', description: 'About Lovepreet Singh, the researcher and writer behind MisterLove and founder of Lovelace. His work, education and research method.', canonical: `${SITE}/`, image: `${SITE}/og/white-edition.png` });
 
   function walk(dir) {
     return readdirSync(dir, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? walk(join(dir, entry.name)) : entry.name === 'index.html' ? [join(dir, entry.name)] : []);

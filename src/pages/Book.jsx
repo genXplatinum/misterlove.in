@@ -168,7 +168,7 @@ export default function Book() {
           </Reveal>
 
           <Reveal className="feature__method" delay={80}>
-            <span className="mono feature__method-title">How a book gets taken apart</span>
+            <span className="mono feature__method-title">How I read these books</span>
             <ol className="feature__promises">
               {booksMeta.method.map((step) => (
                 <li key={step.n}>
@@ -190,7 +190,7 @@ export default function Book() {
             <span className="mono hide-sm">{book.topic}</span>
           </div>
 
-          {failed && <p className="mono dim feature__loading">Contents didn’t load — please refresh.</p>}
+          {failed && <p className="mono dim feature__loading">The contents didn’t load. Please refresh the page.</p>}
 
           <ol className="feature__parts studylist">
             {contents.map((study, i) => {

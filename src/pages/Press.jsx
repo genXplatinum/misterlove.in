@@ -66,11 +66,11 @@ function ShareTools({ feature, compact = false }) {
   }
   return <div className={`press-share ${compact ? 'press-share--compact' : ''}`}>
     <div className="press-share__buttons">
-      <button type="button" onClick={share}>Share this {feature ? 'feature' : 'collection'} <span aria-hidden="true">↗</span></button>
+      <button type="button" onClick={share}>Share this page <span aria-hidden="true">↗</span></button>
       <button type="button" onClick={copy}>Copy link <span aria-hidden="true">⧉</span></button>
       {!compact && <>
-        <a href={feature ? featureCard(feature) : pressCollectionCard} download>Download social card <span aria-hidden="true">↓</span></a>
-        {feature && <a href={featureStory(feature)} download>Download Story <span aria-hidden="true">↓</span></a>}
+        <a href={feature ? featureCard(feature) : pressCollectionCard} download>Download post image <span aria-hidden="true">↓</span></a>
+        {feature && <a href={featureStory(feature)} download>Download story image <span aria-hidden="true">↓</span></a>}
       </>}
     </div>
     <p className="press-share__status" role="status" aria-live="polite">{status}</p>
@@ -86,7 +86,7 @@ function FeatureCard({ feature }) {
   return <article className={`press-card press-card--${feature.accent}`}>
     <Link className="press-card__image" to={featurePath(feature)} tabIndex={-1} aria-hidden="true">
       <img src={feature.images[0].src} alt="" loading="lazy" decoding="async" />
-      <span className="press-card__view">View feature <span aria-hidden="true">↗</span></span>
+      <span className="press-card__view">View entry <span aria-hidden="true">↗</span></span>
     </Link>
     <div className="press-card__body">
       <SourceLabel feature={feature} />
@@ -99,7 +99,7 @@ function FeatureCard({ feature }) {
 
 function OriginalCollections() {
   return <section className="press-originals" aria-labelledby="originals-title">
-    <div><p className="press-kicker">The original record</p><h2 id="originals-title">Kept, as they were shared.</h2><p>Both Instagram collections, preserved in full. Every clipping above leads back to its original slide.</p></div>
+    <div><p className="press-kicker">Original collections</p><h2 id="originals-title">The 2022 Instagram posts</h2><p>Both posts are preserved in full. Each archived clipping links to the slide it came from.</p></div>
     <div className="press-originals__posts">{carousels.map(post => <a key={post.id} href={post.url} target="_blank" rel="noopener noreferrer">
       <img src={`/press/clippings/carousel-${post.id}-${post.id === 'one' ? '02' : '07'}.webp`} alt="" loading="lazy" />
       <span><strong>{post.title}</strong><small>{post.count} original slides · 9 October 2022</small><b>View on Instagram ↗</b></span>
@@ -119,24 +119,24 @@ export default function Press() {
   const results = features.filter(feature => matchesPressFilter(feature, filter));
   return <div className="press-page press-index">
     <header className="press-hero"><div className="press-opening container">
-      <div className="press-opening__copy"><p className="press-kicker">Press & features</p><p className="press-opening__name">Lovepreet Singh</p><h1>Built to<br />make a mark.</h1><p className="press-opening__intro">{pressIntro}</p><a href="#collection" className="press-button">Explore the features <span aria-hidden="true">↓</span></a><p className="press-opening__signature">Five Rivers Inc. <span aria-hidden="true">/</span> Lovelace</p></div>
+      <div className="press-opening__copy"><p className="press-kicker">Press & features</p><p className="press-opening__name">Lovepreet Singh</p><h1>Articles<br />and mentions.</h1><p className="press-opening__intro">{pressIntro}</p><a href="#collection" className="press-button">Browse the collection <span aria-hidden="true">↓</span></a><p className="press-opening__signature">Five Rivers Inc. <span aria-hidden="true">/</span> Lovelace</p></div>
       <div className="press-lead">
         <div className="press-lead__art"><img className="press-lead__portrait" src="/press/release-portrait.webp" alt="Lovepreet Singh, in the portrait accompanying the EIN Presswire release" fetchPriority="high" width="1000" height="667" /><Link to={featurePath(latest)} className="press-lead__clipping" aria-label="View the EIN Presswire release"><img src={latest.images[0].src} alt="EIN Presswire release headline" width="1255" height="569" /></Link></div>
-        <div className="press-lead__caption"><p className="press-kicker">Latest release · 9 October 2026</p><h2><Link to={featurePath(latest)}>One founder.<br />A bigger vision.</Link></h2><p>Five Rivers Inc. & Lovelace — where technical ambition meets considered design.</p><Link to={featurePath(latest)} className="press-text-link">Read the latest release <span aria-hidden="true">↗</span></Link><small>{latest.credit}</small></div>
+        <div className="press-lead__caption"><p className="press-kicker">Latest press release · 9 October 2026</p><h2><Link to={featurePath(latest)}>Five Rivers Inc.<br />and Lovelace.</Link></h2><p>Lovepreet Singh discusses technology, business needs and digital design at the two companies.</p><Link to={featurePath(latest)} className="press-text-link">Read the press release <span aria-hidden="true">↗</span></Link><small>{latest.credit}</small></div>
       </div>
-    </div><div className="press-publisher-band"><div className="container"><p>Published stories & preserved clippings</p><div><span className="press-publisher-band__ein">EIN Presswire</span><span className="press-publisher-band__dwi">DWI Media Wire <small>on Medium</small></span><span>GrowthBusiness</span><span className="press-publisher-band__yourstory">YourStory</span></div></div></div></header>
+    </div><div className="press-publisher-band"><div className="container"><p>Articles, releases and archived clippings</p><div><span className="press-publisher-band__ein">EIN Presswire</span><span className="press-publisher-band__dwi">DWI Media Wire <small>on Medium</small></span><span>GrowthBusiness</span><span className="press-publisher-band__yourstory">YourStory</span></div></div></div></header>
 
     <div className="container press-content">
     <section id="collection" className="press-collection" aria-labelledby="collection-title">
-      <div className="press-collection__head"><div><p className="press-kicker">The spotlight collection</p><h2 id="collection-title">A journey.<br />Seen from every angle.</h2></div><span>{features.length} stories, profiles & mentions<br />Every source. Every original.</span></div>
+      <div className="press-collection__head"><div><p className="press-kicker">The collection</p><h2 id="collection-title">Articles, profiles<br />and clippings.</h2></div><span>{features.length} entries<br />Original links and archived images</span></div>
       <div className="press-filters" aria-label="Filter the press collection">{pressFilters.map(value => <button type="button" key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value}</button>)}</div>
       <p className="press-results" role="status">{results.length} {results.length === 1 ? 'entry' : 'entries'}{filter !== 'All' ? ` · ${filter}` : ''}</p>
       <div className="press-grid">{results.map(feature => <FeatureCard key={feature.slug} feature={feature} />)}</div>
-      <p className="press-archive-note">From the archive: older clippings reflect the pages as captured. Where an original page could not be located, its Instagram source and full image are preserved here. An archived mention is not a current endorsement.</p>
+      <p className="press-archive-note">Older clippings show past pages, not current endorsements. Entries without an original page link include the full image and its Instagram source.</p>
     </section>
 
     <OriginalCollections />
-    <section className="press-thanks"><p className="press-kicker">The story keeps growing</p><h2>For every voice.<br />For every new horizon.</h2><p>To the writers, editors, platforms and people who have followed the journey: thank you for being part of the story. The next chapter is still being written.</p><ShareTools /><Link to="/writing/" className="press-text-link">Discover the work behind the stories <span aria-hidden="true">→</span></Link></section>
+    <section className="press-thanks"><p className="press-kicker">Keep reading</p><h2>Essays and<br />research.</h2><p>Read my work on history, belief and public life, or share this press collection.</p><ShareTools /><Link to="/writing/" className="press-text-link">Browse the writing <span aria-hidden="true">→</span></Link></section>
     </div>
   </div>;
 }
@@ -159,16 +159,16 @@ export function PressFeature() {
   const { slug } = useParams();
   const feature = features.find(item => item.slug === slug);
   usePressMeta(feature);
-  if (!feature) return <div className="press-page container press-missing"><h1>Feature not found.</h1><Link to="/press/">Return to the collection →</Link></div>;
+  if (!feature) return <div className="press-page container press-missing"><h1>Page not found.</h1><Link to="/press/">Return to the collection →</Link></div>;
   const position = features.indexOf(feature);
   const next = features[(position + 1) % features.length];
   return <article className="press-page press-detail container">
     <nav className="press-breadcrumb" aria-label="Breadcrumb"><Link to="/">Home</Link><span aria-hidden="true">/</span><Link to="/press/">Press & features</Link><span aria-hidden="true">/</span><span>{feature.publisher}</span></nav>
     <header className="press-detail__heading"><SourceLabel feature={feature} /><h1>{feature.title}</h1><p>{feature.excerpt}</p><span className="press-detail__date">{feature.dateLabel}</span></header>
-    <div className="press-detail__layout"><aside className="press-detail__context"><h2>The source</h2><p>{feature.credit}</p>{feature.source ? <a className="press-button" href={feature.source} target="_blank" rel="noopener noreferrer">Read the original <span aria-hidden="true">↗</span></a> : <><p className="press-detail__archive">The original article link could not be located. The complete supplied clipping remains available here.</p><a className="press-button" href={feature.images[0].provenance} target="_blank" rel="noopener noreferrer">View Instagram source <span aria-hidden="true">↗</span></a></>}
-      {feature.archived && <p className="press-detail__archive">An archival capture reflects the page at the time it was saved. It is not a current verification of the claims inside the image.</p>}
-      <div className="press-detail__sharing"><h2>Take the story with you.</h2><p>Share this page or save its ready-to-post artwork. The source credit travels with the card.</p><ShareTools key={feature.slug} feature={feature} /><a className="press-preview" href={featureCard(feature)} target="_blank" rel="noopener noreferrer"><img src={featureCard(feature)} alt={`Social preview for ${feature.publisher}: ${feature.cardTitle}`} loading="lazy" width="1200" height="630" /><span>Preview social card ↗</span></a></div>
+    <div className="press-detail__layout"><aside className="press-detail__context"><h2>The source</h2><p>{feature.credit}</p>{feature.source ? <a className="press-button" href={feature.source} target="_blank" rel="noopener noreferrer">Read the original <span aria-hidden="true">↗</span></a> : <><p className="press-detail__archive">The original page link could not be found. The full clipping is shown here.</p><a className="press-button" href={feature.images[0].provenance} target="_blank" rel="noopener noreferrer">View Instagram source <span aria-hidden="true">↗</span></a></>}
+      {feature.archived && <p className="press-detail__archive">This clipping records what the page said when it was saved. It does not verify the claims in the image.</p>}
+      <div className="press-detail__sharing"><h2>Share this page</h2><p>Copy the page link or download an image to share. Each image includes a source credit.</p><ShareTools key={feature.slug} feature={feature} /><a className="press-preview" href={featureCard(feature)} target="_blank" rel="noopener noreferrer"><img src={featureCard(feature)} alt={`Social preview for ${feature.publisher}: ${feature.cardTitle}`} loading="lazy" width="1200" height="630" /><span>Preview post image ↗</span></a></div>
     </aside><ImageGallery key={feature.slug} images={feature.images} /></div>
-    <nav className="press-next" aria-label="More features"><Link to="/press/">← Back to the collection</Link><Link to={featurePath(next)}><small>Up next · {next.publisher}</small><strong>{next.cardTitle} <span aria-hidden="true">→</span></strong></Link></nav>
+    <nav className="press-next" aria-label="More press entries"><Link to="/press/">← Back to the collection</Link><Link to={featurePath(next)}><small>Up next · {next.publisher}</small><strong>{next.cardTitle} <span aria-hidden="true">→</span></strong></Link></nav>
   </article>;
 }

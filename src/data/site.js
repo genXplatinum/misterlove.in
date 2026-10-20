@@ -35,27 +35,27 @@ export const nav = [
 export const home = {
   hero: {
     eyebrow: profile.descriptor,
-    title: 'I study systems, then write until they become clear.',
+    title: 'I study how systems work and write about what I find.',
     lead:
-      'My work moves between security, business strategy and public research. I founded Lovelace, taught myself the engineering I use, and build long-form investigations that take difficult public questions back to the record.',
+      'My work spans cybersecurity, business strategy and public research. I founded Lovelace and taught myself the engineering I use. I write detailed investigations that check public claims against the record.',
     primary: { label: 'Read my work', to: '/writing', route: true },
     secondary: { label: 'About me', to: '#about' },
   },
 
   about: {
     label: 'About',
-    title: 'Curiosity became a method.',
+    title: 'My background.',
     statement:
       'I want to write the kind of argument that gets stronger the more you fact-check it, not weaker.',
     /* The clause the epigraph turns on. Set upright inside the italic, so
        the sentence carries its own emphasis instead of running flat. */
     statementEmphasis: 'gets stronger',
     paragraphs: [
-      'I am Lovepreet Singh — a Certified Ethical Hacker, the founder of Lovelace, and the writer behind this archive. I took a B.Com in Business at Chandigarh University and am in the second year of an MBA in Business Strategy and Analysis at Panjab University, Chandigarh. A doctorate is what I intend to do after it. I read across technology, business, history, politics, psychology, philosophy and economics, because the questions that matter rarely stay inside one subject.',
-      'Everything technical about me is self-taught. I have no science background and no computer-science degree. I learned C, C++ and data structures and algorithms on my own, then the MERN stack, then security — and earned the Certified Ethical Hacker qualification the same way. I did it because I wanted to know how the machine actually works, not because a syllabus required it.',
-      'I am an obsessive science and technology enthusiast, and I think the two halves of my training feed each other. Strategy taught me to ask who benefits from a claim. Engineering taught me that a system will do exactly what it was built to do, whatever anyone intended. They are the same discipline pointed at different objects.',
-      'Philosophy is the part I would do for nothing. Epistemology above all — how a claim earns the right to be believed, where certainty is warranted and where it is merely loud, and what it costs to hold a position honestly. Ethics and political philosophy follow from it, because most public arguments turn out to be three arguments wearing one coat: a dispute about facts, a dispute about what a word means, and a dispute about what ought to matter. Almost nobody says which one they are having, which is why so few of them ever end.',
-      'So my writing begins with a simple discomfort: public arguments are usually confident long before they are careful. I go back to the record, read across disagreement, separate what is evidence from what is a value judgement, and explain what survives in plain language. This archive is where that method is being built — and it is deliberate preparation for the doctoral research I mean to do, not a detour from it.',
+      'I am Lovepreet Singh, a Certified Ethical Hacker, the founder of Lovelace, and the writer behind this archive. I took a B.Com in Business at Chandigarh University and am in the second year of an MBA in Business Strategy and Analysis at Panjab University, Chandigarh. I intend to pursue a doctorate after it. I read across technology, business, history, politics, psychology, philosophy and economics because the questions I study often overlap.',
+      'I taught myself the technical skills I use. I have no science background and no computer-science degree. I learned C, C++ and data structures and algorithms on my own, followed by the MERN stack and security. I also prepared for the Certified Ethical Hacker qualification through independent study. I wanted to understand how computers work.',
+      'I am an obsessive science and technology enthusiast. My business and technical training inform each other: strategy taught me to ask who benefits from a claim, while engineering taught me to examine how a system behaves and how its design shapes the result. I use both habits in my research.',
+      'Philosophy is the part I would do for nothing. I am especially interested in epistemology: how we justify beliefs, when certainty is warranted, and what it takes to hold a position honestly. I also study ethics and political philosophy. Public arguments often mix questions of fact, the meaning of words and what we ought to value. I try to identify which question I am answering.',
+      'I am wary of public arguments that sound certain before they have been examined carefully. I check the record, read opposing arguments and distinguish evidence from value judgements. Then I explain the reasoning in plain language. I use this archive to develop that method and prepare for the doctoral research I intend to pursue.',
     ],
     facts: [
       { label: 'Based in', value: 'Punjab, India' },
@@ -69,15 +69,15 @@ export const home = {
 
   practice: {
     label: 'Practice',
-    title: 'Three fields. One habit of mind.',
+    title: 'My work.',
     intro:
-      'Each field asks the same thing of me: understand the system, find the hidden assumptions, and make the result useful to someone else.',
+      'Across these fields, I try to understand how a system works and which assumptions it depends on, then explain my findings in a way someone else can use.',
     fields: [
       {
         n: '01',
         title: 'Research and writing',
         text:
-          'I investigate subjects that public debate often reduces to slogans: independence, farmers’ movements, religion, gender, caste, merit and social justice. The method is philosophical before it is historical — establish what kind of question is being asked, then answer that question rather than a louder one standing next to it.',
+          'I investigate independence, farmers’ movements, religion, gender, caste, merit and social justice. I begin by identifying the question and what would count as an answer. That helps me separate historical evidence from disagreements about meaning or values.',
         points: ['Primary records', 'Competing arguments', 'Plain-English synthesis'],
         href: '/writing',
         route: true,
@@ -87,7 +87,7 @@ export const home = {
         n: '02',
         title: 'Lovelace',
         text:
-          'I founded Lovelace, a design and digital studio. It brings research, visual judgement and engineering together to make websites that feel considered, useful and alive.',
+          'I founded Lovelace, a design and digital studio. The studio combines research and engineering with visual design to build useful websites and interactive experiences.',
         points: ['Digital design', 'Web experiences', '3D and interaction'],
         href: 'https://lovelace.co.in',
         link: 'Visit lovelace.co.in',
@@ -96,7 +96,7 @@ export const home = {
         n: '03',
         title: 'Cybersecurity',
         text:
-          'I work on practical questions of risk, failure and trust in digital systems, as a Certified Ethical Hacker who learned the craft outside any syllabus. The work is technical, but the purpose is simple: help people understand what can go wrong and make better decisions before it does.',
+          'I work on risk, failure and trust in digital systems. As a Certified Ethical Hacker who trained through independent study, I help people understand what can go wrong and make better decisions about their security.',
         points: ['Offensive security', 'System review', 'Clear technical advice'],
       },
     ],
@@ -104,85 +104,85 @@ export const home = {
 
   method: {
     label: 'Research method',
-    title: 'A clear argument should show its workings.',
+    title: 'How I research a question.',
     steps: [
       {
         n: '01',
         title: 'Begin with a real question.',
-        text: 'Not a conclusion looking for evidence. A question that can still surprise me.',
+        text: 'I start with a question I have not already decided how to answer.',
       },
       {
         n: '02',
         title: 'Read across disagreement.',
-        text: 'A position deserves to be tested in its strongest form, not through its weakest spokesperson.',
+        text: 'I read the strongest case for positions I disagree with and test my own against it.',
       },
       {
         n: '03',
         title: 'Check the important claims.',
-        text: 'Original records first where possible, then serious scholarship, with uncertainty named honestly.',
+        text: 'I look for original records, then relevant scholarship, and state what the evidence leaves uncertain.',
       },
       {
         n: '04',
         title: 'Write so anyone can follow.',
-        text: 'Depth does not require fog. If a difficult idea matters, it should be explained clearly.',
+        text: 'I explain difficult ideas in plain language so readers can follow the reasoning.',
       },
     ],
   },
 
   writing: {
     label: 'Selected research',
-    title: 'The work is the argument.',
+    title: 'Explore the research.',
     intro:
-      'Five continuing investigations, built part by part. Each one starts from zero, tests the popular stories, and keeps the hard parts visible.',
+      'These investigations explain the subject from the beginning, test common claims and include the evidence and disagreements that matter.',
   },
 
   education: {
     label: 'Education and inquiry',
-    title: 'Formal study, independent reading, public work.',
+    title: 'Education and independent study.',
     intro:
-      'Education is not a finished badge here. It is a continuing practice of reading, testing and revising what I think I know — and it is heading somewhere specific.',
+      'I continue to read, question and revise what I think I know. After my MBA, I intend to pursue doctoral research.',
     items: [
       {
         period: 'Next',
         title: 'Doctoral research',
         place: 'Planned on completion of the MBA',
         text:
-          'The intention this whole archive is pointed at. Philosophy is the spine of it — epistemology, ethics and political philosophy — and every investigation published here is groundwork: practice at holding a position honestly, in public, before anyone requires it of me.',
+          'I plan to pursue doctoral research after my MBA, with interests in epistemology, ethics and political philosophy. Publishing these investigations gives me practice in developing arguments that other people can examine.',
       },
       {
         period: 'Second year',
         title: 'MBA — Business Strategy and Analysis',
         place: 'Panjab University, Chandigarh',
         text:
-          'Strategy, analysis and the economics of how organisations actually decide — the formal counterpart to the reasoning this archive runs on.',
+          'I study strategy, analysis and how organisations make economic decisions.',
       },
       {
         period: 'Self-taught',
         title: 'Certified Ethical Hacker',
         place: 'Earned without a science background or a technology degree',
         text:
-          'C, C++ and data structures and algorithms first, then the MERN stack, then offensive security. All of it outside a syllabus, because I wanted to know how the machine actually works.',
+          'I learned C, C++ and data structures and algorithms through independent study, followed by the MERN stack and offensive security.',
       },
       {
         period: 'Completed',
         title: 'B.Com — Business',
         place: 'Chandigarh University',
         text:
-          'The commerce foundation: accounts, markets and the structures sitting underneath every claim about who gains from a policy.',
+          'My background in accounts and markets informs how I examine claims about who benefits from a policy.',
       },
       {
         period: 'Foundation',
         title: 'Senior secondary education',
         place: 'Jhamku Devi Senior Secondary School',
         text:
-          'The formal foundation before a wider, self-directed path through technology and the social sciences.',
+          'I completed senior secondary education before studying technology and the social sciences independently.',
       },
       {
         period: 'Continuing',
         title: 'Independent interdisciplinary study',
         place: 'Science · Technology · Business · Politics · Psychology · Philosophy · Economics · History',
         text:
-          'A daily reading and writing practice that moves between disciplines instead of treating them as sealed rooms.',
+          'I read and write across these subjects each day, following questions that connect them.',
       },
     ],
   },
@@ -191,7 +191,7 @@ export const home = {
     label: 'Founded by Lovepreet',
     title: 'Lovelace',
     text:
-      'A design and digital studio for people who care about how an idea feels, how it works, and whether it will still make sense when the novelty wears off.',
+      'My design and digital studio, where I develop websites and interactive experiences.',
     href: 'https://lovelace.co.in',
   },
 
@@ -202,7 +202,7 @@ export const home = {
     title: 'A serious question is',
     titleAccent: 'a good place to begin.',
     text:
-      'For research conversations, cybersecurity work, collaborations or a considered digital project, write to me directly.',
+      'For research conversations, cybersecurity work, collaborations or a digital project, write to me directly.',
     cta: 'Email Lovepreet',
   },
 };
