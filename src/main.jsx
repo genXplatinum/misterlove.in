@@ -1,8 +1,7 @@
-import { lazy, StrictMode, Suspense } from 'react';
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import './index.css';
-import App from './App.jsx';
 import { ExperienceProvider, readExperience, applyExperience } from './components/ExperienceProvider';
 import '@fontsource/eb-garamond/400.css';
 import '@fontsource/eb-garamond/400-italic.css';
@@ -18,7 +17,11 @@ import { applyTheme, readStoredTheme, ThemeProvider } from './components/ThemePr
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || undefined;
 const whitePath = `${basename || ''}/white`;
 const isWhite = window.location.pathname === whitePath || window.location.pathname.startsWith(`${whitePath}/`);
-const WhiteApp = lazy(() => import('./white/WhiteApp.jsx'));
+// Keep the already-rendered page visible while its edition's code arrives.
+// Original homepage code is no longer downloaded by White or article pages.
+const { default: EditionApp } = await (isWhite
+  ? import('./white/WhiteApp.jsx')
+  : import('./App.jsx'));
 const initialTheme = readStoredTheme();
 const initialExperience = readExperience();
 if (isWhite) {
@@ -39,8 +42,8 @@ createRoot(document.getElementById('root')).render(
           }
         >
           {isWhite
-            ? <Suspense fallback={<div style={{ minHeight: '100vh', background: '#fff', color: '#121212', padding: '3rem', fontFamily: 'sans-serif' }} role="status">Opening the archive…</div>}><WhiteApp /></Suspense>
-            : <ExperienceProvider initialExperience={initialExperience}><App /></ExperienceProvider>}
+            ? <EditionApp />
+            : <ExperienceProvider initialExperience={initialExperience}><EditionApp /></ExperienceProvider>}
         </ErrorBoundary>
       </BrowserRouter>
     </ThemeProvider>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { loadBookContents } from '../data/readerData';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import Reveal from '../components/Reveal';
 import Magnetic from '../components/Magnetic';
@@ -79,7 +80,7 @@ export default function Book() {
     let alive = true;
     setStudies(null);
     setFailed(false);
-    book.load()
+    loadBookContents(book)
       .then((m) => { if (alive) setStudies(m.default); })
       .catch(() => { if (alive) setFailed(true); });
     return () => { alive = false; };

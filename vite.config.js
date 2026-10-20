@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { existsSync } from 'node:fs'
+import { readerChunks } from './scripts/reader-chunks.mjs'
 
 // If a custom domain is configured (public/CNAME present), serve at the domain ROOT
 // → base '/'. Otherwise, on GitHub Actions, serve under the repo subpath
@@ -16,5 +17,6 @@ const base = hasCustomDomain
 // https://vite.dev/config/
 export default defineConfig({
   base,
-  plugins: [react()],
+  plugins: [react(), readerChunks()],
+  build: { manifest: true },
 })

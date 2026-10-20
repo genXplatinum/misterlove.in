@@ -4,10 +4,10 @@ import Nav from './components/Nav';
 import Footer from './components/Footer';
 import ScrollProgress from './components/ScrollProgress';
 import ErrorBoundary from './components/ErrorBoundary';
-import ClassicHome from './pages/ClassicHome';
 import { pageSurfaceForPath, syncThemeColor } from './pageSurface';
 
 const Writing = lazy(() => import('./pages/Writing'));
+const ClassicHome = lazy(() => import('./pages/ClassicHome'));
 const Topic = lazy(() => import('./pages/Topic'));
 const Article = lazy(() => import('./pages/Article'));
 const Books = lazy(() => import('./pages/Books'));

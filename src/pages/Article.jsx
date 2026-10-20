@@ -23,6 +23,7 @@ import { profile } from '../data/site';
 import { unitNameOf, withVolumeCopy } from '../data/writingUnits.js';
 import './Article.css';
 import './Rooms.css';
+import { loadWritingPart } from '../data/readerData';
 
 const RAIL_KEY = 'lws:reader-rail';
 
@@ -413,17 +414,17 @@ export default function Article() {
   const valid = Number.isInteger(n) && n >= 1 && piece && n <= piece.parts;
 
   useEffect(() => {
-    if (!piece) return undefined;
+    if (!piece || !valid) return undefined;
     let alive = true;
     setParts(null);
     setLoadError(false);
-    piece.load()
+    loadWritingPart(piece, n)
       .then((module) => { if (alive) setParts(module.default); })
       .catch(() => { if (alive) setLoadError(true); });
     return () => { alive = false; };
-  }, [piece]);
+  }, [piece, n, valid]);
 
-  const part = parts && valid ? parts[n - 1] : null;
+  const part = parts && valid && parts[n - 1]?.html !== undefined ? parts[n - 1] : null;
   const partDisplayDate = part?.displayDate ?? piece?.displayDate;
   const articlePdf = part ? pdfForPart(piece, part) : null;
   const toc = useMemo(() => part?.toc ?? [], [part]);

@@ -24,6 +24,7 @@ import { profile } from '../data/site';
 import { withVolumeCopy } from '../data/writingUnits.js';
 import './Writing.css';
 import './Rooms.css';
+import { loadWritingContents } from '../data/readerData';
 
 const COPY = {
   en: {
@@ -217,7 +218,7 @@ export default function Topic() {
     let alive = true;
     setParts(null);
     setFailed(false);
-    piece.load()
+    loadWritingContents(piece)
       .then((m) => { if (alive) setParts(m.default); })
       .catch(() => { if (alive) setFailed(true); });
     return () => { alive = false; };
