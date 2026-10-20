@@ -17,7 +17,7 @@ export const writingMeta = {
   label: 'Writing',
   title: 'Questions I followed further.',
   lead:
-    'Long-form work on difficult public questions. The evidence is checked, the competing arguments are stated fairly, and the conclusions are written in plain language.',
+    'I write about public questions that take time to understand. These essays explain what I found, where people disagree, and why I reached my conclusions. Sources are included so you can check for yourself.',
 };
 
 export const pieces = [

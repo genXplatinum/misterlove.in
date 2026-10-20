@@ -25,9 +25,9 @@ export default function PressLogoStrip({ paused: parentPaused = false }) {
   return <section className={`press-ribbon ${stopped ? 'press-ribbon--paused' : ''}`} aria-labelledby={titleId}>
     <div className="press-ribbon__inner">
       <div className="press-ribbon__heading">
-        <div><h2 id={titleId}>In the <em>spotlight.</em></h2><p>Selected press release placements</p></div>
+        <div><h2 id={titleId}>Press <em>releases.</em></h2><p>Published through EIN Presswire</p></div>
         <div className="press-ribbon__actions">
-          <Link to="/press/">Explore the press archive <span aria-hidden="true">↗</span></Link>
+          <Link to="/press/">View the press archive <span aria-hidden="true">↗</span></Link>
           <button type="button" aria-controls={railId} aria-pressed={stopped} disabled={parentPaused}
             onClick={() => setPaused(value => !value)}>
             <span aria-hidden="true">{stopped ? '▷' : 'Ⅱ'}</span> {parentPaused ? 'Motion paused' : stopped ? 'Resume movement' : 'Pause movement'}
@@ -52,7 +52,7 @@ export default function PressLogoStrip({ paused: parentPaused = false }) {
           </div>
         </div>
       </div>
-      <p className="press-ribbon__note">Select a publisher to read the release on its site.</p>
+      <p className="press-ribbon__note">These sites carry copies of the release. Select a logo to read it.</p>
     </div>
   </section>;
 }

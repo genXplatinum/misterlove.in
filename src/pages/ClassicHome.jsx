@@ -58,7 +58,7 @@ function Hero() {
     <section className="intellect-hero">
       <div className="container">
         <div className="intellect-hero__folio">
-          <span>Independent research · essays · inquiry</span>
+          <span>Independent research and essays</span>
           <span>{profile.location}</span>
         </div>
 
@@ -83,7 +83,7 @@ function Hero() {
 
           <aside className="intellect-hero__docket" aria-label="The writing at a glance">
             <div className="docket__masthead">
-              <span>The independent review</span>
+              <span>Research archive</span>
               <span>Personal journal</span>
             </div>
             <p className="docket__edition">The writing is the centre of this site.</p>
@@ -171,7 +171,7 @@ function About() {
           number="III"
           label={about.label}
           title={about.title}
-          intro="Biography, method and the unfinished education behind the work."
+          intro="My background and how I came to this work."
         />
 
         <div className="intellect-about__opening">
@@ -252,7 +252,7 @@ function Method() {
         <Reveal className="intellect-method__intro">
           <span className="chapter-label">Chapter II · {method.label}</span>
           <h2>{method.title}</h2>
-          <p className="intellect-method__note">Four habits that govern the work.</p>
+          <p className="intellect-method__note">I use these steps to check what I think I know.</p>
         </Reveal>
 
         <ol className="protocol-list">
@@ -308,7 +308,7 @@ function WritingLibrary() {
                 <i>{livePartsOf(featured)} of {featured.parts}</i> parts published
                 <i>{featured.words.toLocaleString('en-IN')}</i> words
               </span>
-              <span className="book-link">Read the complete work <span aria-hidden="true">→</span></span>
+              <span className="book-link">Read the work <span aria-hidden="true">→</span></span>
             </span>
           </Link>
         </Reveal>
@@ -377,7 +377,7 @@ function Lovelace() {
         <Reveal className="intellect-lovelace__identity">
           <span className="chapter-label">Chapter VI · {lovelace.label}</span>
           <h2>{lovelace.title}</h2>
-          <span className="intellect-lovelace__tag">A studio for considered digital work</span>
+          <span className="intellect-lovelace__tag">Design and web development</span>
         </Reveal>
         <Reveal className="intellect-lovelace__body" delay={55}>
           <p>{lovelace.text}</p>

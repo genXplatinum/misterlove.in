@@ -389,7 +389,7 @@ function shelfCard() {
   // A line of the section's own copy fills the space under the rule, so the
   // left column doesn't trail off into empty card.
   const leadY = ruleY + 44;
-  const leadLines = clampLines(writingMeta.lead, 22, LEFT_W, 3)
+  const leadLines = clampLines('Essays on public questions, with competing arguments, evidence and sources you can check.', 22, LEFT_W, 3)
     .map((l, i) => `<text class="s" x="${LEFT}" y="${(leadY + i * 31).toFixed(0)}" fill="${p.sub}" font-size="22" font-weight="400">${esc(l)}</text>`)
     .join('\n  ');
 
@@ -468,7 +468,7 @@ function booksShelfCard() {
 
   const ruleY = titleTop + (t.lines.length - 1) * leading + 40;
   const leadY = ruleY + 44;
-  const leadLines = clampLines(booksMeta.lead, 22, LEFT_W, 3)
+  const leadLines = clampLines('Close readings of well-known passages, their assumptions, and the arguments for and against them.', 22, LEFT_W, 3)
     .map((l, i) => `<text class="s" x="${LEFT}" y="${(leadY + i * 31).toFixed(0)}" fill="${p.sub}" font-size="22" font-weight="400">${esc(l)}</text>`)
     .join('\n  ');
 
@@ -492,7 +492,7 @@ function booksShelfCard() {
     ? `  <text class="s" x="${COL + 20}" y="${listTop + shown.length * rowH}" fill="${p.accent}" font-size="16" font-weight="600" letter-spacing="1">+ ${rest} more</text>`
     : '';
 
-  const badge = `${booksTotals.studies} ${booksTotals.studies === 1 ? 'STUDY' : 'STUDIES'} · ${booksTotals.axioms} AXIOMS DUG OUT`;
+  const badge = `${booksTotals.studies} ${booksTotals.studies === 1 ? 'STUDY' : 'STUDIES'} · ${booksTotals.axioms} ASSUMPTIONS`;
   const badgeW = labelWidth(badge, 17, 1.2) + 34;
 
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">

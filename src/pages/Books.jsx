@@ -37,7 +37,7 @@ function ShelfCard({ book, i }) {
           </span>
 
           <span className="link topic__cta">
-            Open the diagnosis <span className="link__arrow">→</span>
+            Read the studies <span className="link__arrow">→</span>
           </span>
         </span>
       </Link>
@@ -89,7 +89,7 @@ export default function Books() {
             <dl className="writingpage__totals">
               <div><dt className="mono">Books</dt><dd>{booksTotals.books}</dd></div>
               <div><dt className="mono">Studies</dt><dd>{booksTotals.studies}</dd></div>
-              <div><dt className="mono">Axioms dug out</dt><dd>{booksTotals.axioms}</dd></div>
+              <div><dt className="mono">Assumptions examined</dt><dd>{booksTotals.axioms}</dd></div>
             </dl>
           </Reveal>
         </div>
@@ -97,7 +97,7 @@ export default function Books() {
 
       <div className="container">
         <Reveal className="shelfmethod">
-          <span className="mono shelfmethod__title">How a book gets taken apart</span>
+          <span className="mono shelfmethod__title">How I read these books</span>
           <ol className="shelfmethod__steps">
             {booksMeta.method.map((step) => (
               <li key={step.n}>
@@ -122,9 +122,8 @@ export default function Books() {
         </ul>
 
         <p className="shelfnote">
-          The shelf grows one book at a time, and only where the quoting has run ahead of the
-          checking. If a book you keep hearing quoted belongs here,{' '}
-          <a className="link" href={`mailto:${profile.email}`}>tell me which sentence</a>.
+          Is there a passage you would like me to examine?{' '}
+          <a className="link" href={`mailto:${profile.email}`}>Send me the quote and the book it comes from</a>.
         </p>
       </div>
     </div>
