@@ -235,16 +235,16 @@
 .white-edition .press-page, .white-edition .press-hero, .white-edition .press-feature { background: #fff; color: #121212; }
 .white-edition #main :where(.press-page, .press-hero, .press-thanks) { --ink: #121212; --ink-soft: #585858; --oxblood: #121212; --press-card: #fff; --press-edge: #dedede; --press-glow: transparent; --press-shadow: none; color: #121212; background: #fff; }
 .white-edition #main .press-hero::before, .white-edition #main .press-card::before { content: none; }
-.white-edition #main .press-opening__name { font: 600 16px/1.5 var(--font-ui); color: #121212; letter-spacing: 0; }
+.white-edition #main .press-opening__name { font: 600 16px/1.5 var(--font-ui); color: #121212; letter-spacing: 0; margin-top: 22px; }
 .white-edition #main .press-opening h1 { text-shadow: none; font-weight: 700; letter-spacing: -.065em; }
 .white-edition #main .press-opening > * { min-width: 0; }
-.white-edition #main .press-opening__signature { color: #585858; flex-wrap: wrap; }
+.white-edition #main .press-opening__signature { color: #585858; flex-wrap: wrap; margin-top: 24px; }
 .white-edition #main .press-opening__signature span { color: #585858; }
 .white-edition #main .press-publisher-band { background: #f6f6f5; border-color: #dedede; }
 .white-edition #main .press-publisher-band p { color: #585858; }
 .white-edition #main .press-publisher-band span { color: #333; }
 .white-edition #main .press-kicker { color: #585858; letter-spacing: 0; text-transform: none; font-size: 12px; }
-.white-edition #main .press-opening__intro { color: #585858; font-size: 17px; line-height: 1.85; }
+.white-edition #main .press-opening__intro { color: #585858; font-size: 17px; line-height: 1.85; margin-bottom: 28px; }
 .white-edition #main .press-lead { border: 0; border-radius: 0; background: none; box-shadow: none; }
 .white-edition #main .press-lead__art { padding: 0; }
 .white-edition #main .press-lead__portrait { border-radius: 0; filter: grayscale(1); }

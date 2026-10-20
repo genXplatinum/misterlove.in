@@ -6,6 +6,7 @@ Checked on 20 October 2026, starting from release `751b43d`.
 
 - White press: the large heading set the grid's minimum width wider than a 320px screen. Constrain the grid and its children, scale the mobile heading, and remove the extra top clearance inherited from Original's fixed header. Restore readable signature and publisher-band colours on White.
 - White press cards: scale titles for their available width. The long word in “Cybersecurity and entrepreneurship” clipped at the 701px breakpoint before the fix.
+- Direct-entry press spacing: give the name, introduction and signature explicit White margins so the shared paragraph reset cannot remove their gaps when stylesheets load in a different order.
 - White footer: put edition switching on its own row, followed by copyright and the back-to-top link. Keep mobile search controls at 16px and edition links at least 44px tall.
 - White navigation: close on same-page links, Escape, outside taps, keyboard focus leaving the menu, and a resize to desktop navigation. Escape returns focus to the menu summary.
 - Original navigation: include the visible close button in the menu's keyboard focus cycle.
