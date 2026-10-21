@@ -19,6 +19,8 @@ const NAVIGATION_PATHS = new Set([
 const MOBILE_BASE = '751b43d3358ea196074330b5a27a7ce43359f4b8';
 const MOBILE_PATHS = new Set(['src/pages/Study.jsx', 'docs/mobile-layout-audit.md']);
 const PERFORMANCE_BASE = '119ba1408aa130f93035db0f5144fbcc119e7b83';
+const SIDEBAR_BASE = '75dac15aeed79a2771e4443b5e365bce3dbc7c45';
+const SIDEBAR_PATHS = new Set(['src/pages/Article.css', 'docs/sidebar-layout-fix.md']);
 const PERFORMANCE_PATHS = new Set([
   'vite.config.js', 'package.json', 'src/main.jsx', 'src/App.jsx',
   'src/pages/Article.jsx', 'src/pages/Topic.jsx', 'src/pages/Book.jsx', 'src/pages/Study.jsx',
@@ -258,7 +260,7 @@ export function verifySiteCopy({ quiet = false } = {}) {
     ]),
   ]);
   const allowed = path => COPY_EDIT_PATHS.has(path) || NAVIGATION_PATHS.has(path) || MOBILE_PATHS.has(path)
-    || PERFORMANCE_PATHS.has(path) || path.startsWith('public/fonts/web/') || imagePaths.has(path);
+    || PERFORMANCE_PATHS.has(path) || SIDEBAR_PATHS.has(path) || path.startsWith('public/fonts/web/') || imagePaths.has(path);
   const changed = git('diff', '--name-only', '--no-renames', '-z', base, '--').split('\0').filter(Boolean);
   const untracked = git('ls-files', '--others', '--exclude-standard', '-z').split('\0').filter(Boolean);
   assert.deepEqual([...new Set([...changed, ...untracked])].filter(path => !allowed(path)), [],
@@ -268,8 +270,15 @@ export function verifySiteCopy({ quiet = false } = {}) {
     assert.equal(beforeReaderDelivery(read(path)), normalize(git('show', `${PERFORMANCE_BASE}:${path}`)),
       `${path}: performance work changed more than reader delivery`);
   }
-  assert.equal(git('diff', '--name-only', PERFORMANCE_BASE, '--', 'src/**/*.css').trim(), '',
-    'Performance work must not change the visual styles');
+  assert.deepEqual(git('diff', '--name-only', PERFORMANCE_BASE, '--', 'src/**/*.css').trim().split('\n').filter(Boolean),
+    ['src/pages/Article.css'], 'Only the authorized contents-sidebar stylesheet may change after the performance pass');
+  const sidebarCss = read('src/pages/Article.css');
+  const originalSidebarCss = normalize(git('show', `${SIDEBAR_BASE}:src/pages/Article.css`));
+  const beforeSidebarFix = sidebarCss
+    .replace('grid-template-columns: minmax(1.5rem, max-content) minmax(0, 1fr);', 'grid-template-columns: 1.5rem minmax(0, 1fr);')
+    .replace('  min-width: 0;\n  max-width: 6rem;\n  overflow-wrap: anywhere;\n  font-size: 0.62rem;', '  font-size: 0.62rem;')
+    .replace('\n.article__toc-link > :last-child {\n  min-width: 0;\n  overflow-wrap: anywhere;\n}\n', '');
+  assert.equal(beforeSidebarFix, originalSidebarCss, 'Sidebar fix must preserve all other reader styles');
 
   const studyPath = 'src/pages/Study.jsx';
   const releasedStudy = normalize(git('show', `${MOBILE_BASE}:${studyPath}`));
