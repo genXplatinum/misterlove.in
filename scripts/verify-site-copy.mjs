@@ -21,6 +21,10 @@ const MOBILE_PATHS = new Set(['src/pages/Study.jsx', 'docs/mobile-layout-audit.m
 const PERFORMANCE_BASE = '119ba1408aa130f93035db0f5144fbcc119e7b83';
 const SIDEBAR_BASE = '75dac15aeed79a2771e4443b5e365bce3dbc7c45';
 const SIDEBAR_PATHS = new Set(['src/pages/Article.css', 'docs/sidebar-layout-fix.md']);
+const GLOSS_BASE = 'a5f057d385bade71bdf4a24c0848eb8b04eb6d1f';
+const GLOSS_PATHS = new Set([
+  'src/white/WhitePremium.css', 'scripts/verify-site-copy.mjs', 'docs/white-book-finish.md',
+]);
 const PERFORMANCE_PATHS = new Set([
   'vite.config.js', 'package.json', 'src/main.jsx', 'src/App.jsx',
   'src/pages/Article.jsx', 'src/pages/Topic.jsx', 'src/pages/Book.jsx', 'src/pages/Study.jsx',
@@ -260,18 +264,27 @@ export function verifySiteCopy({ quiet = false } = {}) {
     ]),
   ]);
   const allowed = path => COPY_EDIT_PATHS.has(path) || NAVIGATION_PATHS.has(path) || MOBILE_PATHS.has(path)
-    || PERFORMANCE_PATHS.has(path) || SIDEBAR_PATHS.has(path) || path.startsWith('public/fonts/web/') || imagePaths.has(path);
+    || PERFORMANCE_PATHS.has(path) || SIDEBAR_PATHS.has(path) || GLOSS_PATHS.has(path) || path.startsWith('public/fonts/web/') || imagePaths.has(path);
   const changed = git('diff', '--name-only', '--no-renames', '-z', base, '--').split('\0').filter(Boolean);
   const untracked = git('ls-files', '--others', '--exclude-standard', '-z').split('\0').filter(Boolean);
   assert.deepEqual([...new Set([...changed, ...untracked])].filter(path => !allowed(path)), [],
-    'Changes exceed the approved copy, edition-menu, mobile-layout and performance scopes');
+    'Changes exceed the approved copy, edition-menu, mobile-layout, performance and book-finish scopes');
+
+  const glossChanges = git('diff', '--name-only', '--no-renames', '-z', GLOSS_BASE, '--').split('\0').filter(Boolean);
+  assert.deepEqual([...new Set([...glossChanges, ...untracked])].filter(path => !GLOSS_PATHS.has(path)), [],
+    'The book finish must preserve the released palette, logo, layout, content and Original edition');
+  const premiumCss = read('src/white/WhitePremium.css');
+  const glossRule = /\/\* A faint varnish highlight belongs to the physical book, not the reading UI\. \*\/\n\.room-object-cover::before \{[^\n]*\}\n/;
+  assert.match(premiumCss, glossRule, 'The authorized book highlight is missing');
+  assert.equal(premiumCss.replace(glossRule, ''), normalize(git('show', `${GLOSS_BASE}:src/white/WhitePremium.css`)),
+    'The gloss pass may add only the single book highlight, preserving every existing style');
 
   for (const path of ['src/pages/Article.jsx', 'src/pages/Topic.jsx', 'src/pages/Book.jsx', 'src/pages/Study.jsx']) {
     assert.equal(beforeReaderDelivery(read(path)), normalize(git('show', `${PERFORMANCE_BASE}:${path}`)),
       `${path}: performance work changed more than reader delivery`);
   }
   assert.deepEqual(git('diff', '--name-only', PERFORMANCE_BASE, '--', 'src/**/*.css').trim().split('\n').filter(Boolean),
-    ['src/pages/Article.css'], 'Only the authorized contents-sidebar stylesheet may change after the performance pass');
+    ['src/pages/Article.css', 'src/white/WhitePremium.css'], 'Only the authorized contents fix and book highlight may change after the performance pass');
   const sidebarCss = read('src/pages/Article.css');
   const originalSidebarCss = normalize(git('show', `${SIDEBAR_BASE}:src/pages/Article.css`));
   const beforeSidebarFix = sidebarCss
