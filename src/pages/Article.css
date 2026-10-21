@@ -476,7 +476,7 @@
 
 .article__toc-link {
   display: grid;
-  grid-template-columns: 1.5rem minmax(0, 1fr);
+  grid-template-columns: minmax(1.5rem, max-content) minmax(0, 1fr);
   align-items: baseline;
   gap: 0.45rem;
   margin-left: -0.55em;
@@ -492,8 +492,16 @@
 }
 
 .article__toc-n {
+  min-width: 0;
+  max-width: 6rem;
+  overflow-wrap: anywhere;
   font-size: 0.62rem;
   color: var(--text-dim);
+}
+
+.article__toc-link > :last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .article__toc-link:hover { color: var(--text); }
