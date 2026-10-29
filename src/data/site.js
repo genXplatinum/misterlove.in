@@ -23,6 +23,7 @@ export const profile = {
 
 export const nav = [
   { label: 'Writing', to: '/writing', route: true },
+  { label: 'My Books', to: '/my-books/', route: true },
   { label: 'Books', to: '/books', route: true },
   { label: 'Press', to: '/press/', route: true },
   { label: 'Method', to: '#method' },

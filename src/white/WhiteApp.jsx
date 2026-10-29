@@ -16,11 +16,12 @@ const Topic = lazy(() => import('../pages/Topic'));
 const Article = lazy(() => import('../pages/Article'));
 const Book = lazy(() => import('../pages/Book'));
 const Study = lazy(() => import('../pages/Study'));
+const MyBooks = lazy(() => import('../pages/MyBooks'));
 const Press = lazy(() => import('../pages/Press'));
 const PressFeature = lazy(() => import('../pages/Press').then(module => ({ default: module.PressFeature })));
 
 const Arrow = ({ diagonal = false }) => <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d={diagonal ? 'M6 18 18 6M6 6h12v12' : 'M4 12h15m-6-6 6 6-6 6'} stroke="currentColor" strokeWidth="1.5" /></svg>;
-const primary = [{ to: '/writing', label: 'Writing' }, { to: '/books', label: 'Books' }, { to: '/about', label: 'About' }, { to: '/press', label: 'Press' }];
+const primary = [{ to: '/writing', label: 'Writing' }, { to: '/my-books/', label: 'My Books' }, { to: '/books', label: 'Books' }, { to: '/about', label: 'About' }, { to: '/press', label: 'Press' }];
 
 function PageMeta({ title, description }) {
   const { pathname } = useLocation();
@@ -176,7 +177,7 @@ function WhiteFrame() {
     window.scrollTo({ top: 0, behavior: 'instant' });
     document.getElementById('main')?.focus({ preventScroll: true });
   }, [location.pathname, location.hash]);
-  return <div className="white-site"><a className="white-skip" href="#main">Skip to content</a><WhiteNav /><main id="main" tabIndex="-1"><Suspense fallback={<div className="white-shell white-loading" role="status">Loading the page…</div>}><Routes><Route path="/" element={<WhiteHome />} /><Route path="/about" element={<WhiteAbout />} /><Route path="/writing" element={<WhiteWriting />} /><Route path="/writing/:slug" element={<Topic />} /><Route path="/hi/writing/:slug" element={<Topic />} /><Route path="/pa/writing/:slug" element={<Topic />} /><Route path="/writing/:slug/:part" element={<Article />} /><Route path="/hi/writing/:slug/:part" element={<Article />} /><Route path="/pa/writing/:slug/:part" element={<Article />} /><Route path="/books" element={<WhiteBooks />} /><Route path="/books/:book" element={<Book />} /><Route path="/books/:book/:study" element={<Study />} /><Route path="/hi/books/:book/:study" element={<Study />} /><Route path="/press" element={<Press />} /><Route path="/press/:slug" element={<PressFeature />} /><Route path="*" element={<WhiteNotFound />} /></Routes></Suspense></main><WhiteFooter /><ReaderCovers /></div>;
+  return <div className="white-site"><a className="white-skip" href="#main">Skip to content</a><WhiteNav /><main id="main" tabIndex="-1"><Suspense fallback={<div className="white-shell white-loading" role="status">Loading the page…</div>}><Routes><Route path="/" element={<WhiteHome />} /><Route path="/about" element={<WhiteAbout />} /><Route path="/writing" element={<WhiteWriting />} /><Route path="/writing/:slug" element={<Topic />} /><Route path="/hi/writing/:slug" element={<Topic />} /><Route path="/pa/writing/:slug" element={<Topic />} /><Route path="/writing/:slug/:part" element={<Article />} /><Route path="/hi/writing/:slug/:part" element={<Article />} /><Route path="/pa/writing/:slug/:part" element={<Article />} /><Route path="/my-books" element={<MyBooks />} /><Route path="/books" element={<WhiteBooks />} /><Route path="/books/:book" element={<Book />} /><Route path="/books/:book/:study" element={<Study />} /><Route path="/hi/books/:book/:study" element={<Study />} /><Route path="/press" element={<Press />} /><Route path="/press/:slug" element={<PressFeature />} /><Route path="*" element={<WhiteNotFound />} /></Routes></Suspense></main><WhiteFooter /><ReaderCovers /></div>;
 }
 
 export default function WhiteApp() {
