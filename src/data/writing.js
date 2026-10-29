@@ -1,3 +1,4 @@
+import { debunkedIslamMeta } from './writing/debunked-islam-meta.js';
 import { atheistBelieverMeta } from './writing/atheist-vs-believer-meta.js';
 /* ============================================================
    WRITING — curated long-form research.
@@ -21,6 +22,7 @@ export const writingMeta = {
 };
 
 export const pieces = [
+  debunkedIslamMeta,
   atheistBelieverMeta,
   // BEGIN WHY-I-DONT-BELIEVE SERIES
   {

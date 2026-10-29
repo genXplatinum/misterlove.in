@@ -285,7 +285,7 @@ function useArticleMeta(piece, part, original) {
     ld.type = 'application/ld+json';
     ld.textContent = JSON.stringify([{
       '@context': 'https://schema.org',
-      '@type': piece.unit === 'volume' ? 'Book' : 'Article',
+      '@type': ['volume', 'book'].includes(piece.unit) ? 'Book' : 'Article',
       headline: language === 'hi'
         ? `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n}`
         : `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n}`,
@@ -297,7 +297,7 @@ function useArticleMeta(piece, part, original) {
       wordCount: part.words,
       articleSection: part.label,
       isPartOf: {
-        '@type': 'CreativeWorkSeries',
+        '@type': piece.unit === 'book' ? 'Book' : 'CreativeWorkSeries',
         name: `${piece.title} — ${piece.subtitle}`,
         url: `https://misterlove.in${writingPathOf(piece)}/`,
         numberOfItems: piece.parts,
@@ -305,7 +305,7 @@ function useArticleMeta(piece, part, original) {
       author: { '@type': 'Person', '@id': 'https://misterlove.in/#lovepreet-singh', name: profile.name },
       publisher: { '@id': 'https://misterlove.in/#lovepreet-singh' },
       about: piece.topic.split(' · ').map((topic) => ({ '@type': 'Thing', name: topic })),
-      ...writingTranslationMeta(piece, part.n, piece.unit === 'volume' ? 'Book' : 'Article'),
+      ...writingTranslationMeta(piece, part.n, ['volume', 'book'].includes(piece.unit) ? 'Book' : 'Article'),
     }, {
       '@context': 'https://schema.org', '@type': 'BreadcrumbList',
       itemListElement: [

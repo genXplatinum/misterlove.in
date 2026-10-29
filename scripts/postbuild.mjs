@@ -450,7 +450,7 @@ function articleBody(piece, part, live) {
   const download = pdf
     ? `<p><a class="btn btn--ghost" href="/${pdf.file}" download>${esc(copy.download(pdf))}</a></p>`
     : '';
-  const toc = writingEditionsOf(piece).length > 1 && part.toc?.length
+  const toc = (piece.unit === 'book' || writingEditionsOf(piece).length > 1) && part.toc?.length
     ? `<nav aria-label="${copy.inThisPart}"><h2>${copy.inThisPart}</h2><ol>${part.toc.map((chapter) => `<li><a href="#${esc(chapter.id)}">${esc(chapter.text)}</a></li>`).join('')}</ol></nav>`
     : '';
   return `<main id="main"><article class="article${piece.language !== 'en' ? ` article--${piece.language}` : ''}" lang="${piece.language}">
@@ -523,7 +523,7 @@ function shelfBody(loaded) {
   <p class="writingpage__lead">${esc(writingMeta.lead)}</p>
   <p class="mono">${writingTotals.pieces} research pieces · ${writingTotals.parts} parts · ${writingTotals.words.toLocaleString('en-IN')} words</p>
   <ul class="topics">${loaded
-    .map(({ piece: p, parts }) => `<li class="topic"><a class="topic__link" href="/writing/${p.slug}/"><span class="topic__body"><span class="mono topic__topic">${esc(p.topic)}</span><span class="topic__title">${esc(p.title)} — ${esc(p.subtitle)}</span><span class="topic__stand">${esc(p.standfirst)}</span><span class="topic__meta mono">${isInProgress(p) ? `${parts.length} of ${p.parts} parts` : `${p.parts} ${p.unit === 'volume' ? 'volumes' : 'parts'}`} · ${p.words.toLocaleString('en-IN')} words · ${esc(p.displayDate)}</span></span></a><ol>${parts
+    .map(({ piece: p, parts }) => `<li class="topic"><a class="topic__link" href="/writing/${p.slug}/"><span class="topic__body"><span class="mono topic__topic">${esc(p.topic)}</span><span class="topic__title">${esc(p.title)} — ${esc(p.subtitle)}</span><span class="topic__stand">${esc(p.standfirst)}</span><span class="topic__meta mono">${isInProgress(p) ? `${parts.length} of ${p.parts} parts` : `${p.parts} ${p.unit === 'book' ? 'book' : p.unit === 'volume' ? 'volumes' : 'parts'}`} · ${p.words.toLocaleString('en-IN')} words · ${esc(p.displayDate)}</span></span></a><ol>${parts
       .map((x) => `<li><a href="/writing/${p.slug}/part-${x.n}/">${unitNameOf(p, 'en')} ${x.n} — ${esc(x.title)}</a></li>`)
       .join('')}</ol></li>`)
     .join('')}</ul>
@@ -912,7 +912,7 @@ shell({
     url: `${SITE}/writing/`,
     author: { '@id': `${SITE}/#lovepreet-singh` },
     hasPart: pieces.map((p) => ({
-      '@type': 'CreativeWorkSeries',
+      '@type': p.unit === 'book' ? 'Book' : 'CreativeWorkSeries',
       name: `${p.title} — ${p.subtitle}`,
       url: `${SITE}/writing/${p.slug}/`,
       numberOfItems: p.parts,
@@ -955,7 +955,7 @@ for (const { piece, parts } of editions) {
       ? `${piece.title}: ${piece.subtitle}। ਲਵਪ੍ਰੀਤ ਸਿੰਘ ਦੀ ਪੜਤਾਲ ਦਾ ਪੰਜਾਬੀ ਸੰਸਕਰਣ।`
       : piece.language === 'hi'
       ? `${piece.title} — ${piece.subtitle}। Lovepreet Singh की ${piece.parts} ${piece.unit === 'volume' ? 'पुस्तकों' : 'भागों'} वाली शोध श्रृंखला।`
-      : `${piece.title} — ${piece.subtitle}. ${piece.parts}-${piece.unit === 'volume' ? 'volume' : 'part'} research series by Lovepreet Singh.`,
+      : `${piece.title} — ${piece.subtitle}. ${piece.unit === 'book' ? piece.chaptersPerVolume : piece.parts}-${piece.unit === 'book' ? 'chapter book' : piece.unit === 'volume' ? 'volume research series' : 'part research series'} by Lovepreet Singh.`,
     body: topicBody(piece, parts),
     css: [ROUTE_CSS.writing, ROUTE_CSS.rooms],
     language: piece.language,
@@ -970,7 +970,7 @@ for (const { piece, parts } of editions) {
       ],
     }, {
       '@context': 'https://schema.org',
-      '@type': 'CreativeWorkSeries',
+      '@type': piece.unit === 'book' ? 'Book' : 'CreativeWorkSeries',
       name: `${piece.title} — ${piece.subtitle}`,
       url: topicUrl,
       description: piece.standfirst,
@@ -981,13 +981,13 @@ for (const { piece, parts } of editions) {
       author: { '@type': 'Person', '@id': `${SITE}/#lovepreet-singh`, name: 'Lovepreet Singh' },
       about: piece.topic.split(' · ').map((t) => ({ '@type': 'Thing', name: t })),
       hasPart: parts.map((x) => ({
-        '@type': piece.unit === 'volume' ? 'Book' : 'Article',
+        '@type': ['volume', 'book'].includes(piece.unit) ? 'Book' : 'Article',
         headline: x.title,
         url: `${SITE}${topicPath}/part-${x.n}/`,
         wordCount: x.words,
         position: x.n,
       })),
-      ...writingTranslationMeta(piece, undefined, 'CreativeWorkSeries'),
+      ...writingTranslationMeta(piece, undefined, piece.unit === 'book' ? 'Book' : 'CreativeWorkSeries'),
     }],
     noscript:
       `      <p><strong>${esc(piece.title)} — ${esc(piece.subtitle)}</strong></p>\n` +
@@ -1049,7 +1049,7 @@ for (const { piece, parts } of editions) {
         ],
       }, {
         '@context': 'https://schema.org',
-        '@type': piece.unit === 'volume' ? 'Book' : 'Article',
+        '@type': ['volume', 'book'].includes(piece.unit) ? 'Book' : 'Article',
         headline: piece.language === 'hi'
           ? `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n}`
           : `${part.title} — ${piece.title}: ${unitNameOf(piece)} ${part.n}`,
@@ -1061,7 +1061,7 @@ for (const { piece, parts } of editions) {
         wordCount: part.words,
         articleSection: part.label,
         isPartOf: {
-          '@type': 'CreativeWorkSeries',
+          '@type': piece.unit === 'book' ? 'Book' : 'CreativeWorkSeries',
           name: `${piece.title} — ${piece.subtitle}`,
           url: topicUrl,
           numberOfItems: piece.parts,
@@ -1070,7 +1070,7 @@ for (const { piece, parts } of editions) {
         publisher: { '@id': `${SITE}/#lovepreet-singh` },
         about: piece.topic.split(' · ').map((t) => ({ '@type': 'Thing', name: t })),
         isAccessibleForFree: true,
-        ...writingTranslationMeta(piece, part.n, piece.unit === 'volume' ? 'Book' : 'Article'),
+        ...writingTranslationMeta(piece, part.n, ['volume', 'book'].includes(piece.unit) ? 'Book' : 'Article'),
       }],
       noscript:
         `      <p><strong>${esc(part.title)}</strong></p>\n` +
