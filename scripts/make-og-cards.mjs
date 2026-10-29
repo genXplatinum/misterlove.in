@@ -17,6 +17,7 @@
 import { Resvg } from '@resvg/resvg-js';
 import jpeg from 'jpeg-js';
 import { atheistBelieverCard, makeAtheistBelieverFigures } from './atheist-believer-art.mjs';
+import { debunkedIslamCard } from './debunked-islam-art.mjs';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, unlinkSync } from 'node:fs';
 import { basename, dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -601,7 +602,7 @@ for (const piece of pieces) {
 
     // Series card — used by /writing and as the piece-level fallback.
     const seriesFile = `${OUT}/${piece.ogImage ?? `${piece.slug}.png`}`;
-    const seriesCard = piece.slug === 'atheist-vs-believer' ? atheistBelieverCard() : piece.slug === 'india-before-and-after-2014'
+    const seriesCard = piece.slug === 'debunked-islam' ? debunkedIslamCard() : piece.slug === 'atheist-vs-believer' ? atheistBelieverCard() : piece.slug === 'india-before-and-after-2014'
       ? indiaComparisonCard()
       : piece.slug === 'why-i-dont-believe'
         ? sacredMirageCard()
@@ -621,7 +622,7 @@ for (const piece of pieces) {
     for (const part of parts) {
       const file = `${OUT}/${piece.slug}-part-${part.n}.png`;
       r = render(
-        piece.slug === 'atheist-vs-believer' ? atheistBelieverCard('en', part.n) : card({
+        piece.slug === 'debunked-islam' ? debunkedIslamCard() : piece.slug === 'atheist-vs-believer' ? atheistBelieverCard('en', part.n) : card({
           kicker: `Part ${String(part.n).padStart(2, '0')} of ${piece.parts} · ${part.label}`,
           title: part.title,
           sub: `${piece.title} — ${piece.subtitle}`,

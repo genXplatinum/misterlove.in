@@ -102,7 +102,7 @@ function useTopicMeta(piece, original) {
       ? `${piece.title}: ${piece.subtitle}। ਲਵਪ੍ਰੀਤ ਸਿੰਘ ਦੀ ਪੜਤਾਲ ਦਾ ਪੰਜਾਬੀ ਸੰਸਕਰਣ।`
       : language === 'hi'
       ? `${piece.title} — ${piece.subtitle}। ${profile.name} की ${piece.parts} ${piece.unit === 'volume' ? 'पुस्तकों' : 'भागों'} वाली शोध श्रृंखला।`
-      : `${piece.title} — ${piece.subtitle}. ${piece.parts}-${piece.unit === 'volume' ? 'volume' : 'part'} research series by ${profile.name}.`;
+      : `${piece.title} — ${piece.subtitle}. ${piece.unit === 'book' ? piece.chaptersPerVolume : piece.parts}-${piece.unit === 'book' ? 'chapter book' : piece.unit === 'volume' ? 'volume research series' : 'part research series'} by ${profile.name}.`;
     document.title = `${piece.title} — ${piece.subtitle} | ${profile.name}`;
     document.documentElement.lang = language;
 
@@ -169,13 +169,13 @@ function useTopicMeta(piece, original) {
     const ld = document.createElement('script');
     ld.type = 'application/ld+json';
     ld.textContent = JSON.stringify([{
-      '@context': 'https://schema.org', '@type': 'CreativeWorkSeries',
+      '@context': 'https://schema.org', '@type': piece.unit === 'book' ? 'Book' : 'CreativeWorkSeries',
       name: `${piece.title} — ${piece.subtitle}`, url,
       description: piece.standfirst, abstract: piece.summary,
       datePublished: piece.published, inLanguage: language,
       numberOfItems: piece.parts,
       author: { '@type': 'Person', '@id': 'https://misterlove.in/#lovepreet-singh', name: profile.name },
-      ...writingTranslationMeta(piece, undefined, 'CreativeWorkSeries'),
+      ...writingTranslationMeta(piece, undefined, piece.unit === 'book' ? 'Book' : 'CreativeWorkSeries'),
     }, {
       '@context': 'https://schema.org', '@type': 'BreadcrumbList',
       itemListElement: [

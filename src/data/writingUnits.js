@@ -1,9 +1,21 @@
 /** Completed book volumes use the existing reader without calling them serial parts. */
 export const unitNameOf = (piece, language = piece?.language ?? 'en') => (
-  piece?.unit === 'volume' ? (language === 'hi' ? 'पुस्तक' : 'Volume') : ({ hi: 'भाग', pa: 'ਭਾਗ' }[language] ?? 'Part')
+  piece?.unit === 'book' ? 'Book' : piece?.unit === 'volume' ? (language === 'hi' ? 'पुस्तक' : 'Volume') : ({ hi: 'भाग', pa: 'ਭਾਗ' }[language] ?? 'Part')
 );
 
 export function withVolumeCopy(piece, copy) {
+  if (piece?.unit === 'book') return {
+    ...copy, part: 'Book', parts: 'Book', series: 'Book',
+    start: 'Read the complete book', contents: 'COMPLETE BOOK',
+    contentsSummary: () => `${piece.chaptersPerVolume} chapters, sources and reader aids`,
+    thisPart: 'This book', inThisPart: 'In this book',
+    allParts: typeof copy.allParts === 'function' ? (() => 'Complete book') : 'Complete book',
+    loading: () => 'Opening the book…', loadFail: 'The book did not load.',
+    begins: () => 'The book begins',
+    sources: typeof copy.sources === 'function' ? (() => 'Sources and notes') : 'Sources and notes',
+    partsAria: 'Book navigation', allPartsHead: 'COMPLETE BOOK',
+    endOfPart: () => 'End of the book', readFull: 'Read the complete book',
+  };
   if (piece?.unit !== 'volume') return copy;
   const hi = piece.language === 'hi';
   return {
