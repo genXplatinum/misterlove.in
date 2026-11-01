@@ -51,7 +51,7 @@
 .folio-mark::after { right: 0; border-radius: 0 7px 1px 0; transform: skewY(-5deg); transform-origin: left bottom; }
 .folio-mark i { display: none; }
 
-.nav__links { display: flex; justify-content: center; align-items: center; gap: clamp(1rem, 2.1vw, 2.2rem); }
+.nav__links { display: flex; justify-content: center; align-items: center; gap: clamp(.65rem, 1.2vw, 1.3rem); }
 
 .nav__link {
   min-height: 2.8rem;
