@@ -18,6 +18,7 @@ const Topic = lazy(() => import('./pages/Topic'));
 const Article = lazy(() => import('./pages/Article'));
 const Books = lazy(() => import('./pages/Books'));
 const MyBooks = lazy(() => import('./pages/MyBooks'));
+const Listen = lazy(() => import('./pages/Listen'));
 const Book = lazy(() => import('./pages/Book'));
 const Study = lazy(() => import('./pages/Study'));
 const Press = lazy(() => import('./pages/Press'));
@@ -86,6 +87,8 @@ function AppFrame({ isHome, resetKey }) {
               <Route path="/pa/writing/:slug/:part" element={<Article />} />
               <Route path="/books" element={<Books />} />
               <Route path="/my-books" element={<MyBooks />} />
+              <Route path="/listen" element={<Listen />} />
+              <Route path="/podcasts" element={<Navigate to="/listen/" replace />} />
               <Route path="/books/:book" element={<Book />} />
               <Route path="/books/:book/:study" element={<Study />} />
               <Route path="/hi/books/:book/:study" element={<Study />} />

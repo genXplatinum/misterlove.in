@@ -27,6 +27,7 @@ function BookCard({ book, index }) {
           : <span className="bookshop-pending">Coming soon <span>Pothi review pending</span></span>}
         {book.previewUrl && <a className="bookshop-preview" href={book.previewUrl} target="_blank" rel="noopener noreferrer" aria-label={`Preview ${book.title} on Pothi (opens in a new tab)`}>Read a preview <Arrow diagonal /></a>}
         {book.readingPath && <Link className="bookshop-preview" to={book.readingPath}>Read the complete book <Arrow /></Link>}
+        {book.id === 'debunked-islam' && <Link className="bookshop-preview" to="/listen/">Listen in Punjabi <Arrow /></Link>}
       </div>
     </div>
   </article>;

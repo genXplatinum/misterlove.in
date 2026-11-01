@@ -294,6 +294,7 @@ export default function Topic() {
             </dl>
 
             <div className="feature__ctas">
+              {piece.slug === 'debunked-islam' && <Link to="/listen/" className="btn btn--ghost">Listen in Punjabi <span aria-hidden="true">↗</span></Link>}
               {readable && (
                 <Magnetic>
                   <Link to={read} className="btn">

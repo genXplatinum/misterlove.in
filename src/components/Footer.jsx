@@ -42,6 +42,7 @@ export default function Footer() {
             <div className="footer__links">
               <Link to="/press/">Press & features<span aria-hidden="true">↗</span></Link>
               <Link to="/my-books/">My Books<span aria-hidden="true">→</span></Link>
+              <Link to="/listen/">Listen Books & Podcasts<span aria-hidden="true">→</span></Link>
               {profile.social.map((social) => (
                 <a key={social.label} href={social.href} target="_blank" rel="noopener noreferrer">
                   {social.label}<span aria-hidden="true">↗</span>

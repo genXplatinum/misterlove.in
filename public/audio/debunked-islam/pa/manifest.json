@@ -1,0 +1,297 @@
+{
+  "series": "debunked-islam",
+  "language": "pa",
+  "count": 36,
+  "total_seconds": 35717.287,
+  "encoding": "MP3, 96 kb/s mono, 44.1 kHz",
+  "files": [
+    {
+      "n": 1,
+      "src": "/audio/debunked-islam/pa/chapter-01.mp3",
+      "duration": 930.818,
+      "bytes": 11170657,
+      "sha256": "d5b4383bc0daf5d499af4133d2bf1014ec0569e441cacc8f4b4dcb32f4276c2d",
+      "full_decode_passed": true
+    },
+    {
+      "n": 2,
+      "src": "/audio/debunked-islam/pa/chapter-02.mp3",
+      "duration": 1166.756,
+      "bytes": 14001923,
+      "sha256": "5430630c764ffc54ea179c1eefd44eaa9401c37ab730ee590c0a0905afff600d",
+      "full_decode_passed": true
+    },
+    {
+      "n": 3,
+      "src": "/audio/debunked-islam/pa/chapter-03.mp3",
+      "duration": 730.895,
+      "bytes": 8771682,
+      "sha256": "cb87bbaf638791ed22c5fe0bab3464560df7d0a3eeaf725fc533f0a6e26339aa",
+      "full_decode_passed": true
+    },
+    {
+      "n": 4,
+      "src": "/audio/debunked-islam/pa/chapter-04.mp3",
+      "duration": 1270.248,
+      "bytes": 15243889,
+      "sha256": "a6dbd378c51b1e3a30b02bb7dd53608cc9182361bb670e5d2b3d5f20af5691e5",
+      "full_decode_passed": true
+    },
+    {
+      "n": 5,
+      "src": "/audio/debunked-islam/pa/chapter-05.mp3",
+      "duration": 1423.012,
+      "bytes": 17077053,
+      "sha256": "82f0dcb26f3f8d58cb236de087e226c2025df8fc8bc39159e5066246a372715d",
+      "full_decode_passed": true
+    },
+    {
+      "n": 6,
+      "src": "/audio/debunked-islam/pa/chapter-06.mp3",
+      "duration": 1276.494,
+      "bytes": 15318808,
+      "sha256": "2bb07b4b63d7b60c65491cc3cedeedf3d5ca3f113a62cf5ed79ee0659087a2f4",
+      "full_decode_passed": true
+    },
+    {
+      "n": 7,
+      "src": "/audio/debunked-islam/pa/chapter-07.mp3",
+      "duration": 1149.481,
+      "bytes": 13794721,
+      "sha256": "c908d774d99aa3a204bf5799537eb7387e5e7c3427369ff39ba2e465ca791360",
+      "full_decode_passed": true
+    },
+    {
+      "n": 8,
+      "src": "/audio/debunked-islam/pa/chapter-08.mp3",
+      "duration": 1151.803,
+      "bytes": 13822605,
+      "sha256": "221da580f523deeef07db5b6e6c1d7bd00111aef68e6a3aa0239f1d1886e2627",
+      "full_decode_passed": true
+    },
+    {
+      "n": 9,
+      "src": "/audio/debunked-islam/pa/chapter-09.mp3",
+      "duration": 626.799,
+      "bytes": 7522512,
+      "sha256": "68bcf8ea009949189491b3d360d6604f2f03a0dce6671bc3cf8e81b7af98fe35",
+      "full_decode_passed": true
+    },
+    {
+      "n": 10,
+      "src": "/audio/debunked-islam/pa/chapter-10.mp3",
+      "duration": 622.295,
+      "bytes": 7468601,
+      "sha256": "453f00d9c775787d08d1b46915a9300c1562c48ff39ab420777473b7fe89edcb",
+      "full_decode_passed": true
+    },
+    {
+      "n": 11,
+      "src": "/audio/debunked-islam/pa/chapter-11.mp3",
+      "duration": 830.485,
+      "bytes": 9966630,
+      "sha256": "70cff12e07e2d2e1e4b6c5b3126d1d6077132a3d9746fbb6fa84ea6d9730ac84",
+      "full_decode_passed": true
+    },
+    {
+      "n": 12,
+      "src": "/audio/debunked-islam/pa/chapter-12.mp3",
+      "duration": 701.568,
+      "bytes": 8419653,
+      "sha256": "ee5344ce68e62c8ae995290388dbcc53c0be0a574a1c841f01998cbc952682c3",
+      "full_decode_passed": true
+    },
+    {
+      "n": 13,
+      "src": "/audio/debunked-islam/pa/chapter-13.mp3",
+      "duration": 1264.257,
+      "bytes": 15172111,
+      "sha256": "1a6bd173b1117efded970d3be663bdade91db72ac93053b459b72c8ab5d61895",
+      "full_decode_passed": true
+    },
+    {
+      "n": 14,
+      "src": "/audio/debunked-islam/pa/chapter-14.mp3",
+      "duration": 922.459,
+      "bytes": 11070355,
+      "sha256": "b7b3b9bffa72c97486e28ee6058beda56dc99195180f7013becab502813d7551",
+      "full_decode_passed": true
+    },
+    {
+      "n": 15,
+      "src": "/audio/debunked-islam/pa/chapter-15.mp3",
+      "duration": 1019.844,
+      "bytes": 12238983,
+      "sha256": "625b2b385f9ef736b73ff0dd08fe5aaf7402e97f1cc2afd0b7ceca576b1fd7b6",
+      "full_decode_passed": true
+    },
+    {
+      "n": 16,
+      "src": "/audio/debunked-islam/pa/chapter-16.mp3",
+      "duration": 553.657,
+      "bytes": 6644788,
+      "sha256": "0a29036ced73943fdfbbea1154b2114726d2d2e29d5f28b76d95058a255f00e5",
+      "full_decode_passed": true
+    },
+    {
+      "n": 17,
+      "src": "/audio/debunked-islam/pa/chapter-17.mp3",
+      "duration": 968.411,
+      "bytes": 11621742,
+      "sha256": "dd27b782e8b844233050a8114592fa574e239425c3488070e4e47bde545c1c12",
+      "full_decode_passed": true
+    },
+    {
+      "n": 18,
+      "src": "/audio/debunked-islam/pa/chapter-18.mp3",
+      "duration": 1188.281,
+      "bytes": 14260231,
+      "sha256": "768fb27022081370b25ca8460b12de8f61cd811144334adab8f426a3fd40d036",
+      "full_decode_passed": true
+    },
+    {
+      "n": 19,
+      "src": "/audio/debunked-islam/pa/chapter-19.mp3",
+      "duration": 704.61,
+      "bytes": 8456340,
+      "sha256": "db92c634d2af5118d540b0714c484de5e2e654f2a8a1d93d6f96800f3b2707a1",
+      "full_decode_passed": true
+    },
+    {
+      "n": 20,
+      "src": "/audio/debunked-islam/pa/chapter-20.mp3",
+      "duration": 871.77,
+      "bytes": 10462223,
+      "sha256": "fcc70058e845d326ddadb3ed12b46810da34b78b52d0cafdbba045df1a1f3ffa",
+      "full_decode_passed": true
+    },
+    {
+      "n": 21,
+      "src": "/audio/debunked-islam/pa/chapter-21.mp3",
+      "duration": 1043.737,
+      "bytes": 12525787,
+      "sha256": "44a4589dfe259564031bcf2b1bb49aad92d2411cc25930c57fbfdf2e95b30b2a",
+      "full_decode_passed": true
+    },
+    {
+      "n": 22,
+      "src": "/audio/debunked-islam/pa/chapter-22.mp3",
+      "duration": 1042.413,
+      "bytes": 12509811,
+      "sha256": "a0d45390ffb564b2a88b882f3965d92114f41608669b185ada74c5a16c81cd22",
+      "full_decode_passed": true
+    },
+    {
+      "n": 23,
+      "src": "/audio/debunked-islam/pa/chapter-23.mp3",
+      "duration": 1235.929,
+      "bytes": 14831985,
+      "sha256": "83ba5a10a9ac31fe21d00e5416cb9f8acdaff104ade0e65940b8b02505bec41b",
+      "full_decode_passed": true
+    },
+    {
+      "n": 24,
+      "src": "/audio/debunked-islam/pa/chapter-24.mp3",
+      "duration": 1234.257,
+      "bytes": 14811928,
+      "sha256": "fe4fd7a56d3a6e532d143258e82856a1f1f9a2070b663ebc3cceebcdba439478",
+      "full_decode_passed": true
+    },
+    {
+      "n": 25,
+      "src": "/audio/debunked-islam/pa/chapter-25.mp3",
+      "duration": 1266.881,
+      "bytes": 15203448,
+      "sha256": "5aa461971d201dc206a558b7ed7247d646d9991780f61f72ef6345b0ddd14299",
+      "full_decode_passed": true
+    },
+    {
+      "n": 26,
+      "src": "/audio/debunked-islam/pa/chapter-26.mp3",
+      "duration": 1143.931,
+      "bytes": 13728261,
+      "sha256": "45f48d36bd61342ebf2368b054275073898ff36a5d30d907e36ff16dd19225b5",
+      "full_decode_passed": true
+    },
+    {
+      "n": 27,
+      "src": "/audio/debunked-islam/pa/chapter-27.mp3",
+      "duration": 627.612,
+      "bytes": 7532221,
+      "sha256": "1f4635be4c3b09482c1ff673b99733d6c63212972a2bbbcb7d6ed8b06f021c47",
+      "full_decode_passed": true
+    },
+    {
+      "n": 28,
+      "src": "/audio/debunked-islam/pa/chapter-28.mp3",
+      "duration": 923.968,
+      "bytes": 11088528,
+      "sha256": "43cf88c060843ab97ec6bb11595e99ee67862183b6b7e65d0d83a23bae4d72fd",
+      "full_decode_passed": true
+    },
+    {
+      "n": 29,
+      "src": "/audio/debunked-islam/pa/chapter-29.mp3",
+      "duration": 1213.637,
+      "bytes": 14564606,
+      "sha256": "aa5bd115c96502fe08b94cdf7affc697140cc3a030448d0a666ad7d50f9675db",
+      "full_decode_passed": true
+    },
+    {
+      "n": 30,
+      "src": "/audio/debunked-islam/pa/chapter-30.mp3",
+      "duration": 1007.723,
+      "bytes": 12093518,
+      "sha256": "cccd970e3c94d4706c5820c5850377ae62b4409a0833ac1ea083d392ef0cd3eb",
+      "full_decode_passed": true
+    },
+    {
+      "n": 31,
+      "src": "/audio/debunked-islam/pa/chapter-31.mp3",
+      "duration": 1118.854,
+      "bytes": 13427325,
+      "sha256": "8cff589054f51488a86c2e5a6eb627723af5b25270e1e18bf37b40770e94ded9",
+      "full_decode_passed": true
+    },
+    {
+      "n": 32,
+      "src": "/audio/debunked-islam/pa/chapter-32.mp3",
+      "duration": 563.572,
+      "bytes": 6763917,
+      "sha256": "406241e91eae5bd6bd11958e8d0c748a46a1938434fa5d0ff0bebc3a60754587",
+      "full_decode_passed": true
+    },
+    {
+      "n": 33,
+      "src": "/audio/debunked-islam/pa/chapter-33.mp3",
+      "duration": 832.134,
+      "bytes": 9986695,
+      "sha256": "f5c15a91de4f1d9e07f5abfa4b6d4a5924dd530b3ab69b10a0504850f6660e52",
+      "full_decode_passed": true
+    },
+    {
+      "n": 34,
+      "src": "/audio/debunked-islam/pa/chapter-34.mp3",
+      "duration": 998.76,
+      "bytes": 11985994,
+      "sha256": "0ec9c458f2677966e27a7d429791e6e3ba95e35e4fa662ca9f11c67ade38e503",
+      "full_decode_passed": true
+    },
+    {
+      "n": 35,
+      "src": "/audio/debunked-islam/pa/chapter-35.mp3",
+      "duration": 910.687,
+      "bytes": 10929305,
+      "sha256": "6f0624d9c993b3ad7944d77563560ee9a3dff224f3fb0e390cf95a503f816809",
+      "full_decode_passed": true
+    },
+    {
+      "n": 36,
+      "src": "/audio/debunked-islam/pa/chapter-36.mp3",
+      "duration": 1179.249,
+      "bytes": 14152077,
+      "sha256": "16cba6731b9b2aa870a0163f2d942ae69997e5d6dced6adf5c658bd84de19385",
+      "full_decode_passed": true
+    }
+  ]
+}

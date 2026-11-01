@@ -26,6 +26,7 @@ for (const file of walk('dist')) {
   if (!section && !white) entries.push('src/pages/ClassicHome.jsx');
   if (section === 'press') entries.push('src/pages/Press.jsx');
   if (section === 'my-books') entries.push('src/pages/MyBooks.jsx');
+  if (section === 'listen') entries.push('src/pages/Listen.jsx');
   if (section === 'writing') {
     if (!slug && !white) entries.push('src/pages/Writing.jsx');
     if (slug) {
