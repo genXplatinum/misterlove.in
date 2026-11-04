@@ -15,6 +15,11 @@
 .listen-section-label { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--rule-dark); padding: 1.25rem 0; }
 .listen-section-label h2, .listen-section-label>span { font: 600 .7rem/1.5 var(--font-ui); letter-spacing: .13em; text-transform: uppercase; }
 .listen-section-label>span { color: var(--ink-soft); font-weight: 400; }
+.listen-series-tabs { display: flex; flex-wrap: wrap; gap: .55rem; margin-bottom: 1.6rem; }
+.listen-series-tabs button { border: 1px solid var(--rule-dark); border-radius: 2px; padding: .7rem 1rem; color: var(--ink-soft); background: transparent; font: 600 .72rem/1.4 var(--font-ui); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.listen-series-tabs button:hover { border-color: var(--forest); color: var(--ink); }
+.listen-series-tabs button.is-selected { border-color: var(--forest); background: var(--forest); color: var(--paper); }
+.listen-series-tabs button:focus-visible { outline: 2px solid var(--oxblood); outline-offset: 3px; }
 .listen-studio { display: grid; grid-template-columns: minmax(210px, .32fr) minmax(0, .68fr); gap: clamp(1.5rem, 3vw, 3.3rem); align-items: start; scroll-margin-top: 7rem; }
 .listen-book { padding-bottom: 2rem; position: sticky; top: 6.5rem; }
 .listen-book__art { min-height: 320px; aspect-ratio: 1; background: #dcd5c5; display: grid; place-items: center; overflow: hidden; position: relative; border-radius: 2px; }
@@ -155,6 +160,8 @@
   .listen-hero__aside a { font-size: .76rem; text-align: left; gap: .5rem; }
   .listen-hero__aside a svg { flex: none; width: 18px; }
   .listen-hero__lead { font-size: .95rem; }
+  .listen-series-tabs { gap: .4rem; }
+  .listen-series-tabs button { padding: .65rem .75rem; font-size: .67rem; }
   .listen-studio { display: block; }
   .listen-book { position: static; display: grid; grid-template-columns: 106px minmax(0, 1fr); gap: 0 1.25rem; padding-block: .5rem 1.5rem; }
   .listen-book__art { grid-column: 1; grid-row: 1 / span 6; width: 106px; height: 159px; min-height: 0; aspect-ratio: auto; align-self: start; }

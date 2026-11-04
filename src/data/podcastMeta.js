@@ -1,9 +1,9 @@
 export const listenMeta = {
   path: '/listen/',
   title: 'Listen Books & Podcasts | MisterLove',
-  description: 'Listen to Punjabi chapter discussions of DEBUNKED: ISLAM by Lovepreet Singh. Explore the chapters, follow the book, and pick up where you left off. English and Hindi are coming soon.',
+  description: 'Listen to Punjabi chapter discussions of DEBUNKED: ISLAM and English or Hindi episodes of The Architecture of Money. Pick a collection and continue listening where you left off.',
   image: '/og/listen.png',
-  imageAlt: 'The MisterLove listening room: DEBUNKED: ISLAM, Punjabi chapter discussions.',
+  imageAlt: 'The MisterLove listening room: Punjabi, English and Hindi audio series with a shared podcast player.',
   feed: '/podcasts/debunked-islam-pa.xml',
   artwork: '/podcast-covers/debunked-islam-pa.png',
 };

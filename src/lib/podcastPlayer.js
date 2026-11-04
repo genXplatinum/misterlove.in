@@ -18,10 +18,11 @@ export function matchingEpisodes(episodes, query) {
 // The element owns playback. UI state follows its events; promise resolution
 // from an earlier selection may never start or relabel a later chapter.
 export class PodcastPlayer {
-  constructor(audio, episodes, { storage, initialChapter } = {}) {
+  constructor(audio, episodes, { storage, storageKey = PODCAST_STORAGE_KEY, initialChapter } = {}) {
     this.audio = audio;
     this.episodes = episodes.filter(episode => episode.src);
     this.storage = storage;
+    this.storageKey = storageKey;
     this.listeners = new Set();
     this.events = [];
     this.generation = 0;
@@ -30,7 +31,7 @@ export class PodcastPlayer {
     this.pendingSeek = null;
     this.lastSaved = -1;
     let saved = {};
-    try { saved = JSON.parse(storage?.getItem(PODCAST_STORAGE_KEY) || '{}') || {}; } catch { /* Storage is optional. */ }
+    try { saved = JSON.parse(storage?.getItem(this.storageKey) || '{}') || {}; } catch { /* Storage is optional. */ }
     this.positions = saved.positions && typeof saved.positions === 'object' ? saved.positions : {};
     const volume = Number.isFinite(saved.volume) ? clamp(saved.volume, 0, 1) : 0.8;
     const rate = PLAYBACK_RATES.includes(saved.rate) ? saved.rate : 1;
@@ -226,7 +227,7 @@ export class PodcastPlayer {
   save() {
     if (this.state.episode) this.positions[this.state.episode.n] = this.state.currentTime;
     this.state = { ...this.state, positions: { ...this.positions } };
-    try { this.storage?.setItem(PODCAST_STORAGE_KEY, JSON.stringify({
+    try { this.storage?.setItem(this.storageKey, JSON.stringify({
       currentChapter: this.state.episode?.n, positions: this.positions,
       volume: this.state.volume, muted: this.state.muted,
       rate: this.state.rate, autoplay: this.state.autoplay,

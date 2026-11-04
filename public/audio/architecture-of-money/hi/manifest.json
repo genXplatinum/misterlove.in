@@ -1,0 +1,72 @@
+{
+  "series": "architecture-of-money-hi",
+  "language": "hi",
+  "format": "MP3, 40 kb/s, mono, 44.1 kHz",
+  "count": 8,
+  "files": [
+    {
+      "n": 1,
+      "src": "/audio/architecture-of-money/hi/part-01.mp3",
+      "bytes": 5861864,
+      "sha256": "4f5ddf749f1a9f81d81ac377f49a5ca235b86c3e1f59e0eb27ba7efe7cdf3e61",
+      "duration": 1172.259,
+      "source_filename": "Hindi_1_-_दुनिया_पर_डॉलर_का_राज_क्यों_है Part 1.m4a"
+    },
+    {
+      "n": 2,
+      "src": "/audio/architecture-of-money/hi/part-02.mp3",
+      "bytes": 6194015,
+      "sha256": "15bd5a8209e440ce05342de2d2854e8e080bc960bfcd8a25f0fb95cd4abffed2",
+      "duration": 1238.692,
+      "source_filename": "Hindi_2_-_डॉलर_का_वर्चस्व_क्यों_नहीं_टूटता Part 2.m4a"
+    },
+    {
+      "n": 3,
+      "src": "/audio/architecture-of-money/hi/part-03.mp3",
+      "bytes": 4247615,
+      "sha256": "48a0bd23e5c176a8481821d3d11b9af0fffbcf24c829122aa280cdd590816715",
+      "duration": 849.409,
+      "source_filename": "Hindi_3_-_दुनिया_पर_डॉलर_का_कब्ज़ा Part 3.m4a"
+    },
+    {
+      "n": 4,
+      "src": "/audio/architecture-of-money/hi/part-04.mp3",
+      "bytes": 5160217,
+      "sha256": "7ea28cf9b2144dfe59864e4cf727a516e48ed9f87a2b80de39b5b4f801e9ce49",
+      "duration": 1031.918,
+      "source_filename": "Hindi_4_-_यूरो_और_युआन_डॉलर_से_क्यों_हारे Part 4.m4a"
+    },
+    {
+      "n": 5,
+      "src": "/audio/architecture-of-money/hi/part-05.mp3",
+      "bytes": 6816514,
+      "sha256": "ba92e463b7727fb764f13eef63a259ecf4e5801e7fe57b19e881e095933371b4",
+      "duration": 1363.197,
+      "source_filename": "Hindi_5_-_दुनिया_पर_डॉलर_का_कब्ज़ा_कैसे_हुआ Part 5.m4a"
+    },
+    {
+      "n": 6,
+      "src": "/audio/architecture-of-money/hi/part-06.mp3",
+      "bytes": 1860031,
+      "sha256": "79c448ef87d58ec41fe60fcc19349114171d581fc112b5050a7f60d2b0ae9172",
+      "duration": 371.891,
+      "source_filename": "Hindi_6_-_डॉलर_का_वर्चस्व_और_कर्ज_संकट Part 6.m4a"
+    },
+    {
+      "n": 7,
+      "src": "/audio/architecture-of-money/hi/part-07.mp3",
+      "bytes": 5827384,
+      "sha256": "ffb2ecc65ac88af9a04a798764332e15cb983576551928a698c1871422bb3ae9",
+      "duration": 1165.363,
+      "source_filename": "Hindi_7_-_डॉलर_का_दबदबा_और_रुपये_की_हकीकत Part 7.m4a"
+    },
+    {
+      "n": 8,
+      "src": "/audio/architecture-of-money/hi/part-08.mp3",
+      "bytes": 3839214,
+      "sha256": "5f9b41a2aa34708605815ec1f25a66a3a51159befe7ec0d270ea7d65aeb84e64",
+      "duration": 767.721,
+      "source_filename": "Hindi_8_-_क्या_डॉलर_का_वैश्विक_एकाधिकार_टूटेगा Part 8.m4a"
+    }
+  ]
+}
