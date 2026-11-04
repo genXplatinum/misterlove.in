@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import podcast from '../src/data/podcasts.json' with { type: 'json' };
+import architecture from '../src/data/architecture-of-money.json' with { type: 'json' };
 import book from '../src/data/writing/debunked-islam.js';
 import { listenMeta } from '../src/data/podcastMeta.js';
 
@@ -31,6 +32,30 @@ for (let i = 0; i < episodes.length; i++) {
   assert.equal(record.full_decode_passed, true);
   assert.ok(Math.abs(record.duration - episode.duration) < .001);
 }
+for (const series of architecture.series) {
+  const manifestPath = `public/audio/architecture-of-money/${series.language}/manifest.json`;
+  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+  assert.equal(series.episodes.length, 8);
+  assert.equal(manifest.count, 8);
+  assert.equal(new Set(series.episodes.map(episode => episode.title)).size, 8);
+  for (let i = 0; i < series.episodes.length; i++) {
+    const episode = series.episodes[i];
+    const record = manifest.files.find(file => file.n === episode.n);
+    const file = `public${episode.src}`;
+    assert.equal(episode.n, i + 1);
+    assert.ok(episode.duration > 60);
+    assert.equal(episode.waveform.length, 168);
+    assert.ok(episode.waveform.every(value => Number.isFinite(value) && value > 0 && value <= 1));
+    assert.ok(record, `Missing ${series.language} part ${episode.n} manifest record`);
+    assert.equal(statSync(file).size, episode.bytes);
+    assert.equal(record.bytes, episode.bytes);
+    assert.equal(hash(file), record.sha256);
+    assert.ok(Math.abs(record.duration - episode.duration) < .001);
+    if (existsSync('dist')) assert.equal(statSync(`dist${episode.src}`).size, episode.bytes);
+  }
+}
+const cover = readFileSync('public/book-covers/architecture-of-money.svg', 'utf8');
+assert.ok(cover.includes('<svg') && cover.includes('The Architecture'));
 const images = [[listenMeta.image, 1200, 630], [listenMeta.artwork, 1400, 1400]];
 for (const [path, width, height] of images) {
   const data = readFileSync(`public${path}`);
@@ -47,6 +72,8 @@ if (existsSync('dist/listen/index.html')) {
     assert.ok(html.includes('Playback speed'));
     assert.ok(html.includes('Autoplay next'));
     assert.ok(html.includes('Search podcast chapters'));
+    assert.ok(html.includes('The Architecture of Money · English'));
+    assert.ok(html.includes('The Architecture of Money · Hindi'));
     assert.ok(!html.includes('Recording coming soon'));
     const data = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(match => JSON.parse(match[1]));
     const series = data.flatMap(item => item['@graph'] || [item]).find(item => item['@type'] === 'PodcastSeries');
@@ -68,4 +95,4 @@ if (existsSync('dist/listen/index.html')) {
   assert.ok(bytes < 1000 * 1024 * 1024, 'The complete GitHub Pages site must fit its published size limit');
   console.log(`podcast ✓ Original + White HTML, 36-episode RSS, sitemap, metadata, copied media; total deployment ${(bytes / 1024 / 1024).toFixed(1)} MiB`);
 }
-console.log('podcast ✓ 36 distinct audio files, hashes, measured durations, real waveforms, chapter anchors and cover dimensions');
+console.log('podcast ✓ 36 Punjabi and 16 English/Hindi audio files, hashes, measured durations, real waveforms, chapter anchors and cover dimensions');
