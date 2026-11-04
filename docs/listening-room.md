@@ -1,25 +1,22 @@
 # Listening room
 
 The listening room is `/listen/`, with the shared player also available at
-`/white/listen/`. `/podcasts/` redirects to the main room. The launch collection
-contains 36 Punjabi discussions of the chapters of **DEBUNKED: ISLAM**. English
-and Hindi are labelled as forthcoming; their unfinished audio is not published.
+`/white/listen/`. `/podcasts/` redirects to the main room. The listening room contains 36 Punjabi discussions of **DEBUNKED: ISLAM**, plus eight English and eight Hindi episodes in **The Architecture of Money**. The series selector uses the same player, episode cards, and visual theme for every language.
 
 ## Media and titles
 
-`src/data/podcasts.json` is the public episode catalogue. The numbered recordings
+`src/data/podcasts.json` and `src/data/architecture-of-money.json` are the public episode catalogues. The numbered recordings
 map to the 36 chapter anchors in the checked online book. Each episode has its
 chapter number and distinct book title; repeated source titles have distinct
-Punjabi display names too, as authorised by the author. The originals in Drive
-retain their filenames. An additional unnumbered recording is not silently
-assigned to a chapter or counted as a thirty-seventh episode.
+Punjabi display names too, as authorised by the author. Architecture of Money
+parts keep the source titles, with original filenames recorded in each language
+manifest. The supplied source files remain unchanged in the user Documents folder.
 
-The committed MP3 files are 96 kb/s mono at 44.1 kHz. They preserve the full
-duration of each source recording. Source hashes, original metadata, measured
-durations and full decoding results are held in the private import audit. Public
-file hashes and durations are in `public/audio/debunked-islam/pa/manifest.json`.
-All 36 derivative files passed full decoding. Their combined measured duration
-is 35,717.287 seconds, or approximately 9 hours 55 minutes.
+The DEBUNKED: ISLAM MP3 files are 96 kb/s mono at 44.1 kHz. The Architecture of Money MP3 files are 40 kb/s mono at 44.1 kHz to keep the complete site within its published deployment-size limit. Both sets preserve the full duration of each source recording. Source hashes, original metadata, measured
+durations and full decoding results for DEBUNKED: ISLAM are held in its private
+import audit. Public file hashes and durations are in the series manifests. All
+52 derivative files passed full decoding; the original series runs approximately
+9 hours 55 minutes.
 
 Waveforms contain 168 amplitude measurements from each actual recording. They
 are not random placeholders. No audio downloads until the listener starts a
@@ -63,8 +60,8 @@ npm run validate:podcast
 
 The production build generates Original and White HTML, canonical and social
 metadata, PodcastSeries/PodcastEpisode structured data, RSS and a sitemap entry.
-Media validation checks all 36 hashes, unique titles and files, durations,
-waveforms, chapter anchors, cover sizes, RSS enclosures and deployment size.
+Media validation checks all 52 audio hashes, unique titles and files, durations,
+waveforms, chapter anchors, cover dimensions, RSS enclosures and deployment size.
 
 The development browser checks on 1 November 2026 used the built-in browser.
 Every numbered episode button started its matching recording with decoded

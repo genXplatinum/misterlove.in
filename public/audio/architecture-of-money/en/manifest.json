@@ -1,0 +1,72 @@
+{
+  "series": "architecture-of-money-en",
+  "language": "en",
+  "format": "MP3, 40 kb/s, mono, 44.1 kHz",
+  "count": 8,
+  "files": [
+    {
+      "n": 1,
+      "src": "/audio/architecture-of-money/en/part-01.mp3",
+      "bytes": 7210525,
+      "sha256": "482cc5db76624e28305cc1a8d1d98fe126839437162d672c676f49ae2f72f39f",
+      "duration": 1442.006,
+      "source_filename": "English_1_-_Who_Decides_What_Money_Is_Worth Part 1.m4a"
+    },
+    {
+      "n": 2,
+      "src": "/audio/architecture-of-money/en/part-02.mp3",
+      "bytes": 6219577,
+      "sha256": "a29d2ae40b916c16db010eafdf3a1b5cce542d0140c81a78c65b6db3e0e86cb7",
+      "duration": 1243.8,
+      "source_filename": "English_2_-_Why_No_Currency_Can_Replace_the_Dollar Part 2.m4a"
+    },
+    {
+      "n": 3,
+      "src": "/audio/architecture-of-money/en/part-03.mp3",
+      "bytes": 6554338,
+      "sha256": "582c718cc432706505a0deff68aee1cdc35211c8812e247a20e0b5ab74a14ff2",
+      "duration": 1310.766,
+      "source_filename": "English_3_-_The_Hidden_Architecture_of_the_US_Dollar Part 3.m4a"
+    },
+    {
+      "n": 4,
+      "src": "/audio/architecture-of-money/en/part-04.mp3",
+      "bytes": 6943557,
+      "sha256": "d87d16c04c65bdee079d45447382bffc3bded515c829b5277398d968dd64d07f",
+      "duration": 1388.6,
+      "source_filename": "English_4_-_Why_Rivals_Can_t_Replace_the_Dollar Part 4.m4a"
+    },
+    {
+      "n": 5,
+      "src": "/audio/architecture-of-money/en/part-05.mp3",
+      "bytes": 6865193,
+      "sha256": "646bc02a0142bba695f3c561c8dc10df9d59491f0b355ba7c39c9a8e2e1b08eb",
+      "duration": 1372.926,
+      "source_filename": "English_5_-_Why_the_US_Dollar_Remains_Unchallenged Part 5.m4a"
+    },
+    {
+      "n": 6,
+      "src": "/audio/architecture-of-money/en/part-06.mp3",
+      "bytes": 2956755,
+      "sha256": "f125ea928aca8d22945ce6024a737d4545e289ab09934fa58191f98b59c3651f",
+      "duration": 591.25,
+      "source_filename": "English_6_-_How_US_Fed_Hikes_Cause_Sovereign_Defaults Part 6.m4a"
+    },
+    {
+      "n": 7,
+      "src": "/audio/architecture-of-money/en/part-07.mp3",
+      "bytes": 6816342,
+      "sha256": "1096e83ccb0833ee2eebee9622b7f9be5fd688afab74e0199ebfb39a11ea6b63",
+      "duration": 1363.174,
+      "source_filename": "English_7_-_Why_the_US_Dollar_Rules_Global_Money Part 7.m4a"
+    },
+    {
+      "n": 8,
+      "src": "/audio/architecture-of-money/en/part-08.mp3",
+      "bytes": 6544144,
+      "sha256": "1ebb9370097fbc42b02e401521357137185f07cc8f0dc02e10ba175bf26588f7",
+      "duration": 1308.723,
+      "source_filename": "English_8_-_Is_the_US_Dollar_Monopoly_Breaking Part 8.m4a"
+    }
+  ]
+}
