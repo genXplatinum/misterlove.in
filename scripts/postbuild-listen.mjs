@@ -38,7 +38,7 @@ try {
       html = html.replace('<div id="root"></div>', `<div id="root">${renderToString(route(frame))}</div>`)
         .replace(/<noscript>[\s\S]*?<\/noscript>/, '');
     }
-    if (!html.includes('Choose a chapter.')) throw new Error(`Listening room missing at ${path}`);
+    if (!html.includes('id="podcast-chapters-title"')) throw new Error(`Listening room missing at ${path}`);
     html = html.replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(listenMeta.title)}</title>`);
     const metadata = {
       description: listenMeta.description, 'og:title': listenMeta.title,

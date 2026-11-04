@@ -95,6 +95,20 @@ test('volume, mute, playback speed, current chapter and positions survive reload
   restored.player.destroy();
 });
 
+test('separate series keep independent positions and preferences', () => {
+  const storage = makeStorage();
+  const english = setup({ storage, storageKey: 'architecture-of-money-en' });
+  english.player.select(2); english.player.seek(82); english.player.destroy();
+  const hindi = setup({ storage, storageKey: 'architecture-of-money-hi' });
+  assert.equal(hindi.player.state.episode.n, 1);
+  assert.equal(hindi.player.state.currentTime, 0);
+  hindi.player.destroy();
+  const restored = setup({ storage, storageKey: 'architecture-of-money-en' });
+  assert.equal(restored.player.state.episode.n, 2);
+  assert.equal(restored.player.state.currentTime, 82);
+  restored.player.destroy();
+});
+
 test('late rejection from an old chapter never corrupts a new chapter', async () => {
   const { audio, player } = setup(); let reject;
   audio.playImplementation = () => new Promise((_, no) => { reject = no; });

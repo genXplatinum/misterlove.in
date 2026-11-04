@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900">
+  <defs>
+    <linearGradient id="paper" x2="0" y2="1"><stop stop-color="#323a35"/><stop offset="1" stop-color="#1c211f"/></linearGradient>
+    <linearGradient id="gold" x2="1" y2="1"><stop stop-color="#f0bd88"/><stop offset="1" stop-color="#b78d64"/></linearGradient>
+  </defs>
+  <rect width="600" height="900" fill="url(#paper)"/>
+  <circle cx="300" cy="430" r="190" fill="none" stroke="#f0bd88" stroke-opacity=".36" stroke-width="2"/>
+  <circle cx="300" cy="430" r="148" fill="none" stroke="#f0bd88" stroke-opacity=".22" stroke-width="1"/>
+  <path d="M108 430h384M300 238v384M165 295l270 270M435 295 165 565" stroke="#f0bd88" stroke-opacity=".22" stroke-width="1"/>
+  <circle cx="300" cy="430" r="7" fill="url(#gold)"/>
+  <text x="52" y="100" fill="#d9c7af" font-family="Arial,sans-serif" font-size="17" letter-spacing="5">MISTERLOVE · LISTEN</text>
+  <text x="52" y="690" fill="#f2eadc" font-family="Georgia,serif" font-size="50">The Architecture</text>
+  <text x="52" y="750" fill="#f2eadc" font-family="Georgia,serif" font-size="50">of Money</text>
+  <path d="M52 785h496" stroke="#f0bd88" stroke-opacity=".7"/>
+  <text x="52" y="828" fill="#d9c7af" font-family="Arial,sans-serif" font-size="16" letter-spacing="3">GLOBAL CURRENCY · POWER · SYSTEMS</text>
+</svg>
