@@ -1,6 +1,9 @@
 # Author bookshop
 
-The promotional catalog lives at `/my-books/`, with an equivalent White edition at `/white/my-books/`. Both site navigations link to **My Books**. The existing `/books/` close-reading shelf keeps its purpose and URLs.
+The promotional catalog lives at `/my-books/` in the primary White edition and
+`/original/my-books/` in the secondary Original edition. Former `/white/`
+catalog links redirect to the primary route. Both site navigations link to
+**My Books**. The existing `/books/` close-reading shelf keeps its purpose.
 
 ## Catalog and verified destinations
 
@@ -26,7 +29,7 @@ The actual front images are served locally under `public/book-covers/`; the sour
 
 ## Production
 
-`src/pages/MyBooks.jsx` is the shared component. `scripts/postbuild-my-books.mjs` renders it into both static routes, keeps White's existing noindex policy and canonical to the Original route, adds three-book structured data, includes the route styles, and puts the canonical route into the sitemap. The page is a catalog rather than a new research article, so the writing RSS entries are unchanged.
+`src/pages/MyBooks.jsx` is the shared component. `scripts/postbuild-my-books.mjs` renders it into both static routes, keeps White indexable and Original `noindex, follow` with the White canonical, adds three-book structured data, includes the route styles, and puts the primary route into the sitemap. The page is a catalog rather than a new research article, so the writing RSS entries are unchanged.
 
 `scripts/make-my-books-card.mjs` creates the 1200 × 630 sharing image from all three approved covers and the bundled open-licensed fonts. The normal OG build and postbuild workflows include the catalog and its validation. `scripts/postbuild-performance.mjs` preloads this route's code on direct entry.
 
