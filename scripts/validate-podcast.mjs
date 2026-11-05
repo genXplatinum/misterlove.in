@@ -63,7 +63,7 @@ for (const [path, width, height] of images) {
   assert.equal(data.readUInt32BE(20), height);
 }
 if (existsSync('dist/listen/index.html')) {
-  for (const path of ['dist/listen/index.html', 'dist/white/listen/index.html']) {
+  for (const path of ['dist/listen/index.html', 'dist/original/listen/index.html']) {
     const html = readFileSync(path, 'utf8');
     assert.ok(html.includes('<title>Listen Books &amp; Podcasts | MisterLove</title>'));
     assert.ok(html.includes('<link rel="canonical" href="https://misterlove.in/listen/"'));
@@ -78,7 +78,8 @@ if (existsSync('dist/listen/index.html')) {
     const data = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(match => JSON.parse(match[1]));
     const series = data.flatMap(item => item['@graph'] || [item]).find(item => item['@type'] === 'PodcastSeries');
     assert.equal(series.episode.length, 36);
-    if (path.includes('/white/')) assert.ok(html.includes('noindex, follow'));
+    if (path.includes('/original/')) assert.ok(html.includes('noindex, follow'));
+    else assert.ok(html.includes('index, follow'));
   }
   const feed = readFileSync(`dist${listenMeta.feed}`, 'utf8');
   assert.equal((feed.match(/<enclosure /g) || []).length, 36);
@@ -93,6 +94,6 @@ if (existsSync('dist/listen/index.html')) {
   }, 0);
   const bytes = size('dist');
   assert.ok(bytes < 1000 * 1024 * 1024, 'The complete GitHub Pages site must fit its published size limit');
-  console.log(`podcast ✓ Original + White HTML, 36-episode RSS, sitemap, metadata, copied media; total deployment ${(bytes / 1024 / 1024).toFixed(1)} MiB`);
+  console.log(`podcast ✓ White + Original HTML, 36-episode RSS, sitemap, metadata, copied media; total deployment ${(bytes / 1024 / 1024).toFixed(1)} MiB`);
 }
 console.log('podcast ✓ 36 Punjabi and 16 English/Hindi audio files, hashes, measured durations, real waveforms, chapter anchors and cover dimensions');

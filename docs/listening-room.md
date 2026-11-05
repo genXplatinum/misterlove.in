@@ -1,7 +1,12 @@
 # Listening room
 
-The listening room is `/listen/`, with the shared player also available at
-`/white/listen/`. `/podcasts/` redirects to the main room. The listening room contains 36 Punjabi discussions of **DEBUNKED: ISLAM**, plus eight English and eight Hindi episodes in **The Architecture of Money**. The series selector uses the same player, episode cards, and visual theme for every language.
+The listening room is `/listen/` in the primary White edition and
+`/original/listen/` in the secondary Original edition. The former White URL
+`/white/listen/` redirects to `/listen/`; `/podcasts/` also redirects to the
+main room. The listening room contains 36 Punjabi discussions of **DEBUNKED:
+ISLAM**, plus eight English and eight Hindi episodes in **The Architecture of
+Money**. The series selector uses the same player and episode cards for every
+language.
 
 ## Media and titles
 
@@ -58,8 +63,9 @@ npm run build
 npm run validate:podcast
 ```
 
-The production build generates Original and White HTML, canonical and social
-metadata, PodcastSeries/PodcastEpisode structured data, RSS and a sitemap entry.
+The production build generates White and Original HTML, primary canonical and
+social metadata, secondary noindex metadata, PodcastSeries/PodcastEpisode
+structured data, RSS and a sitemap entry.
 Media validation checks all 52 audio hashes, unique titles and files, durations,
 waveforms, chapter anchors, cover dimensions, RSS enclosures and deployment size.
 
