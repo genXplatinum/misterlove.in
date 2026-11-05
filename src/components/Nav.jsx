@@ -31,7 +31,9 @@ export default function Nav() {
   const menuRef = useRef(null);
   const { pathname, state } = useLocation();
   const navigate = useNavigate();
-  const { homePath } = useExperience();
+  const { homePath, white } = useExperience();
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  const homeHref = white ? `${base}/` : `${base}/original/`;
   const isHome = pathname === '/';
 
   useEffect(() => {
@@ -201,7 +203,7 @@ export default function Nav() {
   return (
     <>
       <header className={`nav ${scrolled ? 'is-scrolled' : ''} ${open ? 'is-menu-open' : ''}`}>
-        <a href={homePath} className="nav__brand" onClick={brand} aria-label="MisterLove home">
+        <a href={homeHref} className="nav__brand" onClick={brand} aria-label="MisterLove home">
           <Wordmark />
         </a>
 

@@ -27,7 +27,9 @@ try {
     if (white) {
       html = readFileSync('dist/white/books/index.html', 'utf8')
         .replace(/<main id="main"[\s\S]*?<\/main>/, renderToString(route(main)))
-        .replace(/<nav class="edition-switch"[\s\S]*?<\/nav>/g, navigation => navigation.replace(/href="(?:\/white)?\/books\/?"/g, match => match.includes('/white/') ? 'href="/white/listen/"' : 'href="/listen/"'))
+        .replace(/<nav class="edition-switch"[\s\S]*?<\/nav>/g, navigation => navigation
+          .replace(/href="\/original\/books\/?"/g, 'href="/original/listen/"')
+          .replace(/href="\/white\/books\/?"/g, 'href="/white/listen/"'))
         .replace(/<a\b[^>]*href="\/white\/books"[^>]*>/g, link => link.replace(/ aria-current="page"/g, '').replace(/class="active"/g, 'class=""'))
         .replace(/<a\b[^>]*href="\/white\/listen\/"[^>]*>/g, link => link.includes('aria-current') ? link : link.slice(0, -1) + ' aria-current="page">');
     } else {

@@ -4,13 +4,14 @@ The personal site and Living Archive of Lovepreet Singh. It brings together a
 concise professional profile and long-form research on history, society,
 religion, public policy and technology.
 
-The interface uses an olive, parchment and brass palette with immersive motion
-and 3D details. Reading routes stay calm and legible so the work remains the
-focus.
+The White edition is the primary site at `/`. The earlier Original design is
+preserved at `/original/`; both editions share the same publications and reader
+routes.
 
 ## Architecture
 
-- `src/App.jsx` defines the application routes.
+- `src/App.jsx` defines Original's routes; `src/white/WhiteApp.jsx` defines
+  White's routes.
 - `src/pages/` contains the home, writing shelf, topic and article views.
 - `src/sections/` contains the chapters of the homepage.
 - `src/components/` contains shared interface, motion and 3D components.
@@ -21,10 +22,9 @@ focus.
 - `scripts/` contains validation, social-card and static-output tools.
 - `public/` contains images, PDFs and other static assets.
 
-The build remains a React 19 and Vite application. Three.js powers the spatial
-elements, GSAP handles scroll choreography, and Lenis provides smooth scrolling.
-The build regenerates the writing share cards, then creates crawlable writing
-pages, a sitemap, an RSS feed and static-host fallbacks.
+The build remains a React 19 and Vite application. It regenerates writing share
+cards, crawlable pages for both editions, a sitemap, an RSS feed and static-host
+fallbacks. Old `/white/` links redirect to the primary White routes.
 
 ## Local development
 
