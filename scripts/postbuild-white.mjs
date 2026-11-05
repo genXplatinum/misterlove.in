@@ -17,7 +17,7 @@ const stylesheet = readdirSync('dist/assets').find(name => name.endsWith('.css')
 if (!stylesheet) throw new Error('White edition stylesheet was not emitted.');
 
 // All artwork is built from the bundled OFL font, including on Linux CI.
-const artwork = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="white"/><g fill="#121212" font-family="Manrope ExtraBold" font-weight="800"><text x="62" y="75" font-size="34" letter-spacing="-2.5">misterlove.</text><text x="62" y="254" font-size="98" letter-spacing="-6">Leave no question</text><text x="62" y="369" font-size="98" letter-spacing="-6">unasked.</text></g><g fill="#121212" font-family="Manrope" font-weight="400"><text x="64" y="501" font-size="23">Independent research &amp; writing by Lovepreet Singh.</text><text x="64" y="563" font-size="18">misterlove.in/white</text></g><path d="M64 595H1136" stroke="#dedede"/></svg>`;
+const artwork = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="white"/><g fill="#121212" font-family="Manrope ExtraBold" font-weight="800"><text x="62" y="75" font-size="34" letter-spacing="-2.5">misterlove.</text><text x="62" y="254" font-size="98" letter-spacing="-6">Leave no question</text><text x="62" y="369" font-size="98" letter-spacing="-6">unasked.</text></g><g fill="#121212" font-family="Manrope" font-weight="400"><text x="64" y="501" font-size="23">Independent research &amp; writing by Lovepreet Singh.</text><text x="64" y="563" font-size="18">misterlove.in</text></g><path d="M64 595H1136" stroke="#dedede"/></svg>`;
 const card = new Resvg(artwork, { font: { fontFiles: ['scripts/white-fonts/Manrope-regular.ttf', 'scripts/white-fonts/Manrope-bold.ttf'], loadSystemFonts: false, defaultFontFamily: 'Manrope' } }).render().asPng();
 writeFileSync('public/og/white-edition.png', card);
 writeFileSync('dist/og/white-edition.png', card);
@@ -39,13 +39,13 @@ try {
   const frameForPath = (frame, path) => frame.replace(
     /<nav class="edition-switch"[\s\S]*?<\/nav>/g,
     switchHtml => switchHtml
-      .replace(/(<a href=")[^"]*("[^>]*>Original<\/a>)/, `$1${path}$2`)
+      .replace(/(<a href=")[^"]*("[^>]*>Original<\/a>)/, `$1/original${path === '/about/' ? '/#about' : path}$2`)
       .replace(/(<a href=")[^"]*("[^>]*>White<\/a>)/, `$1/white${path}$2`)
   );
 
   function shell(source, path, body, meta) {
     let html = source.replace(/<html([^>]*)>/, (_, attrs) => `<html${attrs.includes('class="') ? attrs.replace(/class="([^"]*)"/, 'class="$1 white-edition"') : `${attrs} class="white-edition"`}>`);
-    const extra = `<meta name="robots" content="noindex, follow"/><link rel="stylesheet" href="/assets/${stylesheet}"/><link rel="preload" href="/white-assets/manrope-latin.woff2" as="font" type="font/woff2" crossorigin="anonymous"/><script>document.documentElement.dataset.experience="classic";</script><style>html.white-edition,html.white-edition body{background:#fff;color:#121212}</style>`;
+    const extra = `<meta name="robots" content="index, follow"/><link rel="stylesheet" href="/assets/${stylesheet}"/><link rel="preload" href="/white-assets/manrope-latin.woff2" as="font" type="font/woff2" crossorigin="anonymous"/><script>document.documentElement.dataset.experience="classic";</script><style>html.white-edition,html.white-edition body{background:#fff;color:#121212}</style>`;
     html = html.replace(/<meta name="robots"[^>]*>/g, '').replace('</head>', `${extra}</head>`);
     html = html.replace('href="/fonts/site-fonts.css"', 'href="/fonts/white-fonts.css"');
     html = html.replace(/(<meta name="theme-color" content=")[^"]*(")/, '$1#ffffff$2');
@@ -70,11 +70,11 @@ try {
     generated.push({ path: `/white${path}`, canonical: html.match(/<link rel="canonical" href="([^"]+)"/)?.[1] });
   }
 
-  const homeMeta = { title: 'MisterLove: leave no question unasked | Lovepreet Singh', description: 'Research by Lovepreet Singh on belief, science and society. Read the arguments and check the sources.', canonical: `${SITE}/white/`, image: `${SITE}/og/white-edition.png` };
+  const homeMeta = { title: 'MisterLove: leave no question unasked | Lovepreet Singh', description: 'Research by Lovepreet Singh on belief, science and society. Read the arguments and check the sources.', canonical: `${SITE}/`, image: `${SITE}/og/white-edition.png` };
   shell(template, '/', homepage, homeMeta);
   shell(readFileSync('dist/writing/index.html', 'utf8'), '/writing/', renderWhite('/writing/'), { title: 'Writing | MisterLove | Lovepreet Singh', description: 'Search the MisterLove research archive by Lovepreet Singh. Find a collection by title or subject.', canonical: `${SITE}/writing/` });
   shell(readFileSync('dist/books/index.html', 'utf8'), '/books/', renderWhite('/books/'), { title: 'Books, read closely | MisterLove | Lovepreet Singh', description: 'Close readings of Chesterton, Horace and Harari by Lovepreet Singh, examining what each book claims and how its arguments hold up.', canonical: `${SITE}/books/` });
-  shell(template, '/about/', renderWhite('/about/'), { title: 'About | MisterLove | Lovepreet Singh', description: 'About Lovepreet Singh, the researcher and writer behind MisterLove and founder of Lovelace. His work, education and research method.', canonical: `${SITE}/`, image: `${SITE}/og/white-edition.png` });
+  shell(template, '/about/', renderWhite('/about/'), { title: 'About | MisterLove | Lovepreet Singh', description: 'About Lovepreet Singh, the researcher and writer behind MisterLove and founder of Lovelace. His work, education and research method.', canonical: `${SITE}/about/`, image: `${SITE}/og/white-edition.png` });
 
   function walk(dir) {
     return readdirSync(dir, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? walk(join(dir, entry.name)) : entry.name === 'index.html' ? [join(dir, entry.name)] : []);
@@ -121,7 +121,17 @@ try {
     manuscripts.push({ path, original_main_sha256: hash(originalMain), white_main_sha256_after_normalizing_links: hash(preservedMain) });
   }
   if (manuscripts.some(row => row.original_main_sha256 !== row.white_main_sha256_after_normalizing_links)) throw new Error('Static manuscript preservation failed.');
-  writeFileSync('dist/white/edition.json', JSON.stringify({ edition: 'White', base: '/white/', routes: generated, canonical_original_readers: true, manuscript_preservation: manuscripts, publication_covers: publicationCovers, social_card_sha256: hash(card) }, null, 2));
+  writeFileSync('dist/white/edition.json', JSON.stringify({
+    edition: 'White',
+    base: '/',
+    routes: generated.map(route => ({ ...route, path: route.path.replace(/^\/white/, '') || '/' })),
+    legacy_aliases: generated.map(route => route.path),
+    canonical_white: true,
+    noindex_original: true,
+    manuscript_preservation: manuscripts,
+    publication_covers: publicationCovers,
+    social_card_sha256: hash(card),
+  }, null, 2));
   const catalogFont = readFileSync('public/white-assets/manrope-latin.woff2').toString('base64');
   const catalogCss = readFileSync('src/white/PublicationCover.css', 'utf8');
   const catalogHtml = `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>White edition — cover library</title><style>@font-face{font-family:Manrope;src:url(data:font/woff2;base64,${catalogFont}) format('woff2');font-weight:400 800}*{box-sizing:border-box}body{margin:0;background:#fff;color:#151714;font-family:Manrope,'Nirmala UI',sans-serif}header{padding:48px 5vw 32px;border-bottom:1px solid #ddd}h1{font-size:clamp(32px,5vw,64px);letter-spacing:-.06em;font-weight:600;margin:18px 0}p{line-height:1.7}input,select{font:inherit;padding:12px;margin:10px 12px 0 0;max-width:100%;border:1px solid #cdd2c6;background:#fff}input{width:320px}.catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:38px;padding:40px 5vw}.catalog figure{margin:0;min-width:0}.catalog figure[hidden]{display:none}.catalog figcaption{font-size:12px;line-height:1.7;margin-top:15px;color:#5a605a}.catalog a{color:inherit}a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #526345;outline-offset:4px}${catalogCss}</style><body class="white-site"><header><p>MisterLove · White edition · Local review only</p><h1>A cover for every question.</h1><p>${publicationCovers.length} covers, drawn from existing published titles. Collections and their articles share a colour and motif. No PDF or manuscript was changed.</p><label>Find a cover <input id="q" type="search" placeholder="Title, collection or part"></label><label>Show <select id="kind"><option value="collection">Collections</option><option value="article">Articles &amp; studies</option><option value="">All covers</option></select></label><label>Language <select id="language"><option value="">All languages</option><option value="en">English</option><option value="hi">Hindi</option><option value="pa">Punjabi</option></select></label><p id="count" role="status">${publicationCovers.length} covers</p><a href="http://127.0.0.1:5513/white/">Open the local White edition ↗</a></header><main class="catalog">${coverCatalog.sort((a,b)=>Number(a.isArticle)-Number(b.isArticle)||a.path.localeCompare(b.path,undefined,{numeric:true})).map(item => `<figure lang="${item.language}" data-language="${item.language}" data-kind="${item.isArticle ? 'article' : 'collection'}" data-title="${escape(`${item.title} ${item.collection} ${item.label}`.toLowerCase())}">${item.art}<figcaption><a href="http://127.0.0.1:5513/white${item.path}">${escape(item.label)} · ${escape(item.collection)}</a><br>${escape(item.title)}</figcaption></figure>`).join('')}</main><script>const q=document.querySelector('#q'),language=document.querySelector('#language'),kind=document.querySelector('#kind'),items=[...document.querySelectorAll('.catalog figure')];function filter(){let count=0;for(const item of items){item.hidden=!(item.dataset.title.includes(q.value.toLowerCase().trim())&&(!language.value||language.value===item.dataset.language)&&(!kind.value||kind.value===item.dataset.kind));if(!item.hidden)count++}document.querySelector('#count').textContent=count+' covers'}q.addEventListener('input',filter);language.addEventListener('change',filter);kind.addEventListener('change',filter);filter();</script></body></html>`;

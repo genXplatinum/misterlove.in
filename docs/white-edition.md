@@ -2,7 +2,12 @@
 
 ## Approved release - 20 October 2026
 
-The site has two editions: Original at `/` and White at `/white/`. Both have a top Original / White switch and matching footer controls. Switching retains the current article, language, query and anchor where the destination exists. Original's About anchor maps to White's About page.
+The site has two editions: White is primary at `/`; Original is secondary at
+`/original/`. Both have edition switches in their navigation and footer.
+Switching retains the current article, language, query and anchor where the
+destination exists. Original's About anchor maps to White's About page. Former
+`/white/` URLs redirect to their matching primary routes, and `/observatory/`
+redirects to the secondary Original homepage.
 
 The Observatory interface, dedicated components, CSS, images and Three.js dependency have been removed. `/observatory/` remains only as a noindex redirect to Original so old bookmarks remain useful. Obsolete saved immersive preferences no longer affect landing pages.
 
@@ -14,7 +19,12 @@ The Reading Room uses Manrope, a white canvas, an interactive research object, c
 
 The publication cover system provides 330 collection/article/study covers across 22 visual identities, including translated editions. All published manuscript text, citations and existing PDFs retain their original bytes after normalizing only White navigation prefixes and validated cover decoration in generated HTML.
 
-The White readers retain Original canonical URLs and `noindex, follow`; the redesign does not duplicate the sitemap or RSS feed. Brand artwork is in `brand/misterlove/`, including the eight-page guide, outlined SVGs, PNGs, avatars, licensed fonts, tokens and reproducible scripts. Both editions use the official outlined `misterlove.` wordmark in their header and footer, and the square `m.` favicon. Original uses the white wordmark in dark mode. The opening screen uses the same artwork; Original retains its established page design.
+White routes use their primary root URLs as canonicals and remain indexable.
+Original routes are `noindex, follow` and point to the matching White canonical;
+the sitemap and RSS continue to describe only the primary routes. Brand artwork
+is in `brand/misterlove/`, including the outlined SVGs, PNGs, avatars, licensed
+fonts, tokens and reproducible scripts. Both editions retain their existing
+visual design and use the official outlined `misterlove.` wordmark.
 
 ## Verification and preview
 
@@ -27,7 +37,11 @@ node scripts/test-brand-intro.mjs
 node scripts/verify-white-premium.mjs
 ```
 
-The verifier checks authorized release scope, removed Observatory files/dependency, legacy redirect, brand intro, route-aware top switching, 351 generated White routes, 345 manuscript hashes, 330 covers, links, canonical metadata and all 57 PDF files.
+The production build verifies that White pages are generated at root, Original
+pages at `/original/`, legacy edition URLs redirect correctly, canonical and
+robots metadata match their roles, and the sitemap contains only primary URLs.
+The White-edition verifier also compares generated manuscripts and checks
+publication covers, reader links and PDF downloads.
 
 Local production preview: `npm.cmd run preview -- --host 127.0.0.1 --port 5513 --strictPort`.
 Development preview: `npm.cmd run dev -- --host 127.0.0.1 --port 5512 --strictPort`.

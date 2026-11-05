@@ -29,7 +29,9 @@ try {
         .replace(/<main id="main"[\s\S]*?<\/main>/, renderToString(routed(main)));
       // The frame comes from a reading-shelf route; switch its edition links
       // and active state to this page without rewriting the other content.
-      html = html.replace(/<nav class="edition-switch"[\s\S]*?<\/nav>/g, navigation => navigation.replace(/href="(?:\/white)?\/books\/?"/g, match => match.includes('/white/') ? 'href="/white/my-books/"' : 'href="/my-books/"'));
+      html = html.replace(/<nav class="edition-switch"[\s\S]*?<\/nav>/g, navigation => navigation
+        .replace(/href="\/original\/books\/?"/g, 'href="/original/my-books/"')
+        .replace(/href="\/white\/books\/?"/g, 'href="/white/my-books/"'));
       html = html.replace(/<a\b[^>]*href="\/white\/books"[^>]*>/g, link => link.replace(/ aria-current="page"/g, '').replace(/class="active"/g, 'class=""'));
       html = html.replace(/<a\b[^>]*href="\/white\/my-books\/"[^>]*>/g, link => link.includes('aria-current') ? link : link.slice(0, -1) + ' aria-current="page">');
     } else {

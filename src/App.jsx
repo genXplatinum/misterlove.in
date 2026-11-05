@@ -10,7 +10,7 @@ const Writing = lazy(() => import('./pages/Writing'));
 // A direct homepage visit must have its hero ready before mounting the frame;
 // otherwise the footer briefly becomes the largest visible loading element.
 const onHome = typeof window !== 'undefined'
-  && window.location.pathname.replace(/\/+$/, '') === import.meta.env.BASE_URL.replace(/\/+$/, '');
+  && window.location.pathname.replace(/\/+$/, '') === `${import.meta.env.BASE_URL.replace(/\/+$/, '')}/original`;
 const ClassicHome = onHome
   ? (await import('./pages/ClassicHome')).default
   : lazy(() => import('./pages/ClassicHome'));

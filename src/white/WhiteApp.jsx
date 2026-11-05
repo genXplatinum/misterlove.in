@@ -30,7 +30,7 @@ function PageMeta({ title, description }) {
   useEffect(() => {
     const previous = document.title;
     document.title = `${title} | Lovepreet Singh`;
-    const canonical = `https://misterlove.in${currentPath === '/' ? '/white/' : currentPath === '/about' ? '/' : `${currentPath}/`}`;
+    const canonical = `https://misterlove.in${currentPath === '/' ? '/' : `${currentPath}/`}`;
     const image = `https://misterlove.in/og/${currentPath === '/writing' ? 'writing' : currentPath === '/books' ? 'books' : 'white-edition'}.png`;
     const changes = [
       ['meta[name="description"]', 'content', description],
@@ -168,8 +168,6 @@ function WhiteFrame() {
   useLayoutEffect(() => {
     const root = document.documentElement;
     root.classList.add('white-edition');
-    const robots = document.querySelector('meta[name="robots"]') ?? document.head.appendChild(document.createElement('meta'));
-    robots.name = 'robots'; robots.content = 'noindex, follow';
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#ffffff');
     return () => root.classList.remove('white-edition');
   }, []);
