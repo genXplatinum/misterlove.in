@@ -26,7 +26,6 @@ for (const file of walk('dist')) {
   if (!section && !white) entries.push('src/pages/ClassicHome.jsx');
   if (section === 'press') entries.push('src/pages/Press.jsx');
   if (section === 'my-books') entries.push('src/pages/MyBooks.jsx');
-  if (section === 'listen') entries.push('src/pages/Listen.jsx');
   if (section === 'writing') {
     if (!slug && !white) entries.push('src/pages/Writing.jsx');
     if (slug) {
@@ -47,15 +46,19 @@ for (const file of walk('dist')) {
     }
   }
   const scripts = new Set();
+  const styles = new Set();
   const visit = key => {
     const chunk = get(key);
     if (scripts.has(chunk.file)) return;
     scripts.add(chunk.file);
+    (chunk.css ?? []).forEach(path => styles.add(path));
     (chunk.imports ?? []).forEach(visit);
   };
   entries.forEach(visit);
   const preloads = [...scripts].filter(path => !html.includes(`href="/${path}"`))
     .map(path => `<link rel="modulepreload" crossorigin href="/${path}">`).join('');
+  const styleLinks = [...styles].filter(path => !html.includes(`href="/${path}"`))
+    .map(path => `<link rel="stylesheet" href="/${path}">`).join('');
   // Both homepage hero faces are discoverable before React mounts. These are
   // the same Google Fonts binaries and descriptors, now served on this domain.
   const fontCss = readFileSync('public/fonts/site-fonts.css', 'utf8');
@@ -72,7 +75,7 @@ for (const file of walk('dist')) {
     if (!existsSync(`public${path}`)) throw new Error(`Missing font ${path}`);
     return `<link rel="preload" href="${path}" as="font" type="font/woff2" crossorigin>`;
   }).join('');
-  html = html.replace('</head>', `${preloads}${fonts}</head>`);
+  html = html.replace('</head>', `${styleLinks}${preloads}${fonts}</head>`);
   writeFileSync(file, html);
   count++;
 }

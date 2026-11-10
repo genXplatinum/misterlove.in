@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { Link, NavLink, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
+import { Link, Navigate, NavLink, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import { PlainReadingProvider } from '../components/ExperienceProvider';
 import EditionSwitch from '../components/EditionSwitch';
 import { Wordmark } from '../components/Logo';
@@ -16,13 +16,17 @@ const Topic = lazy(() => import('../pages/Topic'));
 const Article = lazy(() => import('../pages/Article'));
 const Book = lazy(() => import('../pages/Book'));
 const Study = lazy(() => import('../pages/Study'));
-const MyBooks = lazy(() => import('../pages/MyBooks'));
-const Listen = lazy(() => import('../pages/Listen'));
-const Press = lazy(() => import('../pages/Press'));
-const PressFeature = lazy(() => import('../pages/Press').then(module => ({ default: module.PressFeature })));
+// Preserve the complete static hero until the direct-entry route is ready.
+// Other visits still fetch these page chunks only when needed.
+const directPath = typeof window === 'undefined' ? '' : window.location.pathname;
+const MyBooks = /^\/my-books\/?$/.test(directPath)
+  ? (await import('../pages/MyBooks')).default : lazy(() => import('../pages/MyBooks'));
+const directPress = /^\/press(?:\/|$)/.test(directPath) ? await import('../pages/Press') : null;
+const Press = directPress?.default ?? lazy(() => import('../pages/Press'));
+const PressFeature = directPress?.PressFeature ?? lazy(() => import('../pages/Press').then(module => ({ default: module.PressFeature })));
 
 const Arrow = ({ diagonal = false }) => <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d={diagonal ? 'M6 18 18 6M6 6h12v12' : 'M4 12h15m-6-6 6 6-6 6'} stroke="currentColor" strokeWidth="1.5" /></svg>;
-const primary = [{ to: '/writing', label: 'Writing' }, { to: '/my-books/', label: 'My Books' }, { to: '/listen/', label: 'Listen' }, { to: '/books', label: 'Books' }, { to: '/about', label: 'About' }, { to: '/press', label: 'Press' }];
+const primary = [{ to: '/writing', label: 'Writing' }, { to: '/my-books/', label: 'My Books' }, { to: '/books', label: 'Books' }, { to: '/about', label: 'About' }, { to: '/press', label: 'Press' }];
 
 function PageMeta({ title, description }) {
   const { pathname } = useLocation();
@@ -124,7 +128,7 @@ function WorkRow({ piece }) {
   return <li className="white-work-row"><Link to={`/writing/${piece.slug}`}>
     <span className="white-archive-cover" aria-hidden="true"><PublicationCover piece={piece} compact /></span>
     <span className="white-work-copy"><span className="white-work-category">{piece.topic.split('·')[0].trim()}</span><h3>{piece.title}</h3><p>{piece.standfirst}</p></span>
-    <span className="white-work-format">{livePartsOf(piece)} {piece.unit === 'volume' ? 'volumes' : 'parts'}<span>{isInProgress(piece) ? 'In progress' : 'Complete'}</span></span>
+    <span className="white-work-format">{livePartsOf(piece)} {piece.unit === 'book' ? (livePartsOf(piece) === 1 ? 'book' : 'books') : piece.unit === 'volume' ? (livePartsOf(piece) === 1 ? 'volume' : 'volumes') : (livePartsOf(piece) === 1 ? 'part' : 'parts')}<span>{isInProgress(piece) ? 'In progress' : 'Complete'}</span></span>
     <Arrow />
   </Link></li>;
 }
@@ -176,7 +180,7 @@ function WhiteFrame() {
     window.scrollTo({ top: 0, behavior: 'instant' });
     document.getElementById('main')?.focus({ preventScroll: true });
   }, [location.pathname, location.hash]);
-  return <div className="white-site"><a className="white-skip" href="#main">Skip to content</a><WhiteNav /><main id="main" tabIndex="-1"><Suspense fallback={<div className="white-shell white-loading" role="status">Loading the page…</div>}><Routes><Route path="/" element={<WhiteHome />} /><Route path="/about" element={<WhiteAbout />} /><Route path="/writing" element={<WhiteWriting />} /><Route path="/writing/:slug" element={<Topic />} /><Route path="/hi/writing/:slug" element={<Topic />} /><Route path="/pa/writing/:slug" element={<Topic />} /><Route path="/writing/:slug/:part" element={<Article />} /><Route path="/hi/writing/:slug/:part" element={<Article />} /><Route path="/pa/writing/:slug/:part" element={<Article />} /><Route path="/my-books" element={<MyBooks />} /><Route path="/listen" element={<Listen />} /><Route path="/books" element={<WhiteBooks />} /><Route path="/books/:book" element={<Book />} /><Route path="/books/:book/:study" element={<Study />} /><Route path="/hi/books/:book/:study" element={<Study />} /><Route path="/press" element={<Press />} /><Route path="/press/:slug" element={<PressFeature />} /><Route path="*" element={<WhiteNotFound />} /></Routes></Suspense></main><WhiteFooter /><ReaderCovers /></div>;
+  return <div className="white-site"><a className="white-skip" href="#main">Skip to content</a><WhiteNav /><main id="main" tabIndex="-1"><Suspense fallback={<div className="white-shell white-loading" role="status">Loading the page…</div>}><Routes><Route path="/" element={<WhiteHome />} /><Route path="/about" element={<WhiteAbout />} /><Route path="/writing" element={<WhiteWriting />} /><Route path="/writing/:slug" element={<Topic />} /><Route path="/hi/writing/:slug" element={<Topic />} /><Route path="/pa/writing/:slug" element={<Topic />} /><Route path="/writing/:slug/:part" element={<Article />} /><Route path="/hi/writing/:slug/:part" element={<Article />} /><Route path="/pa/writing/:slug/:part" element={<Article />} /><Route path="/my-books" element={<MyBooks />} /><Route path="/listen" element={<Navigate to="/writing/" replace />} /><Route path="/books" element={<WhiteBooks />} /><Route path="/books/:book" element={<Book />} /><Route path="/books/:book/:study" element={<Study />} /><Route path="/hi/books/:book/:study" element={<Study />} /><Route path="/press" element={<Press />} /><Route path="/press/:slug" element={<PressFeature />} /><Route path="*" element={<WhiteNotFound />} /></Routes></Suspense></main><WhiteFooter /><ReaderCovers /></div>;
 }
 
 export default function WhiteApp() {

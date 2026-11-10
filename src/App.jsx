@@ -5,6 +5,11 @@ import Footer from './components/Footer';
 import ScrollProgress from './components/ScrollProgress';
 import ErrorBoundary from './components/ErrorBoundary';
 import { pageSurfaceForPath, syncThemeColor } from './pageSurface';
+import '@fontsource/eb-garamond/400.css';
+import '@fontsource/eb-garamond/400-italic.css';
+import '@fontsource/source-sans-3/400.css';
+import '@fontsource/source-sans-3/600.css';
+import '@fontsource/source-serif-4/400.css';
 
 const Writing = lazy(() => import('./pages/Writing'));
 // A direct homepage visit must have its hero ready before mounting the frame;
@@ -18,7 +23,6 @@ const Topic = lazy(() => import('./pages/Topic'));
 const Article = lazy(() => import('./pages/Article'));
 const Books = lazy(() => import('./pages/Books'));
 const MyBooks = lazy(() => import('./pages/MyBooks'));
-const Listen = lazy(() => import('./pages/Listen'));
 const Book = lazy(() => import('./pages/Book'));
 const Study = lazy(() => import('./pages/Study'));
 const Press = lazy(() => import('./pages/Press'));
@@ -87,8 +91,8 @@ function AppFrame({ isHome, resetKey }) {
               <Route path="/pa/writing/:slug/:part" element={<Article />} />
               <Route path="/books" element={<Books />} />
               <Route path="/my-books" element={<MyBooks />} />
-              <Route path="/listen" element={<Listen />} />
-              <Route path="/podcasts" element={<Navigate to="/listen/" replace />} />
+              <Route path="/listen" element={<Navigate to="/writing/" replace />} />
+              <Route path="/podcasts" element={<Navigate to="/writing/" replace />} />
               <Route path="/books/:book" element={<Book />} />
               <Route path="/books/:book/:study" element={<Study />} />
               <Route path="/hi/books/:book/:study" element={<Study />} />

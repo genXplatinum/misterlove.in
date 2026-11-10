@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { myBooks, myBooksMeta } from '../data/myBooks';
+import { coverImageProps } from '../data/coverImages';
 import './MyBooks.css';
 
 function Arrow({ diagonal = false }) {
@@ -12,7 +13,7 @@ function BookCard({ book, index }) {
   return <article className={`author-book author-book--${book.color}`} id={book.id} aria-labelledby={`${book.id}-title`}>
     <div className="author-book__stage">
       <span className="author-book__number" aria-hidden="true">0{index + 1}</span>
-      <img className="author-book__cover" src={book.cover} alt={`${book.title} — approved paperback cover`} width="600" height="900" loading="lazy" decoding="async" />
+      <img className="author-book__cover" {...coverImageProps(book, '(max-width: 700px) 60vw, 280px')} alt={`${book.title} — approved paperback cover`} width="600" height="900" loading="lazy" decoding="async" />
       <span className={`author-book__status${available ? '' : ' author-book__status--soon'}`}><i aria-hidden="true" />{available ? 'Available on Pothi' : 'Paperback coming soon'}</span>
     </div>
     <div className="author-book__copy">
@@ -27,7 +28,6 @@ function BookCard({ book, index }) {
           : <span className="bookshop-pending">Coming soon <span>Pothi review pending</span></span>}
         {book.previewUrl && <a className="bookshop-preview" href={book.previewUrl} target="_blank" rel="noopener noreferrer" aria-label={`Preview ${book.title} on Pothi (opens in a new tab)`}>Read a preview <Arrow diagonal /></a>}
         {book.readingPath && <Link className="bookshop-preview" to={book.readingPath}>Read the complete book <Arrow /></Link>}
-        {book.id === 'debunked-islam' && <Link className="bookshop-preview" to="/listen/">Listen in Punjabi <Arrow /></Link>}
       </div>
     </div>
   </article>;
@@ -74,9 +74,9 @@ export default function MyBooks() {
       <div className="bookshop__exhibit" aria-hidden="true">
         <span className="bookshop__halo" />
         <div className="bookshop__volumes">
-          <img className="bookshop__volume bookshop__volume--left" src={myBooks[1].cover} alt="" width="600" height="900" decoding="async" />
-          <img className="bookshop__volume bookshop__volume--middle" src={myBooks[0].cover} alt="" width="600" height="900" fetchPriority="high" decoding="async" />
-          <img className="bookshop__volume bookshop__volume--right" src={myBooks[2].cover} alt="" width="600" height="900" decoding="async" />
+          <img className="bookshop__volume bookshop__volume--left" {...coverImageProps(myBooks[1], '(max-width: 700px) 34vw, 210px')} alt="" width="600" height="900" decoding="async" />
+          <img className="bookshop__volume bookshop__volume--middle" {...coverImageProps(myBooks[0], '(max-width: 700px) 40vw, 250px')} alt="" width="600" height="900" fetchPriority="high" decoding="async" />
+          <img className="bookshop__volume bookshop__volume--right" {...coverImageProps(myBooks[2], '(max-width: 700px) 34vw, 210px')} alt="" width="600" height="900" decoding="async" />
         </div>
         <span className="bookshop__exhibit-caption">Independent thought. In print.</span>
       </div>

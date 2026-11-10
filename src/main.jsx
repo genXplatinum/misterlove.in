@@ -3,11 +3,6 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import { ExperienceProvider, readExperience, applyExperience } from './components/ExperienceProvider';
-import '@fontsource/eb-garamond/400.css';
-import '@fontsource/eb-garamond/400-italic.css';
-import '@fontsource/source-sans-3/400.css';
-import '@fontsource/source-sans-3/600.css';
-import '@fontsource/source-serif-4/400.css';
 import ErrorBoundary from './components/ErrorBoundary';
 import { applyTheme, readStoredTheme, ThemeProvider } from './components/ThemeProvider';
 

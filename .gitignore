@@ -27,3 +27,16 @@ pnpm-debug.log*
 .idea
 .DS_Store
 Thumbs.db
+
+# Audio was retired on 2026-11-10. Keep recordings out of site history.
+*.mp3
+*.m4a
+*.wav
+*.ogg
+*.opus
+*.flac
+*.aac
+*.aif
+*.aiff
+*.wma
+/public/book-covers/responsive/

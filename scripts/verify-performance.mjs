@@ -28,11 +28,11 @@ for (const [key, parts] of collections) {
   }
 }
 const representative = [
-  ['/', ['src/App.jsx', 'src/pages/ClassicHome.jsx']],
-  ['/white/', ['src/white/WhiteApp.jsx']],
-  ['/press/', ['src/App.jsx', 'src/pages/Press.jsx']],
-  ['/white/press/', ['src/white/WhiteApp.jsx', 'src/pages/Press.jsx']],
-  ['/white/writing/why-i-dont-believe/part-1/', [
+  ['/original/', ['src/App.jsx', 'src/pages/ClassicHome.jsx']],
+  ['/', ['src/white/WhiteApp.jsx']],
+  ['/original/press/', ['src/App.jsx', 'src/pages/Press.jsx']],
+  ['/press/', ['src/white/WhiteApp.jsx', 'src/pages/Press.jsx']],
+  ['/writing/why-i-dont-believe/part-1/', [
     'virtual:reader:writing:en:why-i-dont-believe', 'virtual:reader:writing:en:why-i-dont-believe:1',
   ]],
   ['/hi/writing/rules-about-women/part-1/', [

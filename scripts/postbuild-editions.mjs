@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
 const dist = resolve('dist');
@@ -8,12 +8,23 @@ const editionPath = join(dist, 'white', 'edition.json');
 const edition = JSON.parse(readFileSync(editionPath, 'utf8'));
 
 function moveOriginalPages() {
+  // Routes move; shared assets keep their public URLs. Retain the accidental
+  // /original media URLs too, so bookmarks made before this repair still work.
+  const movePages = (source, target) => {
+    mkdirSync(target, { recursive: true });
+    for (const entry of readdirSync(source, { withFileTypes: true })) {
+      const from = join(source, entry.name), to = join(target, entry.name);
+      if (entry.isDirectory()) movePages(from, to);
+      else if (entry.name.endsWith('.html')) renameSync(from, to);
+      else copyFileSync(from, to);
+    }
+  };
   const original = join(dist, 'original');
   mkdirSync(original, { recursive: true });
   renameSync(join(dist, 'index.html'), join(original, 'index.html'));
   for (const route of ['books', 'writing', 'press', 'hi', 'pa', 'my-books', 'listen', 'observatory']) {
     const source = join(dist, route);
-    if (existsSync(source)) renameSync(source, join(original, route));
+    if (existsSync(source)) movePages(source, join(original, route));
   }
   const podcastRedirect = join(dist, 'podcasts', 'index.html');
   if (existsSync(podcastRedirect)) {
@@ -151,7 +162,6 @@ function verifyPromotion() {
   assert.ok(existsSync(join(dist, 'original', 'writing', 'index.html')), 'Original writing shelf was not moved');
   assert.ok(existsSync(join(dist, 'writing', 'index.html')), 'White writing shelf was not promoted');
   assert.ok(existsSync(join(dist, 'my-books', 'index.html')), 'White bookshop was not promoted');
-  assert.ok(existsSync(join(dist, 'listen', 'index.html')), 'White listening room was not promoted');
   assert.match(readFileSync(join(dist, 'white', 'writing', 'index.html'), 'utf8'), /url=\/writing\//);
   assert.ok(!sitemap.includes('/original/'), 'Secondary Original URLs must not appear in the sitemap');
   assert.ok(!sitemap.includes('/white/'), 'Legacy White aliases must not appear in the sitemap');

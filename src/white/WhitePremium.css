@@ -296,3 +296,23 @@
 /* Keep the menu switch legible regardless of the Original theme preference. */
 .white-header .edition-switch { --ink: #151714; --canvas: #fff; --ink-soft: #5a605a; --rule-dark: #d5d8d0; --paper-deep: #eff1ea; }
 @media (max-width: 1100px) { .white-header-contact { display: none; } }
+
+/* Bring the Press opening into the same rhythm as the research shelves. */
+.white-edition #main .press-opening {
+  padding-top: clamp(48px, 6vw, 88px);
+  padding-bottom: clamp(40px, 5vw, 72px);
+  gap: 6%;
+}
+.white-site .white-work-row > a { border-radius: 3px; }
+.white-site .white-work-row > a:focus-visible { outline-offset: 4px; }
+.white-site .white-work-format > span { color: var(--room-moss); }
+.white-site .white-search input:focus, .white-site .white-search select:focus {
+  border-color: var(--room-moss);
+}
+@media (hover: hover) {
+  .white-site .white-work-row > a:hover { background: #eff1ea66; }
+}
+@media (max-width: 700px) {
+  .white-edition #main .press-opening { gap: 36px; }
+  .white-site .white-search input, .white-site .white-search select { font-size: 16px; }
+}

@@ -59,11 +59,8 @@ try {
         for (const property of ['og:image:alt', 'twitter:image:alt']) html = html.replace(new RegExp(`(<meta (?:property|name)="${property}" content=")[^"]*(")`), '$1MisterLove White — leave no question unasked$2');
       }
     }
-    // Keep the short brand introduction outside React's root in both editions.
     if (!html.slice(0, html.indexOf('<body')).includes('type="module"')) throw new Error('Expected module entry in document head.');
-    const introduction = html.match(/<div id="brand-intro"[\s\S]*?<\/div>\s*<script src="\/brand\/intro\.js"><\/script>/)?.[0];
-    if (!introduction) throw new Error('Brand introduction missing from the source shell.');
-    html = html.replace(/<body[\s\S]*?<\/body>/, `<body>${introduction}<div id="root">${body}</div></body>`);
+    html = html.replace(/<body[\s\S]*?<\/body>/, `<body><div id="root">${body}</div></body>`);
     const dir = `dist/white${path}`;
     mkdirSync(dir, { recursive: true });
     writeFileSync(`${dir}/index.html`, html);
