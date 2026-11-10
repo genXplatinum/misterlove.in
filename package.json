@@ -34,7 +34,7 @@
     "@resvg/resvg-js": "^2.6.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.2",
+    "@vitejs/plugin-react": "^6.2.1",
     "harfbuzzjs": "1.6.2",
     "jpeg-js": "^0.4.4",
     "mupdf": "^1.28.0",
