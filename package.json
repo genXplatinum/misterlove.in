@@ -37,7 +37,7 @@
     "@vitejs/plugin-react": "^6.0.2",
     "harfbuzzjs": "1.6.2",
     "jpeg-js": "^0.4.4",
-    "mupdf": "^1.28.0",
+    "mupdf": "^1.28.1",
     "oxlint": "^1.69.0",
     "pagedjs": "^0.4.3",
     "pdf-lib": "^1.17.1",
